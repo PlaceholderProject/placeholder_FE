@@ -3,8 +3,8 @@ import React from "react";
 const MainPage = () => {
 
 
-// 모임들 가져오기
-const {data: meetups, isPending, error} = useQuery(["meetups"], async () => {
+// 모임들 가져오기 수정전
+const {data: meetups, isPending, isError} = useQuery(["meetups"], async () => {
   const response = await fetch("/api/v1/meetup", {
     method: "GET",
     headers: {
@@ -19,7 +19,7 @@ const {data: meetups, isPending, error} = useQuery(["meetups"], async () => {
 })
 
 // 모임 하나 가져오기
- const {data: meetup, isPending, error} = useQuery(["meetup"], async () => {
+ const {data: meetup, isPending, isError} = useQuery(["meetup"], async () => {
   const response = await fetch(`api/v1/meetup/${meetup_id}`, {
     method: "GET",
     headers: {
@@ -27,7 +27,7 @@ const {data: meetups, isPending, error} = useQuery(["meetups"], async () => {
     },
   })
 
-  if (error) {
+  if (!response.ok) {
 
     throw new Error('모임 가져오기 실패')
 

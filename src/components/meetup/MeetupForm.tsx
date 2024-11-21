@@ -1,36 +1,38 @@
 import React from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
+interface Meetup {
+  id: number;
+  isOrganizer: boolean;
+  organizer: {
+    name: string;
+    profileImage: string;
+  };
+  name: string;
+  description: string;
+  place: string;
+  startedAt: string | null;
+  endedAt: string | null;
+  adTitle: string;
+  adEndedAt: string | null;
+  isPublic: boolean; 
+  image: string;
+  category: string;
+
+}
+
 const MeetupForm = () => {
 
   const queryClient = useQueryClient();
 
-//JWT token
 const token = "my-jwt-token";
 
 // API 함수들
-
 // 모임들 가져오기 수정 중
 // 이거를 가져와서 meetups 라는 애가 있는 상태에서
 // 새로운 meetup을 추가하고 그걸 가지고 메인페이지로 넘어가야할듯?
 
-// 모임들 가져오기 수정 중
-// const { data: meetups, isPending, isError } = useQuery(["meetups"], async () => {
-//   const response = await fetch("/api/v1/meetup", //baseURL? 
-//     {
-//     method: "GET",
-//     headers: {
-//       Authorization: `Bearer ${token}`,
-//     },
-//   });
-
-//   if (isError) {
-//     throw new Error('모임들 가져오기 실패')
-//   }
-//   return response.json()
-// });
-
-const getMeetups = async () => {
+const getMeetups = async () : Promise<Meetup[]> => {
   const response = await fetch("/api/v1/meetup", {
     method: "GET",
     headers: {
@@ -39,28 +41,14 @@ const getMeetups = async () => {
   });
 
   if (!response.ok) {
-    throw new Error('모임 가져오기 실패')
+    throw new Error("모임들 가져오기 실패")
   }
 
   return response.json();
 }
 
-const {data: meetups, isPending, isError} = useQuery({
-  queryKey: ["meetups"],
-  queryFn: getMeetups
-})
-
-if (isPending) {
-  return <p>Pending...</p>
-}
-
-if (isError) {
-  return <p>Error발생</p>
-}
-
 // 모임 생성 수정중
-
-const createMeetup = async (newMeetup) => {
+const createMeetup = async (newMeetup: Meetup): Promise<void> => {
   const response = await fetch("api/v1/meetup", {
     method: "POST",
     headers: {
@@ -71,46 +59,38 @@ const createMeetup = async (newMeetup) => {
   });
 
   if (!response.ok) {
-    throw new Error('모임 생성 실패');
+    throw new Error("모임 생성 실패");
   }
       return;
 }
 
-const createMutation = useMutation({
+const {data: meetups, isPending, isError} = useQuery<Meetup[]>({
+  queryKey: ["meetups"],
+  queryFn: getMeetups
+});
+
+const createMutation = useMutation<void, Error, Meetup>({
   mutationFn: createMeetup,
   onSuccess: () => {
-    queryClient.invalidateQueries(["meetups"])
+    queryClient.invalidateQueries({queryKey: ["meetups"]})
   }
-})
+});
 
+ const handleMeetupFormSubmit = (event: React.FormEvent) => {
+  event.preventDefault();
+  // const form = event.currentTarget;
 
-// const mutation = useMutation(
-//   async (newMeetup: Object) => {
-//     const response = await fetch("/api/v1/meetup", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//         Authorization: `Bearer ${token}`,
-//       },
-//       body: JSON.stringify(newMeetup),
-//     })
+  const nameValue = (event.target as HTMLInputElement).value;
+  const descritopnValue = (event.target as HTMLInputElement).value;
+  const placeValue = (event.target as HTMLInputElement).value;
+  const startedAtValue = (event.target as HTMLInputElement).value;
+  const endedAtValue = (event.target as HTMLInputElement).value;
+  const adTitleValue = (event.target as HTMLInputElement).value;
+  const adEndedAtValue = (event.target as HTMLInputElement).value;
+  const isPublicValue = (event.target as HTMLFormElement).isPublic.checked;
+  const imageValue = (event.target as HTMLInputElement).value;
+  const categoryValue = (event.target as HTMLInputElement).value;
 
-//     if (response.ok) {
-//       throw new Error('모임 생성 실패')
-//     }
-//         return response.json()
-//   },
-  
-//   {
-//     onSuccees: () => {
-//       queryClient.invalidateQueries(["meetups"])
-//     },
-//   }
-// )
-
-
- const handleMeetupFormSubmit = (event: SubmitEvent) => {
-  event.preventDefault()
   const newMeetup = {
     id: 0,
     isOrganizer: true,
@@ -118,25 +98,30 @@ const createMutation = useMutation({
       name: "string",
       profileImage: "string"
     },
-    name: event.target.name.value,
-    description: event.target.description.value,
-    place: event.target.place.value,
-    startedAt: event.target.startedAt.value,
-    endedAt: event.target.endedAt.value,
-    adTitle: event.target.adTitle.value,
-    adEndedAt: event.target.adEndedAt.value,
-    isPublic: event.target.isPublic.value,
-    image: event.target.image.value,
-    category: event.target.category.value,
-
+    // name: form.name.value,
+    name: nameValue,
+    description: descritopnValue,
+    place: placeValue,
+    startedAt: startedAtValue,
+    endedAt: endedAtValue,
+    adTitle: adTitleValue,
+    adEndedAt: adEndedAtValue,
+    isPublic: isPublicValue,
+    image: imageValue,
+    category: categoryValue,
   }
 
-  mutation.mutate(newMeetup)
+  createMutation.mutate(newMeetup)
   event.target.reset()
  }
 
- if (isPending) return <p>Pending...</p>
- if (isError) return <p>Error: {error.message}</p>
+ if (isPending) {
+  return <p>Pending...</p>
+}
+
+if (isError) {
+  return <p>Error발생</p>
+}
 
 
   return (
