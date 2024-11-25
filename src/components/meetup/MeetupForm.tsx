@@ -54,10 +54,10 @@ const MeetupForm = () => {
   const startedAtRef = useRef<HTMLInputElement>(null);
   const endedAtRef = useRef<HTMLInputElement>(null);
   const placeRef = useRef<HTMLInputElement>(null);
-  const placeDescriptionRef = useRef<HTMLTextAreaElement>(null);
+  const placeDescriptionRef = useRef<HTMLInputElement>(null);
   const adTitleRef = useRef<HTMLInputElement>(null);
   const adEndedAtRef = useRef<HTMLInputElement>(null);
-  const descriptionRef = useRef<HTMLInputElement>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const isPublicRef = useRef<HTMLInputElement>(null);
   const categoryRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
@@ -170,7 +170,7 @@ const MeetupForm = () => {
       endedAt: endedAtRef.current?.value || "",
       adTitle: adTitleRef.current?.value || "",
       adEndedAt: adEndedAtRef.current?.value || "",
-      isPublic: isPublicRef.current?.value || "",
+      isPublic: isPublicRef.current?.checked || false, // `checked`로 값 가져오기
       image: imageRef.current?.value || "",
       category: categoryRef.current?.value || "",
     };
