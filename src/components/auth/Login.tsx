@@ -28,6 +28,7 @@ const Login = () => {
 
   const handleLoginFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
     if (!email.trim()) {
       alert("이메일을 입력해주세요.");
       return;
@@ -36,7 +37,7 @@ const Login = () => {
       alert("비밀번호를 입력해주세요");
       return;
     }
-    event.preventDefault();
+
     console.log(`아이디:${email} 비밀번호:${password}`);
     router.replace("/");
   };
