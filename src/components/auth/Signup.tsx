@@ -12,6 +12,7 @@ const Signup = () => {
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [nickname, setNickname] = useState("");
   const [bio, setBio] = useState("");
+  const [bioTextLength, setBioTextLength] = useState(0);
   const [passwordWarning, setPasswordWarning] = useState("");
   const [passwordConfirmWarning, setPasswordConfirmWarning] = useState("");
   const [isVisivlePassword, setIsVisivlePassword] = useState(false);
@@ -45,7 +46,11 @@ const Signup = () => {
     setNickname(event.target.value);
   };
   const handleBioChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (event.target.value.length > 40) {
+      return;
+    }
     setBio(event.target.value);
+    setBioTextLength(event.target.value.length);
   };
 
   const handleTogglePassword = () => {
@@ -129,6 +134,7 @@ const Signup = () => {
           <div className="flex flex-col">
             <label htmlFor="bio">자기소개</label>
             <textarea value={bio} onChange={handleBioChange} placeholder="함께할 모임원을 위해 간단한 자기소개를 작성해주세요." className="border-2 rounded-md" />
+            <p>{bioTextLength}/40</p>
           </div>
           <button className="bg-gray-200">회원가입</button>
         </form>
