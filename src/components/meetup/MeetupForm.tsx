@@ -8,7 +8,7 @@ interface Meetup {
   description: string;
   place: string;
   placeDescription: string;
-  startedAt: string | null;
+  startedAt: string | null; //아예 null 대신 "미정"이란 string으로?
   endedAt: string | null;
   adTitle: string;
   adEndedAt: string | null;
@@ -26,14 +26,17 @@ interface LabeledInputProps {
   minlength?: string;
   maxlength?: string;
   required: boolean;
+  disabled?: boolean;
+  checked?: boolean;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
-const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(({ id, name, label, type = "text", placeholder, required = true }, ref) => {
+const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(({ id, name, label, type = "text", placeholder, disabled, required, checked, onChange }, ref) => {
   return (
     <>
       <div>
         <label htmlFor={id}>{label}</label>
-        <input id={id} name={name} type={type} placeholder={placeholder} required={required} ref={ref} />
+        <input id={id} name={name} type={type} placeholder={placeholder} disabled={disabled} required={required} checked={checked} onChange={onChange} ref={ref} />
       </div>
     </>
   );
@@ -69,12 +72,7 @@ const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({
 const MeetupForm = () => {
   const queryClient = useQueryClient();
   const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMyMTg3MjE4LCJpYXQiOjE3MzIxODY5MTgsImp0aSI6ImVjZDc0ZDBiOGEyODRmODZhMGE3MjRmYjUzNTBkNmRkIiwidXNlcl9pZCI6Mn0.Oy6DifyBzOdwsQt3kGxKEicCockgcsCuWlWDAEnBFG0";
-
-  const [isStartedAtChecked, setIsStartedAtChecked] = useState(false);
-  const [isEndedAtChecked, setIsEndedAtChecked] = useState(false);
-  const [isStartedAtNullChecked, setIsStartedAtNullChecked] = useState(false);
-  const [isEndedAtNullChecked, setIsEndedAtNullChecked] = useState(false);
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMyNzc4Mzk3LCJpYXQiOjE3MzI3Nzc2NzgsImp0aSI6ImM2YzY1NDAyMmMyNDQ1NDU5NjE3YmVkMTMyNTU1NGM5IiwidXNlcl9pZCI6Mn0.gi9APOp-RGyhEooUXWjZhhWeqbP07iWaWzUU0aCBGmE";
 
   const nameRef = useRef<HTMLInputElement>(null);
   const startedAtRef = useRef<HTMLInputElement>(null);
@@ -87,10 +85,21 @@ const MeetupForm = () => {
   const isPublicRef = useRef<HTMLInputElement>(null); //이게 왜 초기값이 true가 아니지? 사실 왜 다 null인지도 조금 아리까리
   const categoryRef = useRef<HTMLSelectElement>(null);
 
+  const isStartedAtNullRef = useRef(false);
+
   const imageRef = useRef<HTMLInputElement>(null);
 
   const categoryOptions = ["운동", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
   const placeOptions = ["서울", "경기", "인천", "강원", "대전", "세종", "충남", "충북", "부산", "울산", "경남", "경북", "대구", "광주", "전남", "전북", "제주", "전국", "미정"];
+
+  //
+  const handleStartedAtCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    isStartedAtNullRef.current = event.target.checked; // 상태값 변경
+    if (startedAtRef.current) {
+      //started랑 ended 둘다 쓰고 싶으면?
+      startedAtRef.current.disabled = event.target.checked;
+    }
+  };
 
   // 모임 생성
   const createMeetup = async (newMeetup: Meetup): Promise<void> => {
@@ -149,6 +158,13 @@ const MeetupForm = () => {
     const startedAt = startedAtRef.current?.value || "";
     console.log("Submitted startedAt:", startedAt);
 
+    if (!isStartedAtNullRef.current === undefined) {
+      console.error("isStartedAtRef가 유효하지않대");
+      return;
+    }
+    const isStartedAtNull = isStartedAtNullRef.current;
+    console.log("Submitted isStartedAtNull:", isStartedAtNull);
+
     if (!endedAtRef.current) {
       console.error("endedAtRef가 인풋에 연걸 안돼있어");
       return;
@@ -201,11 +217,12 @@ const MeetupForm = () => {
     console.log("Submitted isPublic:", isPublic);
 
     const newMeetup: Meetup = {
-      name: nameRef.current?.value || "", // name: nameRef였음 ㅜㅜ
+      name: nameRef.current?.value || "",
       description: descriptionRef.current?.value || "",
       place: placeRef.current?.value || "",
       placeDescription: placeDescriptionRef.current?.value || "",
-      startedAt: startedAtRef.current?.value || "",
+      //startedAt: startedAtRef.current?.value || "", //이거를 "미정"으로 바꿔야 하나?
+      startedAt: startedAtRef.current ? "미정" : startedAtRef.current?.value || null,
       endedAt: endedAtRef.current?.value || "",
       adTitle: adTitleRef.current?.value || "",
       adEndedAt: adEndedAtRef.current?.value || "",
@@ -233,8 +250,12 @@ const MeetupForm = () => {
             <LabeledSelect id="category" name="category" label="모임 성격" options={categoryOptions} ref={categoryRef} required />
 
             <LabeledInput id="name" name="name" label="모임 이름(랜덤 생성 버튼 필요)" type="text" ref={nameRef} required />
-            <LabeledInput id="startedAt" name="startedAt" label="모임 시작 날짜" type="date" ref={startedAtRef} required />
+
+            <LabeledInput id="startedAt" name="startedAt" label="모임 시작 날짜" type="date" ref={startedAtRef} disabled={isStartedAtNullRef.current} required />
+            <LabeledInput id="미정" name="미정" label="미정" type="checkbox" checked={isStartedAtNullRef.current} onChange={handleStartedAtCheckboxChange} />
+
             <LabeledInput id="endedAt" name="endedAt" label="모임 종료 날짜" type="date" ref={endedAtRef} required />
+
             <LabeledSelect id="category" name="category" label="모임 지역" options={placeOptions} ref={placeRef} required />
             <LabeledInput id="placeDescription" name="placeDescription" label="모임 장소" type="text" placeholder="만날 곳의 대략적 위치를 적어주세요. 예) 강남역" ref={placeDescriptionRef} required />
 
@@ -246,10 +267,9 @@ const MeetupForm = () => {
             <label htmlFor="description">광고글 설명</label>
             <textarea id="description" name="description" defaultValue="" placeholder="멤버 광고글에 보일 설명을 적어주세요." ref={descriptionRef}></textarea>
           </div>
-          <div>
-            <label htmlFor="isPublic">광고글 공개하기</label>
-            <input id="isPublic" type="checkbox" ref={isPublicRef} />
-          </div>
+
+          <LabeledInput id="isPublic" name="isPublic" label="광고글 공개하기" type="checkbox" ref={isPublicRef} required />
+
           <div>
             <button type="submit">모임 생성하기</button>
           </div>
