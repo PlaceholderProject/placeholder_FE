@@ -8,7 +8,7 @@ interface Meetup {
   description: string;
   place: string;
   placeDescription: string;
-  startedAt: string | null; //아예 null 대신 "미정"이란 string으로?
+  startedAt: string | null;
   endedAt: string | null;
   adTitle: string;
   adEndedAt: string | null;
@@ -25,7 +25,7 @@ interface LabeledInputProps {
   placeholder?: string; // 선택적 placeholder
   minlength?: string;
   maxlength?: string;
-  required: boolean;
+  required?: boolean;
   disabled?: boolean;
   checked?: boolean;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
@@ -84,22 +84,26 @@ const MeetupForm = () => {
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const isPublicRef = useRef<HTMLInputElement>(null); //이게 왜 초기값이 true가 아니지? 사실 왜 다 null인지도 조금 아리까리
   const categoryRef = useRef<HTMLSelectElement>(null);
-
-  const isStartedAtNullRef = useRef(false);
-
   const imageRef = useRef<HTMLInputElement>(null);
+
+  // 체크 박스 상태 관리 위한 스테이트
+  const [isStartedAtNull, setIsStartedAtNull] = useState(false);
+  const [isEndedAtNull, setIsEndedAtNull] = useState(false);
 
   const categoryOptions = ["운동", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
   const placeOptions = ["서울", "경기", "인천", "강원", "대전", "세종", "충남", "충북", "부산", "울산", "경남", "경북", "대구", "광주", "전남", "전북", "제주", "전국", "미정"];
 
   //
-  const handleStartedAtCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    isStartedAtNullRef.current = event.target.checked; // 상태값 변경
-    if (startedAtRef.current) {
-      //started랑 ended 둘다 쓰고 싶으면?
-      startedAtRef.current.disabled = event.target.checked;
-    }
-  };
+  // const handleStartedAtCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const checked = event.target.checked;
+  //   isStartedAtNullRef.current = checked; // ref 값 업데이트
+  //   if (startedAtRef.current) {
+  //     //started랑 ended 둘다 쓰고 싶으면?
+  //     startedAtRef.current.disabled = checked;
+  //   }
+
+  //   event.target.checked = checked;
+  // };
 
   // 모임 생성
   const createMeetup = async (newMeetup: Meetup): Promise<void> => {
@@ -155,21 +159,14 @@ const MeetupForm = () => {
       console.error("startedAtRef가 인풋에 연걸 안돼있어");
       return;
     }
-    const startedAt = startedAtRef.current?.value || "";
+    const startedAt = isStartedAtNull ? null : startedAtRef.current.value || null;
     console.log("Submitted startedAt:", startedAt);
-
-    if (!isStartedAtNullRef.current === undefined) {
-      console.error("isStartedAtRef가 유효하지않대");
-      return;
-    }
-    const isStartedAtNull = isStartedAtNullRef.current;
-    console.log("Submitted isStartedAtNull:", isStartedAtNull);
 
     if (!endedAtRef.current) {
       console.error("endedAtRef가 인풋에 연걸 안돼있어");
       return;
     }
-    const endedAt = endedAtRef.current?.value || "";
+    const endedAt = isEndedAtNull ? null : endedAtRef.current.value || null;
     console.log("Submitted endedAt:", endedAt);
 
     if (!placeRef.current) {
@@ -213,7 +210,7 @@ const MeetupForm = () => {
       console.error("isPublicRef가 인풋에 연결 안돼있어");
       return;
     }
-    const isPublic = isPublicRef.current?.value || "";
+    const isPublic = isPublicRef.current?.checked || false;
     console.log("Submitted isPublic:", isPublic);
 
     const newMeetup: Meetup = {
@@ -221,12 +218,11 @@ const MeetupForm = () => {
       description: descriptionRef.current?.value || "",
       place: placeRef.current?.value || "",
       placeDescription: placeDescriptionRef.current?.value || "",
-      //startedAt: startedAtRef.current?.value || "", //이거를 "미정"으로 바꿔야 하나?
-      startedAt: startedAtRef.current ? "미정" : startedAtRef.current?.value || null,
-      endedAt: endedAtRef.current?.value || "",
+      startedAt: startedAt,
+      endedAt: endedAt,
       adTitle: adTitleRef.current?.value || "",
       adEndedAt: adEndedAtRef.current?.value || "",
-      isPublic: isPublicRef.current?.checked || true, // `checked`로 값 가져오기
+      isPublic: isPublicRef.current?.checked || false, // `checked`로 값 가져오기
       image: imageRef.current?.value || "",
       category: categoryRef.current?.value || "",
     };
@@ -251,10 +247,42 @@ const MeetupForm = () => {
 
             <LabeledInput id="name" name="name" label="모임 이름(랜덤 생성 버튼 필요)" type="text" ref={nameRef} required />
 
-            <LabeledInput id="startedAt" name="startedAt" label="모임 시작 날짜" type="date" ref={startedAtRef} disabled={isStartedAtNullRef.current} required />
-            <LabeledInput id="미정" name="미정" label="미정" type="checkbox" checked={isStartedAtNullRef.current} onChange={handleStartedAtCheckboxChange} />
+            <LabeledInput id="startedAt" name="startedAt" label="모임 시작 날짜" type="date" ref={startedAtRef} disabled={isStartedAtNull} required />
+            <LabeledInput
+              id="startedAtUndecided"
+              name="startedAtUndecided"
+              label="미정"
+              type="checkbox"
+              // １. ref={isStartedAtNullRef}
+              //checked={isStartedAtNullRef.current}를 위처럼 수정하고
+              //onChage 지우니까 토글만 됨
 
-            <LabeledInput id="endedAt" name="endedAt" label="모임 종료 날짜" type="date" ref={endedAtRef} required />
+              // 2.　useRef를 통해 상태를 저장, 리액트의 chekced와 disabled 속성을
+              // useRef.current 기준으로 렌더링에 반영
+
+              // checked={isStartedAtNullRef.current}
+              // onChange={event => {
+              //   isStartedAtNullRef.current = event?.target.checked;
+              //   if (startedAtRef.current) {
+              //     startedAtRef.current.disabled = event.target.checked;
+              //   }
+              // }}
+
+              onChange={event => {
+                setIsStartedAtNull(event.target.checked);
+              }}
+            />
+
+            <LabeledInput id="endedAt" name="endedAt" label="모임 종료 날짜" type="date" ref={endedAtRef} disabled={isEndedAtNull} required />
+            <LabeledInput
+              id="endedAtUndecided"
+              name="endedAtUndecided"
+              label="미정"
+              type="checkbox"
+              onChange={event => {
+                setIsEndedAtNull(event.target.checked);
+              }}
+            />
 
             <LabeledSelect id="category" name="category" label="모임 지역" options={placeOptions} ref={placeRef} required />
             <LabeledInput id="placeDescription" name="placeDescription" label="모임 장소" type="text" placeholder="만날 곳의 대략적 위치를 적어주세요. 예) 강남역" ref={placeDescriptionRef} required />
@@ -268,7 +296,7 @@ const MeetupForm = () => {
             <textarea id="description" name="description" defaultValue="" placeholder="멤버 광고글에 보일 설명을 적어주세요." ref={descriptionRef}></textarea>
           </div>
 
-          <LabeledInput id="isPublic" name="isPublic" label="광고글 공개하기" type="checkbox" ref={isPublicRef} required />
+          <LabeledInput id="isPublic" name="isPublic" label="광고글 공개하기" type="checkbox" ref={isPublicRef} />
 
           <div>
             <button type="submit">모임 생성하기</button>
