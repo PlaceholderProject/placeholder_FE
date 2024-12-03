@@ -13,7 +13,7 @@ interface Meetup {
   adTitle: string;
   adEndedAt: string | null;
   isPublic: boolean;
-  image: string;
+  // image: string;
   category: string;
 }
 
@@ -28,6 +28,7 @@ interface LabeledInputProps {
   required?: boolean;
   disabled?: boolean;
   checked?: boolean;
+  accept?: string;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
@@ -72,7 +73,7 @@ const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({
 const MeetupForm = () => {
   const queryClient = useQueryClient();
   const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMyNzc4Mzk3LCJpYXQiOjE3MzI3Nzc2NzgsImp0aSI6ImM2YzY1NDAyMmMyNDQ1NDU5NjE3YmVkMTMyNTU1NGM5IiwidXNlcl9pZCI6Mn0.gi9APOp-RGyhEooUXWjZhhWeqbP07iWaWzUU0aCBGmE";
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMzMjA1OTIwLCJpYXQiOjE3MzMyMDU1MzUsImp0aSI6IjhhYmNjYTg5ZmVkMzRiZDRhYTQ1MTI2MmEyMDE0ZGM5IiwidXNlcl9pZCI6Mn0.8nuoXlJKA1_K3gu5IIIDHgvkNOMeD_L7a9KbSSb2Wzo";
 
   const nameRef = useRef<HTMLInputElement>(null);
   const startedAtRef = useRef<HTMLInputElement>(null);
@@ -106,14 +107,14 @@ const MeetupForm = () => {
   // };
 
   // 모임 생성
-  const createMeetup = async (newMeetup: Meetup): Promise<void> => {
+  const createMeetup = async (newMeetup: FormData): Promise<void> => {
     const response = await fetch("http://localhost:8000/api/v1/meetup", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(newMeetup),
+      body: newMeetup, // FormData 객체 전달
     });
 
     if (!response.ok) {
@@ -131,7 +132,7 @@ const MeetupForm = () => {
   //   queryFn: getMeetups,
   // });
 
-  const createMutation = useMutation<void, Error, Meetup>({
+  const createMutation = useMutation<void, Error, FormData>({
     mutationFn: createMeetup,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["meetups"] });
@@ -213,6 +214,11 @@ const MeetupForm = () => {
     const isPublic = isPublicRef.current?.checked || false;
     console.log("Submitted isPublic:", isPublic);
 
+    const image = imageRef.current?.value || "";
+    console.log("Submitted image:", image);
+
+    const formData = new FormData();
+
     const newMeetup: Meetup = {
       name: nameRef.current?.value || "",
       description: descriptionRef.current?.value || "",
@@ -223,11 +229,18 @@ const MeetupForm = () => {
       adTitle: adTitleRef.current?.value || "",
       adEndedAt: adEndedAtRef.current?.value || "",
       isPublic: isPublicRef.current?.checked || false, // `checked`로 값 가져오기
-      image: imageRef.current?.value || "",
       category: categoryRef.current?.value || "",
+      // image: imageRef.current?.value || "",
     };
 
-    createMutation.mutate(newMeetup);
+    // 이미지 파일 추가
+    if (imageRef.current?.files?.[0]) {
+      formData.append("iamge", imageRef.current.files[0]);
+    }
+
+    formData.append("newMeetup", new Blob([JSON.stringify(newMeetup)], { type: "application, json" }));
+
+    createMutation.mutate(formData);
   };
 
   // if (isPending) {
@@ -297,6 +310,7 @@ const MeetupForm = () => {
           </div>
 
           <LabeledInput id="isPublic" name="isPublic" label="광고글 공개하기" type="checkbox" ref={isPublicRef} />
+          <LabeledInput id="image" name="image" label="광고글 대표 이미지" type="file" accept="image/jpg, image/jpeg, imgage/png" ref={imageRef} required />
 
           <div>
             <button type="submit">모임 생성하기</button>
@@ -308,3 +322,15 @@ const MeetupForm = () => {
 };
 
 export default MeetupForm;
+
+// 1. const newMeetup: Meetup 안에 image가 필요해?
+// 필요 여부:
+
+// 필요한 경우:
+// 만약 서버가 image 필드(이미지의 파일 경로 또는 URL 등)를 기대하고 있다면, newMeetup 객체에 포함되어야 합니다. 예를 들어, 서버가 JSON 데이터를 처리하고 이미지를 별도로 저장하는 경우입니다. 이때 image는 파일의 경로(또는 이름)를 나타낼 수 있습니다.
+// 필요하지 않은 경우:
+// 서버가 이미지 파일을 multipart/form-data로 처리하고 JSON 데이터에는 이미지 관련 정보가 없거나 필요 없는 경우입니다. 이 경우 image는 newMeetup에 포함될 필요가 없습니다.
+// 결론:
+
+// 이미지 파일 자체를 FormData로 전송하고 JSON 데이터에 이미지 관련 정보가 필요 없다면, newMeetup에 image 필드는 필요 없습니다.
+// 서버가 이미지를 JSON 데이터로도 받기를 기대한다면 포함해야 합니다.
