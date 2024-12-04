@@ -2,65 +2,39 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Meetup } from "@/types/Meetup";
+import { LabeledInputProps } from "@/types/LabeledInputProps";
+import { LabeledSelectProps } from "@/types/LabeledSelectProps";
 
-interface Meetup {
-  id: string; // ID 필드 추가
-  name: string;
-  description: string;
-  place: string;
-  placeDescription: string;
-  startedAt: string | null;
-  endedAt: string | null;
-  adTitle: string;
-  adEndedAt: string | null;
-  isPublic: boolean;
-  image: string;
-  category: string;
-}
+const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(({ id, name, label, type = "text", placeholder, disabled, required, checked, onChange }, ref) => {
+  return (
+    <>
+      <div>
+        <label htmlFor={id}>{label}</label>
+        <input id={id} name={name} type={type} placeholder={placeholder} disabled={disabled} required={required} checked={checked} onChange={onChange} ref={ref} />
+      </div>
+    </>
+  );
+});
 
-interface LabeledInputProps {
-  id: string;
-  name: string;
-  label: string;
-  type?: string;
-  placeholder?: string;
-  required: boolean;
-  disabled?: boolean;
-  checked?: boolean;
-  onChange?: React.ChangeEventHandler<HTMLInputElement>;
-}
-
-const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(({ id, name, label, type = "text", placeholder, disabled, required, checked, onChange }, ref) => (
-  <>
-    <div>
-      <label htmlFor={id}>{label}</label>
-      <input id={id} name={name} type={type} placeholder={placeholder} disabled={disabled} required={required} checked={checked} onChange={onChange} ref={ref} />
-    </div>
-  </>
-));
-
-interface LabeledSelectProps {
-  id: string;
-  name: string;
-  label: string;
-  options: string[];
-  required: boolean;
-}
-
-const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({ id, name, label, options, required }, ref) => (
-  <>
-    <div>
-      <label htmlFor={id}>{label}</label>
-      <select id={id} name={name} required={required} ref={ref}>
-        {options.map(option => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
-    </div>
-  </>
-));
+const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({ id, name, label, options, required = true }, ref) => {
+  return (
+    <>
+      <div>
+        <label htmlFor={id}>{label}</label>
+        <select id={id} name={name} required={required} ref={ref}>
+          {options.map(option => {
+            return (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            );
+          })}
+        </select>
+      </div>
+    </>
+  );
+});
 
 const MeetupEditForm = ({ meetupId }: { meetupId: string }) => {
   const queryClient = useQueryClient();
@@ -179,6 +153,84 @@ const MeetupEditForm = ({ meetupId }: { meetupId: string }) => {
       <LabeledInput id="isPublic" name="isPublic" label="공개 여부" type="checkbox" ref={isPublicRef} defaultChecked={meetupData?.isPublic} />
       <button type="submit">수정 완료</button>
     </form>
+
+    // <div>
+    // <form onSubmit={handleMeetupFormSubmit}>
+    //   <div>
+    //     <LabeledSelect id="category" name="category" label="모임 성격" options={categoryOptions} ref={categoryRef} required />
+
+    //     <LabeledInput id="name" name="name" label="모임 이름(랜덤 생성 버튼 필요)" type="text" ref={nameRef} required />
+
+    //     <LabeledInput id="startedAt" name="startedAt" label="모임 시작 날짜" type="date" ref={startedAtRef} disabled={isStartedAtNull} required />
+    //     <LabeledInput
+    //       id="startedAtUndecided"
+    //       name="startedAtUndecided"
+    //       label="미정"
+    //       type="checkbox"
+    //       // １. ref={isStartedAtNullRef}
+    //       //checked={isStartedAtNullRef.current}를 위처럼 수정하고
+    //       //onChage 지우니까 토글만 됨
+
+    //       // 2.　useRef를 통해 상태를 저장, 리액트의 chekced와 disabled 속성을
+    //       // useRef.current 기준으로 렌더링에 반영
+
+    //       // checked={isStartedAtNullRef.current}
+    //       // onChange={event => {
+    //       //   isStartedAtNullRef.current = event?.target.checked;
+    //       //   if (startedAtRef.current) {
+    //       //     startedAtRef.current.disabled = event.target.checked;
+    //       //   }
+    //       // }}
+
+    //       onChange={event => {
+    //         setIsStartedAtNull(event.target.checked);
+    //       }}
+    //     />
+
+    //     <LabeledInput id="endedAt" name="endedAt" label="모임 종료 날짜" type="date" ref={endedAtRef} disabled={isEndedAtNull} required />
+    //     <LabeledInput
+    //       id="endedAtUndecided"
+    //       name="endedAtUndecided"
+    //       label="미정"
+    //       type="checkbox"
+    //       onChange={event => {
+    //         setIsEndedAtNull(event.target.checked);
+    //       }}
+    //     />
+
+    //     <LabeledSelect id="category" name="category" label="모임 지역" options={placeOptions} ref={placeRef} required />
+    //     <LabeledInput id="placeDescription" name="placeDescription" label="모임 장소" type="text" placeholder="만날 곳의 대략적 위치를 적어주세요. 예) 강남역" ref={placeDescriptionRef} required />
+
+    //     <LabeledInput id="adTitle" name="adTitle" label="광고글 제목" type="text" ref={adTitleRef} required />
+
+    //     <LabeledInput id="adEndedAt" name="adEndedAt" label="광고 종료 날짜" type="date" ref={adEndedAtRef} required />
+    //   </div>
+    //   <div>
+    //     <label htmlFor="description">광고글 설명</label>
+    //     <textarea id="description" name="description" defaultValue="" placeholder="멤버 광고글에 보일 설명을 적어주세요." ref={descriptionRef}></textarea>
+    //   </div>
+
+    //   <div>
+    //     <h4>선택된 이미지</h4>
+    //     <img src={previewImage} alt="previewImage" />
+    //     <LabeledInput
+    //       id="image"
+    //       name="image"
+    //       label="광고글 대표 이미지"
+    //       type="file"
+    //       accept="image/jpg, image/jpeg, image/png, image/webp, image/bmp"
+    //       ref={imageRef}
+    //       onChange={handlePreviewImageChange}
+    //       required
+    //     />
+    //   </div>
+    //   <LabeledInput id="isPublic" name="isPublic" label="광고글 공개하기" type="checkbox" ref={isPublicRef} />
+
+    //   <div>
+    //     <button type="submit">모임 생성하기</button>
+    //   </div>
+    // </form>
+    // </div>
   );
 };
 

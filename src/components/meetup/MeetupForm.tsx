@@ -2,35 +2,9 @@
 
 import React, { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-
-interface Meetup {
-  name: string;
-  description: string;
-  place: string;
-  placeDescription: string;
-  startedAt: string | null;
-  endedAt: string | null;
-  adTitle: string;
-  adEndedAt: string | null;
-  isPublic: boolean;
-  // image: string;
-  category: string;
-}
-
-interface LabeledInputProps {
-  id: string;
-  name: string;
-  label: string;
-  type?: string; // 인풋 타입 (기본값: "text")
-  placeholder?: string; // 선택적 placeholder
-  minlength?: string;
-  maxlength?: string;
-  required?: boolean;
-  disabled?: boolean;
-  checked?: boolean;
-  accept?: string;
-  onChange?: React.ChangeEventHandler<HTMLInputElement>;
-}
+import { Meetup } from "@/types/Meetup";
+import { LabeledInputProps } from "@/types/LabeledInputProps";
+import { LabeledSelectProps } from "@/types/LabeledSelectProps";
 
 const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(({ id, name, label, type = "text", placeholder, disabled, required, checked, onChange }, ref) => {
   return (
@@ -42,14 +16,6 @@ const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(({ id
     </>
   );
 });
-
-interface LabeledSelectProps {
-  id: string;
-  name: string;
-  label: string;
-  options: string[];
-  required: boolean;
-}
 
 const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({ id, name, label, options, required = true }, ref) => {
   return (
@@ -73,7 +39,7 @@ const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({
 const MeetupForm = () => {
   const queryClient = useQueryClient();
   const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMzMjA1OTIwLCJpYXQiOjE3MzMyMDU1MzUsImp0aSI6IjhhYmNjYTg5ZmVkMzRiZDRhYTQ1MTI2MmEyMDE0ZGM5IiwidXNlcl9pZCI6Mn0.8nuoXlJKA1_K3gu5IIIDHgvkNOMeD_L7a9KbSSb2Wzo";
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMzMzAzNjcxLCJpYXQiOjE3MzMzMDMzNzEsImp0aSI6IjlhYTJlMjBmYmUzYzQxNmQ5NzY0N2ExNjEwODUxOTdkIiwidXNlcl9pZCI6Mn0.Lb6apU2aejCAOfyXCpllDaE2MUwB0xPx-YLZZlPnSFI";
 
   const nameRef = useRef<HTMLInputElement>(null);
   const startedAtRef = useRef<HTMLInputElement>(null);
@@ -91,6 +57,7 @@ const MeetupForm = () => {
   const [isStartedAtNull, setIsStartedAtNull] = useState(false);
   const [isEndedAtNull, setIsEndedAtNull] = useState(false);
 
+  // 셀렉트 배열
   const categoryOptions = ["운동", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
   const placeOptions = ["서울", "경기", "인천", "강원", "대전", "세종", "충남", "충북", "부산", "울산", "경남", "경북", "대구", "광주", "전남", "전북", "제주", "전국", "미정"];
 
@@ -235,7 +202,7 @@ const MeetupForm = () => {
 
     // 이미지 파일 추가
     if (imageRef.current?.files?.[0]) {
-      formData.append("iamge", imageRef.current.files[0]);
+      formData.append("image", imageRef.current.files[0]);
     }
 
     formData.append("newMeetup", new Blob([JSON.stringify(newMeetup)], { type: "application, json" }));
@@ -250,6 +217,18 @@ const MeetupForm = () => {
   // if (isError) {
   //   return <p>Error발생</p>;
   // }
+
+  // 이미지 미리보기 스테이트
+
+  const [previewImage, setPreviewImage] = useState("/meetup_default_image.jpg");
+  const handlePreviewImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const previewFile = event.target.files[0];
+      const previewFileUrl = URL.createObjectURL(previewFile);
+      setPreviewImage(previewFileUrl);
+    }
+    console.log("미리보기 이미지:", previewImage);
+  };
 
   return (
     <>
@@ -309,8 +288,21 @@ const MeetupForm = () => {
             <textarea id="description" name="description" defaultValue="" placeholder="멤버 광고글에 보일 설명을 적어주세요." ref={descriptionRef}></textarea>
           </div>
 
+          <div>
+            <h4>선택된 이미지</h4>
+            <img src={previewImage} alt="previewImage" />
+            <LabeledInput
+              id="image"
+              name="image"
+              label="광고글 대표 이미지"
+              type="file"
+              accept="image/jpg, image/jpeg, image/png, image/webp, image/bmp"
+              ref={imageRef}
+              onChange={handlePreviewImageChange}
+              required
+            />
+          </div>
           <LabeledInput id="isPublic" name="isPublic" label="광고글 공개하기" type="checkbox" ref={isPublicRef} />
-          <LabeledInput id="image" name="image" label="광고글 대표 이미지" type="file" accept="image/jpg, image/jpeg, imgage/png" ref={imageRef} required />
 
           <div>
             <button type="submit">모임 생성하기</button>
