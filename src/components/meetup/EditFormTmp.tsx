@@ -6,26 +6,12 @@ import { Meetup } from "@/types/Meetup";
 import { LabeledInputProps } from "@/types/LabeledInputProps";
 import { LabeledSelectProps } from "@/types/LabeledSelectProps";
 
-const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
-  ({ id, name, label, type = "text", placeholder, defaultValue, defaultChecked, disabled, required, checked, onChange }, ref) => (
-    <div>
-      <label htmlFor={id}>{label}</label>
-      <input
-        id={id}
-        name={name}
-        type={type}
-        placeholder={placeholder}
-        defaultValue={defaultValue}
-        defaultChecked={defaultChecked}
-        disabled={disabled}
-        required={required}
-        checked={checked}
-        onChange={onChange}
-        ref={ref}
-      />
-    </div>
-  ),
-);
+const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(({ id, name, label, type = "text", placeholder, defaultValue, disabled, required, checked, onChange }, ref) => (
+  <div>
+    <label htmlFor={id}>{label}</label>
+    <input id={id} name={name} type={type} placeholder={placeholder} defaultValue={defaultValue} disabled={disabled} required={required} checked={checked} onChange={onChange} ref={ref} />
+  </div>
+));
 
 const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({ id, name, label, options, defaultValue, required = true }, ref) => (
   <div>
@@ -42,56 +28,51 @@ const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({
 
 const MeetupEditForm = ({ meetupId }: { meetupId: string }) => {
   const queryClient = useQueryClient();
-  const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMyNzc4Mzk3LCJpYXQiOjE3MzI3Nzc2NzgsImp0aSI6ImM2YzY1NDAyMmMyNDQ1NDU5NjE3YmVkMTMyNTU1NGM5IiwidXNlcl9pZCI6Mn0.gi9APOp-RGyhEooUXWjZhhWeqbP07iWaWzUU0aCBGmE";
+  const token = process.env.NEXT_PUBLIC_API_TOKEN;
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const [meetupData, setMeetupData] = useState<Meetup | null>(null);
-  const [previewImage, setPreviewImage] = useState<string>("여기디폴트값이가져온이미지여야되는데");
+  const [previewImage, setPreviewImage] = useState<string>("/meetup_default_image.jpg");
 
-  //기존 모임 데이터 가져오기
-  const {
-    data: previousMeetupData,
-    isPending,
-    isError,
-  } = useQuery<Meetup, Error>({
-    queryKey: ["meetup", meetupId],
-    queryFn: async (): Promise<Meetup> => {
-      const response = await fetch(`http://localhost:8000/meetup/${meetupId}`, {
-        headers: {
-          method: "GET",
-          Authorization: `Bearer ${token}`,
-          body: JSON.stringify(previousMeetupData),
-        },
+  const { data, isLoading, isError } = useQuery(
+    ["meetup", meetupId],
+    async () => {
+      const response = await fetch(`${apiUrl}/meetup/${meetupId}`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-
       if (!response.ok) {
-        throw new Error("모임 디테일 가져오기 실패");
+        throw new Error("Failed to fetch meetup details");
       }
       return response.json();
     },
-  });
+    {
+      onSuccess: data => {
+        setMeetupData(data);
+        if (data.image) {
+          setPreviewImage(data.image);
+        }
+      },
+    },
+  );
 
-  //지금 유즈쿼리의 매개변수로 1-2개가 필요한데 onSucess까지 가져와버린거야. useQuery() 안에 세개. 그니까 이거를 queryFn 라든가 뭐 그런 식으로 바꿔서 개수를 줄여야지.
-
-  //수정 뮤테이션
-  const editMutation = useMutation<void, Error, FormData>({
-    mutationFn: async (formData: FormData) => {
-      const response = await fetch(`http://localhost:8000/meetup/${meetupId}`, {
+  const editMutation = useMutation(
+    async (formData: FormData) => {
+      const response = await fetch(`${apiUrl}/meetup/${meetupId}`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
-
       if (!response.ok) {
-        throw new Error("모임 수정 실패");
+        throw new Error("Failed to edit meetup");
       }
     },
-
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["meetups"] });
-      alert("모임 정보 수정 성공!");
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["meetups"]);
+        alert("Meetup updated successfully!");
+      },
     },
-  });
+  );
 
   const nameRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
@@ -108,12 +89,11 @@ const MeetupEditForm = ({ meetupId }: { meetupId: string }) => {
   const categoryOptions = ["운동", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
   const placeOptions = ["서울", "경기", "인천", "강원", "대전", "세종", "충남", "충북", "부산", "울산", "경남", "경북", "대구", "광주", "전남", "전북", "제주", "전국", "미정"];
 
-  const handleEditFormSubmit = (event: React.FormEvent) => {
+  const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-
     if (!meetupData) return;
 
-    const editedMeetup: Meetup = {
+    const updatedMeetup: Meetup = {
       ...meetupData,
       name: nameRef.current?.value || "",
       description: descriptionRef.current?.value || "",
@@ -128,10 +108,10 @@ const MeetupEditForm = ({ meetupId }: { meetupId: string }) => {
     };
 
     const formData = new FormData();
-    formData.append("editedMeetup", new Blob([JSON.stringify(editedMeetup)], { type: "application/json" }));
+    formData.append("updatedMeetup", new Blob([JSON.stringify(updatedMeetup)], { type: "application/json" }));
 
     if (imageRef.current?.files?.[0]) {
-      formData.append("iamge", imageRef.current.files[0]);
+      formData.append("image", imageRef.current.files[0]);
     }
 
     editMutation.mutate(formData);
@@ -145,11 +125,11 @@ const MeetupEditForm = ({ meetupId }: { meetupId: string }) => {
     }
   };
 
-  if (isPending) return <p>Pending...</p>;
-  if (isError) return <p>모임 데이터 로드 실패</p>;
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>Failed to load meetup data</p>;
 
   return (
-    <form onSubmit={handleEditFormSubmit}>
+    <form onSubmit={handleSubmit}>
       <LabeledInput id="name" name="name" label="모임 이름" type="text" ref={nameRef} defaultValue={meetupData?.name} required />
       <LabeledSelect id="category" name="category" label="모임 성격" options={categoryOptions} ref={categoryRef} defaultValue={meetupData?.category} required />
       <LabeledInput id="startedAt" name="startedAt" label="모임 시작 날짜" type="date" ref={startedAtRef} defaultValue={meetupData?.startedAt || ""} />

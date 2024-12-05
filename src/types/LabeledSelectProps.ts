@@ -3,5 +3,6 @@ export interface LabeledSelectProps {
   name: string;
   label: string;
   options: string[];
+  defaultValue?: string | undefined;
   required: boolean;
 }

@@ -40,7 +40,7 @@ const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({
   </div>
 ));
 
-const MeetupEditForm = ({ meetupId }: { meetupId: string }) => {
+const EditFormTest = ({ meetupId }: { meetupId: string }) => {
   const queryClient = useQueryClient();
   const token =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMyNzc4Mzk3LCJpYXQiOjE3MzI3Nzc2NzgsImp0aSI6ImM2YzY1NDAyMmMyNDQ1NDU5NjE3YmVkMTMyNTU1NGM5IiwidXNlcl9pZCI6Mn0.gi9APOp-RGyhEooUXWjZhhWeqbP07iWaWzUU0aCBGmE";
@@ -179,4 +179,4 @@ const MeetupEditForm = ({ meetupId }: { meetupId: string }) => {
   );
 };
 
-export default MeetupEditForm;
+export default EditFormTest;

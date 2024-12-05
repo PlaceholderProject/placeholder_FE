@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Meetup } from "@/types/Meetup";
 import { LabeledInputProps } from "@/types/LabeledInputProps";
 import { LabeledSelectProps } from "@/types/LabeledSelectProps";
+import useNavigate from "react-router-dom";
 
 const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(({ id, name, label, type = "text", placeholder, disabled, required, checked, onChange }, ref) => {
   return (
