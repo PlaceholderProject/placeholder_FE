@@ -1,5 +1,7 @@
 "use client";
 
+// import { createAuth } from "@/services/auth.service.";
+// import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -12,15 +14,24 @@ const Signup = () => {
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [nickname, setNickname] = useState("");
   const [bio, setBio] = useState("");
-  const [bioTextLength, setBioTextLength] = useState(0);
-  const [passwordWarning, setPasswordWarning] = useState("");
-  const [passwordConfirmWarning, setPasswordConfirmWarning] = useState("");
+
   const [isVisivlePassword, setIsVisivlePassword] = useState(false);
   const [isVisivlePassworConfirm, setIsVisivlePasswordConfirm] = useState(false);
+
+  const [passwordWarning, setPasswordWarning] = useState("");
+  const [passwordConfirmWarning, setPasswordConfirmWarning] = useState("");
+  const [nicknameWarning, setNicknameWarning] = useState("");
+  const [bioTextLength, setBioTextLength] = useState(0);
+  const [bioWarning, setBioWarning] = useState("");
 
   const router = useRouter();
 
   const PASSWORDREGEX = /^(?=.*[0-9])(?=.*[!@#$%^&*{}[\]\/?.,;:|)~`!^_+<>="#%&\\=('-])[a-zA-Z0-9!@#$%^&*{}[\]\/?.,;:|)~`!^_+<>="#%&\\=('-]{6,15}$/;
+
+  // const mutation = useMutation(createAuth, {
+  //   onSuccess: () => alert("회원가입 성공!"),
+  //   onError: error => alert(`회원가입 실패: ${error.message}`),
+  // });
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
@@ -43,11 +54,19 @@ const Signup = () => {
     setPasswordConfirm(event.target.value);
   };
   const handleNicknameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.value.length > 8) {
+      setNicknameWarning("닉네임은 최소 2자 최대 8자까지 가능합니다.");
+    } else {
+      setNicknameWarning("");
+    }
     setNickname(event.target.value);
   };
   const handleBioChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (event.target.value.length > 40) {
+      setBioWarning("자기소개는 최대 40자까지 작성이 가능합니다.");
       return;
+    } else {
+      setBioWarning("");
     }
     setBio(event.target.value);
     setBioTextLength(event.target.value.length);
@@ -61,7 +80,7 @@ const Signup = () => {
     setIsVisivlePasswordConfirm(!isVisivlePassworConfirm);
   };
 
-  const handleSignupFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSignupFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!email.trim()) {
@@ -80,10 +99,7 @@ const Signup = () => {
       alert("닉네임을 작성해주세요.");
       return;
     }
-    if (!bio.trim()) {
-      alert("자기소개를 작성해주세요.");
-      return;
-    }
+
     if (password.trim() !== passwordConfirm.trim()) {
       alert("비밀번호가 일치하지 않습니다. 비밀번호를 다시 입력해주세요.");
       return;
@@ -94,11 +110,44 @@ const Signup = () => {
       return;
     }
 
-    console.log(`이메일:${email}
-      비밀번호:${password}
-      비밀번호 확인: ${passwordConfirm}
-      닉네임: ${nickname}
-      자기소개: ${bio}`);
+    if (nickname.length < 2 || nickname.length > 8) {
+      alert("닉네임은 최소 2자 최대 8자까지 가능합니다.");
+      return;
+    }
+
+    const newUser = {
+      email,
+      password,
+      nickname,
+      bio,
+    };
+
+    try {
+      const res = await fetch("http://localhost:8000/api/v1/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newUser),
+      });
+
+      if (!res.ok) {
+        const errorResult = await res.json();
+        alert(errorResult.detail);
+        return;
+      }
+
+      const result = await res.json();
+
+      console.log(result);
+
+      alert(`${newUser.nickname}님 회원가입을 축하드립니다.`);
+    } catch (error) {
+      console.log(error);
+      alert("회원가입을 실패했습니다. 다시 시도해주세요.");
+      return;
+    }
+
     router.replace("/login");
   };
 
@@ -130,10 +179,12 @@ const Signup = () => {
           <div className="flex flex-col">
             <label htmlFor="nickname">닉네임</label>
             <input type="text" value={nickname} onChange={handleNicknameChange} className="border-2 rounded-md" />
+            {nicknameWarning && <p>{nicknameWarning}</p>}
           </div>
           <div className="flex flex-col">
             <label htmlFor="bio">자기소개</label>
             <textarea value={bio} onChange={handleBioChange} placeholder="함께할 모임원을 위해 간단한 자기소개를 작성해주세요." className="border-2 rounded-md" />
+            {bioWarning && <p>{bioWarning}</p>}
             <p>{bioTextLength}/40</p>
           </div>
           <button className="bg-gray-200">회원가입</button>
