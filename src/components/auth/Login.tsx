@@ -6,8 +6,10 @@ import React, { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { TiDelete } from "react-icons/ti";
 import { FaEyeSlash } from "react-icons/fa";
+import Cookies from "js-cookie";
 
 const Login = () => {
+  const [isLogged, setIsLogged] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isVisivlePassword, setIsVisivlePassword] = useState(false);
@@ -26,7 +28,7 @@ const Login = () => {
     setIsVisivlePassword(!isVisivlePassword);
   };
 
-  const handleLoginFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleLoginFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!email.trim()) {
@@ -35,6 +37,36 @@ const Login = () => {
     }
     if (!password.trim()) {
       alert("비밀번호를 입력해주세요");
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:8000/api/v1/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      if (!res.ok) {
+        alert("이메일 또는 비밀번호가 잘못되었습니다. 다시 시도해주세요.");
+        return;
+      }
+
+      const { access, refresh } = await res.json();
+
+      Cookies.set("accessToken", access, { expires: 1, secure: true, sameSite: "Strict" });
+      Cookies.set("refreshToken", refresh, { expires: 7, secure: true, sameSite: "Strict" });
+      setIsLogged(true);
+
+      console.log(access, refresh);
+    } catch (error) {
+      console.error("네트워크 오류:", error);
+      alert("로그인 처리 중 문제가 발생했습니다.");
       return;
     }
 

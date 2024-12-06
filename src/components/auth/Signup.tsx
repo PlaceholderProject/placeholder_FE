@@ -1,7 +1,5 @@
 "use client";
 
-// import { createAuth } from "@/services/auth.service.";
-// import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -27,11 +25,6 @@ const Signup = () => {
   const router = useRouter();
 
   const PASSWORDREGEX = /^(?=.*[0-9])(?=.*[!@#$%^&*{}[\]\/?.,;:|)~`!^_+<>="#%&\\=('-])[a-zA-Z0-9!@#$%^&*{}[\]\/?.,;:|)~`!^_+<>="#%&\\=('-]{6,15}$/;
-
-  // const mutation = useMutation(createAuth, {
-  //   onSuccess: () => alert("회원가입 성공!"),
-  //   onError: error => alert(`회원가입 실패: ${error.message}`),
-  // });
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
