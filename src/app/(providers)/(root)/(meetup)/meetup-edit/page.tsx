@@ -10,7 +10,7 @@ const MeetupEditPage = () => {
   return (
     <>
       <QueryClientProvider client={queryClient}>
-        <MeetupEditForm />
+        <MeetupEditForm meetupId={""} />
       </QueryClientProvider>
     </>
   );

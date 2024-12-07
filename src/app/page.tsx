@@ -1,3 +1,3 @@
 export default function Home() {
-  return <h1>Placeholder</h1>;
+  return <h1>Placeholder 메인입니당!</h1>;
 }

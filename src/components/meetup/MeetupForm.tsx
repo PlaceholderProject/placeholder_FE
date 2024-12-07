@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Meetup } from "@/types/Meetup";
 import { LabeledInputProps } from "@/types/LabeledInputProps";
 import { LabeledSelectProps } from "@/types/LabeledSelectProps";
-import useNavigate from "react-router-dom";
+import { useNavigate } from "react-router";
 
 const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(({ id, name, label, type = "text", placeholder, disabled, required, checked, onChange }, ref) => {
   return (
@@ -38,6 +38,7 @@ const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({
 });
 
 const MeetupForm = () => {
+  // const navigate = useNavigate();
   const queryClient = useQueryClient();
   const token =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMzMzAzNjcxLCJpYXQiOjE3MzMzMDMzNzEsImp0aSI6IjlhYTJlMjBmYmUzYzQxNmQ5NzY0N2ExNjEwODUxOTdkIiwidXNlcl9pZCI6Mn0.Lb6apU2aejCAOfyXCpllDaE2MUwB0xPx-YLZZlPnSFI";
@@ -104,6 +105,10 @@ const MeetupForm = () => {
     mutationFn: createMeetup,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["meetups"] });
+      // navigate("/");
+    },
+    onError: error => {
+      console.error("모임 생성 중 오류 발생:", error);
     },
   });
 
