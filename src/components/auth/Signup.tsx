@@ -1,5 +1,7 @@
 "use client";
 
+import { register } from "@/services/auth.service";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -12,10 +14,8 @@ const Signup = () => {
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [nickname, setNickname] = useState("");
   const [bio, setBio] = useState("");
-
   const [isVisivlePassword, setIsVisivlePassword] = useState(false);
   const [isVisivlePassworConfirm, setIsVisivlePasswordConfirm] = useState(false);
-
   const [passwordWarning, setPasswordWarning] = useState("");
   const [passwordConfirmWarning, setPasswordConfirmWarning] = useState("");
   const [nicknameWarning, setNicknameWarning] = useState("");
@@ -115,33 +115,11 @@ const Signup = () => {
       bio,
     };
 
-    try {
-      const res = await fetch("http://localhost:8000/api/v1/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newUser),
-      });
-
-      if (!res.ok) {
-        const errorResult = await res.json();
-        alert(errorResult.detail);
-        return;
-      }
-
-      const result = await res.json();
-
-      console.log(result);
-
+    const response = await register(newUser);
+    if (response) {
       alert(`${newUser.nickname}님 회원가입을 축하드립니다.`);
-    } catch (error) {
-      console.log(error);
-      alert("회원가입을 실패했습니다. 다시 시도해주세요.");
-      return;
+      router.replace("/login");
     }
-
-    router.replace("/login");
   };
 
   return (

@@ -7,6 +7,7 @@ import { FaEye } from "react-icons/fa";
 import { TiDelete } from "react-icons/ti";
 import { FaEyeSlash } from "react-icons/fa";
 import Cookies from "js-cookie";
+import { AUTH_API_HOST } from "@/constants/auth";
 
 const Login = () => {
   const [isLogged, setIsLogged] = useState(false);
@@ -41,7 +42,7 @@ const Login = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:8000/api/v1/auth/login", {
+      const res = await fetch(`${AUTH_API_HOST}/api/v1/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

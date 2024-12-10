@@ -1,10 +1,44 @@
+import { AUTH_API_HOST } from "@/constants/auth";
 import Cookies from "js-cookie";
+
+interface newUser {
+  email: string;
+  password: string;
+  nickname: string;
+  bio: string | null;
+}
+
+export const register = async (newUser: newUser) => {
+  try {
+    const response = await fetch(`${AUTH_API_HOST}/api/v1/auth/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newUser),
+    });
+
+    if (!response.ok) {
+      const errorResult = await response.json();
+      alert(errorResult.detail);
+      return;
+    }
+
+    const result = await response.json();
+
+    return result;
+  } catch (error) {
+    console.log(error);
+    alert("회원가입을 실패했습니다. 다시 시도해주세요.");
+    return;
+  }
+};
 
 export async function fetchData() {
   const accessToken = Cookies.get("accessToken");
 
   try {
-    const response = await fetch("http://localhost:8000/api/v1/auth/profile", {
+    const response = await fetch(`${AUTH_API_HOST}/api/v1/auth/profile`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -32,7 +66,7 @@ export async function refreshToken() {
   const refreshToken = Cookies.get("refreshToken"); // 쿠키에서 refresh 토큰 가져오기
 
   try {
-    const response = await fetch("http://localhost:8000/api/v1/auth/refresh", {
+    const response = await fetch(`${AUTH_API_HOST}/api/v1/auth/refresh`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
