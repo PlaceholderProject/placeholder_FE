@@ -16,7 +16,6 @@ export function useAuth() {
     Cookies.remove("accessToken");
     Cookies.remove("refreshToken");
     setIsLogged(false);
-    // 로그아웃 후 처리, 예를 들어 페이지 리디렉션 등
   };
 
   return {

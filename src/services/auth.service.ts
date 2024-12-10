@@ -1,7 +1,7 @@
 import Cookies from "js-cookie";
 
 export async function fetchData() {
-  const accessToken = Cookies.get("accessToken"); // 쿠키에서 access 토큰 가져오기
+  const accessToken = Cookies.get("accessToken");
 
   try {
     const response = await fetch("http://localhost:8000/api/v1/auth/profile", {

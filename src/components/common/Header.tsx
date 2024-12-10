@@ -3,14 +3,19 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaRegBell } from "react-icons/fa6";
 import { useAuth } from "@/hooks/useAuth";
+import { fetchData } from "@/services/auth.service";
 
 const Header = () => {
   const { isLogged, handleLogout } = useAuth();
   const [isRead, setIsRead] = useState(true);
   const router = useRouter();
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const handleNotificationPage = () => {
     router.replace("/notification");
