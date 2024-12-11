@@ -5,17 +5,35 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { FaRegBell } from "react-icons/fa6";
-import { useAuth } from "@/hooks/useAuth";
-import { fetchData } from "@/services/auth.service";
+import Cookies from "js-cookie";
+import { useDispatch, useSelector } from "react-redux";
+import { setAuthenticated } from "@/stores/authSlice";
+import { RootState } from "@/stores/store";
 
 const Header = () => {
-  const { isLogged, handleLogout } = useAuth();
   const [isRead, setIsRead] = useState(true);
   const router = useRouter();
 
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    fetchData();
+    const accessToken = Cookies.get("accessToken");
+
+    if (accessToken) {
+      dispatch(setAuthenticated(true));
+    } else {
+      handleLogout();
+    }
   }, []);
+
+  const handleLogout = () => {
+    router.replace("/");
+    Cookies.remove("accessToken");
+    Cookies.remove("refreshToken");
+    dispatch(setAuthenticated(false));
+  };
 
   const handleNotificationPage = () => {
     router.replace("/notification");
@@ -29,7 +47,7 @@ const Header = () => {
           <Image src="/logo.png" alt="로고" width={113} height={20} />
         </Link>
         <div className="flex justify-center items-center gap-3">
-          {isLogged ? (
+          {isAuthenticated ? (
             <>
               <div className="relative">
                 <button onClick={handleNotificationPage}>

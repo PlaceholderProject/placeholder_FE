@@ -6,16 +6,18 @@ import React, { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { TiDelete } from "react-icons/ti";
 import { FaEyeSlash } from "react-icons/fa";
-import Cookies from "js-cookie";
-import { AUTH_API_HOST } from "@/constants/auth";
+import { login } from "@/services/auth.service";
+import { setAuthenticated } from "@/stores/authSlice";
+import { useDispatch } from "react-redux";
 
 const Login = () => {
-  const [isLogged, setIsLogged] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isVisivlePassword, setIsVisivlePassword] = useState(false);
 
   const router = useRouter();
+
+  const dispatch = useDispatch();
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
@@ -41,38 +43,11 @@ const Login = () => {
       return;
     }
 
-    try {
-      const res = await fetch(`${AUTH_API_HOST}/api/v1/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
-
-      if (!res.ok) {
-        alert("이메일 또는 비밀번호가 잘못되었습니다. 다시 시도해주세요.");
-        return;
-      }
-
-      const { access, refresh } = await res.json();
-
-      Cookies.set("accessToken", access, { expires: 1, secure: true, sameSite: "Strict" });
-      Cookies.set("refreshToken", refresh, { expires: 7, secure: true, sameSite: "Strict" });
-      setIsLogged(true);
-
-      console.log(access, refresh);
-    } catch (error) {
-      console.error("네트워크 오류:", error);
-      alert("로그인 처리 중 문제가 발생했습니다.");
-      return;
+    const response = await login({ email, password });
+    if (response) {
+      dispatch(setAuthenticated(true));
+      router.replace("/");
     }
-
-    console.log(`아이디:${email} 비밀번호:${password}`);
-    router.replace("/");
   };
 
   return (
