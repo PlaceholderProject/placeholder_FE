@@ -43,7 +43,7 @@ const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({
 const EditFormTest = ({ meetupId }: { meetupId: string }) => {
   const queryClient = useQueryClient();
   const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMyNzc4Mzk3LCJpYXQiOjE3MzI3Nzc2NzgsImp0aSI6ImM2YzY1NDAyMmMyNDQ1NDU5NjE3YmVkMTMyNTU1NGM5IiwidXNlcl9pZCI6Mn0.gi9APOp-RGyhEooUXWjZhhWeqbP07iWaWzUU0aCBGmE";
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMzODA0NzY4LCJpYXQiOjE3MzM4MDQ0NDcsImp0aSI6ImE4NDcyMjI4MTBlZDQ2OGM4NzY5OWNhNjU4NGY4MzI4IiwidXNlcl9pZCI6Mn0.0KC6MPRlkDFgfwCuevLt6kd6Gw8pebeU9544xOWlBaI";
 
   const [meetupData, setMeetupData] = useState<Meetup | null>(null);
   const [previewImage, setPreviewImage] = useState<string>("여기디폴트값이가져온이미지여야되는데");
