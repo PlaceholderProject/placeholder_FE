@@ -1,22 +1,11 @@
-import { AUTH_API_HOST } from "@/constants/authApiHost";
+import { BASE_URL } from "@/constants/baseUrl";
+import { LoginProps, NewUserProps } from "@/types/authType";
 import Cookies from "js-cookie";
-
-interface NewUserProps {
-  email: string;
-  password: string;
-  nickname: string;
-  bio: string | null;
-}
-
-interface LoginProps {
-  email: string;
-  password: string;
-}
 
 // sign-up
 export const register = async (newUser: NewUserProps) => {
   try {
-    const response = await fetch(`${AUTH_API_HOST}/api/v1/auth/register`, {
+    const response = await fetch(`${BASE_URL}/api/v1/auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -43,7 +32,7 @@ export const register = async (newUser: NewUserProps) => {
 // sign-in
 export const login = async ({ email, password }: LoginProps) => {
   try {
-    const response = await fetch(`${AUTH_API_HOST}/api/v1/auth/login`, {
+    const response = await fetch(`${BASE_URL}/api/v1/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -104,37 +93,33 @@ export const login = async ({ email, password }: LoginProps) => {
 // };
 
 // refreshToken
-// export const refreshToken = async () => {
-//   const refreshToken = Cookies.get("refreshToken"); // 쿠키에서 refresh 토큰 가져오기
-//   if (!refreshToken) {
-//     console.error("No refreshToken available.");
-//     store.dispatch(deleteTokens());
-//     return null;
-//   }
+export const refreshToken = async () => {
+  const refreshToken = Cookies.get("refreshToken"); // 쿠키에서 refresh 토큰 가져오기
+  if (!refreshToken) {
+    console.error("No refreshToken available.");
+    return null;
+  }
 
-//   try {
-//     const response = await fetch(`${AUTH_API_HOST}/api/v1/auth/refresh`, {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({ refresh: refreshToken }),
-//     });
+  try {
+    const response = await fetch(`${BASE_URL}/api/v1/auth/refresh`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ refresh: refreshToken }),
+    });
 
-//     if (!response.ok) {
-//       throw new Error("Failed to refresh token");
-//     }
+    if (!response.ok) {
+      throw new Error("Failed to refresh token");
+    }
 
-//     const { access, refresh } = await response.json();
-//     Cookies.set("accessToken", access, { expires: 1, secure: true, sameSite: "Strict" });
-//     Cookies.set("refreshToken", refresh, { expires: 7, secure: true, sameSite: "Strict" });
+    const { access, refresh } = await response.json();
+    Cookies.set("accessToken", access, { expires: 1, secure: true, sameSite: "Strict" });
+    Cookies.set("refreshToken", refresh, { expires: 7, secure: true, sameSite: "Strict" });
 
-//     store.dispatch(setTokens({ accessToken: access, refreshToken: refresh }));
-
-//     // console.log("토큰 갱신 성공");
-//   } catch (error) {
-//     console.error("토큰 갱신 요청 실패:", error);
-//     store.dispatch(deleteTokens());
-//     return null;
-//   }
-// };
+    // console.log("토큰 갱신 성공");
+  } catch (error) {
+    console.error("토큰 갱신 요청 실패:", error);
+    return null;
+  }
+};
