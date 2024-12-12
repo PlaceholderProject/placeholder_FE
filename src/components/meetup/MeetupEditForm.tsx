@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Meetup } from "@/types/Meetup";
 import { LabeledInputProps } from "@/types/LabeledInputProps";
 import { LabeledSelectProps } from "@/types/LabeledSelectProps";
+import { useNavigate } from "react-router";
 
 const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
   ({ id, name, label, type = "text", placeholder, defaultValue, defaultChecked, disabled, required, checked, onChange }, ref) => (
@@ -40,11 +41,24 @@ const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({
   </div>
 ));
 
-const MeetupEditForm = ({ meetupId }: { meetupId: string }) => {
+const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
+  // const navigate = useNavigate();
   const queryClient = useQueryClient();
   const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMyNzc4Mzk3LCJpYXQiOjE3MzI3Nzc2NzgsImp0aSI6ImM2YzY1NDAyMmMyNDQ1NDU5NjE3YmVkMTMyNTU1NGM5IiwidXNlcl9pZCI6Mn0.gi9APOp-RGyhEooUXWjZhhWeqbP07iWaWzUU0aCBGmE";
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM0MDcwNTMzLCJpYXQiOjE3MzM5ODQxMzMsImp0aSI6Ijk0ZmRiNGMzNTk3MjQ3MjY5ODIyYzBjMGIzNjcxNmUxIiwidXNlcl9pZCI6M30._CqUgteDIxatqbh_amYnT8eQkYA13YM0xd_UHs6AfQk";
+  const nameRef = useRef<HTMLInputElement>(null);
+  const startedAtRef = useRef<HTMLInputElement>(null);
+  const endedAtRef = useRef<HTMLInputElement>(null);
+  const placeRef = useRef<HTMLSelectElement>(null);
+  const placeDescriptionRef = useRef<HTMLInputElement>(null);
+  const adTitleRef = useRef<HTMLInputElement>(null);
+  const adEndedAtRef = useRef<HTMLInputElement>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
+  const isPublicRef = useRef<HTMLInputElement>(null);
+  const categoryRef = useRef<HTMLSelectElement>(null);
+  const imageRef = useRef<HTMLInputElement>(null);
 
+  // 모임데이터 상태 설정
   const [meetupData, setMeetupData] = useState<Meetup | null>(null);
   const [previewImage, setPreviewImage] = useState<string>("여기디폴트값이가져온이미지여야되는데");
 
@@ -56,7 +70,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: string }) => {
   } = useQuery<Meetup, Error>({
     queryKey: ["meetup", meetupId],
     queryFn: async (): Promise<Meetup> => {
-      const response = await fetch(`http://localhost:8000/meetup/${meetupId}`, {
+      const response = await fetch(`http://localhost:8000/api/v1/meetup/${meetupId}`, {
         headers: {
           method: "GET",
           Authorization: `Bearer ${token}`,
@@ -69,6 +83,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: string }) => {
       }
       return response.json();
     },
+    retry: 0,
   });
 
   //지금 유즈쿼리의 매개변수로 1-2개가 필요한데 onSucess까지 가져와버린거야. useQuery() 안에 세개. 그니까 이거를 queryFn 라든가 뭐 그런 식으로 바꿔서 개수를 줄여야지.
@@ -92,18 +107,6 @@ const MeetupEditForm = ({ meetupId }: { meetupId: string }) => {
       alert("모임 정보 수정 성공!");
     },
   });
-
-  const nameRef = useRef<HTMLInputElement>(null);
-  const descriptionRef = useRef<HTMLTextAreaElement>(null);
-  const placeRef = useRef<HTMLSelectElement>(null);
-  const placeDescriptionRef = useRef<HTMLInputElement>(null);
-  const startedAtRef = useRef<HTMLInputElement>(null);
-  const endedAtRef = useRef<HTMLInputElement>(null);
-  const adTitleRef = useRef<HTMLInputElement>(null);
-  const adEndedAtRef = useRef<HTMLInputElement>(null);
-  const isPublicRef = useRef<HTMLInputElement>(null);
-  const categoryRef = useRef<HTMLSelectElement>(null);
-  const imageRef = useRef<HTMLInputElement>(null);
 
   const categoryOptions = ["운동", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
   const placeOptions = ["서울", "경기", "인천", "강원", "대전", "세종", "충남", "충북", "부산", "울산", "경남", "경북", "대구", "광주", "전남", "전북", "제주", "전국", "미정"];
@@ -131,7 +134,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: string }) => {
     formData.append("editedMeetup", new Blob([JSON.stringify(editedMeetup)], { type: "application/json" }));
 
     if (imageRef.current?.files?.[0]) {
-      formData.append("iamge", imageRef.current.files[0]);
+      formData.append("iamge", imageRef.current.files[0], imageRef.current.files[0].name);
     }
 
     editMutation.mutate(formData);
@@ -150,7 +153,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: string }) => {
 
   return (
     <form onSubmit={handleEditFormSubmit}>
-      <LabeledInput id="name" name="name" label="모임 이름" type="text" ref={nameRef} defaultValue={meetupData?.name} required />
+      <LabeledInput id="name" name="name" label="모임 이름" type="text" ref={nameRef} defaultValue={previousMeetupData?.name} required />
       <LabeledSelect id="category" name="category" label="모임 성격" options={categoryOptions} ref={categoryRef} defaultValue={meetupData?.category} required />
       <LabeledInput id="startedAt" name="startedAt" label="모임 시작 날짜" type="date" ref={startedAtRef} defaultValue={meetupData?.startedAt || ""} />
       <LabeledInput id="endedAt" name="endedAt" label="모임 종료 날짜" type="date" ref={endedAtRef} defaultValue={meetupData?.endedAt || ""} />

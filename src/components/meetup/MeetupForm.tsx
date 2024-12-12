@@ -6,6 +6,7 @@ import { Meetup } from "@/types/Meetup";
 import { LabeledInputProps } from "@/types/LabeledInputProps";
 import { LabeledSelectProps } from "@/types/LabeledSelectProps";
 import { useNavigate } from "react-router";
+import { resolve } from "path";
 
 const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(({ id, name, label, type = "text", placeholder, disabled, required, checked, onChange }, ref) => {
   return (
@@ -41,8 +42,7 @@ const MeetupForm = () => {
   // const navigate = useNavigate();
   const queryClient = useQueryClient();
   const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMzMzAzNjcxLCJpYXQiOjE3MzMzMDMzNzEsImp0aSI6IjlhYTJlMjBmYmUzYzQxNmQ5NzY0N2ExNjEwODUxOTdkIiwidXNlcl9pZCI6Mn0.Lb6apU2aejCAOfyXCpllDaE2MUwB0xPx-YLZZlPnSFI";
-
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM0MDcwNTMzLCJpYXQiOjE3MzM5ODQxMzMsImp0aSI6Ijk0ZmRiNGMzNTk3MjQ3MjY5ODIyYzBjMGIzNjcxNmUxIiwidXNlcl9pZCI6M30._CqUgteDIxatqbh_amYnT8eQkYA13YM0xd_UHs6AfQk";
   const nameRef = useRef<HTMLInputElement>(null);
   const startedAtRef = useRef<HTMLInputElement>(null);
   const endedAtRef = useRef<HTMLInputElement>(null);
@@ -77,10 +77,10 @@ const MeetupForm = () => {
 
   // 모임 생성
   const createMeetup = async (newMeetup: FormData): Promise<void> => {
-    const response = await fetch("http://localhost:8000/api/v1/meetup", {
+    const response = await fetch("http://localhost:8000/api/v1/meetup/", {
       method: "POST",
       headers: {
-        "Content-Type": "multipart/form-data",
+        ContentType: "multipart/formdata",
         Authorization: `Bearer ${token}`,
       },
       body: newMeetup, // FormData 객체 전달
@@ -203,26 +203,22 @@ const MeetupForm = () => {
       adEndedAt: adEndedAtRef.current?.value || "",
       isPublic: isPublicRef.current?.checked || false, // `checked`로 값 가져오기
       category: categoryRef.current?.value || "",
-      // image: imageRef.current?.value || "",
+      image: imageRef.current?.value || "",
     };
 
     // 이미지 파일 추가
+
+    // 이 코드면 meetup도 image도 binary로 나옴
+    // blob 사용하지 않으면 타입 정보 손실 위험성이 있다고 한다 pereplexity가 알려줌..
+    formData.append("newMeetup", new Blob([JSON.stringify(newMeetup)], { type: "application/json" }));
+
+    // formData.append("newMeetup", JSON.stringify(newMeetup));
+
     if (imageRef.current?.files?.[0]) {
-      formData.append("image", imageRef.current.files[0]);
+      formData.append("image", imageRef.current.files[0], imageRef.current.files[0].name);
     }
-
-    formData.append("newMeetup", new Blob([JSON.stringify(newMeetup)], { type: "application, json" }));
-
     createMutation.mutate(formData);
   };
-
-  // if (isPending) {
-  //   return <p>Pending...</p>;
-  // }
-
-  // if (isError) {
-  //   return <p>Error발생</p>;
-  // }
 
   // 이미지 미리보기 스테이트
 
