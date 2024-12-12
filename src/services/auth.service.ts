@@ -1,6 +1,4 @@
-import { AUTH_API_HOST } from "@/constants/auth";
-// import { deleteTokens, setTokens } from "@/stores/authSlice";
-// import { store } from "@/stores/store";
+import { AUTH_API_HOST } from "@/constants/authApiHost";
 import Cookies from "js-cookie";
 
 interface NewUserProps {

@@ -1,7 +1,6 @@
 "use client";
 
 import { register } from "@/services/auth.service";
-
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
