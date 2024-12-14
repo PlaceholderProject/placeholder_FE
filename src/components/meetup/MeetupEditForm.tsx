@@ -6,7 +6,6 @@ import { Meetup } from "@/types/Meetup";
 import { LabeledInputProps } from "@/types/LabeledInputProps";
 import { LabeledSelectProps } from "@/types/LabeledSelectProps";
 import { useRouter } from "next/navigation";
-import { useNavigate } from "react-router";
 
 const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
   ({ id, name, label, type = "text", placeholder, defaultValue, defaultChecked, disabled, required, checked, onChange }, ref) => (
@@ -60,7 +59,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   const imageRef = useRef<HTMLInputElement>(null);
 
   // 모임데이터 상태 설정
-  const [meetupData, setMeetupData] = useState<Meetup | null>(null);
+  // const [meetupData, setMeetupData] = useState<Meetup | null>(null);
   const [previewImage, setPreviewImage] = useState<string>("여기디폴트값이가져온이미지여야되는데");
 
   //기존 모임 데이터 가져오기
@@ -72,10 +71,10 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
     queryKey: ["meetup", meetupId],
     queryFn: async (): Promise<Meetup> => {
       const response = await fetch(`http://localhost:8000/api/v1/meetup/${meetupId}`, {
+        method: "GET",
         headers: {
-          method: "GET",
           Authorization: `Bearer ${token}`,
-          body: JSON.stringify(previousMeetupData),
+          // body: JSON.stringify(previousMeetupData),
         },
       });
 
@@ -115,10 +114,10 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   const handleEditFormSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!meetupData) return;
+    if (!previousMeetupData) return;
 
     const editedMeetup: Meetup = {
-      ...meetupData,
+      ...previousMeetupData,
       name: nameRef.current?.value || "",
       description: descriptionRef.current?.value || "",
       place: placeRef.current?.value || "",
@@ -155,16 +154,16 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   return (
     <form onSubmit={handleEditFormSubmit}>
       <LabeledInput id="name" name="name" label="모임 이름" type="text" ref={nameRef} defaultValue={previousMeetupData?.name} required />
-      <LabeledSelect id="category" name="category" label="모임 성격" options={categoryOptions} ref={categoryRef} defaultValue={meetupData?.category} required />
-      <LabeledInput id="startedAt" name="startedAt" label="모임 시작 날짜" type="date" ref={startedAtRef} defaultValue={meetupData?.startedAt || ""} />
-      <LabeledInput id="endedAt" name="endedAt" label="모임 종료 날짜" type="date" ref={endedAtRef} defaultValue={meetupData?.endedAt || ""} />
-      <LabeledSelect id="place" name="place" label="모임 지역" options={placeOptions} ref={placeRef} defaultValue={meetupData?.place} required />
-      <LabeledInput id="placeDescription" name="placeDescription" label="모임 장소 설명" type="text" ref={placeDescriptionRef} defaultValue={meetupData?.placeDescription} required />
-      <LabeledInput id="adTitle" name="adTitle" label="광고 제목" type="text" ref={adTitleRef} defaultValue={meetupData?.adTitle} required />
-      <LabeledInput id="adEndedAt" name="adEndedAt" label="광고 종료 날짜" type="date" ref={adEndedAtRef} defaultValue={meetupData?.adEndedAt || ""} />
+      <LabeledSelect id="category" name="category" label="모임 성격" options={categoryOptions} ref={categoryRef} defaultValue={previousMeetupData?.category} required />
+      <LabeledInput id="startedAt" name="startedAt" label="모임 시작 날짜" type="date" ref={startedAtRef} defaultValue={previousMeetupData?.startedAt || ""} />
+      <LabeledInput id="endedAt" name="endedAt" label="모임 종료 날짜" type="date" ref={endedAtRef} defaultValue={previousMeetupData?.endedAt || ""} />
+      <LabeledSelect id="place" name="place" label="모임 지역" options={placeOptions} ref={placeRef} defaultValue={previousMeetupData?.place} required />
+      <LabeledInput id="placeDescription" name="placeDescription" label="모임 장소 설명" type="text" ref={placeDescriptionRef} defaultValue={previousMeetupData?.placeDescription} required />
+      <LabeledInput id="adTitle" name="adTitle" label="광고 제목" type="text" ref={adTitleRef} defaultValue={previousMeetupData?.adTitle} required />
+      <LabeledInput id="adEndedAt" name="adEndedAt" label="광고 종료 날짜" type="date" ref={adEndedAtRef} defaultValue={previousMeetupData?.adEndedAt || ""} />
       <label htmlFor="description">광고글 설명</label>
-      <textarea id="description" name="description" ref={descriptionRef} defaultValue={meetupData?.description || ""} placeholder="설명을 작성하세요" />
-      <LabeledInput id="isPublic" name="isPublic" label="공개 여부" type="checkbox" ref={isPublicRef} defaultChecked={meetupData?.isPublic} />
+      <textarea id="description" name="description" ref={descriptionRef} defaultValue={previousMeetupData?.description || ""} placeholder="설명을 작성하세요" />
+      <LabeledInput id="isPublic" name="isPublic" label="공개 여부" type="checkbox" ref={isPublicRef} defaultChecked={previousMeetupData?.isPublic} />
       <div>
         <h4>선택된 이미지</h4>
         <img src={previewImage} alt="Preview" />
