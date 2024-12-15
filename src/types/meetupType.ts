@@ -9,7 +9,7 @@ export interface Meetup {
   adEndedAt: string | null;
   isPublic: boolean;
   image: string;
-  category: string;
+  category: Array<string>;
 }
 export interface LabeledInputProps {
   id: string;
@@ -35,4 +35,5 @@ export interface LabeledSelectProps {
   options: string[];
   defaultValue?: string | undefined;
   required: boolean;
+  multiple?: boolean;
 }

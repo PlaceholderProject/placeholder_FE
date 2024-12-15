@@ -3,9 +3,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Meetup } from "@/types/Meetup";
-import { LabeledInputProps } from "@/types/LabeledInputProps";
-import { LabeledSelectProps } from "@/types/LabeledSelectProps";
+import { LabeledInputProps } from "@/types/meetupType";
+import { LabeledSelectProps } from "@/types/meetupType";
 import { useRouter } from "next/navigation";
+
+const token = process.env.NEXT_PUBLIC_MY_TOKEN;
 
 const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
   ({ id, name, label, type = "text", placeholder, defaultValue, defaultChecked, disabled, required, checked, onChange }, ref) => (
@@ -28,7 +30,7 @@ const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
   ),
 );
 
-const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({ id, name, label, options, defaultValue, required = true }, ref) => (
+const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({ id, name, label, options, defaultValue, multiple = true, required = true }, ref) => (
   <div>
     <label htmlFor={id}>{label}</label>
     <select id={id} name={name} defaultValue={defaultValue} required={required} ref={ref}>
@@ -44,8 +46,6 @@ const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({
 const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   // const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM0MDcwNTMzLCJpYXQiOjE3MzM5ODQxMzMsImp0aSI6Ijk0ZmRiNGMzNTk3MjQ3MjY5ODIyYzBjMGIzNjcxNmUxIiwidXNlcl9pZCI6M30._CqUgteDIxatqbh_amYnT8eQkYA13YM0xd_UHs6AfQk";
   const nameRef = useRef<HTMLInputElement>(null);
   const startedAtRef = useRef<HTMLInputElement>(null);
   const endedAtRef = useRef<HTMLInputElement>(null);
@@ -81,6 +81,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
       if (!response.ok) {
         throw new Error("모임 디테일 가져오기 실패");
       }
+      console.log(response);
       return response.json();
     },
     retry: 0,

@@ -3,10 +3,11 @@
 import React, { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Meetup } from "@/types/Meetup";
-import { LabeledInputProps } from "@/types/LabeledInputProps";
-import { LabeledSelectProps } from "@/types/LabeledSelectProps";
-import { useNavigate } from "react-router";
-import { resolve } from "path";
+import { LabeledInputProps } from "@/types/meetupType";
+import { LabeledSelectProps } from "@/types/meetupType";
+import { useRouter } from "next/navigation";
+
+const token = process.env.NEXT_PUBLIC_MY_TOKEN;
 
 const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(({ id, name, label, type = "text", placeholder, disabled, required, checked, onChange }, ref) => {
   return (
@@ -39,10 +40,9 @@ const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({
 });
 
 const MeetupForm = () => {
-  // const navigate = useNavigate();
+  const router = useRouter();
+
   const queryClient = useQueryClient();
-  const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM0MDcwNTMzLCJpYXQiOjE3MzM5ODQxMzMsImp0aSI6Ijk0ZmRiNGMzNTk3MjQ3MjY5ODIyYzBjMGIzNjcxNmUxIiwidXNlcl9pZCI6M30._CqUgteDIxatqbh_amYnT8eQkYA13YM0xd_UHs6AfQk";
   const nameRef = useRef<HTMLInputElement>(null);
   const startedAtRef = useRef<HTMLInputElement>(null);
   const endedAtRef = useRef<HTMLInputElement>(null);
@@ -51,7 +51,7 @@ const MeetupForm = () => {
   const adTitleRef = useRef<HTMLInputElement>(null);
   const adEndedAtRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
-  const isPublicRef = useRef<HTMLInputElement>(null); //이게 왜 초기값이 true가 아니지? 사실 왜 다 null인지도 조금 아리까리
+  const isPublicRef = useRef<HTMLInputElement>(null); //초기값 왜 null
   const categoryRef = useRef<HTMLSelectElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
 
@@ -63,24 +63,38 @@ const MeetupForm = () => {
   const categoryOptions = ["운동", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
   const placeOptions = ["서울", "경기", "인천", "강원", "대전", "세종", "충남", "충북", "부산", "울산", "경남", "경북", "대구", "광주", "전남", "전북", "제주", "전국", "미정"];
 
-  //
-  // const handleStartedAtCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const checked = event.target.checked;
-  //   isStartedAtNullRef.current = checked; // ref 값 업데이트
-  //   if (startedAtRef.current) {
-  //     //started랑 ended 둘다 쓰고 싶으면?
-  //     startedAtRef.current.disabled = checked;
-  //   }
+  // 기존 모임들 가져오기
+  const {
+    data: previousMeetups,
+    isPending,
+    isError,
+  } = useQuery({
+    queryKey: ["meetups"],
+    queryFn: async () => {
+      const response = await fetch("http://localhost:8000/api/v1/meetup/", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-  //   event.target.checked = checked;
-  // };
+      if (!response.ok) {
+        throw new Error("모임 목록 가져오기 실패");
+      }
+      return response.json();
+    },
+    retry: 0,
+  });
+
+  if (isPending) return <div>로딩중</div>;
+  if (isError) return <div>에러 발생</div>;
 
   // 모임 생성
   const createMeetup = async (newMeetup: FormData): Promise<void> => {
     const response = await fetch("http://localhost:8000/api/v1/meetup/", {
       method: "POST",
       headers: {
-        ContentType: "multipart/formdata",
+        // ContentType: "multipart/formdata",
         Authorization: `Bearer ${token}`,
       },
       body: newMeetup, // FormData 객체 전달
@@ -92,20 +106,12 @@ const MeetupForm = () => {
     return;
   };
 
-  // const {
-  //   data: meetups,
-  //   isPending,
-  //   isError,
-  // } = useQuery<Meetup[]>({
-  //   queryKey: ["meetups"],
-  //   queryFn: getMeetups,
-  // });
-
   const createMutation = useMutation<void, Error, FormData>({
     mutationFn: createMeetup,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["meetups"] });
-      // navigate("/");
+      // meetups 라는 쿼리키?????????????
+      router.push("/");
     },
     onError: error => {
       console.error("모임 생성 중 오류 발생:", error);
@@ -210,6 +216,7 @@ const MeetupForm = () => {
 
     // 이 코드면 meetup도 image도 binary로 나옴
     // blob 사용하지 않으면 타입 정보 손실 위험성이 있다고 한다 pereplexity가 알려줌..
+
     formData.append("newMeetup", new Blob([JSON.stringify(newMeetup)], { type: "application/json" }));
 
     // formData.append("newMeetup", JSON.stringify(newMeetup));
@@ -217,6 +224,7 @@ const MeetupForm = () => {
     if (imageRef.current?.files?.[0]) {
       formData.append("image", imageRef.current.files[0], imageRef.current.files[0].name);
     }
+
     createMutation.mutate(formData);
   };
 
