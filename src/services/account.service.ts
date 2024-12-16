@@ -1,5 +1,6 @@
-import { BASE_URL } from "@/constants/baseURL";
 import Cookies from "js-cookie";
+
+import { BASE_URL } from "@/constants/baseURL";
 import { refreshToken } from "./auth.service";
 
 // get-account
