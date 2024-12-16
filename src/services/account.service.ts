@@ -8,7 +8,7 @@ export const getAccount = async (retryCount: number = 0) => {
 
   if (!accessToken) return null;
   try {
-    const response = await fetch(`${BASE_URL}/api/v1/auth/profile`, {
+    const response = await fetch(`${BASE_URL}/api/v1/user`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -24,8 +24,9 @@ export const getAccount = async (retryCount: number = 0) => {
       }
       return null;
     }
-    console.log(response.json());
-    return await response.json();
+    const result = await response.json();
+    console.log(result);
+    return result;
   } catch (error) {
     console.error("데이터 가져오기 오류:", error);
     return null;

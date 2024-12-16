@@ -7,23 +7,34 @@ import { FaChevronRight } from "react-icons/fa";
 import { getAccount } from "@/services/account.service";
 
 const Account = () => {
-  // const [account, setAccount] = useState({ email: null, nickname: null, bio: null, profileImage: null });
+  const [account, setAccount] = useState({ email: null, nickname: null, bio: null, profileImage: null });
 
   useEffect(() => {
-    getAccount();
+    const fetchAccount = async () => {
+      const data = await getAccount();
+      if (data) {
+        setAccount({
+          email: data.email,
+          nickname: data.nickname,
+          bio: data.bio,
+          profileImage: data.image_url, // 기본 이미지 경로 처리
+        });
+      }
+    };
+    fetchAccount();
   }, []);
 
   return (
     <div className="flex flex-col items-center">
       <h2 className="">계정 관리</h2>
       <div className="border-2 flex flex-col items-center rounded-xl">
-        <Image src="/profile.png" alt="프로필 이미지" width="100" height="100" />
+        <Image src={account.profileImage || "/profile.png"} alt="프로필 이미지" width="100" height="100" unoptimized={true} />
         <p>
-          🎉<span className="font-bold">닉네임1</span>님, 환영합니다.
+          🎉<span className="font-bold">{account.nickname}</span>님, 환영합니다.
         </p>
-        <div>자기소개</div>
+        <div>{account.bio}</div>
         <div className="flex flex-col items-center gap-3">
-          <div className="w-[240px] h-[45px] bg-[#FBFFA9] rounded-xl flex items-center">계정정보 placeholder@naver.com</div>
+          <div className="w-[240px] h-[45px] bg-[#FBFFA9] rounded-xl flex items-center">계정정보 {account.email}</div>
           <Link href="/account-edit" className="w-[240px] h-[45px] bg-[#FBFFA9] rounded-xl flex items-center">
             회원 정보 수정
             <FaChevronRight />
