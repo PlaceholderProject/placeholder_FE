@@ -9,7 +9,7 @@ export const getAccount = async (retryCount: number = 0) => {
 
   if (!accessToken) return null;
   try {
-    const response = await fetch(`${BASE_URL}/api/v1/auth/profile`, {
+    const response = await fetch(`${BASE_URL}/api/v1/user`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -25,8 +25,6 @@ export const getAccount = async (retryCount: number = 0) => {
       }
       return null;
     }
-
-    console.log(response);
 
     return await response.json();
   } catch (error) {
