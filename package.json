@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.60.5",
-    "next": "15.0.2",
+    "@reduxjs/toolkit": "^2.5.0",
+    "js-cookie": "^3.0.5",
     "react": "19.0.0-rc-02c0e824-20241028",
     "react-dom": "19.0.0-rc-02c0e824-20241028",
     "react-kakao-maps-sdk": "^1.1.27"
