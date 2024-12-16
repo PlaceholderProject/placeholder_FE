@@ -24,9 +24,7 @@ export const getAccount = async (retryCount: number = 0) => {
       }
       return null;
     }
-
-    console.log(response);
-
+    console.log(response.json());
     return await response.json();
   } catch (error) {
     console.error("데이터 가져오기 오류:", error);
