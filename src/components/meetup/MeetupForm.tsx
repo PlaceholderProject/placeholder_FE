@@ -64,34 +64,34 @@ const MeetupForm = () => {
   const placeOptions = ["서울", "경기", "인천", "강원", "대전", "세종", "충남", "충북", "부산", "울산", "경남", "경북", "대구", "광주", "전남", "전북", "제주", "전국", "미정"];
 
   // 기존 모임들 가져오기
-  const {
-    data: previousMeetups,
-    isPending,
-    isError,
-  } = useQuery({
-    queryKey: ["meetups"],
-    queryFn: async () => {
-      const response = await fetch("http://localhost:8000/api/v1/meetup/", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  // const {
+  //   data: previousMeetups,
+  //   isPending,
+  //   isError,
+  // } = useQuery({
+  //   queryKey: ["meetups"],
+  //   queryFn: async () => {
+  //     const response = await fetch("http://localhost:8000/api/v1/meetup/", {
+  //       method: "GET",
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
 
-      if (!response.ok) {
-        throw new Error("모임 목록 가져오기 실패");
-      }
-      return response.json();
-    },
-    retry: 0,
-  });
+  //     if (!response.ok) {
+  //       throw new Error("모임 목록 가져오기 실패");
+  //     }
+  //     return response.json();
+  //   },
+  //   retry: 0,
+  // });
 
-  if (isPending) return <div>로딩중</div>;
-  if (isError) return <div>에러 발생</div>;
+  // if (isPending) return <div>로딩중</div>;
+  // if (isError) return <div>에러 발생</div>;
 
   // 모임 생성
   const createMeetup = async (newMeetup: FormData): Promise<void> => {
-    const response = await fetch("http://localhost:8000/api/v1/meetup/", {
+    const response = await fetch("http://localhost:8000/api/v1/meetup", {
       method: "POST",
       headers: {
         // ContentType: "multipart/formdata",
