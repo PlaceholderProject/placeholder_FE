@@ -41,8 +41,9 @@ const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({
 
 const MeetupForm = () => {
   const router = useRouter();
-
   const queryClient = useQueryClient();
+
+  // Ref
   const nameRef = useRef<HTMLInputElement>(null);
   const startedAtRef = useRef<HTMLInputElement>(null);
   const endedAtRef = useRef<HTMLInputElement>(null);
@@ -58,65 +59,87 @@ const MeetupForm = () => {
   // 체크 박스 상태 관리 위한 스테이트
   const [isStartedAtNull, setIsStartedAtNull] = useState(false);
   const [isEndedAtNull, setIsEndedAtNull] = useState(false);
+  // 미리보기 스테이트
+  const [previewImage, setPreviewImage] = useState("/meetup_default_image.jpg");
 
   // 셀렉트 배열
-  const categoryOptions = ["운동", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
+  const categoryOptions = [["0"], "너는스트링이니?", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
   const placeOptions = ["서울", "경기", "인천", "강원", "대전", "세종", "충남", "충북", "부산", "울산", "경남", "경북", "대구", "광주", "전남", "전북", "제주", "전국", "미정"];
 
-  // 기존 모임들 가져오기
-  // const {
-  //   data: previousMeetups,
-  //   isPending,
-  //   isError,
-  // } = useQuery({
-  //   queryKey: ["meetups"],
-  //   queryFn: async () => {
-  //     const response = await fetch("http://localhost:8000/api/v1/meetup/", {
-  //       method: "GET",
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
+  // useMutation은 최상단에 위치시키라고 함
+  const createMutation = useMutation({
+    mutationFn: (blobFormData: FormData) => createMeetup(blobFormData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["meetups"] });
+      router.push("/");
+    },
 
-  //     if (!response.ok) {
-  //       throw new Error("모임 목록 가져오기 실패");
-  //     }
-  //     return response.json();
-  //   },
-  //   retry: 0,
-  // });
+    onError: error => {
+      console.error("모임 생성 오류 발생:", error);
+    },
+  });
 
-  // if (isPending) return <div>로딩중</div>;
-  // if (isError) return <div>에러 발생</div>;
+  // getMeetups 함수
+  const getMeetups = async () => {
+    const response = await fetch("http://localhost:8000/api/v1/meetup", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error("모임 목록 가져오기 실패");
+    }
+    const meetupsData = await response.json();
+    console.log("json()하지 않은 모임 목록: ", response);
+    console.log("가져온 모임 목록:", meetupsData);
+    return meetupsData;
+  };
+
+  // 모임 목록 가져오기 탠스택쿼리
+  const {
+    data: previousMeetups,
+    isPending,
+    isError,
+  } = useQuery({
+    queryKey: ["meetups"],
+    queryFn: getMeetups,
+    retry: 0,
+  });
+
+  if (isPending) return <div>로딩중</div>;
+  if (isError) return <div>에러 발생</div>;
 
   // 모임 생성
-  const createMeetup = async (newMeetup: FormData): Promise<void> => {
+  const createMeetup = async (blobFormData: FormData): Promise<void> => {
     const response = await fetch("http://localhost:8000/api/v1/meetup", {
       method: "POST",
       headers: {
         // ContentType: "multipart/formdata",
         Authorization: `Bearer ${token}`,
       },
-      body: newMeetup, // FormData 객체 전달
+      body: blobFormData,
     });
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.log(errorText);
       throw new Error("모임 생성 실패");
     }
-    return;
+    return await response.json();
   };
 
-  const createMutation = useMutation<void, Error, FormData>({
-    mutationFn: createMeetup,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["meetups"] });
-      // meetups 라는 쿼리키?????????????
-      router.push("/");
-    },
-    onError: error => {
-      console.error("모임 생성 중 오류 발생:", error);
-    },
-  });
+  // const createMutation = useMutation<void, Error, FormData>({
+  //   mutationFn: createMeetup,
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({ queryKey: ["meetups"] });
+  //     // meetups 라는 쿼리키?????????????
+  //     router.push("/");
+  //   },
+  //   onError: error => {
+  //     console.error("모임 생성 중 오류 발생:", error);
+  //   },
+  // });
 
   const handleMeetupFormSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -127,6 +150,7 @@ const MeetupForm = () => {
     }
     const category = categoryRef.current?.value || "";
     console.log("Submitted category", category);
+    console.log("카테고리타입뭐야?:", typeof category);
 
     if (!nameRef.current) {
       console.error("nameRef가 인풋에 연걸 안돼있어");
@@ -196,7 +220,7 @@ const MeetupForm = () => {
     const image = imageRef.current?.value || "";
     console.log("Submitted image:", image);
 
-    const formData = new FormData();
+    const blobFormData = new FormData();
 
     const newMeetup: Meetup = {
       name: nameRef.current?.value || "",
@@ -217,20 +241,34 @@ const MeetupForm = () => {
     // 이 코드면 meetup도 image도 binary로 나옴
     // blob 사용하지 않으면 타입 정보 손실 위험성이 있다고 한다 pereplexity가 알려줌..
 
-    formData.append("newMeetup", new Blob([JSON.stringify(newMeetup)], { type: "application/json" }));
+    // blobFormData.append("newMeetup", JSON.stringify(newMeetup));
+
+    blobFormData.append("payload", JSON.stringify(newMeetup));
 
     // formData.append("newMeetup", JSON.stringify(newMeetup));
 
+    // if (imageRef.current?.files?.[0]) {
+    //   blobFormData.append("image", imageRef.current.files[0]);
+    // }
+
     if (imageRef.current?.files?.[0]) {
-      formData.append("image", imageRef.current.files[0], imageRef.current.files[0].name);
+      const file = imageRef.current.files[0];
+      console.log("이미지 파일 정보:", file.name, file.type, file.size);
+      blobFormData.append("image", file);
+    } else {
+      console.log("imageRef: ", imageRef);
+      console.log("imageRef.current: ", imageRef.current);
+      console.log("imageRef.current.value: ", imageRef.current?.value);
     }
 
-    createMutation.mutate(formData);
+    for (const pair of blobFormData.entries()) {
+      console.log("blobFormData 출력:", pair[0], pair[1]); // key와 value 출력
+    }
+    createMutation.mutate(blobFormData);
   };
 
   // 이미지 미리보기 스테이트
 
-  const [previewImage, setPreviewImage] = useState("/meetup_default_image.jpg");
   const handlePreviewImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const previewFile = event.target.files[0];

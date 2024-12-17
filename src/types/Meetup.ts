@@ -8,6 +8,6 @@ export interface Meetup {
   adTitle: string;
   adEndedAt: string | null;
   isPublic: boolean;
-  image: string;
+  image?: string;
   category: string;
 }

@@ -44,7 +44,6 @@ const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({
 ));
 
 const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
-  // const navigate = useNavigate();
   const queryClient = useQueryClient();
   const nameRef = useRef<HTMLInputElement>(null);
   const startedAtRef = useRef<HTMLInputElement>(null);
@@ -60,6 +59,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
 
   // 모임데이터 상태 설정
   // const [meetupData, setMeetupData] = useState<Meetup | null>(null);
+  const router = useRouter();
   const [previewImage, setPreviewImage] = useState<string>("여기디폴트값이가져온이미지여야되는데");
 
   //기존 모임 데이터 가져오기
@@ -106,6 +106,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["meetups"] });
       alert("모임 정보 수정 성공!");
+      router.push("/");
     },
   });
 
