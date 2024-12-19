@@ -2,27 +2,33 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { FaChevronRight } from "react-icons/fa";
-import { getAccount } from "@/services/account.service";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/stores/store";
+import { getUser } from "@/services/account.service";
+import { setUser } from "@/stores/accountSlice";
 
 const Account = () => {
-  const [account, setAccount] = useState({ email: null, nickname: null, bio: null, profileImage: null });
+  const dispatch = useDispatch();
+  const account = useSelector((state: RootState) => state.account.user);
 
   useEffect(() => {
     const fetchAccount = async () => {
-      const data = await getAccount();
+      const data = await getUser();
       if (data) {
-        setAccount({
-          email: data.email,
-          nickname: data.nickname,
-          bio: data.bio,
-          profileImage: data.image_url, // 기본 이미지 경로 처리
-        });
+        dispatch(
+          setUser({
+            email: data.email,
+            nickname: data.nickname,
+            bio: data.bio,
+            profileImage: data.image_url,
+          }),
+        );
       }
     };
     fetchAccount();
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className="flex flex-col items-center">
