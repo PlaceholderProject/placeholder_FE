@@ -1,5 +1,6 @@
 "use client";
 
+import { PASSWORD_REGULAR_EXPRESSION } from "@/constants/regularExpressionConstants";
 import { register } from "@/services/auth.service";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -23,19 +24,18 @@ const Signup = () => {
 
   const router = useRouter();
 
-  const PASSWORDREGEX = /^(?=.*[0-9])(?=.*[!@#$%^&*{}[\]\/?.,;:|)~`!^_+<>="#%&\\=('-])[a-zA-Z0-9!@#$%^&*{}[\]\/?.,;:|)~`!^_+<>="#%&\\=('-]{6,15}$/;
-
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
   };
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!PASSWORDREGEX.test(event.target.value)) {
+    if (!PASSWORD_REGULAR_EXPRESSION.test(event.target.value)) {
       setPasswordWarning("비밀번호는 숫자 1개, 특수문자 1개를 포함하여 6~15자리 사이여야 합니다.");
     } else {
       setPasswordWarning("");
     }
     setPassword(event.target.value);
   };
+
   const handlePasswordConfirmChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (password !== event.target.value) {
       setPasswordConfirmWarning("비밀번호가 일치하지 않습니다.");
@@ -97,7 +97,7 @@ const Signup = () => {
       return;
     }
 
-    if (!PASSWORDREGEX.test(password)) {
+    if (!PASSWORD_REGULAR_EXPRESSION.test(password)) {
       alert("비밀번호는 숫자 1개, 특수문자 1개를 포함하여 6~15자리 사이여야 합니다.");
       return;
     }
@@ -157,7 +157,9 @@ const Signup = () => {
             {bioWarning && <p>{bioWarning}</p>}
             <p>{bioTextLength}/40</p>
           </div>
-          <button className="bg-gray-200">회원가입</button>
+          <button type="submit" className="bg-gray-200">
+            회원가입
+          </button>
         </form>
         <Link href="/login">
           <div className="bg-slate-100">로그인하러 가기</div>
