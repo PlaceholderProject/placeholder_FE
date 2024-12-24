@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface AccountState {
+interface UserState {
   isPasswordRechecked: boolean;
   user: {
     email: string | null;
@@ -10,7 +10,7 @@ interface AccountState {
   };
 }
 
-const initialState: AccountState = {
+const initialState: UserState = {
   isPasswordRechecked: false,
   user: {
     email: null,
@@ -20,19 +20,19 @@ const initialState: AccountState = {
   },
 };
 
-const accountSlice = createSlice({
-  name: "account",
+const userSlice = createSlice({
+  name: "user",
   initialState,
   reducers: {
     setIsPasswordRechecked(state, action: PayloadAction<boolean>) {
       state.isPasswordRechecked = action.payload;
     },
-    setUser(state, action: PayloadAction<AccountState["user"]>) {
+    setUser(state, action: PayloadAction<UserState["user"]>) {
       state.user = action.payload;
     },
   },
 });
 
-export const { setIsPasswordRechecked, setUser } = accountSlice.actions;
+export const { setIsPasswordRechecked, setUser } = userSlice.actions;
 
-export default accountSlice.reducer;
+export default userSlice.reducer;

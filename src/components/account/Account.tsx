@@ -6,12 +6,12 @@ import { useEffect } from "react";
 import { FaChevronRight } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
-import { getUser } from "@/services/account.service";
-import { setUser } from "@/stores/accountSlice";
+import { getUser } from "@/services/user.service";
+import { setUser } from "@/stores/userSlice";
 
 const Account = () => {
   const dispatch = useDispatch();
-  const account = useSelector((state: RootState) => state.account.user);
+  const account = useSelector((state: RootState) => state.user.user);
 
   useEffect(() => {
     const fetchAccount = async () => {
