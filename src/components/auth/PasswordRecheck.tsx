@@ -1,11 +1,21 @@
+"use client";
+
+import { recheckPassword } from "@/services/auth.service";
+import { setIsPasswordRechecked } from "@/stores/authSlice";
+import { RootState } from "@/stores/store";
+
 import Link from "next/link";
 import { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
 
 const PasswordRecheck = () => {
   const [password, setPassword] = useState("");
   const [isVisivlePassword, setIsVisivlePassword] = useState(false);
+
+  const dispatch = useDispatch();
+  const isPasswordRechecked = useSelector((state: RootState) => state.auth.isPasswordRechecked);
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
@@ -15,7 +25,19 @@ const PasswordRecheck = () => {
     setIsVisivlePassword(!isVisivlePassword);
   };
 
-  const handlePasswordRecheckFormSubmit = () => {};
+  const handlePasswordRecheckFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!password.trim()) {
+      alert("비밀번호를 입력해주세요");
+      return;
+    }
+
+    const response = await recheckPassword(password);
+    if (response) {
+      dispatch(setIsPasswordRechecked(!isPasswordRechecked));
+    }
+  };
 
   return (
     <div className="bg-red-200 w-[500px] h-[500px]">
