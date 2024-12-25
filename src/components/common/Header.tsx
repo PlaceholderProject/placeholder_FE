@@ -7,7 +7,7 @@ import React, { useEffect, useState } from "react";
 import { FaRegBell } from "react-icons/fa6";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
-import { setAuthenticated } from "@/stores/authSlice";
+import { setIsAuthenticated } from "@/stores/authSlice";
 import { RootState } from "@/stores/store";
 
 const Header = () => {
@@ -22,7 +22,7 @@ const Header = () => {
     const accessToken = Cookies.get("accessToken");
 
     if (accessToken) {
-      dispatch(setAuthenticated(true));
+      dispatch(setIsAuthenticated(true));
     } else {
       handleLogout();
     }
@@ -32,7 +32,7 @@ const Header = () => {
     router.replace("/");
     Cookies.remove("accessToken");
     Cookies.remove("refreshToken");
-    dispatch(setAuthenticated(false));
+    dispatch(setIsAuthenticated(false));
   };
 
   const handleNotificationPage = () => {

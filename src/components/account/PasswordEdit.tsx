@@ -5,7 +5,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
-import PasswordRecheck from "./PasswordRecheck";
+import PasswordRecheck from "../auth/PasswordRecheck";
 import { useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
 
@@ -17,7 +17,7 @@ const PasswordEdit = () => {
   const [passwordWarning, setPasswordWarning] = useState("");
   const [passwordConfirmWarning, setPasswordConfirmWarning] = useState("");
 
-  const isPasswordRechecked = useSelector((state: RootState) => state.account.isPasswordRechecked);
+  const isPasswordRechecked = useSelector((state: RootState) => state.auth.isPasswordRechecked);
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!PASSWORD_REGULAR_EXPRESSION.test(event.target.value)) {

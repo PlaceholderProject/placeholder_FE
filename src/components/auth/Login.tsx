@@ -7,7 +7,7 @@ import { FaEye } from "react-icons/fa";
 import { TiDelete } from "react-icons/ti";
 import { FaEyeSlash } from "react-icons/fa";
 import { login } from "@/services/auth.service";
-import { setAuthenticated } from "@/stores/authSlice";
+import { setIsAuthenticated } from "@/stores/authSlice";
 import { useDispatch } from "react-redux";
 
 const Login = () => {
@@ -45,7 +45,7 @@ const Login = () => {
 
     const response = await login({ email, password });
     if (response) {
-      dispatch(setAuthenticated(true));
+      dispatch(setIsAuthenticated(true));
       router.replace("/");
     }
   };

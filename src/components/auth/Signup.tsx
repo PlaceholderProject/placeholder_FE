@@ -1,7 +1,8 @@
 "use client";
 
 import { PASSWORD_REGULAR_EXPRESSION } from "@/constants/regularExpressionConstants";
-import { register } from "@/services/auth.service";
+import { createUser } from "@/services/user.service";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -114,7 +115,7 @@ const Signup = () => {
       bio,
     };
 
-    const response = await register(newUser);
+    const response = await createUser(newUser);
     if (response) {
       alert(`${newUser.nickname}님 회원가입을 축하드립니다.`);
       router.replace("/login");
