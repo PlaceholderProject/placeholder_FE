@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Meetup } from "@/types/meetupType";
 import { LabeledInputProps } from "@/types/meetupType";
@@ -58,16 +58,14 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   const categoryRef = useRef<HTMLSelectElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
 
-  // 🍰🍰🍰🍰🍰🍰🍰🍰🍰🍰 useEffect를 시작, 종료 날짜 미정 체크에 또 써야 하는데 🍰🍰🍰🍰🍰🍰🍰🍰🍰🍰🍰🍰
-  // 🍰🍰🍰🍰🍰🍰🍰🍰🍰 이거 나중에 커스텀훅으로 묶을까? 🍰🍰🍰🍰🍰🍰🍰🍰🍰
-
-  // 체크 박스 상태 관리 스테이트
-  const [isStartedAtNull, setIsStartedAtNull] = useState(false);
-  const [isEndedAtNull, setIsEndedAtNull] = useState(false);
-
   const router = useRouter();
   // const [previewImage, setPreviewImage] = useState<string | null>("image:/media/meetup_images/pv_test.JPG");
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+  // id 해당 모임 데이터 가져오는데
+  // 미리 보기의 default값이 이미 들어가있어야 된다.
+  // setPreviewImage는 최상단에 있는데
+  // 미리 보기 설정 로직은 아래에 있다.
 
   // id 해당 모임 get 함수
   const getMeetupById = async () => {
@@ -89,8 +87,8 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
     // 아니 왜 콘솔에 .json() 넣으면 브라우저 에러 나는 것?
     // 안 그러다기???????????????
 
-    // // 🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠 이거는 필요 없고 onSuccess에서 하면 됨 되는거야 마는거야 🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠 아마 안됨
-    // setPreviewImage(`${meetupByIdData.image}`);
+    // // 🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠 이거 되는거야 마는거야 🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠 아마 안됨
+    setPreviewImage(`${meetupByIdData.image}`);
 
     console.log("가져온 데이터: ", meetupByIdData);
     console.log("meetupId 타입 뭐야?", typeof meetupByIdData.id);
@@ -111,45 +109,18 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
     // 💞 queryFn에서 반환한 데이터를 onSuccess의 매개변수로 전달
     // 💞 즉 data는 getMeetupById의 반환값인 meetupByIdData
 
-    // onSuccess: (meetupByIdData: Meetup) => {
-    //   // 💞 여기서 meetupByIdData를 매개면수로 받고 있으므로 이걸 써야돼
-
-    //   if (meetupByIdData.image) {
-    //     // console.log(`이전 미리보기 url: http://localhost:8000/api/v1${data.image}`);
-
-    //     // setPreviewImage(`http://localhost:8000${previousMeetupData.image}`);
-    //     setPreviewImage(`http://localhost:8000${meetupByIdData.image}`);
-    //   }
-    // },
+    onSuccess: (meetupByIdData: Meetup) => {
+      if (meetupByIdData.image) {
+        // console.log(`이전 미리보기 url: http://localhost:8000/api/v1${data.image}`);
+        // setPreviewImage(`http://localhost:8000${meetupByIdData.image}`);
+        // 💞 원래는
+        setPreviewImage(`http://localhost:8000${previousMeetupData.image}`);
+        // 였다
+      }
+    },
 
     retry: 0,
   });
-
-  useEffect(() => {
-    if (previousMeetupData?.image) {
-      const imageUrl = `http://localhost:8000${previousMeetupData.image}`;
-      console.log("미리보기 설정되는 이미지 URL: ", imageUrl);
-      setPreviewImage(imageUrl);
-    }
-  }, [previousMeetupData]);
-
-  // useEffect(() => {
-  //   previousMeetupData?.startedAt === null ? alert("null이다!") : setIsStartedAtNull(true);
-  // }, [previousMeetupData]);
-  // 위 코드는 시작 날짜가 null이 아닌데도 null이다!가 뜨고 미정 체크되어있으면서 날짜가 정해져서 들어가있음 뭔가 꼬임
-  // 아 삼항연산자 잘못씀^ㅇ^..
-
-  useEffect(() => {
-    previousMeetupData?.startedAt === null ? setIsStartedAtNull(true) : setIsStartedAtNull(false);
-  }, [previousMeetupData]);
-
-  useEffect(() => {
-    if (previousMeetupData?.endedAt === null) {
-      setIsEndedAtNull(true);
-    } else {
-      setIsEndedAtNull(false);
-    }
-  }, [previousMeetupData]);
 
   //수정 뮤테이션
   const editMutation = useMutation<void, Error, FormData>({
@@ -226,50 +197,17 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   if (isPending) return <p>Pending...</p>;
   if (isError) return <p>모임 데이터 로드 error남</p>;
 
-  // console.log("🔮🔮🔮🔮🔮🔮  성공한 미리보기 previousMeetupData.image 스트링🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮 : ", previousMeetupData.image);
+  console.log("🔮🔮🔮🔮🔮🔮  성공한 미리보기 previousMeetupData.image 스트링🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮 : ", previousMeetupData.image);
   return (
     <>
-      {/* // <img src={`http://localhost:8000${previousMeetupData.image}`} alt="성공한 테스트" />
-      // <p>성공한 이미지는 위에⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️ 뜰 것입니다</p>
-      // <img src={`http://localhost:8000meetup_images/pv_test.JPG`} alt="⬅️ 경로 테스트 실패한 이미지태그" /> */}
-
+      <img src={`http://localhost:8000${previousMeetupData.image}`} alt="성공한 테스트" />
+      <p>성공한 이미지는 위에⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️ 뜰 것입니다</p>
+      <img src={`http://localhost:8000meetup_images/pv_test.JPG`} alt="⬅️ 경로 테스트 실패한 이미지태그" />
       <form onSubmit={handleEditFormSubmit}>
         <LabeledInput id="name" name="name" label="모임 이름" type="text" ref={nameRef} defaultValue={previousMeetupData?.name} required />
         <LabeledSelect id="category" name="category" label="모임 성격" options={categoryOptions} ref={categoryRef} defaultValue={previousMeetupData?.category} required />
-        <LabeledInput
-          id="startedAt"
-          name="startedAt"
-          label="모임 시작 날짜"
-          type="date"
-          ref={startedAtRef}
-          defaultValue={previousMeetupData?.startedAt ? previousMeetupData.startedAt.substring(0, 10) : undefined}
-          disabled={isStartedAtNull}
-          required
-        />
-
-        <LabeledInput
-          id="startedAtUndecided"
-          name="startedAtUndecided"
-          label="미정"
-          type="checkbox"
-          checked={isStartedAtNull}
-          onChange={event => {
-            setIsStartedAtNull(event?.target.checked);
-          }}
-        />
-
-        <LabeledInput id="endedAt" name="endedAt" label="모임 종료 날짜" type="date" ref={endedAtRef} defaultValue={previousMeetupData?.endedAt?.substring(0, 10)} disabled={isEndedAtNull} required />
-        <LabeledInput
-          id="endedAtUndecided"
-          name="endedAtUndecided"
-          label="미정"
-          type="checkbox"
-          checked={isEndedAtNull}
-          onChange={event => {
-            setIsEndedAtNull(event?.target.checked);
-          }}
-        />
-
+        <LabeledInput id="startedAt" name="startedAt" label="모임 시작 날짜" type="date" ref={startedAtRef} defaultValue={previousMeetupData?.startedAt?.substring(0, 10)} />
+        <LabeledInput id="endedAt" name="endedAt" label="모임 종료 날짜" type="date" ref={endedAtRef} defaultValue={previousMeetupData?.endedAt?.substring(0, 10)} />
         <LabeledSelect id="place" name="place" label="모임 지역" options={placeOptions} ref={placeRef} defaultValue={previousMeetupData?.place} required />
         <LabeledInput id="placeDescription" name="placeDescription" label="모임 장소 설명" type="text" ref={placeDescriptionRef} defaultValue={previousMeetupData?.placeDescription} required />
         <LabeledInput id="adTitle" name="adTitle" label="광고 제목" type="text" ref={adTitleRef} defaultValue={previousMeetupData?.adTitle} required />
@@ -278,11 +216,12 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
         <textarea id="description" name="description" ref={descriptionRef} defaultValue={previousMeetupData?.description || ""} placeholder="설명을 작성하세요" />
         <LabeledInput id="isPublic" name="isPublic" label="공개 여부" type="checkbox" ref={isPublicRef} defaultChecked={previousMeetupData?.isPublic} />
         <div>
-          {/* <h3>선택된 이미지</h3>
+          <h3>선택된 이미지</h3>
+          {/* 선택된 이미지 기본값 뭘로 고치지*/}
           <img src={`http://localhost:8000${previousMeetupData.image}`} alt="Preview" />
-          🍓🍓🍓🍓🍓🍓🍓🍓🍓이렇게 그냥 갖다 쓰니까 미리보기 된다고?🍓🍓🍓🍓🍓🍓🍓🍓🍓🍓 */}
-          {previewImage ? <img src={previewImage} alt="미리보기 대체 텍스트" /> : <p>미리보기 이미지 없다</p>}
-          {/* 🧚🏼‍♀️🧚🏼‍♀️🧚🏼‍♀️🧚🏼‍♀️🧚🏼‍♀️🧚🏼‍♀️🧚🏼‍♀️🧚🏼‍♀️이거는 지금 소스 경로를 previewImage로 설정해놨고 아마 setPreviewImage가 다시 안 쓰여서 기본값 null로 뜬거같다.🧚🏼‍♀️🧚🏼‍♀️🧚🏼‍♀️🧚🏼‍♀️🧚🏼‍♀️🧚🏼‍♀️ */}
+          🍓🍓🍓🍓🍓🍓🍓🍓🍓이렇게 그냥 갖다 쓰니까 미리보기 된다고?🍓🍓🍓🍓🍓🍓🍓🍓🍓🍓
+          {previewImage ? <img src={previewImage} alt="두번째 미리보기 텍스트" /> : <p>미리보기 이미지 없다</p>}
+          🧚🏼‍♀️🧚🏼‍♀️🧚🏼‍♀️🧚🏼‍♀️🧚🏼‍♀️🧚🏼‍♀️🧚🏼‍♀️🧚🏼‍♀️이거는 지금 소스 경로를 previewImage로 설정해놨고 아마 setPreviewImage가 다시 안 쓰여서 기본값 null로 뜬거같다.🧚🏼‍♀️🧚🏼‍♀️🧚🏼‍♀️🧚🏼‍♀️🧚🏼‍♀️🧚🏼‍♀️
           <LabeledInput
             id="image"
             name="image"

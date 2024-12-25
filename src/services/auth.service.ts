@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 // sign-up
 export const register = async (newUser: NewUserProps) => {
   try {
-    const response = await fetch(`${BASE_URL}/api/v1/auth/register`, {
+    const response = await fetch(`${BASE_URL}/api/v1/user`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -9,7 +9,7 @@ export interface Meetup {
   adEndedAt: string | null;
   isPublic: boolean;
   image: string;
-  category: Array<string>;
+  category: string;
 }
 export interface LabeledInputProps {
   id: string;
@@ -17,6 +17,7 @@ export interface LabeledInputProps {
   label: string;
   type?: string; // 인풋 타입 (기본값: "text")
   placeholder?: string; // 선택적 placeholder
+  value?: string | number | readonly string[] | undefined;
   defaultValue?: string;
   minlength?: string;
   maxlength?: string;

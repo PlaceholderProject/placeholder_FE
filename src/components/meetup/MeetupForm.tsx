@@ -6,15 +6,28 @@ import { Meetup } from "@/types/Meetup";
 import { LabeledInputProps } from "@/types/meetupType";
 import { LabeledSelectProps } from "@/types/meetupType";
 import { useRouter } from "next/navigation";
+import { refreshToken } from "@/services/auth.service";
 
 const token = process.env.NEXT_PUBLIC_MY_TOKEN;
 
-const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(({ id, name, label, type = "text", placeholder, disabled, required, checked, onChange }, ref) => {
+const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(({ id, name, label, type, placeholder, value, defaultValue, disabled, required, checked, onChange }, ref) => {
   return (
     <>
       <div>
         <label htmlFor={id}>{label}</label>
-        <input id={id} name={name} type={type} placeholder={placeholder} disabled={disabled} required={required} checked={checked} onChange={onChange} ref={ref} />
+        <input
+          id={id}
+          name={name}
+          type={type}
+          placeholder={placeholder}
+          disabled={disabled}
+          value={value}
+          defaultValue={defaultValue}
+          required={required}
+          checked={checked}
+          onChange={onChange}
+          ref={ref}
+        />
       </div>
     </>
   );
@@ -63,7 +76,7 @@ const MeetupForm = () => {
   const [previewImage, setPreviewImage] = useState("/meetup_default_image.jpg");
 
   // 셀렉트 배열
-  const categoryOptions = [["0"], "너는스트링이니?", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
+  const categoryOptions = [["0"], "너는스트링이니?", "운동", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
   const placeOptions = ["서울", "경기", "인천", "강원", "대전", "세종", "충남", "충북", "부산", "울산", "경남", "경북", "대구", "광주", "전남", "전북", "제주", "전국", "미정"];
 
   // useMutation은 최상단에 위치시키라고 함
@@ -123,23 +136,12 @@ const MeetupForm = () => {
 
     if (!response.ok) {
       const errorText = await response.text();
+      await refreshToken();
       console.log(errorText);
       throw new Error("모임 생성 실패");
     }
     return await response.json();
   };
-
-  // const createMutation = useMutation<void, Error, FormData>({
-  //   mutationFn: createMeetup,
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({ queryKey: ["meetups"] });
-  //     // meetups 라는 쿼리키?????????????
-  //     router.push("/");
-  //   },
-  //   onError: error => {
-  //     console.error("모임 생성 중 오류 발생:", error);
-  //   },
-  // });
 
   const handleMeetupFormSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -220,8 +222,6 @@ const MeetupForm = () => {
     const image = imageRef.current?.value || "";
     console.log("Submitted image:", image);
 
-    const blobFormData = new FormData();
-
     const newMeetup: Meetup = {
       name: nameRef.current?.value || "",
       description: descriptionRef.current?.value || "",
@@ -235,6 +235,8 @@ const MeetupForm = () => {
       category: categoryRef.current?.value || "",
       image: imageRef.current?.value || "",
     };
+
+    const blobFormData = new FormData();
 
     // 이미지 파일 추가
 
@@ -264,11 +266,15 @@ const MeetupForm = () => {
     for (const pair of blobFormData.entries()) {
       console.log("blobFormData 출력:", pair[0], pair[1]); // key와 value 출력
     }
-    createMutation.mutate(blobFormData);
+    createMutation.mutate(blobFormData, {
+      // 🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵  코드잇 보고 넣어봄 🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵
+      onSuccess: () => {
+        alert("모임 생성 성공!!!!");
+      },
+    });
   };
 
   // 이미지 미리보기 스테이트
-
   const handlePreviewImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const previewFile = event.target.files[0];
