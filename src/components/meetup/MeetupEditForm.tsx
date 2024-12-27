@@ -164,13 +164,13 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
         throw new Error("모임 수정 실패");
       }
 
-      alert("모임 정보 수정 성공!");
+      alert("mutation Fn 모임 정보 수정 성공!");
       router.push("/");
     },
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["meetups"] });
-      alert("모임 정보 수정 성공!");
+      alert("onSuccess invalidate 모임 정보 수정 성공!");
       router.push("/");
     },
   });
@@ -200,7 +200,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
 
     const formData = new FormData();
 
-    formData.append("editedMeetup", JSON.stringify(editedMeetup));
+    formData.append("payload", JSON.stringify(editedMeetup));
 
     if (imageRef.current?.files?.[0]) {
       const file = imageRef.current.files[0];

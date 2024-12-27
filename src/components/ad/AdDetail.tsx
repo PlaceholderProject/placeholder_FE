@@ -1,42 +1,76 @@
-"use client";
-
-import React, { useEffect } from "react";
-
-const AdDetail = () => {
+const AdDetail = async ({ meetupId }: { meetupId: number }) => {
   const token = process.env.NEXT_PUBLIC_MY_TOKEN;
 
-  const getMeetupById = async () => {
-    try {
-      const response = await fetch("http://localhost:8000/api/v1/meetup/4", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  try {
+    const response = await fetch(`http://localhost:8000/api/v1/meetup/${meetupId}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-      if (!response.ok) {
-        console.error("가져오기 실패: ", response.status, response.statusText);
-        throw new Error("해당 id 모임 가져오기 실패");
-      }
-
-      const meetupAsAd = await response.json();
-      console.log(meetupAsAd);
-      return meetupAsAd;
-    } catch (error) {
-      console.log("에러 : ", error.message);
+    if (!response.ok) {
+      throw new Error("해당 id 모임 가져오기 실패");
     }
-  };
 
-  useEffect(() => {
-    getMeetupById();
-  }, []);
-
-  getMeetupById();
-
-  return <div>AdDetail</div>;
+    const meetupAsAd = await response.json();
+    console.log(meetupAsAd);
+    return (
+      <>
+        <div>
+          <h2>meetupAsAd 디테일</h2>
+          <div>{meetupAsAd.name}</div>
+          <div>{meetupAsAd.startedAt}</div>
+          <p>렌더링 부분 다시 만드세용~~~</p>
+        </div>
+      </>
+    );
+  } catch (error) {
+    return <div>에러 발생: {error.message}</div>;
+  }
 };
 
 export default AdDetail;
+
+// "use client";
+
+// import React, { useEffect } from "react";
+
+// const AdDetail = ({ meetupId }: { meetupId: number }) => {
+//   const token = process.env.NEXT_PUBLIC_MY_TOKEN;
+
+//   const getMeetupById = async () => {
+//     try {
+//       const response = await fetch(`http://localhost:8000/api/v1/meetup/${meetupId}`, {
+//         method: "GET",
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       });
+
+//       if (!response.ok) {
+//         console.error("가져오기 실패: ", response.status, response.statusText);
+//         throw new Error("해당 id 모임 가져오기 실패");
+//       }
+
+//       const meetupAsAd = await response.json();
+//       console.log(meetupAsAd);
+//       return meetupAsAd;
+//     } catch (error) {
+//       console.log("에러 : ", error.message);
+//     }
+//   };
+
+//   useEffect(() => {
+//     getMeetupById();
+//   }, []);
+
+//   getMeetupById();
+
+//   return <div>AdDetail</div>;
+// };
+
+// export default AdDetail;
 
 // 🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠 SSR 구현중🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠
 // import React from "react";
