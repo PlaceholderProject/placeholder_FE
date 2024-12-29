@@ -6,6 +6,7 @@ import { Meetup } from "@/types/meetupType";
 import { LabeledInputProps } from "@/types/meetupType";
 import { LabeledSelectProps } from "@/types/meetupType";
 import { useRouter } from "next/navigation";
+import { BASE_URL } from "@/constants/baseURL";
 
 const token = process.env.NEXT_PUBLIC_MY_TOKEN;
 
@@ -71,7 +72,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
 
   // id 해당 모임 get 함수
   const getMeetupById = async () => {
-    const response = await fetch(`http://localhost:8000/api/v1/meetup/${meetupId}`, {
+    const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -127,7 +128,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
 
   useEffect(() => {
     if (previousMeetupData?.image) {
-      const imageUrl = `http://localhost:8000${previousMeetupData.image}`;
+      const imageUrl = `${BASE_URL}${previousMeetupData.image}`;
       console.log("미리보기 설정되는 이미지 URL: ", imageUrl);
       setPreviewImage(imageUrl);
     }
@@ -154,7 +155,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   //수정 뮤테이션
   const editMutation = useMutation<void, Error, FormData>({
     mutationFn: async (formData: FormData) => {
-      const response = await fetch(`http://localhost:8000/api/v1/meetup/${meetupId}`, {
+      const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,

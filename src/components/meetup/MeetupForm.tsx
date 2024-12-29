@@ -7,6 +7,7 @@ import { LabeledInputProps } from "@/types/meetupType";
 import { LabeledSelectProps } from "@/types/meetupType";
 import { useRouter } from "next/navigation";
 import { refreshToken } from "@/services/auth.service";
+import { BASE_URL } from "@/constants/baseURL";
 
 const token = process.env.NEXT_PUBLIC_MY_TOKEN;
 
@@ -94,7 +95,7 @@ const MeetupForm = () => {
 
   // getMeetups 함수
   const getMeetups = async () => {
-    const response = await fetch("http://localhost:8000/api/v1/meetup", {
+    const response = await fetch(`${BASE_URL}/api/v1/meetup`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -125,7 +126,7 @@ const MeetupForm = () => {
 
   // 모임 생성
   const createMeetup = async (blobFormData: FormData): Promise<void> => {
-    const response = await fetch("http://localhost:8000/api/v1/meetup", {
+    const response = await fetch(`${BASE_URL}/api/v1/meetup`, {
       method: "POST",
       headers: {
         // ContentType: "multipart/formdata",
