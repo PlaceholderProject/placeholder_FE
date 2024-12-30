@@ -1,4 +1,5 @@
 import { BASE_URL } from "@/constants/baseURL";
+import calculateDays from "@/utils/calculateDays";
 
 const AdDetail = async ({ meetupId }: { meetupId: number }) => {
   const token = process.env.NEXT_PUBLIC_MY_TOKEN;
@@ -37,10 +38,30 @@ const AdDetail = async ({ meetupId }: { meetupId: number }) => {
             🍎 모임장소 : [{meetupAsAd.place}] {meetupAsAd.placeDescription}
           </div>
           <div>
-            {meetupAsAd.startedAt} ~ {meetupAsAd.endedAt}
+            모임날짜 : {meetupAsAd.startedAt.substring(0, 10)} ~ {meetupAsAd.endedAt.substring(0, 10)}
+            <div>
+              {calculateDays({
+                startedAt: meetupAsAd.startedAt,
+                endedAt: meetupAsAd.endedAt,
+              })}{" "}
+              days
+            </div>
             <br />
-            ---------TODO-------- <br />
+            {/* ---------TODO-------- <br />
             두번재 날짜에서 첫번째 날짜 빼서 계산하고 값이 1이하면 day, 아니면 days 붙이는 함수 util로 만들기 미정이 있으면 day글자 자체가 안 나오게 (메인페이지에서도 사용)
+            <div>
+  {meetupAsAd.startedAt} ~ {meetupAsAd.endedAt} {
+    (() => {
+      const days = calculateDays({
+        startedAt: meetupAsAd.startedAt,
+        endedAt: meetupAsAd.endedAt
+      });
+      return days > 0 ? `${days} ${days === 1 ? 'day' : 'days'}` : '';
+    })()
+  }
+</div>
+
+여기에 null일 경우도 포함해서 분기해서 함수 로직 만들기 */}
           </div>
           <div>{meetupAsAd.description}</div>
         </div>
