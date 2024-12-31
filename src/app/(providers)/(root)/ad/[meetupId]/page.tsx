@@ -42,17 +42,24 @@
 
 // 위 코드는 여전히 `page.tsx:32  Server   Error: Route "/ad/[meetupId]" used `params.meetupId`. `params` should be awaited before using its properties.` 오류가 뜨지만, 수정 전 한 번의 새로 고침에 2번이 뜨던 것과 달리 1번만 뜬다.
 
+import AdButton from "@/components/ad/AdButton";
 import AdClientSideWrapper from "@/components/ad/AdClientSideWrapper";
 import AdDetail from "@/components/ad/AdDetail";
+import AdSignboard from "@/components/ad/AdSignboard";
+import AdUser from "@/components/ad/AdUser";
 
 const AdPage = async ({ params }: { params: { meetupId: string } }) => {
   const resolvedParams = await params;
+  const parsedMeetupId = parseInt(resolvedParams.meetupId, 10);
 
   return (
     <>
       <div>
-        <AdDetail meetupId={parseInt(resolvedParams.meetupId, 10)} />
-        <AdClientSideWrapper meetupId={parseInt(resolvedParams.meetupId, 10)} />
+        <AdSignboard meetupId={parsedMeetupId} />
+        <AdUser meetupId={parsedMeetupId} />
+        <AdDetail meetupId={parsedMeetupId} />
+        <AdButton meetupId={parsedMeetupId} />
+        <AdClientSideWrapper meetupId={parsedMeetupId}></AdClientSideWrapper>
       </div>
     </>
   );

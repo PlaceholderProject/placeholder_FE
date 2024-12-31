@@ -23,15 +23,11 @@ const AdDetail = async ({ meetupId }: { meetupId: number }) => {
     return (
       <>
         <div>
-          <h3>
-            <div>{meetupAsAd.adTitle}</div>
-            <div>{meetupAsAd.adEndedAt.substring(0, 10)}까지 모집</div>
-            <div>⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯</div>
-            {/* <Image width={50} height={20} src={imageUrl} alt={"모임 광고글 이미지"} /> */}
-            <img src={imageUrl} alt={"모임 광고글 이미지"} />
-            ---------TODO-------- <br />
-            서버에서 보내주는 날짜 값 뒷자리 제거하는 함수 util로 만들기
-          </h3>
+          <div>⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯</div>
+          {/* <Image width={50} height={20} src={imageUrl} alt={"모임 광고글 이미지"} /> */}
+          <img src={imageUrl} alt={"모임 광고글 이미지"} />
+          ---------TODO-------- <br />
+          서버에서 보내주는 날짜 값 뒷자리 제거하는 함수 util로 만들기
           <div>⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯</div>
           <div>🩵 모임이름 : {meetupAsAd.name}</div>
           <div>
@@ -62,6 +58,13 @@ const AdDetail = async ({ meetupId }: { meetupId: number }) => {
 </div>
 
 여기에 null일 경우도 포함해서 분기해서 함수 로직 만들기 */}
+            {/* 미정이 하나라도 있을 경우 계산할 필요도 없고 days 표기X
+days가 0이면 day => 계산 상 numberOfDays는 1일로 나올 듯
+days가 1이상이면 days
+
+이 함수는 최소 AdPage와 MainPage, 두 군데 이상에서 사용됨!
+숫자 표기와 days 표기를 calculateDays 함수 내에서 한번에 리턴할지
+아니면 따로 할지 */}
           </div>
           <div>{meetupAsAd.description}</div>
         </div>
