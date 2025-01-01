@@ -191,6 +191,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
       place: placeRef.current?.value || "",
       placeDescription: placeDescriptionRef.current?.value || "",
       startedAt: startedAtRef.current?.value || null,
+
       endedAt: endedAtRef.current?.value || null,
       adTitle: adTitleRef.current?.value || "",
       adEndedAt: adEndedAtRef.current?.value || null,
@@ -301,3 +302,5 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
 };
 
 export default MeetupEditForm;
+
+("/media/meetup_images/pv_test_ywXpm9A.JPG");
