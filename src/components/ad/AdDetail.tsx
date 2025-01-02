@@ -1,5 +1,6 @@
 import { BASE_URL } from "@/constants/baseURL";
 import calculateDays from "@/utils/calculateDays";
+import AdNonModal from "./AdNonModal";
 
 const AdDetail = async ({ meetupId }: { meetupId: number }) => {
   const token = process.env.NEXT_PUBLIC_MY_TOKEN;
@@ -28,10 +29,11 @@ const AdDetail = async ({ meetupId }: { meetupId: number }) => {
           <div>⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯</div>
           {/* <Image width={50} height={20} src={imageUrl} alt={"모임 광고글 이미지"} /> */}
           <img src={imageUrl} alt={"모임 광고글 이미지"} />
-          ---------TODO-------- <br />
-          서버에서 보내주는 날짜 값 뒷자리 제거하는 함수 util로 만들기
+
           <div>⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯</div>
           <div>🩵 모임이름 : {meetupAsAd.name}</div>
+
+          <AdNonModal />
           <div>
             🍎 모임장소 : [{meetupAsAd.place}] {meetupAsAd.placeDescription}
           </div>
