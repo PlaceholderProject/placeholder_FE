@@ -7,20 +7,31 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
 import { toggleAdNonModal } from "@/stores/nonModalSlice";
+import { toggleAdDeleteModal } from "@/stores/modalSlice";
 
 const AdNonModal = ({ meetupId }: { meetupId: number }) => {
   const dispatch = useDispatch();
   const isAdNonModalOpen = useSelector((state: RootState) => state.nonModal.isAdNonModalOpen);
+  const isAdDeleteModalOpen = useSelector((state: RootState) => state.modal.isAdDeleteModalOpen);
 
-  // 토글 상태변화 감지용
+  // 논모달 토글 상태변화 감지용
   React.useEffect(() => {
-    console.log("상태 업데이트됨:", isAdNonModalOpen);
+    console.log("논모달 상태 업데이트됨:", isAdNonModalOpen);
   }, [isAdNonModalOpen]);
 
   const handleThreeDotsClick = () => {
-    // alert("점 세개 클릭됐으니 논모달 시트를 띄워주세요");
     dispatch(toggleAdNonModal());
     console.log(isAdNonModalOpen);
+  };
+
+  // 논모달 토글 상태변화 감지용
+  React.useEffect(() => {
+    console.log("모달 상태 업데이트됨:", isAdDeleteModalOpen);
+  }, [isAdDeleteModalOpen]);
+
+  const handleCloseButtonClick = () => {
+    dispatch(toggleAdDeleteModal());
+    console.log(isAdDeleteModalOpen);
   };
   return (
     <>
@@ -32,16 +43,13 @@ const AdNonModal = ({ meetupId }: { meetupId: number }) => {
           <div>
             <Link href={`http://localhost:3000/meetup-edit/${meetupId}`}>수정</Link>
           </div>
-          <button
-            type="button"
-            onClick={() => {
-              alert("'클릭하면 현재 광고글이 삭제되고, 복구할 수 없습니다. 정말 삭제하시겠습니까? 라는 모달 띄우자'");
-            }}
-          >
+          <button type="button" onClick={handleCloseButtonClick}>
             삭제
+            {/* 이걸 클릭하면 isAdDeleModalOpen 상태가 토글되어야 함 */}
           </button>
         </div>
       )}
+      {isAdDeleteModalOpen && <AdDeleteModal meetupId={meetupId} />}
     </>
   );
 };
