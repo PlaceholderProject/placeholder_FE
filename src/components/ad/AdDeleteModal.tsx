@@ -44,11 +44,12 @@ const AdDeleteModal = ({ meetupId }: { meetupId: number }) => {
 
     if (!response.ok) {
       console.error("광고글 삭제 실패: ", response.status, response.statusText);
+      throw new Error("광고글 삭제에 실패했습니다.");
     }
   };
 
   // 삭제 뮤테이션
-  // 이긴 한데 굳이 삭제 함수를 따로 뺄 필요가 있나
+  // 이긴 한데 굳이 삭제 함수를 위에서 따로 만들 필요가 있었나
   // 나중에 정리할 때 편할지 아니면 코드만 늘어난 건지 아직 모르겠다.
 
   const deleteMutation = useMutation({
@@ -60,16 +61,17 @@ const AdDeleteModal = ({ meetupId }: { meetupId: number }) => {
   });
 
   const handleDeleteClick = () => {
-    deleteMutation.mutate({ meetupId });
+    const confirmed = window.confirm("정말 삭제하시겠습니까?");
+    if (confirmed) deleteMutation.mutate({ meetupId });
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" onClick={handleOverlayClick}>
       <div className="bg-white rounded-lg p-6">
         <div className="w-50 h-50 bt-white rounded-lg p-6">
-          '삭제하기' 버튼을 클릭하면 광고글이 영구적으로 지워집니다.
+          '삭제하기' 버튼을 클릭하면 광고글이 영구적으로 사라집니다.
           <button type="button" onClick={handleCloseButtonClick}>
-            닫기
+            닫기fa
           </button>
           <button onClick={handleDeleteClick} type="button" disabled={deleteMutation.isPending} className="m-2 w-50 h-10 bg-red-400">
             {deleteMutation.isPending ? "삭제 중.." : "⚠️삭제하기⚠️"}

@@ -77,7 +77,7 @@ const MeetupForm = () => {
   const [previewImage, setPreviewImage] = useState("/meetup_default_image.jpg");
 
   // 셀렉트 배열
-  const categoryOptions = [["0"], "너는스트링이니?", "운동", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
+  const categoryOptions = ["운동", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
   const placeOptions = ["서울", "경기", "인천", "강원", "대전", "세종", "충남", "충북", "부산", "울산", "경남", "경북", "대구", "광주", "전남", "전북", "제주", "전국", "미정"];
 
   // useMutation은 최상단에 위치시키라고 함
@@ -93,36 +93,37 @@ const MeetupForm = () => {
     },
   });
 
+  // ☀️ ☀️ meetups 리스트를 가져오는 로직이 없어도 meetups라는 쿼리키를 가진 데이터가 유효하지 않다고 판단하고 무효화하는 작업이 가능하다!
   // getMeetups 함수
-  const getMeetups = async () => {
-    const response = await fetch(`${BASE_URL}/api/v1/meetup`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    if (!response.ok) {
-      throw new Error("모임 목록 가져오기 실패");
-    }
-    const meetupsData = await response.json();
-    console.log("json()하지 않은 모임 목록: ", response);
-    console.log("가져온 모임 목록:", meetupsData);
-    return meetupsData;
-  };
+  // const getMeetups = async () => {
+  //   const response = await fetch(`${BASE_URL}/api/v1/meetup`, {
+  //     method: "GET",
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //     },
+  //   });
+  //   if (!response.ok) {
+  //     throw new Error("모임 목록 가져오기 실패");
+  //   }
+  //   const meetupsData = await response.json();
+  //   console.log("json()하지 않은 모임 목록: ", response);
+  //   console.log("가져온 모임 목록:", meetupsData);
+  //   return meetupsData;
+  // };
 
   // 모임 목록 가져오기 탠스택쿼리
-  const {
-    data: previousMeetups,
-    isPending,
-    isError,
-  } = useQuery({
-    queryKey: ["meetups"],
-    queryFn: getMeetups,
-    retry: 0,
-  });
+  // const {
+  //   data: previousMeetups,
+  //   isPending,
+  //   isError,
+  // } = useQuery({
+  //   queryKey: ["meetups"],
+  //   queryFn: getMeetups,
+  //   retry: 0,
+  // });
 
-  if (isPending) return <div>로딩중</div>;
-  if (isError) return <div>에러 발생</div>;
+  // if (isPending) return <div>로딩중</div>;
+  // if (isError) return <div>에러 발생</div>;
 
   // 모임 생성
   const createMeetup = async (blobFormData: FormData): Promise<void> => {
@@ -267,8 +268,9 @@ const MeetupForm = () => {
     for (const pair of blobFormData.entries()) {
       console.log("blobFormData 출력:", pair[0], pair[1]); // key와 value 출력
     }
+
     createMutation.mutate(blobFormData, {
-      // 🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵  코드잇 보고 넣어봄 🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵
+      // 🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵  코드잇 보고 넣어봄 🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵
       onSuccess: () => {
         alert("모임 생성 성공!!!!");
       },
