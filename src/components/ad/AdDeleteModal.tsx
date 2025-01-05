@@ -55,12 +55,12 @@ const AdDeleteModal = ({ meetupId }: { meetupId: number }) => {
     mutationFn: deleteAd,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["meetups"] });
-      router.push("-1");
+      router.push("/");
     },
   });
 
-  const handleDeleteClick = (meetupId: { meetupId: number }) => {
-    deleteMutation.mutate(meetupId);
+  const handleDeleteClick = () => {
+    deleteMutation.mutate({ meetupId });
   };
 
   return (
