@@ -190,12 +190,15 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
       description: descriptionRef.current?.value || "",
       place: placeRef.current?.value || "",
       placeDescription: placeDescriptionRef.current?.value || "",
-      startedAt: startedAtRef.current?.value || null,
+      // startedAt: startedAtRef.current?.value || null,
+      startedAt: isStartedAtNull ? null : startedAtRef.current?.value || null,
 
-      endedAt: endedAtRef.current?.value || null,
+      //endedAt: endedAtRef.current?.value || null,
+      endedAt: isEndedAtNull ? null : endedAtRef.current?.value || null,
       adTitle: adTitleRef.current?.value || "",
       adEndedAt: adEndedAtRef.current?.value || null,
-      isPublic: isPublicRef.current?.checked || false,
+      // 수정전: isPublic: isPublicRef.current?.checked || false,
+      isPublic: isPublicRef.current?.checked, //이래도 안됨
       category: categoryRef.current?.value || "",
       image: imageRef.current?.value || "",
     };
@@ -206,7 +209,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
 
     if (imageRef.current?.files?.[0]) {
       const file = imageRef.current.files[0];
-      formData.append("iamge", file);
+      formData.append("image", file);
     }
 
     editMutation.mutate(formData);
@@ -219,11 +222,6 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
       setPreviewImage(previewFileUrl);
     }
   };
-
-  // 이전 코드에서는 디폴트 이미지로 설정돼이썽ㅆ음
-  // 근데 그 디폴트 부분을 데이터 통신으로 가져온 후에야 setPreviewImage로 설정가능하게 되어서
-  // 절차 하나가 들어가ㅑㅇ 함
-  //
 
   if (isPending) return <p>Pending...</p>;
   if (isError) return <p>모임 데이터 로드 error남</p>;
@@ -302,5 +300,3 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
 };
 
 export default MeetupEditForm;
-
-("/media/meetup_images/pv_test_ywXpm9A.JPG");

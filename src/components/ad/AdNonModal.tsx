@@ -35,6 +35,7 @@ const AdNonModal = ({ meetupId }: { meetupId: number }) => {
   };
   return (
     <>
+      {/* 🏁 🏁 🏁 🏁 🏁  TODO: 이 threedots 자체가 organizer 여부에 따라 조건부 렌더링되어야 함 🏁 🏁 🏁 🏁 🏁   */}
       <button>
         <BsThreeDotsVertical onClick={handleThreeDotsClick} />
       </button>
