@@ -1,3 +1,14 @@
-export default function Home() {
-  return <h1>Placeholder 메인입니당!</h1>;
-}
+//  완전 루트 페이지
+import MainPage from "./(providers)/(root)/(main)/page";
+
+const Home = () => {
+  return (
+    <>
+      <div>
+        <MainPage />
+      </div>
+    </>
+  );
+};
+
+export default Home;

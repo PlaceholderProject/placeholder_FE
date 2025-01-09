@@ -142,15 +142,16 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
 
   useEffect(() => {
     previousMeetupData?.startedAt === null ? setIsStartedAtNull(true) : setIsStartedAtNull(false);
+    previousMeetupData?.endedAt === null ? setIsEndedAtNull(true) : setIsEndedAtNull(false);
   }, [previousMeetupData]);
 
-  useEffect(() => {
-    if (previousMeetupData?.endedAt === null) {
-      setIsEndedAtNull(true);
-    } else {
-      setIsEndedAtNull(false);
-    }
-  }, [previousMeetupData]);
+  // useEffect(() => {
+  //   if (previousMeetupData?.endedAt === null) {
+  //     setIsEndedAtNull(true);
+  //   } else {
+  //     setIsEndedAtNull(false);
+  //   }
+  // }, [previousMeetupData]);
 
   //수정 뮤테이션
   const editMutation = useMutation<void, Error, FormData>({
@@ -165,12 +166,24 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
         throw new Error("모임 수정 실패");
       }
 
-      alert("mutation Fn 모임 정보 수정 성공!");
-      router.push("/");
+      // 🚨🚨🚨🚨🚨서버 응답 형태 확인 좀 ㅎ겟습니다 지금 date랑 checkbox 인풋만 수정이 안되거든요🚨🚨🚨🚨🚨
+
+      const responseData = await response.json();
+      console.log("서버 응답:", responseData);
+      return responseData;
+      // alert("mutation Fn 모임 정보 수정 성공!");
+      // router.push("/");
     },
 
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["meetup", meetupId] });
       queryClient.invalidateQueries({ queryKey: ["meetups"] });
+      queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
+
+      //처음에 쿼리키 meetups로 썼으나 캐시 무효화는 현재 수정된 그 모임 하나만 하는 게 효율적이겠죠?
+      //근데 이제 메인페이지로 넘어가는 경우에 전체를 지칭하는 쿼리키 써줌
+      //밋업스냐 헤드헌팅스냐...
+
       alert("onSuccess invalidate 모임 정보 수정 성공!");
       router.push("/");
     },
@@ -190,10 +203,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
       description: descriptionRef.current?.value || "",
       place: placeRef.current?.value || "",
       placeDescription: placeDescriptionRef.current?.value || "",
-      // startedAt: startedAtRef.current?.value || null,
       startedAt: isStartedAtNull ? null : startedAtRef.current?.value || null,
-
-      //endedAt: endedAtRef.current?.value || null,
       endedAt: isEndedAtNull ? null : endedAtRef.current?.value || null,
       adTitle: adTitleRef.current?.value || "",
       adEndedAt: adEndedAtRef.current?.value || null,
@@ -212,6 +222,8 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
       formData.append("image", file);
     }
 
+    const payload = formData.get("payload");
+    console.log("서버로 전송되는 수정된 모임 데이터:", JSON.stringify(payload as string));
     editMutation.mutate(formData);
   };
 

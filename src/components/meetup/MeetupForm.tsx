@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Meetup } from "@/types/Meetup";
+import { Meetup } from "@/types/meetupType";
 import { LabeledInputProps } from "@/types/meetupType";
 import { LabeledSelectProps } from "@/types/meetupType";
 import { useRouter } from "next/navigation";
@@ -242,7 +242,7 @@ const MeetupForm = () => {
 
     // 이미지 파일 추가
 
-    // 이 코드면 meetup도 image도 binary로 나옴
+    // 이 코드면 meetup도 image도 binary로 나옴 => 바이너리가 필요할 때만 블롭으로 변환하세요
     // blob 사용하지 않으면 타입 정보 손실 위험성이 있다고 한다 pereplexity가 알려줌..
 
     // blobFormData.append("newMeetup", JSON.stringify(newMeetup));

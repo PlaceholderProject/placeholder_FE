@@ -1,4 +1,5 @@
 export interface Meetup {
+  id?: number; // 24.01.07 ThumbnailArea에 광고 아이템 하나씩 띄우는데 타입 필요해서 추가함
   name: string;
   description: string;
   place: string;
@@ -8,9 +9,10 @@ export interface Meetup {
   adTitle: string;
   adEndedAt: string | null;
   isPublic: boolean;
-  image: string;
+  image?: string;
   category: string;
 }
+
 export interface LabeledInputProps {
   id: string;
   name: string;

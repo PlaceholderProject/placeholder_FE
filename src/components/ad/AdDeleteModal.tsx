@@ -6,7 +6,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BASE_URL } from "@/constants/baseURL";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Meetup } from "@/types/Meetup";
+import { Meetup } from "@/types/meetupType";
 import { useRouter } from "next/navigation";
 
 const token = process.env.NEXT_PUBLIC_MY_TOKEN;
