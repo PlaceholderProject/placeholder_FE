@@ -1,4 +1,7 @@
 export interface Meetup {
+  organizer: any;
+  isLike?: boolean;
+  likeCount?: number;
   id?: number; // 24.01.07 ThumbnailArea에 광고 아이템 하나씩 띄우는데 타입 필요해서 추가함
   name: string;
   description: string;

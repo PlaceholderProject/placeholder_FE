@@ -178,7 +178,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["meetup", meetupId] });
       queryClient.invalidateQueries({ queryKey: ["meetups"] });
-      queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
+      // queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
 
       //처음에 쿼리키 meetups로 썼으나 캐시 무효화는 현재 수정된 그 모임 하나만 하는 게 효율적이겠죠?
       //근데 이제 메인페이지로 넘어가는 경우에 전체를 지칭하는 쿼리키 써줌

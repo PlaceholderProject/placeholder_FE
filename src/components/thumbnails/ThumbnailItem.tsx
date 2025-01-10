@@ -20,6 +20,8 @@ const ThumbnailItem = ({ thumbnail }: ThumbnailItemProps) => {
       )}
       <div className="space-y-2">
         <p className="font-semibold">작성자: {thumbnail.organizer.nickname}</p>
+        <p>좋아요 눌렀니? {thumbnail.isLike.toString()}</p>
+        <p>좋아요 숫자 : {thumbnail.likeCount}</p>
         <p className="text-gray-600">[{thumbnail.place}]</p>
         <p className="text-lg font-bold">{thumbnail.adTitle}</p>
         <div>
