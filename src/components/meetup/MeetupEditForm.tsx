@@ -166,7 +166,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
         throw new Error("모임 수정 실패");
       }
 
-      // 🚨🚨🚨🚨🚨서버 응답 형태 확인 좀 ㅎ겟습니다 지금 date랑 checkbox 인풋만 수정이 안되거든요🚨🚨🚨🚨🚨
+      // 🚨🚨🚨🚨🚨서버 응답 형태 확인용 지금 date랑 checkbox 인풋만 수정이 안되거든요🚨🚨🚨🚨🚨
 
       const responseData = await response.json();
       console.log("서버 응답:", responseData);
@@ -179,11 +179,6 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
       queryClient.invalidateQueries({ queryKey: ["meetup", meetupId] });
       queryClient.invalidateQueries({ queryKey: ["meetups"] });
       // queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
-
-      //처음에 쿼리키 meetups로 썼으나 캐시 무효화는 현재 수정된 그 모임 하나만 하는 게 효율적이겠죠?
-      //근데 이제 메인페이지로 넘어가는 경우에 전체를 지칭하는 쿼리키 써줌
-      //밋업스냐 헤드헌팅스냐...
-
       alert("onSuccess invalidate 모임 정보 수정 성공!");
       router.push("/");
     },

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { BASE_URL } from "@/constants/baseURL";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Meetup } from "@/types/meetupType";
 import ThumbnailItem from "./ThumbnailItem";
 
