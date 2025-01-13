@@ -2,7 +2,6 @@
 
 import { PASSWORD_REGULAR_EXPRESSION } from "@/constants/regularExpressionConstants";
 import { createUser } from "@/services/user.service";
-
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";

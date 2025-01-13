@@ -33,6 +33,38 @@ export const login = async ({ email, password }: LoginProps) => {
   }
 };
 
+// refreshToken
+export const refreshToken = async () => {
+  const refreshToken = Cookies.get("refreshToken"); // 쿠키에서 refresh 토큰 가져오기
+  if (!refreshToken) {
+    console.error("No refreshToken available.");
+    return null;
+  }
+
+  try {
+    const response = await fetch(`${BASE_URL}/api/v1/auth/refresh`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ refresh: refreshToken }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to refresh token");
+    }
+
+    const { access, refresh } = await response.json();
+    Cookies.set("accessToken", access, { expires: 1, secure: true, sameSite: "Strict" });
+    Cookies.set("refreshToken", refresh, { expires: 7, secure: true, sameSite: "Strict" });
+
+    // console.log("토큰 갱신 성공");
+  } catch (error) {
+    console.error("토큰 갱신 요청 실패:", error);
+    return null;
+  }
+};
+
 // recheck password
 export const recheckPassword = async (password: string) => {
   const accessToken = Cookies.get("accessToken");
@@ -69,34 +101,37 @@ export const recheckPassword = async (password: string) => {
   }
 };
 
-// refreshToken
-export const refreshToken = async () => {
-  const refreshToken = Cookies.get("refreshToken"); // 쿠키에서 refresh 토큰 가져오기
-  if (!refreshToken) {
-    console.error("No refreshToken available.");
-    return null;
-  }
-
+// reset password
+export const resetPassword = async (password: string) => {
+  const accessToken = Cookies.get("accessToken");
   try {
-    const response = await fetch(`${BASE_URL}/api/v1/auth/refresh`, {
+    const response = await fetch(`${BASE_URL}/api/v1/auth/reset-password`, {
       method: "POST",
       headers: {
+        Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ refresh: refreshToken }),
+      body: JSON.stringify({
+        password,
+      }),
     });
 
     if (!response.ok) {
-      throw new Error("Failed to refresh token");
+      const errorData = await response.json();
+      const errorMessage = errorData.detail?.[0]?.msg || "비밀번호 변경 중 오류가 발생했습니다.";
+
+      throw new Error(errorMessage);
     }
 
     const { access, refresh } = await response.json();
+
     Cookies.set("accessToken", access, { expires: 1, secure: true, sameSite: "Strict" });
     Cookies.set("refreshToken", refresh, { expires: 7, secure: true, sameSite: "Strict" });
 
-    // console.log("토큰 갱신 성공");
+    return { access, refresh };
   } catch (error) {
-    console.error("토큰 갱신 요청 실패:", error);
-    return null;
+    console.error("네트워크 오류:", error);
+    alert("로그인 처리 중 문제가 발생했습니다.");
+    return;
   }
 };
