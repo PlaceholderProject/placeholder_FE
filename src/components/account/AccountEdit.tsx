@@ -6,13 +6,13 @@ import { RootState } from "@/stores/store";
 import { setUser } from "@/stores/userSlice";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { FaCog } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 
 const AccountEdit = () => {
   const [profileImage, setProfileImage] = useState<string>("");
-  const [profileImagePreview, setProfileImagePreview] = useState<string>("/profile.png");
   const [nickname, setNickname] = useState("");
   const [nicknameWarning, setNicknameWarning] = useState("");
   const [bio, setBio] = useState("");
@@ -24,14 +24,14 @@ const AccountEdit = () => {
   const user = useSelector((state: RootState) => state.user.user);
   const dispatch = useDispatch();
 
+  const router = useRouter();
+
   useEffect(() => {
     if (user) {
       if (user.profileImage) {
         const imagePath = user.profileImage.startsWith("http") ? user.profileImage : `${BASE_URL}${user.profileImage}`;
-        setProfileImagePreview(imagePath);
         setProfileImage(imagePath);
       } else {
-        setProfileImagePreview("/profile.png");
         setProfileImage("/profile.png");
       }
       setNickname(user.nickname || "");
@@ -102,6 +102,9 @@ const AccountEdit = () => {
         }),
       );
       setProfileImage(imageUrl);
+
+      alert("회원 정보가가 변경되었습니다.");
+      router.replace("/account");
     } else {
       console.error("Update failed");
       return;

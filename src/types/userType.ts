@@ -1,5 +1,12 @@
 export interface EditedUserProps {
-  profileImage: string | ArrayBuffer | null;
+  profileImage: File | null;
   nickname: string;
-  bio: string | null;
+  bio: string;
 }
+
+export type User = {
+  email: string;
+  nickname: string;
+  bio: string;
+  image: string;
+};

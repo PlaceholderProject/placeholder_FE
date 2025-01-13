@@ -2,7 +2,15 @@ import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./authSlice";
 import userReducer from "./userSlice";
 import storage from "redux-persist/lib/storage";
-import { persistReducer, persistStore } from "redux-persist";
+import { createTransform, FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE } from "redux-persist";
+
+// 데이터 직렬화/비직렬화 변환 설정
+const transform = createTransform(
+  // 저장하기 전에 실행 (인코딩)
+  inboundState => JSON.stringify(inboundState),
+  // 불러올 때 실행 (디코딩)
+  outboundState => JSON.parse(outboundState),
+);
 
 // redux-persist 설정
 const persistConfig = {
@@ -18,6 +26,12 @@ export const store = configureStore({
     auth: authReducer,
     user: persistedUserReducer,
   },
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
 });
 
 export const persistor = persistStore(store);

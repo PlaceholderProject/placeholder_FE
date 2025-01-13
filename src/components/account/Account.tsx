@@ -2,16 +2,19 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FaChevronRight } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
 import { getUser } from "@/services/user.service";
 import { setUser } from "@/stores/userSlice";
+import { BASE_URL } from "@/constants/baseURL";
 
 const Account = () => {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user.user);
+
+  const [profileImage, setProfileImage] = useState<string>("");
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -22,19 +25,33 @@ const Account = () => {
             email: data.email,
             nickname: data.nickname,
             bio: data.bio,
-            profileImage: data.image_url,
+            profileImage: data.image,
           }),
         );
+        setProfileImage(data.image || "/profile.png");
       }
+      console.log(data);
     };
-    fetchUser();
-  }, [dispatch]);
+    if (!user) {
+      fetchUser();
+    } else {
+      if (user.profileImage) {
+        const imagePath = user.profileImage.startsWith("http") ? user.profileImage : `${BASE_URL}${user.profileImage}`;
+        setProfileImage(imagePath);
+      } else {
+        setProfileImage("/profile.png");
+      }
+      return;
+    }
+  }, [dispatch, user]);
+
+  console.log(user.profileImage);
 
   return (
     <div className="flex flex-col items-center">
       <h2 className="">계정 관리</h2>
       <div className="border-2 flex flex-col items-center rounded-xl">
-        <Image src={user.profileImage || "/profile.png"} alt="프로필 이미지" width="100" height="100" unoptimized={true} />
+        <Image src={profileImage || "/profile.png"} alt="프로필 이미지" width="100" height="100" unoptimized={true} />
         <p>
           🎉<span className="font-bold">{user.nickname}</span>님, 환영합니다.
         </p>
