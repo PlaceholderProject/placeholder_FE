@@ -1,7 +1,7 @@
 import { BASE_URL } from "@/constants/baseURL";
 import Cookies from "js-cookie";
 import { refreshToken } from "./auth.service";
-import { EditedUserProps } from "@/types/userType";
+import { EditedUserProps, User } from "@/types/userType";
 import { NewUserProps } from "@/types/authType";
 
 // create user
@@ -32,21 +32,19 @@ export const createUser = async (newUser: NewUserProps) => {
 };
 
 // get user
-export const getUser = async (retryCount: number = 0) => {
+export const getUser = async (retryCount: number = 0): Promise<User | null> => {
   const accessToken = Cookies.get("accessToken");
 
   if (!accessToken) return null;
   try {
-    const response = await fetch(`${BASE_URL}/api/v1/user`, {
+    const response = await fetch(`${BASE_URL}/api/v1/user/me`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
       },
     });
 
     if (!response.ok) {
-      //   console.error("API 요청 실패");
       if (response.status === 401 && retryCount < 3) {
         await refreshToken(); // 토큰 갱신
         return getUser(retryCount + 1); // 데이터 다시 요청
@@ -68,18 +66,31 @@ export const editUser = async (editedUser: EditedUserProps, retryCount: number =
   if (!accessToken) return null;
 
   const formData = new FormData();
+  // payload 필드에 JSON 데이터 추가
+  // formData.append(
+  //   "payload",
+  //   JSON.stringify({
+  //     nickname: editedUser.nickname,
+  //     bio: editedUser.bio,
+  //   }),
+  // );
   formData.append("nickname", editedUser.nickname);
   formData.append("bio", editedUser.bio);
-  formData.append("profileImage", editedUser.profileImage);
+
+  // profileImage 추가
+  if (editedUser.profileImage) {
+    console.log("프로필 이미지 추가 전:", editedUser.profileImage); // 디버깅
+    formData.append("image", editedUser.profileImage);
+    console.log("프로필 이미지 추가 완료", editedUser.profileImage); // 디버깅
+  }
 
   try {
-    const response = await fetch(`${BASE_URL}/api/v1/user`, {
+    const response = await fetch(`${BASE_URL}/api/v1/user/me`, {
       method: "PUT",
+      body: formData,
       headers: {
         Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "multipart/form-data",
       },
-      body: JSON.stringify(editedUser),
     });
 
     if (!response.ok) {
@@ -91,7 +102,6 @@ export const editUser = async (editedUser: EditedUserProps, retryCount: number =
       return null;
     }
     const result = await response.json();
-    console.log(result);
     return result;
   } catch (error) {
     console.error("사용자 데이터 수정 중 오류", error);
@@ -102,7 +112,7 @@ export const editUser = async (editedUser: EditedUserProps, retryCount: number =
 export const deleteUser = async () => {
   try {
     const accessToken = Cookies.get("accessToken");
-    const response = await fetch(`${BASE_URL}/api/v1/user`, {
+    const response = await fetch(`${BASE_URL}/api/v1/user/me`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${accessToken}`,

@@ -1,66 +1,54 @@
 "use client";
 
-// import { BASE_URL } from "@/constants/baseURL";
-// import { editUser } from "@/services/user.service";
+import { BASE_URL } from "@/constants/baseURL";
+import { editUser } from "@/services/user.service";
 import { RootState } from "@/stores/store";
+import { setUser } from "@/stores/userSlice";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { FaCog } from "react-icons/fa";
-import { useSelector } from "react-redux";
-// import Cookies from "js-cookie";
+import { useDispatch, useSelector } from "react-redux";
 
 const AccountEdit = () => {
-  const [profileImage, setProfileImage] = useState<string>("/profile.png");
+  const [profileImage, setProfileImage] = useState<string>("");
+  const [profileImagePreview, setProfileImagePreview] = useState<string>("/profile.png");
   const [nickname, setNickname] = useState("");
   const [nicknameWarning, setNicknameWarning] = useState("");
   const [bio, setBio] = useState("");
   const [bioTextLength, setBioTextLength] = useState(0);
   const [bioWarning, setBioWarning] = useState("");
-  const account = useSelector((state: RootState) => state.user.user);
+
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const user = useSelector((state: RootState) => state.user.user);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    if (account) {
-      setProfileImage(account.profileImage || "");
-      setNickname(account.nickname || "");
-      setBio(account.bio || "");
+    if (user) {
+      if (user.profileImage) {
+        const imagePath = user.profileImage.startsWith("http") ? user.profileImage : `${BASE_URL}${user.profileImage}`;
+        setProfileImagePreview(imagePath);
+        setProfileImage(imagePath);
+      } else {
+        setProfileImagePreview("/profile.png");
+        setProfileImage("/profile.png");
+      }
+      setNickname(user.nickname || "");
+      setBio(user.bio || "");
     }
-  }, [account]);
+  }, [user]);
 
-  // **1**
-  // const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const file = event.target.files?.[0];
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     reader.onloadend = () => {
-  //       setProfileImage(reader.result); // 미리보기 이미지 URL 설정
-  //     };
-  //     reader.readAsDataURL(file);
-  //   }
-  // };
+  const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const objectUrl = URL.createObjectURL(file);
+      setProfileImage(objectUrl); // Blob URL을 React 상태에 설정
+      console.log("Blob URL 생성:", objectUrl);
+    }
+  };
 
-  // **2**
-  // const handleProfileImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const file = event.target.files?.[0];
-
-  //   if (!file) return;
-  //   setProfileImage("");
-
-  //   const reader = new FileReader();
-
-  //   reader.readAsDataURL(file);
-
-  //   reader.onload = e => {
-  //     if (reader.readyState === 2 && e.target?.result) {
-  //       setProfileImage(e.target.result as string); // 상태 업데이트
-  //     }
-  //   };
-  // };
-
-  // const convertDataURLToBlob = async (dataURL: string): Promise<Blob> => {
-  //   const response = await fetch(dataURL);
-  //   return await response.blob();
-  // };
+  console.log("파일 등록시", profileImage);
 
   const handleNicknameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value.length > 8) {
@@ -85,61 +73,39 @@ const AccountEdit = () => {
   const handleAccountEditFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    // **2**
-    // const formData = new FormData();
-    // formData.append(
-    //   "stay",
-    //   new Blob(
-    //     [
-    //       JSON.stringify({
-    //         nickname,
-    //         bio,
-    //       }),
-    //     ],
-    //     { type: "application/json" },
-    //   ),
-    // );
+    const file = fileInputRef.current?.files?.[0];
 
-    // if (profileImage !== "/profile.png") {
-    //   console.log("파일 객체로 변환 전 이미지", profileImage);
+    console.log(file?.name);
+    console.log(profileImage);
 
-    //   const profileImageBlob = await convertDataURLToBlob(profileImage);
-    //   const profileImageFile = new File([profileImageBlob], "profileImage.png", { type: profileImageBlob.type });
+    const editedUser = {
+      nickname,
+      bio,
+      profileImage: file || null,
+    };
 
-    //   formData.append("profileImage", profileImageFile);
-    //   console.log("파일 객체로 변환 후 이미지", profileImageFile);
-    // }
+    const response = await editUser(editedUser);
 
-    // const accessToken = Cookies.get("accessToken");
-    // try {
-    //   const response = await fetch(`${BASE_URL}/api/v1/user`, {
-    //     method: "PUT",
-    //     headers: {
-    //       Authorization: `Bearer ${accessToken}`,
-    //     },
-    //     body: formData,
-    //   });
+    if (response) {
+      console.log("Update successful:", response);
 
-    //   if (!response.ok) {
-    //     throw new Error(`HTTP error! status: ${response.status}`);
-    //   }
-    //   const result = await response.json();
-    //   console.log(result);
-    // } catch (error) {
-    //   console.error("회원 정보 수정 중 오류 발생", error);
-    // }
+      const imageUrl = response.image ? (response.image.startsWith("http") ? response.image : `${BASE_URL}${response.image}`) : "/profile.png"; // 기본 이미지 경로
 
-    // **1**
-    // const editedUser = {
-    //   profileImage,
-    //   nickname,
-    //   bio,
-    // };
+      console.log(imageUrl);
 
-    // const response = await editUser(editedUser);
-    // if (response) {
-    //   console.log(nickname);
-    // }
+      dispatch(
+        setUser({
+          email: response.email,
+          nickname: response.nickname,
+          bio: response.bio,
+          profileImage: imageUrl,
+        }),
+      );
+      setProfileImage(imageUrl);
+    } else {
+      console.error("Update failed");
+      return;
+    }
   };
 
   return (
@@ -159,7 +125,8 @@ const AccountEdit = () => {
                   type="file"
                   id="profileImage"
                   accept="image/*"
-                  // onChange={handleProfileImageChange}
+                  ref={fileInputRef}
+                  onChange={handleProfileImageChange}
                   className="hidden" // 숨김 처리
                 />
               </label>
