@@ -21,7 +21,7 @@ export const createUser = async (newUser: NewUserProps) => {
       return;
     }
 
-    const result = await response.json();
+    const result = response.status;
 
     return result;
   } catch (error) {
@@ -66,22 +66,12 @@ export const editUser = async (editedUser: EditedUserProps, retryCount: number =
   if (!accessToken) return null;
 
   const formData = new FormData();
-  // payload 필드에 JSON 데이터 추가
-  // formData.append(
-  //   "payload",
-  //   JSON.stringify({
-  //     nickname: editedUser.nickname,
-  //     bio: editedUser.bio,
-  //   }),
-  // );
+
   formData.append("nickname", editedUser.nickname);
   formData.append("bio", editedUser.bio);
 
-  // profileImage 추가
   if (editedUser.profileImage) {
-    console.log("프로필 이미지 추가 전:", editedUser.profileImage); // 디버깅
     formData.append("image", editedUser.profileImage);
-    console.log("프로필 이미지 추가 완료", editedUser.profileImage); // 디버깅
   }
 
   try {
@@ -94,7 +84,6 @@ export const editUser = async (editedUser: EditedUserProps, retryCount: number =
     });
 
     if (!response.ok) {
-      //   console.error("API 요청 실패");
       if (response.status === 401 && retryCount < 3) {
         await refreshToken(); // 토큰 갱신
         return getUser(retryCount + 1); // 데이터 다시 요청

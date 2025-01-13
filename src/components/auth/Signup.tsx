@@ -114,8 +114,8 @@ const Signup = () => {
       bio,
     };
 
-    const response = await createUser(newUser);
-    if (response) {
+    const result = await createUser(newUser);
+    if (result) {
       alert(`${newUser.nickname}님 회원가입을 축하드립니다.`);
       router.replace("/login");
     }
