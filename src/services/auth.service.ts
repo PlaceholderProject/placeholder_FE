@@ -17,6 +17,7 @@ export const login = async ({ email, password }: LoginProps) => {
     });
 
     if (!response.ok) {
+      console.log("이메일 또는 비밀번호가 잘못되었습니다. 다시 시도해주세요.");
       throw new Error("이메일 또는 비밀번호가 잘못되었습니다. 다시 시도해주세요.");
     }
 
@@ -28,7 +29,7 @@ export const login = async ({ email, password }: LoginProps) => {
     return { access, refresh };
   } catch (error) {
     console.error("네트워크 오류:", error);
-    alert("로그인 처리 중 문제가 발생했습니다.");
+    alert("이메일 또는 비밀번호가 잘못되었습니다. 다시 시도해주세요.");
     return;
   }
 };
