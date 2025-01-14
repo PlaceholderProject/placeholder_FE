@@ -17,22 +17,22 @@ const Account = () => {
   const [profileImage, setProfileImage] = useState<string>("");
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const data = await getUser();
-      if (data) {
-        dispatch(
-          setUser({
-            email: data.email,
-            nickname: data.nickname,
-            bio: data.bio,
-            profileImage: data.image,
-          }),
-        );
-        setProfileImage(data.image || "/profile.png");
-      }
-      console.log(data);
-    };
-    if (!user) {
+    if (!user.email) {
+      const fetchUser = async () => {
+        const data = await getUser();
+        if (data) {
+          dispatch(
+            setUser({
+              email: data.email,
+              nickname: data.nickname,
+              bio: data.bio,
+              profileImage: data.image,
+            }),
+          );
+          setProfileImage(data.image || "/profile.png");
+        }
+        console.log(data);
+      };
       fetchUser();
     } else {
       if (user.profileImage) {
@@ -41,7 +41,6 @@ const Account = () => {
       } else {
         setProfileImage("/profile.png");
       }
-      return;
     }
   }, [dispatch, user]);
 

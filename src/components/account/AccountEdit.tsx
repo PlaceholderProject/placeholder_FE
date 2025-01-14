@@ -1,7 +1,7 @@
 "use client";
 
 import { BASE_URL } from "@/constants/baseURL";
-import { editUser } from "@/services/user.service";
+import { editUser, getUser } from "@/services/user.service";
 import { RootState } from "@/stores/store";
 import { setUser } from "@/stores/userSlice";
 import Image from "next/image";
@@ -27,7 +27,24 @@ const AccountEdit = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (user) {
+    if (!user.email) {
+      const fetchUser = async () => {
+        const data = await getUser();
+        if (data) {
+          dispatch(
+            setUser({
+              email: data.email,
+              nickname: data.nickname,
+              bio: data.bio,
+              profileImage: data.image,
+            }),
+          );
+          setProfileImage(data.image || "/profile.png");
+        }
+        console.log(data);
+      };
+      fetchUser();
+    } else {
       if (user.profileImage) {
         const imagePath = user.profileImage.startsWith("http") ? user.profileImage : `${BASE_URL}${user.profileImage}`;
         setProfileImage(imagePath);
