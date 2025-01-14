@@ -8,7 +8,8 @@ import { FaRegBell } from "react-icons/fa6";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsAuthenticated } from "@/stores/authSlice";
-import { RootState } from "@/stores/store";
+import { persistor, RootState } from "@/stores/store";
+import { logout } from "@/stores/userSlice";
 
 const Header = () => {
   const [isRead, setIsRead] = useState(true);
@@ -28,11 +29,15 @@ const Header = () => {
     }
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     router.replace("/");
     Cookies.remove("accessToken");
     Cookies.remove("refreshToken");
     dispatch(setIsAuthenticated(false));
+    dispatch(logout());
+
+    await persistor.purge();
+    console.log("User data cleared from persist storage.");
   };
 
   const handleNotificationPage = () => {
