@@ -7,6 +7,7 @@ import { LabeledInputProps } from "@/types/meetupType";
 import { LabeledSelectProps } from "@/types/meetupType";
 import { useRouter } from "next/navigation";
 import { BASE_URL } from "@/constants/baseURL";
+import { editMeetupApi, getMeetupByIdApi } from "@/services/meetup.service";
 
 const token = process.env.NEXT_PUBLIC_MY_TOKEN;
 
@@ -70,43 +71,44 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   // const [previewImage, setPreviewImage] = useState<string | null>("image:/media/meetup_images/pv_test.JPG");
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
-  // id 해당 모임 get 함수
-  const getMeetupById = async () => {
-    const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  // id 해당 모임 get api
+  // const getMeetupById = async () => {
+  //   const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}`, {
+  //     method: "GET",
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //     },
+  //   });
 
-    if (!response.ok) {
-      console.error("가져오기 실패: ", response.status, response.statusText);
-      throw new Error("해당 id 모임 가져오기 실패");
-    }
+  //   if (!response.ok) {
+  //     console.error("가져오기 실패: ", response.status, response.statusText);
+  //     throw new Error("해당 id 모임 가져오기 실패");
+  //   }
 
-    const meetupByIdData = await response.json();
-    // console.log("json()하지 않은 해당 id 모임: ", response);
-    // console.log("가져온 해당 id 모임:", meetupByIdData.json());
-    // 아니 왜 콘솔에 .json() 넣으면 브라우저 에러 나는 것?
-    // 안 그러다기???????????????
+  //   const meetupByIdData = await response.json();
+  //   // console.log("json()하지 않은 해당 id 모임: ", response);
+  //   // console.log("가져온 해당 id 모임:", meetupByIdData.json());
+  //   // 아니 왜 콘솔에 .json() 넣으면 브라우저 에러 나는 것?
+  //   // 안 그러다기???????????????
 
-    // // 🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠 이거는 필요 없고 onSuccess에서 하면 됨 되는거야 마는거야 🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠 아마 안됨
-    // setPreviewImage(`${meetupByIdData.image}`);
+  //   // // 🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠 이거는 필요 없고 onSuccess에서 하면 됨 되는거야 마는거야 🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠 아마 안됨
+  //   // setPreviewImage(`${meetupByIdData.image}`);
 
-    console.log("가져온 데이터: ", meetupByIdData);
-    console.log("meetupId 타입 뭐야?", typeof meetupByIdData.id);
+  //   console.log("가져온 데이터: ", meetupByIdData);
+  //   console.log("meetupId 타입 뭐야?", typeof meetupByIdData.id);
 
-    return meetupByIdData;
-  };
+  //   return meetupByIdData;
+  // };
 
   //id 해당 모임 가져오기 탠스택
+  // 🟨 이것도 왜 필요한지 모르겠는데 갑자기? 캐싱떄문이야?
   const {
     data: previousMeetupData,
     isPending,
     isError,
   } = useQuery<Meetup, Error>({
     queryKey: ["meetup", meetupId],
-    queryFn: getMeetupById,
+    queryFn: () => getMeetupByIdApi(meetupId),
 
     // 💞 onSuccess는 queryFn인 metMeetupById가 데이터 반환에 성공했을 때 호출됨
     // 💞 queryFn에서 반환한 데이터를 onSuccess의 매개변수로 전달
@@ -134,46 +136,33 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
     }
   }, [previousMeetupData]);
 
-  // useEffect(() => {
-  //   previousMeetupData?.startedAt === null ? alert("null이다!") : setIsStartedAtNull(true);
-  // }, [previousMeetupData]);
-  // 위 코드는 시작 날짜가 null이 아닌데도 null이다!가 뜨고 미정 체크되어있으면서 날짜가 정해져서 들어가있음 뭔가 꼬임
-  // 아 삼항연산자 잘못씀^ㅇ^..
-
   useEffect(() => {
     previousMeetupData?.startedAt === null ? setIsStartedAtNull(true) : setIsStartedAtNull(false);
     previousMeetupData?.endedAt === null ? setIsEndedAtNull(true) : setIsEndedAtNull(false);
   }, [previousMeetupData]);
 
-  // useEffect(() => {
-  //   if (previousMeetupData?.endedAt === null) {
-  //     setIsEndedAtNull(true);
-  //   } else {
-  //     setIsEndedAtNull(false);
+  // 수정 api
+  // const editMeetupApi = async (formData: FormData): Promise<void> => {
+  //   const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}`, {
+  //     method: "PUT",
+  //     headers: { Authorization: `Bearer ${token}` },
+  //     body: formData,
+  //   });
+  //   if (!response.ok) {
+  //     throw new Error("모임 수정 실패");
   //   }
-  // }, [previousMeetupData]);
+
+  //   // 🚨🚨🚨🚨🚨서버 응답 형태 확인용 지금 date랑 checkbox 인풋만 수정이 안되거든요🚨🚨🚨🚨🚨
+
+  //   const responseData = await response.json();
+  //   console.log("서버 응답:", responseData);
+  //   return responseData;
+  // };
 
   //수정 뮤테이션
+  // 근데 뮤테이션은 최상단에 위치시키라고 했던거같은데
   const editMutation = useMutation<void, Error, FormData>({
-    mutationFn: async (formData: FormData) => {
-      const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}`, {
-        method: "PUT",
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error("모임 수정 실패");
-      }
-
-      // 🚨🚨🚨🚨🚨서버 응답 형태 확인용 지금 date랑 checkbox 인풋만 수정이 안되거든요🚨🚨🚨🚨🚨
-
-      const responseData = await response.json();
-      console.log("서버 응답:", responseData);
-      return responseData;
-      // alert("mutation Fn 모임 정보 수정 성공!");
-      // router.push("/");
-    },
+    mutationFn: formData => editMeetupApi(meetupId, formData),
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["meetup", meetupId] });

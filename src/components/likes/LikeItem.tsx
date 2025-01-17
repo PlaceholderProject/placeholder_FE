@@ -1,19 +1,16 @@
 "use client";
 
-import { LikeProps } from "@/types/likeType";
-import React, { useState } from "react";
+import { LikeItemProps } from "@/types/likeType";
+import React from "react";
 import { IoMdHeart, IoMdHeartEmpty } from "react-icons/io";
 
-const LikeArea = ({ isLike, likeCount, handleToggleLike }: LikeProps) => {
-  // const [isHeadhuntingLike, setIsHeadhuntingLike] = useState(false);
-
+const LikeItem = ({ isLike, likeCount, handleToggleLike }: LikeItemProps) => {
   return (
     <>
-      <div>🌟Like Area🌟</div>
-      <p>{isLike?.toString()}</p>
-      <p>{likeCount}</p>
-      {/* <button onClick={() => setIsHeadhuntingLike(!isHeadhuntingLike)}>좋아요 눌렀니? {isHeadhuntingLike ? <IoMdHeart /> : <IoMdHeartEmpty />}</button> */}
+      <div>🌟개별라이크🌟</div>
       <button onClick={handleToggleLike}>{isLike ? <IoMdHeart /> : <IoMdHeartEmpty />}</button>
+      <p>좋아요 눌렸니? {isLike?.toString()}</p>
+      <p>좋아요 숫자 : {likeCount}</p>
 
       {/* 👇👇👇👇👇👇👇👇아래 thumbnail.isLike로 접근한 건 잘못된 코드인데 기억하라고 남겨둠 */}
       {/* <p>좋아요 눌렀니? {thumbnail.isLike.toString()}</p>
@@ -24,4 +21,4 @@ const LikeArea = ({ isLike, likeCount, handleToggleLike }: LikeProps) => {
   );
 };
 
-export default LikeArea;
+export default LikeItem;

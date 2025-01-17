@@ -8,6 +8,7 @@ import { LabeledSelectProps } from "@/types/meetupType";
 import { useRouter } from "next/navigation";
 import { refreshToken } from "@/services/auth.service";
 import { BASE_URL } from "@/constants/baseURL";
+import { createMeetupApi } from "@/services/meetup.service";
 
 const token = process.env.NEXT_PUBLIC_MY_TOKEN;
 
@@ -82,7 +83,7 @@ const MeetupForm = () => {
 
   // useMutation은 최상단에 위치시키라고 함
   const createMutation = useMutation({
-    mutationFn: (blobFormData: FormData) => createMeetup(blobFormData),
+    mutationFn: (meetupFormData: FormData) => createMeetupApi(meetupFormData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["meetups"] });
       router.push("/");
@@ -93,57 +94,25 @@ const MeetupForm = () => {
     },
   });
 
-  // ☀️ ☀️ meetups 리스트를 가져오는 로직이 없어도 meetups라는 쿼리키를 가진 데이터가 유효하지 않다고 판단하고 무효화하는 작업이 가능하다!
-  // getMeetups 함수
-  // const getMeetups = async () => {
+  // 모임 생성 api
+  // const createMeetupApi = async (blobFormData: FormData): Promise<void> => {
   //   const response = await fetch(`${BASE_URL}/api/v1/meetup`, {
-  //     method: "GET",
+  //     method: "POST",
   //     headers: {
+  //       // ContentType: "multipart/formdata",
   //       Authorization: `Bearer ${token}`,
   //     },
+  //     body: blobFormData,
   //   });
+
   //   if (!response.ok) {
-  //     throw new Error("모임 목록 가져오기 실패");
+  //     const errorText = await response.text();
+  //     await refreshToken();
+  //     console.log(errorText);
+  //     throw new Error("모임 생성 실패");
   //   }
-  //   const meetupsData = await response.json();
-  //   console.log("json()하지 않은 모임 목록: ", response);
-  //   console.log("가져온 모임 목록:", meetupsData);
-  //   return meetupsData;
+  //   return await response.json();
   // };
-
-  // 모임 목록 가져오기 탠스택쿼리
-  // const {
-  //   data: previousMeetups,
-  //   isPending,
-  //   isError,
-  // } = useQuery({
-  //   queryKey: ["meetups"],
-  //   queryFn: getMeetups,
-  //   retry: 0,
-  // });
-
-  // if (isPending) return <div>로딩중</div>;
-  // if (isError) return <div>에러 발생</div>;
-
-  // 모임 생성
-  const createMeetup = async (blobFormData: FormData): Promise<void> => {
-    const response = await fetch(`${BASE_URL}/api/v1/meetup`, {
-      method: "POST",
-      headers: {
-        // ContentType: "multipart/formdata",
-        Authorization: `Bearer ${token}`,
-      },
-      body: blobFormData,
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      await refreshToken();
-      console.log(errorText);
-      throw new Error("모임 생성 실패");
-    }
-    return await response.json();
-  };
 
   const handleMeetupFormSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -238,7 +207,7 @@ const MeetupForm = () => {
       image: imageRef.current?.value || "",
     };
 
-    const blobFormData = new FormData();
+    const meetupFormData = new FormData();
 
     // 이미지 파일 추가
 
@@ -247,7 +216,7 @@ const MeetupForm = () => {
 
     // blobFormData.append("newMeetup", JSON.stringify(newMeetup));
 
-    blobFormData.append("payload", JSON.stringify(newMeetup));
+    meetupFormData.append("payload", JSON.stringify(newMeetup));
 
     // formData.append("newMeetup", JSON.stringify(newMeetup));
 
@@ -258,19 +227,26 @@ const MeetupForm = () => {
     if (imageRef.current?.files?.[0]) {
       const file = imageRef.current.files[0];
       console.log("이미지 파일 정보:", file.name, file.type, file.size);
-      blobFormData.append("image", file);
+      meetupFormData.append("image", file);
     } else {
       console.log("imageRef: ", imageRef);
       console.log("imageRef.current: ", imageRef.current);
       console.log("imageRef.current.value: ", imageRef.current?.value);
     }
 
-    for (const pair of blobFormData.entries()) {
-      console.log("blobFormData 출력:", pair[0], pair[1]); // key와 value 출력
+    for (const pair of meetupFormData.entries()) {
+      console.log("meetupFormData 출력:", pair[0], pair[1]); // key와 value 출력
     }
 
-    createMutation.mutate(blobFormData, {
-      // 🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵  코드잇 보고 넣어봄 🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵
+    createMutation.mutate(meetupFormData, {
+      // 버튼 클릭되면 handleMeetupForm 실행
+      // => 그 안에 지금 createMutation.mutate(formData) 있는거고
+      // createMutation은 invalidasteQueries를 해
+      // createMutation 안에 달린 mutationFn가 createMeetupApi 함수야 ("POST")
+      // 원래 createMeetup 함수였는데 api 여서 이름 바꾼거야
+      //
+
+      // 🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵  코드잇 보고 넣어봄 🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵
       onSuccess: () => {
         alert("모임 생성 성공!!!!");
       },
