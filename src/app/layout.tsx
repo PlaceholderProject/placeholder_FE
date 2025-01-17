@@ -27,12 +27,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <ReduxProvider>
-          <Header />
-          {children}
-        </ReduxProvider>
-      </body>
+      <Providers>
+        <QueryProvider>
+          <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+            <Header />
+            {children}
+          </body>
+        </QueryProvider>
+      </Providers>
     </html>
   );
 }
