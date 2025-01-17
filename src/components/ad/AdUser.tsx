@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { getAccount } from "@/services/account.service";
+
 import { useEffect } from "react";
 import { AdUserData } from "@/types/adType";
 import Cookies from "js-cookie";
+import { getUser } from "@/services/user.service";
 
 const AdUser = ({ meetupId }: { meetupId: number }) => {
   const [adUserData, setAdUserData] = useState<AdUserData | null>(null);
@@ -13,7 +14,7 @@ const AdUser = ({ meetupId }: { meetupId: number }) => {
     console.log("현재 내 토큰:", getAccountToken);
     // 💖💖💖💖💖getAccount 함수의 fetch url 엔드포인트 /api/v1/user로 수정하면 유저 정보 잘 가져와진다!!!💖💖💖💖💖💖
     // 🌽🌽🌽🌽🌽🌽🌽🌽🌽🌽🌽🌽🌽 이브한테 물어보기 🌽🌽🌽🌽🌽🌽🌽🌽🌽🌽🌽🌽🌽🌽🌽🌽🌽
-    getAccount().then(setAdUserData);
+    getUser().then(setAdUserData);
   }, []);
 
   // if (!adUserData) {
