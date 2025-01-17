@@ -1,12 +1,12 @@
 import ScheduleForm from "@/components/schedule/ScheduleForm";
 
-interface ScheduleCreatePageProps {
+interface MeetupCreatePageProps {
   params: {
     meetupId: string;
   };
 }
 
-const ScheduleCreatePage = ({ params }: ScheduleCreatePageProps) => {
+const MeetupCreatePage = ({ params }: MeetupCreatePageProps) => {
   const meetupId = parseInt(params.meetupId);
 
   return (
@@ -17,4 +17,4 @@ const ScheduleCreatePage = ({ params }: ScheduleCreatePageProps) => {
   );
 };
 
-export default ScheduleCreatePage;
+export default MeetupCreatePage;
