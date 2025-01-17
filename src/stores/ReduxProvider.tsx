@@ -9,7 +9,7 @@ type Children = {
   children: React.ReactNode;
 };
 
-export default function Providers({ children }: Children) {
+export default function ReduxProvider({ children }: Children) {
   return (
     <>
       <Provider store={store}>
