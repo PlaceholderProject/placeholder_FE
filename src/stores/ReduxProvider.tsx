@@ -1,5 +1,3 @@
-//-----TODO: 파일 이름을 바꿔야할 것 같습니당!!!!-----
-
 "use client";
 
 import React, { useState } from "react";
