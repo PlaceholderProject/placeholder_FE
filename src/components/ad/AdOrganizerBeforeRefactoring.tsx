@@ -7,7 +7,9 @@ import { AdUserData } from "@/types/adType";
 import Cookies from "js-cookie";
 import { getUser } from "@/services/user.service";
 
-const AdUser = ({ meetupId }: { meetupId: number }) => {
+// 썸네일.오거나이저.닉네임;
+
+const AdOrganizerBeforeReactoring = ({ meetupId }: { meetupId: number }) => {
   const [adUserData, setAdUserData] = useState<AdUserData | null>(null);
   useEffect(() => {
     const getAccountToken = Cookies.get("accessToken");
@@ -40,7 +42,7 @@ const AdUser = ({ meetupId }: { meetupId: number }) => {
   );
 };
 
-export default AdUser;
+export default AdOrganizerBeforeReactoring;
 
 // 👇 현 컴포넌트에서 아래 코드처럼
 // 👇👇👇👇👇 로딩, 에러처리까지 해주는 것이 UX 측면에서 좋긴 하다

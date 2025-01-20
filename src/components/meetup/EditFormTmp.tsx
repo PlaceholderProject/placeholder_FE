@@ -6,6 +6,7 @@ import { Meetup } from "@/types/meetupType";
 import { LabeledInputProps } from "@/types/meetupType";
 import { LabeledSelectProps } from "@/types/meetupType";
 import { useRouter } from "next/navigation";
+import { getMeetupByIdApi } from "@/services/meetup.service";
 
 const token = process.env.NEXT_PUBLIC_MY_TOKEN;
 
@@ -67,34 +68,34 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   // setPreviewImage는 최상단에 있는데
   // 미리 보기 설정 로직은 아래에 있다.
 
-  // id 해당 모임 get 함수
-  const getMeetupById = async () => {
-    const response = await fetch(`http://localhost:8000/api/v1/meetup/${meetupId}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  // // id 해당 모임 get 함수
+  // const getMeetupById = async () => {
+  //   const response = await fetch(`http://localhost:8000/api/v1/meetup/${meetupId}`, {
+  //     method: "GET",
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //     },
+  //   });
 
-    if (!response.ok) {
-      console.error("가져오기 실패: ", response.status, response.statusText);
-      throw new Error("해당 id 모임 가져오기 실패");
-    }
+  //   if (!response.ok) {
+  //     console.error("가져오기 실패: ", response.status, response.statusText);
+  //     throw new Error("해당 id 모임 가져오기 실패");
+  //   }
 
-    const meetupByIdData = await response.json();
-    // console.log("json()하지 않은 해당 id 모임: ", response);
-    // console.log("가져온 해당 id 모임:", meetupByIdData.json());
-    // 아니 왜 콘솔에 .json() 넣으면 브라우저 에러 나는 것?
-    // 안 그러다기???????????????
+  //   const meetupByIdData = await response.json();
+  //   // console.log("json()하지 않은 해당 id 모임: ", response);
+  //   // console.log("가져온 해당 id 모임:", meetupByIdData.json());
+  //   // 아니 왜 콘솔에 .json() 넣으면 브라우저 에러 나는 것?
+  //   // 안 그러다기???????????????
 
-    // // 🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠 이거 되는거야 마는거야 🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠 아마 안됨
-    setPreviewImage(`${meetupByIdData.image}`);
+  //   // // 🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠 이거 되는거야 마는거야 🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠 아마 안됨
+  //   setPreviewImage(`${meetupByIdData.image}`);
 
-    console.log("가져온 데이터: ", meetupByIdData);
-    console.log("meetupId 타입 뭐야?", typeof meetupByIdData.id);
+  //   console.log("가져온 데이터: ", meetupByIdData);
+  //   console.log("meetupId 타입 뭐야?", typeof meetupByIdData.id);
 
-    return meetupByIdData;
-  };
+  //   return meetupByIdData;
+  // };
 
   //id 해당 모임 가져오기 탠스택
   const {
@@ -103,9 +104,9 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
     isError,
   } = useQuery<Meetup, Error>({
     queryKey: ["meetup", meetupId],
-    queryFn: getMeetupById,
+    queryFn: () => getMeetupByIdApi(meetupId),
 
-    // 💞 onSuccess는 queryFn인 metMeetupById가 데이터 반환에 성공했을 때 호출됨
+    // 💞 onSuccess는 queryFn인 getMeetupById가 데이터 반환에 성공했을 때 호출됨
     // 💞 queryFn에서 반환한 데이터를 onSuccess의 매개변수로 전달
     // 💞 즉 data는 getMeetupById의 반환값인 meetupByIdData
 

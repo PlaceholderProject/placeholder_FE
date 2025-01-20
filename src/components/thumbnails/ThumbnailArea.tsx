@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { BASE_URL } from "@/constants/baseURL";
 import { useQuery } from "@tanstack/react-query";
 import { Meetup } from "@/types/meetupType";
 import ThumbnailItem from "./ThumbnailItem";
