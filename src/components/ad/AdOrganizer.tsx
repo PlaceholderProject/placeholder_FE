@@ -1,39 +1,43 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { getAdByIdApi } from "@/services/ad.service";
+import { Meetup } from "@/types/meetupType";
 import { BASE_URL } from "@/constants/baseURL";
-import Cookies from "js-cookie";
 
-const AdOrganizer = async ({ meetupId }: { meetupId: number }) => {
-  const token = Cookies.get("accessToken");
+const AdOrganizer = ({ meetupId }: { meetupId: number }) => {
+  const [adData, setAdData] = useState<Meetup>();
+  const [error, setError] = useState<string | null>(null);
 
-  try {
-    const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  useEffect(() => {
+    const getAd = async () => {
+      try {
+        const data = await getAdByIdApi(meetupId);
+        console.log("받아온 전체 데이터:", data); // 전체 데이터 구조 확인
+        console.log("방장 데이터:", data.organizer); // organizer 객체 구조 확인
+        console.log("프사 데이터:", data.organizer.profileImage);
+        setAdData(data);
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+    getAd();
+  }, [meetupId]);
 
-    if (!response.ok) {
-      throw new Error("해당 id 모임 가져오기 실패");
-    }
+  if (error) return <div>에러 발생: {error}</div>;
+  if (!adData) return <div>로딩중...</div>;
 
-    const meetupAsAd = await response.json();
-    console.log(meetupAsAd);
+  const profileImageUrl = `${BASE_URL}${adData.organizer.profileImage}`;
 
-    return (
-      <>
-        <div>
-          <h4>작성자를 보자</h4>
-          <div>{meetupAsAd.organizer.nickname}</div>
-          {/* <div>{meetupAsAd.organzier.profileImage}</div> */}
-        </div>
-      </>
-    );
-  } catch (error) {
-    return <div>에러 발생: {error.message}</div>;
-  }
+  return (
+    <>
+      <div>
+        <h4>작성자: </h4>
+        <div>{adData.organizer.nickname}</div>
+        <img src={profileImageUrl} alt={"방장프사"} />
+      </div>
+    </>
+  );
 };
 
 export default AdOrganizer;
