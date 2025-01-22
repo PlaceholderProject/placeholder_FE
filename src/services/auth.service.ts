@@ -2,7 +2,57 @@ import { BASE_URL } from "@/constants/baseURL";
 import { LoginProps } from "@/types/authType";
 import Cookies from "js-cookie";
 
-// sign-in
+// 회원가입페이지 : 이메일 중복확인
+export const checkEmail = async (email: string) => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/v1/auth/email`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+      }),
+    });
+
+    if (!response.ok) {
+      alert("이미 사용중인 이메일입니다.");
+      return;
+    } else {
+      alert("사용 가능한 이메일입니다.");
+    }
+  } catch (error) {
+    console.error("네트워크 오류:", error);
+    return null;
+  }
+};
+
+// 회원가입페이지 : 닉네임 중복확인
+export const checkNickname = async (nickName: string) => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/v1/auth/nickname`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nickName,
+      }),
+    });
+
+    if (!response.ok) {
+      alert("이미 사용중인 닉네임입니다.");
+      return;
+    } else {
+      alert("사용 가능한 닉네임입니다.");
+    }
+  } catch (error) {
+    console.error("네트워크 오류:", error);
+    return null;
+  }
+};
+
+// login
 export const login = async ({ email, password }: LoginProps) => {
   try {
     const response = await fetch(`${BASE_URL}/api/v1/auth/login`, {

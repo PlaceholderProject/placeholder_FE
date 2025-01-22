@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { useRouter } from "next/navigation";
-import { createSchedule } from "@/services/meetup.service";
+import { createSchedule } from "@/services/schedule.service";
 
 interface ScheduleFormProps {
   meetupId: number;
