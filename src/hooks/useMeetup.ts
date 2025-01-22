@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { getSchedules } from "@/services/meetup.service";
+import { getSchedules } from "@/services/schedule.service";
 import { Schedule } from "@/types/scheduleType";
 
 export const useSchedules = (meetupId: number) => {
