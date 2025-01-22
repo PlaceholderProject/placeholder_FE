@@ -3,6 +3,8 @@ import authReducer from "./authSlice";
 import userReducer from "./userSlice";
 import storage from "redux-persist/lib/storage";
 import { createTransform, FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE } from "redux-persist";
+import nonModalReducer from "./nonModalSlice";
+import modalReducer from "./modalSlice";
 
 // 데이터 직렬화/비직렬화 변환 설정
 const transform = createTransform(
@@ -24,6 +26,9 @@ const persistedUserReducer = persistReducer(persistConfig, userReducer);
 export const store = configureStore({
   reducer: {
     auth: authReducer,
+    nonModal: nonModalReducer,
+    modal: modalReducer,
+
     user: persistedUserReducer,
   },
   middleware: getDefaultMiddleware =>
