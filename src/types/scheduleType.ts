@@ -4,11 +4,12 @@ export interface Schedule {
   scheduled_at: string;
   place: string;
   address: string;
-  latitude: number;
-  longitude: number;
+  latitude: string;
+  longitude: string;
   memo: string;
   image?: string;
-  created_at?: string;
-  updated_at?: string;
-  participant: string[];
+  participant: Array<{
+    nickname: string;
+    image: string | null;
+  }>;
 }

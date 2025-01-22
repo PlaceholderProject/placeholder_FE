@@ -9,7 +9,7 @@ interface MeetupPageProps {
   };
 }
 
-const SchedulePage = ({ params }: MeetupPageProps) => {
+const MeetupPage = ({ params }: MeetupPageProps) => {
   const meetupId = Number(params.meetupId);
 
   return (
@@ -25,4 +25,4 @@ const SchedulePage = ({ params }: MeetupPageProps) => {
   );
 };
 
-export default SchedulePage;
+export default MeetupPage;

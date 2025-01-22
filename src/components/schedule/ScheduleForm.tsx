@@ -17,24 +17,30 @@ const ScheduleForm = ({ meetupId }: ScheduleFormProps) => {
   const latitudeRef = useRef<HTMLInputElement>(null);
   const longitudeRef = useRef<HTMLInputElement>(null);
   const memoRef = useRef<HTMLTextAreaElement>(null);
+  const imageRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const scheduleData = {
+      const formData = new FormData();
+      const payload = {
         scheduled_at: scheduledAtRef.current?.value || "",
-        meetup_id: meetupId,
         place: placeRef.current?.value || "",
         address: addressRef.current?.value || "",
-        latitude: Number(latitudeRef.current?.value) || 0,
-        longitude: Number(longitudeRef.current?.value) || 0,
+        latitude: String(latitudeRef.current?.value || "0"),
+        longitude: String(longitudeRef.current?.value || "0"),
         memo: memoRef.current?.value || "",
-        participant: [], // 참석자 목록은 나중에 추가
+        participant: [],
       };
 
-      await createSchedule(meetupId, scheduleData);
-      router.push(`/${meetupId}/schedule`);
+      formData.append("payload", JSON.stringify(payload));
+      if (imageRef.current?.files?.[0]) {
+        formData.append("image", imageRef.current.files[0]);
+      }
+
+      await createSchedule(meetupId, formData);
+      router.push(`/meetup/${meetupId}`);
     } catch (error) {
       console.error("Failed to create schedule:", error);
     }
@@ -64,7 +70,6 @@ const ScheduleForm = ({ meetupId }: ScheduleFormProps) => {
         {/* 우편 API 버튼 나중에 추가 */}
       </div>
 
-      {/* 위도/경도 입력은 숨겨두거나 우편 API에서 자동으로 설정되도록 할 수 있습니다 */}
       <input type="hidden" ref={latitudeRef} />
       <input type="hidden" ref={longitudeRef} />
 

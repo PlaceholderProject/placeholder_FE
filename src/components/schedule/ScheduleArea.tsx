@@ -12,7 +12,7 @@ const ScheduleArea = ({ meetupId }: ScheduleAreaProps) => {
   const { data: schedules, isPending, error } = useSchedules(meetupId);
 
   const handleCreateClick = () => {
-    router.push(`/meetup/${meetupId}/schedule-create`);
+    router.push(`/meetup/${meetupId}/schedule/create`);
   };
 
   if (isPending) return <div>Loading...</div>;
