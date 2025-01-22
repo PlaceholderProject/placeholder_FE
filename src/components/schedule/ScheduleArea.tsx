@@ -1,9 +1,45 @@
 "use client";
 
-import { useState } from "react";
+import { useSchedules } from "@/hooks/useMeetup";
+import { useRouter } from "next/navigation";
 
-const ScheduleArea = () => {
-  return <div className="flex flex-col p-4"></div>;
+interface ScheduleAreaProps {
+  meetupId: number;
+}
+
+const ScheduleArea = ({ meetupId }: ScheduleAreaProps) => {
+  const router = useRouter();
+  const { data: schedules, isPending, error } = useSchedules(meetupId);
+
+  const handleCreateClick = () => {
+    router.push(`/meetup/${meetupId}/schedule/create`);
+  };
+
+  if (isPending) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
+  const hasSchedules = schedules && schedules.length > 0;
+
+  return (
+    <div className="flex flex-col p-4">
+      {!hasSchedules ? (
+        <div className="flex flex-col items-center gap-4">
+          <p>버튼을 눌러 스케줄을 등록해보세요</p>
+          <button onClick={handleCreateClick}>+</button>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-4">
+          {schedules.map((schedule, index) => (
+            // 나중에 ScheduleItem 컴포넌트로 분리
+            <div key={schedule.id}>Schedule {index + 1}</div>
+          ))}
+          <button onClick={handleCreateClick} className="self-end">
+            +
+          </button>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default ScheduleArea;
