@@ -1,8 +1,11 @@
+"use client";
+
 import React from "react";
 import { BASE_URL } from "@/constants/baseURL";
+import Cookies from "js-cookie";
 
 const AdOrganizer = async ({ meetupId }: { meetupId: number }) => {
-  const token = process.env.NEXT_PUBLIC_MY_TOKEN;
+  const token = Cookies.get("accessToken");
 
   try {
     const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}`, {

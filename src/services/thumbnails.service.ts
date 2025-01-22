@@ -1,8 +1,10 @@
 import { BASE_URL } from "@/constants/baseURL";
-const token = process.env.NEXT_PUBLIC_MY_TOKEN;
+import Cookies from "js-cookie";
 
 // meetups(headhuntings) 가져오는 api
 export const getHeadhuntingsApi = async () => {
+  const token = Cookies.get("accessToken");
+
   const response = await fetch(`${BASE_URL}/api/v1/meetup`, {
     method: "GET",
     headers: {
@@ -20,6 +22,8 @@ export const getHeadhuntingsApi = async () => {
 
 // 광고글 하나 데이터 가져오기 api
 export const getHeadhuntingItemApi = async (thumbnailId: number) => {
+  const token = Cookies.get("accessToken");
+
   const response = await fetch(`${BASE_URL}/api/v1/meetup/${thumbnailId}`, {
     method: "GET",
     headers: {

@@ -1,8 +1,11 @@
 "use client";
 
 import React from "react";
+import Cookies from "js-cookie";
 
 const AdButton = ({ meetupId }: { meetupId: number }) => {
+  const token = Cookies.get("accessToken");
+
   const handleAdNonModalInteraction = () => alert("광고 수정삭제 논모달 외부영역 상호작용 테스트");
   return (
     <>

@@ -5,9 +5,8 @@ import { BASE_URL } from "@/constants/baseURL";
 import { ThumbnailItemProps } from "@/types/thumbnailType";
 import calculateDays from "@/utils/calculateDays";
 import LikeArea from "../likes/LikeArea";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getHeadhuntingItemApi } from "@/services/thumbnails.service";
-const token = process.env.NEXT_PUBLIC_MY_TOKEN;
 
 const ThumbnailItem = ({ thumbnail }: ThumbnailItemProps) => {
   const thumbnailImageUrl = `${BASE_URL}${thumbnail.image}`;
@@ -41,7 +40,7 @@ const ThumbnailItem = ({ thumbnail }: ThumbnailItemProps) => {
     isError,
   } = useQuery({
     queryKey: ["headhuntings", "thumbnail", thumbnailId],
-    queryFn: t => getHeadhuntingItemApi(thumbnailId),
+    queryFn: () => getHeadhuntingItemApi(thumbnailId),
   });
 
   if (isPending) return <div>로딩중</div>;
