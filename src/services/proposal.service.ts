@@ -1,5 +1,6 @@
 import { BASE_URL } from "@/constants/baseURL";
 
+// 광고 페이지 : 신청서 생성
 export const createProposal = async (proposalText: string, meetupId: string) => {
   try {
     const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}`, {
@@ -25,3 +26,9 @@ export const createProposal = async (proposalText: string, meetupId: string) => 
     return;
   }
 };
+
+// 받은 신청서 페이지 : 받은 신청서 가져오기
+export const getReceivedProposal = async () => {};
+
+// 보낸 신청서 페이지 : 보낸 신청서 가져오기
+export const getSentProposal = async () => {};
