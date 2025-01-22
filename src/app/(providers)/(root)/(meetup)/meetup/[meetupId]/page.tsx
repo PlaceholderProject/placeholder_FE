@@ -3,19 +3,26 @@ import MeetupSignboard from "@/components/meetup/MeetupSignboard";
 import ScheduleArea from "@/components/schedule/ScheduleArea";
 import React from "react";
 
-const SchedulePage = () => {
+interface MeetupPageProps {
+  params: {
+    meetupId: string;
+  };
+}
+
+const MeetupPage = ({ params }: MeetupPageProps) => {
+  const meetupId = Number(params.meetupId);
+
   return (
     <div className="">
-      <div className="h-16 bg-slate-400">임시 헤더</div>
-      <MeetupSignboard />
+      <MeetupSignboard meetupId={meetupId} />
       <div>
         <KakaoMaps />
       </div>
       <div>
-        <ScheduleArea />
+        <ScheduleArea meetupId={meetupId} />
       </div>
     </div>
   );
 };
 
-export default SchedulePage;
+export default MeetupPage;
