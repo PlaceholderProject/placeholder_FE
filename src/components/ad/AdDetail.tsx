@@ -1,9 +1,12 @@
+"use client";
+
 import { BASE_URL } from "@/constants/baseURL";
 import calculateDays from "@/utils/calculateDays";
 import AdNonModal from "./AdNonModal";
+import Cookies from "js-cookie";
 
 const AdDetail = async ({ meetupId }: { meetupId: number }) => {
-  const token = process.env.NEXT_PUBLIC_MY_TOKEN;
+  const token = Cookies.get("accessToken");
 
   try {
     const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}`, {

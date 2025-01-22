@@ -1,8 +1,11 @@
 import { BASE_URL } from "@/constants/baseURL";
-const token = process.env.NEXT_PUBLIC_MY_TOKEN;
+import Cookies from "js-cookie";
+import { refreshToken } from "./auth.service";
 
 // 모임 생성 api
 export const createMeetupApi = async (meetupFormData: FormData): Promise<void> => {
+  const token = Cookies.get("accessToken");
+
   const response = await fetch(`${BASE_URL}/api/v1/meetup`, {
     method: "POST",
     headers: {
@@ -14,7 +17,7 @@ export const createMeetupApi = async (meetupFormData: FormData): Promise<void> =
 
   if (!response.ok) {
     const errorText = await response.text();
-    // await refreshToken();
+    await refreshToken();
     console.log(errorText);
     throw new Error("모임 생성 실패");
   }
@@ -23,6 +26,8 @@ export const createMeetupApi = async (meetupFormData: FormData): Promise<void> =
 
 // id 해당 모임 get api
 export const getMeetupByIdApi = async (meetupId: number) => {
+  const token = Cookies.get("accessToken");
+
   const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}`, {
     method: "GET",
     headers: {
@@ -52,6 +57,8 @@ export const getMeetupByIdApi = async (meetupId: number) => {
 
 // 수정 api
 export const editMeetupApi = async (meetupId: number, formData: FormData): Promise<void> => {
+  const token = Cookies.get("accessToken");
+
   const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}`, {
     method: "PUT",
     headers: { Authorization: `Bearer ${token}` },

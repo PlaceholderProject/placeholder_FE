@@ -10,8 +10,6 @@ import { refreshToken } from "@/services/auth.service";
 import { BASE_URL } from "@/constants/baseURL";
 import { createMeetupApi } from "@/services/meetup.service";
 
-const token = process.env.NEXT_PUBLIC_MY_TOKEN;
-
 const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(({ id, name, label, type, placeholder, value, defaultValue, disabled, required, checked, onChange }, ref) => {
   return (
     <>
