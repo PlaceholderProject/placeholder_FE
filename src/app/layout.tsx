@@ -28,14 +28,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <ReduxProvider>
-        <QueryProvider>
-          <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <ReduxProvider>
+          <QueryProvider>
             <Header />
             {children}
-          </body>
-        </QueryProvider>
-      </ReduxProvider>
+          </QueryProvider>
+        </ReduxProvider>
+      </body>
     </html>
   );
 }

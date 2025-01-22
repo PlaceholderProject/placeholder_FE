@@ -1,37 +1,38 @@
-import React from "react";
-import { BASE_URL } from "@/constants/baseURL";
+"use client";
 
-const AdSignboard = async ({ meetupId }: { meetupId: number }) => {
-  const token = process.env.NEXT_PUBLIC_MY_TOKEN;
+import React, { useEffect, useState } from "react";
+import { getAdByIdApi } from "@/services/ad.service";
+import { Meetup } from "@/types/meetupType";
 
-  try {
-    const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+const AdSignboard = ({ meetupId }: { meetupId: number }) => {
+  const [adData, setAdData] = useState<Meetup>();
+  const [error, setError] = useState<string | null>(null);
 
-    if (!response.ok) {
-      throw new Error("해당 id 모임 가져오기 실패");
-    }
+  useEffect(() => {
+    const getAd = async () => {
+      try {
+        const data = await getAdByIdApi(meetupId);
+        setAdData(data);
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+    getAd();
+  }, [meetupId]);
 
-    const meetupAsAd = await response.json();
-    console.log(meetupAsAd);
+  if (error) return <div>에러 발생: {error}</div>;
+  if (!adData) return <div>로딩중...</div>;
 
-    return (
-      <>
-        <div>
-          <h4>사인보드</h4>
-          <div>{meetupAsAd.adTitle}</div>
-          <div>{meetupAsAd.adEndedAt.substring(0, 10)}까지 모집</div>
-          <div>⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯</div>
-        </div>
-      </>
-    );
-  } catch (error) {
-    return <div>에러 발생: {error.message}</div>;
-  }
+  return (
+    <>
+      <div>
+        <h4>사인보드</h4>
+        <div>{adData.adTitle}</div>
+        <div>{adData.adEndedAt?.substring(0, 10)}까지 모집</div>
+        <div>⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯</div>
+      </div>
+    </>
+  );
 };
 
 export default AdSignboard;

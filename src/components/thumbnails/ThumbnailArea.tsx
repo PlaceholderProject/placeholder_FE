@@ -6,8 +6,6 @@ import { Meetup } from "@/types/meetupType";
 import ThumbnailItem from "./ThumbnailItem";
 import { getHeadhuntingsApi } from "@/services/thumbnails.service";
 
-const token = process.env.NEXT_PUBLIC_MY_TOKEN;
-
 const ThumbnailArea = () => {
   // // meetups(headhuntings) 가져오는 api
   // const getHeadhuntingsApi = async () => {
