@@ -1,6 +1,7 @@
 "use client";
 
 import { PASSWORD_REGULAR_EXPRESSION } from "@/constants/regularExpressionConstants";
+import { checkEmail, checkNickname } from "@/services/auth.service";
 import { createUser } from "@/services/user.service";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -62,6 +63,14 @@ const Signup = () => {
     }
     setBio(event.target.value);
     setBioTextLength(event.target.value.length);
+  };
+
+  const handleCheckEmail = async () => {
+    await checkEmail(email);
+  };
+
+  const handleCheckNickname = async () => {
+    await checkNickname(nickname);
   };
 
   const handleTogglePassword = () => {
@@ -128,7 +137,12 @@ const Signup = () => {
         <form onSubmit={handleSignupFormSubmit} className="flex flex-col items-center justify-center">
           <div className="flex flex-col">
             <label htmlFor="email">이메일 주소</label>
-            <input type="email" value={email} onChange={handleEmailChange} className="border-2 rounded-md" />
+            <div>
+              <input type="email" value={email} onChange={handleEmailChange} className="border-2 rounded-md" />
+              <button type="button" onClick={handleCheckEmail} className="bg-slate-200">
+                중복확인
+              </button>
+            </div>
           </div>
           <div className="relative flex flex-col">
             <label htmlFor="password">비밀번호</label>
@@ -148,7 +162,12 @@ const Signup = () => {
           </div>
           <div className="flex flex-col">
             <label htmlFor="nickname">닉네임</label>
-            <input type="text" value={nickname} onChange={handleNicknameChange} className="border-2 rounded-md" />
+            <div>
+              <input type="text" value={nickname} onChange={handleNicknameChange} className="border-2 rounded-md" />
+              <button type="button" onClick={handleCheckNickname} className="bg-slate-200">
+                중복확인
+              </button>
+            </div>
             {nicknameWarning && <p>{nicknameWarning}</p>}
           </div>
           <div className="flex flex-col">
