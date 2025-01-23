@@ -34,6 +34,7 @@ const Signup = () => {
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
   };
+
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!PASSWORD_REGULAR_EXPRESSION.test(event.target.value)) {
       setPasswordWarning("비밀번호는 숫자 1개, 특수문자 1개를 포함하여 6~15자리 사이여야 합니다.");
@@ -52,6 +53,7 @@ const Signup = () => {
 
     setPasswordConfirm(event.target.value);
   };
+
   const handleNicknameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value.length > 8) {
       setNicknameWarning("닉네임은 최소 2자 최대 8자까지 가능합니다.");
@@ -60,6 +62,7 @@ const Signup = () => {
     }
     setNickname(event.target.value);
   };
+
   const handleBioChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (event.target.value.length > 40) {
       setBioWarning("자기소개는 최대 40자까지 작성이 가능합니다.");
