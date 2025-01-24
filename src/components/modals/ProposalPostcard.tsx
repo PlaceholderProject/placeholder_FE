@@ -3,7 +3,7 @@
 import { createProposal } from "@/services/proposal.service";
 import React, { useState } from "react";
 
-const ProposalPostcard = () => {
+const ProposalPostcard = ({ meetupId }: { meetupId: number }) => {
   const [proposalText, setProposalText] = useState("");
 
   const handleProposalText = (e: React.ChangeEvent<HTMLInputElement>) => {
