@@ -1,6 +1,6 @@
 "use client";
 
-import { useSchedules } from "@/hooks/useMeetup";
+import { useSchedules } from "@/hooks/useSchedule";
 import { useRouter } from "next/navigation";
 
 interface ScheduleAreaProps {
