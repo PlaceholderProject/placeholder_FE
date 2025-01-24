@@ -3,12 +3,9 @@
 import { useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createSchedule } from "@/services/schedule.service";
+import { useDaumPostcodePopup } from "react-daum-postcode";
 
-interface ScheduleFormProps {
-  meetupId: number;
-}
-
-const ScheduleForm = ({ meetupId }: ScheduleFormProps) => {
+const ScheduleForm = (meetupId: number) => {
   const router = useRouter();
 
   const scheduledAtRef = useRef<HTMLInputElement>(null);
@@ -18,6 +15,25 @@ const ScheduleForm = ({ meetupId }: ScheduleFormProps) => {
   const longitudeRef = useRef<HTMLInputElement>(null);
   const memoRef = useRef<HTMLTextAreaElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
+
+  const openPostcode = useDaumPostcodePopup(); // 카카오 우편번호 API 팝업
+
+  const handleAddressSearch = () => {
+    openPostcode({
+      onComplete: data => {
+        if (addressRef.current) addressRef.current.value = data.address;
+
+        // 주소를 위경도로 변환
+        const geocoder = new window.kakao.maps.services.Geocoder();
+        geocoder.addressSearch(data.address, (result, status) => {
+          if (status === window.kakao.maps.services.Status.OK) {
+            if (longitudeRef.current) longitudeRef.current.value = result[0].x;
+            if (latitudeRef.current) latitudeRef.current.value = result[0].y;
+          }
+        });
+      },
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,40 +65,33 @@ const ScheduleForm = ({ meetupId }: ScheduleFormProps) => {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col space-y-4 p-4">
       <div>
-        <label htmlFor="scheduled_at" className="block mb-1">
-          날짜 및 시간
-        </label>
-        <input type="datetime-local" id="scheduled_at" ref={scheduledAtRef} className="w-full p-2 border rounded" required />
+        <label htmlFor="scheduled_at">날짜 및 시간</label>
+        <input type="datetime-local" id="scheduled_at" ref={scheduledAtRef} required />
       </div>
 
       <div>
-        <label htmlFor="place" className="block mb-1">
-          장소명
-        </label>
-        <input type="text" id="place" ref={placeRef} className="w-full p-2 border rounded" required />
+        <label htmlFor="place">장소명</label>
+        <input type="text" id="place" ref={placeRef} required />
       </div>
 
       <div>
-        <label htmlFor="address" className="block mb-1">
-          주소
-        </label>
-        <input type="text" id="address" ref={addressRef} className="w-full p-2 border rounded" required />
-        {/* 우편 API 버튼 나중에 추가 */}
+        <label htmlFor="address">주소</label>
+        <input type="text" id="address" ref={addressRef} required />
+        <button type="button" onClick={handleAddressSearch} className="bg-gray-300 px-2 py-1">
+          우편번호 찾기
+        </button>
       </div>
 
+      {/* 위경도는 제출하되 안보이게 히든 */}
       <input type="hidden" ref={latitudeRef} />
       <input type="hidden" ref={longitudeRef} />
 
       <div>
-        <label htmlFor="memo" className="block mb-1">
-          메모
-        </label>
-        <textarea id="memo" ref={memoRef} className="w-full p-2 border rounded h-32" />
+        <label htmlFor="memo">메모</label>
+        <textarea id="memo" ref={memoRef} />
       </div>
 
-      <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-        스케줄 생성
-      </button>
+      <button type="submit">스케줄 생성</button>
     </form>
   );
 };
