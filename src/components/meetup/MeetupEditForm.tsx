@@ -71,37 +71,6 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   // const [previewImage, setPreviewImage] = useState<string | null>("image:/media/meetup_images/pv_test.JPG");
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
-  // id 해당 모임 get api
-  // const getMeetupById = async () => {
-  //   const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}`, {
-  //     method: "GET",
-  //     headers: {
-  //       Authorization: `Bearer ${token}`,
-  //     },
-  //   });
-
-  //   if (!response.ok) {
-  //     console.error("가져오기 실패: ", response.status, response.statusText);
-  //     throw new Error("해당 id 모임 가져오기 실패");
-  //   }
-
-  //   const meetupByIdData = await response.json();
-  //   // console.log("json()하지 않은 해당 id 모임: ", response);
-  //   // console.log("가져온 해당 id 모임:", meetupByIdData.json());
-  //   // 아니 왜 콘솔에 .json() 넣으면 브라우저 에러 나는 것?
-  //   // 안 그러다기???????????????
-
-  //   // // 🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠 이거는 필요 없고 onSuccess에서 하면 됨 되는거야 마는거야 🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠 아마 안됨
-  //   // setPreviewImage(`${meetupByIdData.image}`);
-
-  //   console.log("가져온 데이터: ", meetupByIdData);
-  //   console.log("meetupId 타입 뭐야?", typeof meetupByIdData.id);
-
-  //   return meetupByIdData;
-  // };
-
-  //id 해당 모임 가져오기 탠스택
-  // 🟨 이것도 왜 필요한지 모르겠는데 갑자기? 캐싱떄문이야?
   const {
     data: previousMeetupData,
     isPending,
@@ -180,6 +149,85 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
     event.preventDefault();
 
     if (!previousMeetupData) return;
+
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    const startDate = isStartedAtNull ? null : startedAtRef?.current?.value || null;
+    const endDate = isEndedAtNull ? null : endedAtRef?.current?.value || null;
+    const adEndDate = adEndedAtRef.current?.value || null;
+
+    const getDateFieldName = (fieldName: string): string => {
+      switch (fieldName) {
+        case "startedAt":
+          return "모임 시작일";
+        case "endedAt":
+          return "모임 종료일";
+        case "adEndedAt":
+          return "광고 종료일";
+        default:
+          return fieldName;
+      }
+    };
+
+    const validateDate = (date: string | null, fieldName: string): boolean => {
+      if (!date) {
+        console.log("!date일 경우의 date:", date);
+        return true;
+      }
+
+      const inputDate = new Date(date);
+      inputDate.setHours(0, 0, 0, 0);
+
+      const previousStartDate = previousMeetupData.startedAt;
+      console.log("기존시작일 타입:", typeof previousStartDate);
+      console.log("오늘", now);
+      console.log("입력일 타입:", typeof inputDate);
+
+      console.log({
+        previousStartDate, // 실제 값과 형식 확인
+        now: now.toISOString(),
+        inputDate: new Date(inputDate).toISOString(),
+      });
+
+      if (typeof previousStartDate !== "string") {
+        console.log("previousStartDate가 string이 아님:", typeof previousStartDate);
+        return false;
+      }
+
+      if (previousStartDate !== null && new Date(previousStartDate) < now && new Date(inputDate) < new Date(previousStartDate)) {
+        console.log("이미 시작 모임 검사 실행");
+        alert(`이미 시작된 모임의 ${getDateFieldName(fieldName)}을 이전으로 수정할 수 없습니다.`);
+
+        return false;
+      }
+
+      // 여기서는 모임종료일과 광고종료일만 오늘 이후로!
+      if (inputDate !== null && inputDate < now) {
+        console.log("now값:", now);
+        console.log("inputDate값:", inputDate);
+        alert(`${getDateFieldName(fieldName)}이 이미 지난 날짜로 설정되었습니다.`);
+        return false;
+      }
+      // 기존 설정 시작일이 오늘보다 이전이면 수정 불가능
+      // 기존 설정 시작일이 오늘보다 이후면 수정 가능
+      //새로 입력한 모임시작일이 기존 설정일보다 이전일 수 없음
+
+      if (endDate !== null && startDate !== null && endDate < startDate) {
+        const beforeAfter = endDate < startDate;
+        console.log("앞뒤틀리니?", beforeAfter);
+        alert("모임 종료일이 시작일보다 빠를 수 없습니다.");
+        return false;
+      }
+
+      return true;
+    };
+
+    if (!validateDate(endDate, "endedAt") || !validateDate(adEndDate, "adEndedAt")) {
+      console.log("유효성 함수 실행됨");
+      console.log("시작일, 종료일, 광고종료일:", startDate, endDate, adEndDate);
+      return;
+    }
 
     const editedMeetup: Meetup = {
       ...previousMeetupData,

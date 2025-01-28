@@ -65,7 +65,7 @@ type PageParams = {
 };
 
 const AdPage = ({ params }: { params: PageParams }) => {
-  const resolvedParams = use<PageParams>(params);
+  const resolvedParams = use(params as any) as PageParams;
   const parsedMeetupId = parseInt(resolvedParams.meetupId, 10);
 
   return (

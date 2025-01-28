@@ -2,40 +2,65 @@
 
 import CurrentMyMeetup from "@/components/my-space/my-meetup/CurrentMyMeetup";
 import PastMyMeetup from "@/components/my-space/my-meetup/PastMyMeetup";
+import ReceivedProposals from "@/components/my-space/received-proposal/ReceivedProposals";
+import SentProposals from "@/components/my-space/sent-proposal/SentProposals";
 import React from "react";
 import { useState } from "react";
 
 const myMeetupPage = () => {
+  // 🐣🐣🐣객체 맵핑 방식~~ 🐣🐣
+  // const TAB_COMPONENTS = {
+  //   myMeetup: <MyMeetupArea />,
+  //   myAd: <MyAdArea />,
+  //   receivedProposal: <ReceivedProposals />,
+  //   sentProposal: <SentProposals />,
+  // };
+
+  // 스위치-케이스문
+  // {(() => {
+  //   switch(activeMainTab) {
+  //     case "myMeetup": return <MyMeetupComponent />;
+  //     case "myAd": return <MyAdComponent />;
+  //     case "received": return <ReceivedApplicationsComponent />;
+  //     case "sent": return <SentApplicationsComponent />;
+  //     default: return null;
+  //   }
+  // })()}
+
   const [activeSubTab, setActiveSubTab] = useState<"current" | "past">("current");
 
   return (
     <>
-      <CurrentMyMeetup />
-      <PastMyMeetup />
       <div>
-        {/* 상위 탭 제목들 */}
+        {/* 상위 탭 제목들
         <div className="main-tabs">
-          <h1>내 공간</h1>
           <div className="tab-list">
-            <span className="active font-bold p-4">내 모임</span>
-            <span className="font-bold p-4">내 광고</span>
-            <span className="font-bold p-4">받은 신청서</span>
-            <span className="font-bold p-4">보낸 신청서</span>
+            <button className={activeMainTab === "myMeetup" ? "active" : ""} onClick={() => setActiveMainTab("myMeetup")}>
+              내 모임
+            </button>
+            <button className={activeMainTab === "myAd" ? "active" : ""} onClick={() => setActiveMainTab("myAd")}>
+              내 광고
+            </button>
           </div>
         </div>
 
+        {activeMainTab === "myMeetup"} */}
+
         {/* 하위 탭 버튼들 */}
         <div className="sub-tabs">
-          <button className={activeSubTab === "current" ? "active" : ""} onClick={() => setActiveSubTab("current")}>
+          <button
+            className={`${activeSubTab === "current" ? "active bg-[#006B8B] text-white" : "bg-[#D9D9D9] text-black"} rounded-md p-2 m-2 font-semibold`}
+            onClick={() => setActiveSubTab("current")}
+          >
             현재 내 모임 보기
           </button>
-          <button className={activeSubTab === "past" ? "active" : ""} onClick={() => setActiveSubTab("past")}>
+          <button className={`${activeSubTab === "past" ? "active bg-[#006B8B] text-white" : "bg-[#D9D9D9] text-black"} rounded-md p-2 m-2 font-semibold`} onClick={() => setActiveSubTab("past")}>
             지난 내 모임 보기
           </button>
         </div>
 
-        {/* 컨텐츠 영역 */}
-        {activeSubTab === "current" ? "현재 모임목록" : "지난 모임목록"}
+        {/* 나올 내용 */}
+        {activeSubTab === "current" ? <CurrentMyMeetup /> : <PastMyMeetup />}
       </div>
     </>
   );

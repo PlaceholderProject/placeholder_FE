@@ -129,3 +129,21 @@
 // // }
 
 // export default CurrentMyMeetup;
+
+import React from "react";
+
+const CurrentMyMeetup = () => {
+  return (
+    <>
+      <div>🐱현재 할리스강 6회 정기모임</div>
+      <div>🐱현재 할리스강 6회 정기모임</div>
+      <div>🐱현재 할리스강 6회 정기모임</div>
+      <div>🐱현재 할리스강 6회 정기모임</div>
+      <div>🐱현재 할리스강 6회 정기모임</div>
+      <div>🐱현재 할리스강 6회 정기모임</div>
+      <div>🐱현재 할리스강 6회 정기모임</div>
+    </>
+  );
+};
+
+export default CurrentMyMeetup;
