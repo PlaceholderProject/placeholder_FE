@@ -8,43 +8,20 @@ import LikeArea from "../likes/LikeArea";
 import { useQuery } from "@tanstack/react-query";
 import { getHeadhuntingItemApi } from "@/services/thumbnails.service";
 
-const ThumbnailItem = ({ thumbnail }: ThumbnailItemProps) => {
-  const thumbnailImageUrl = `${BASE_URL}${thumbnail.image}`;
-  const thumbnailId = thumbnail.id;
-
-  // 광고글 하나 데이터 가져오기 api
-  // const getHeadhuntingItemApi = async () => {
-  //   const response = await fetch(`${BASE_URL}/api/v1/meetup/${thumbnailId}`, {
-  //     method: "GET",
-  //     headers: {
-  //       Authorization: `Bearer ${token}`,
-  //     },
-  //   });
-
-  //   if (!response.ok) {
-  //     throw new Error("해당 id 광고아이템 가져오기 실패");
-  //   }
-
-  //   const headhuntingItemData = await response.json();
-
-  //   console.log("아이템 하나 데이터:", headhuntingItemData);
-
-  //   return await headhuntingItemData;
-  // };
-
-  // 광고글 하나 탠스택
-  // 🟨이게 왜 필요허지???????🟨
+const ThumbnailItem = ({ thumbnailId }: ThumbnailItemProps) => {
   const {
-    data: headhuntingAsThumbnailItem,
+    data: thumbnail,
     isPending,
     isError,
   } = useQuery({
-    queryKey: ["headhuntings", "thumbnail", thumbnailId],
+    queryKey: ["headhuntings", thumbnailId],
     queryFn: () => getHeadhuntingItemApi(thumbnailId),
   });
 
   if (isPending) return <div>로딩중</div>;
   if (isError) return <div>에러발생</div>;
+
+  const thumbnailImageUrl = `${BASE_URL}${thumbnail.image}`;
 
   return (
     <>
@@ -52,7 +29,7 @@ const ThumbnailItem = ({ thumbnail }: ThumbnailItemProps) => {
         {thumbnail.image && (
           <div className="relative h-48 b-4">
             {/* <Image src={thumbnailImageUrl} alt={`${thumbnail.id}번 광고 이미지 안뜸`} fill className="object-cover rounded" loading="lazy" /> */}
-            {/* 🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩Imageㅅ 써야될거같은데!!!!!11🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩 */}
+            {/* 🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩Imageㅅ 써야될거같은데!!!!!🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩 */}
             <img src={thumbnailImageUrl} alt="테스트용 이미지 잘뜨나" className="object-cover rounded" loading="lazy" />
           </div>
         )}

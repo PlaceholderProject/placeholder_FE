@@ -2,35 +2,17 @@
 
 import React, { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Meetup } from "@/types/meetupType";
 import ThumbnailItem from "./ThumbnailItem";
 import { getHeadhuntingsApi } from "@/services/thumbnails.service";
 
 const ThumbnailArea = () => {
-  // // meetups(headhuntings) 가져오는 api
-  // const getHeadhuntingsApi = async () => {
-  //   const response = await fetch(`${BASE_URL}/api/v1/meetup`, {
-  //     method: "GET",
-  //     headers: {
-  //       Authorization: `Bearer ${token}`,
-  //     },
-  //   });
-
-  //   if (!response.ok) {
-  //     throw new Error("광고글 목록 가져오기 실패");
-  //   }
-  //   const headhuntingsData = await response.json();
-  //   console.log("가져온 광고글 목록: ", headhuntingsData);
-  //   return headhuntingsData;
-  // };
-
   //headhuntings 탠스택쿼리
   const {
-    data: headhuntingsAsThumbnails,
+    data: headhuntingsData,
     isPending,
     isError,
   } = useQuery({
-    queryKey: ["headhuntings", "thumbnail"],
+    queryKey: ["headhuntings"],
     queryFn: getHeadhuntingsApi,
     retry: 0,
   });
@@ -38,23 +20,19 @@ const ThumbnailArea = () => {
   console.log("쿼리 상태:", {
     isPending,
     isError,
-    headhuntingsAsThumbnails,
+    headhuntingsData,
   });
 
-  useEffect(() => {
-    if (headhuntingsAsThumbnails) {
-      console.log("받아온 데이터 구조:", headhuntingsAsThumbnails);
-    }
-  }, [headhuntingsAsThumbnails]);
-
-  if (isPending) return <div>로딩중...</div>;
+  if (isPending) return <div>로딩중</div>;
   if (isError) return <div>에러 발생</div>;
+
+  const thumbnailIds = headhuntingsData.result.map(item => item.id);
 
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
-        {headhuntingsAsThumbnails.result.map((thumbnail: Meetup) => (
-          <ThumbnailItem key={thumbnail.id} thumbnail={thumbnail} />
+        {thumbnailIds.map(thumbnailId => (
+          <ThumbnailItem key={thumbnailId} thumbnailId={thumbnailId} />
         ))}
       </div>
     </>
