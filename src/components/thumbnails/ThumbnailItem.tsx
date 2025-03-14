@@ -4,18 +4,19 @@ import React, { useState } from "react";
 import { BASE_URL } from "@/constants/baseURL";
 import { ThumbnailItemProps } from "@/types/thumbnailType";
 import calculateDays from "@/utils/calculateDays";
-import LikeArea from "../likes/LikeArea";
 import { useQuery } from "@tanstack/react-query";
 import { getHeadhuntingItemApi } from "@/services/thumbnails.service";
+import LikeContainer from "../likes/LikeContainer";
+import { Meetup } from "@/types/meetupType";
 
-const ThumbnailItem = ({ thumbnailId }: ThumbnailItemProps) => {
+const ThumbnailItem = ({ id }: { id: Meetup["id"] }) => {
   const {
     data: thumbnail,
     isPending,
     isError,
   } = useQuery({
-    queryKey: ["headhuntings", thumbnailId],
-    queryFn: () => getHeadhuntingItemApi(thumbnailId),
+    queryKey: ["headhuntings", id],
+    queryFn: () => getHeadhuntingItemApi(id),
   });
 
   if (isPending) return <div>로딩중</div>;
@@ -36,7 +37,7 @@ const ThumbnailItem = ({ thumbnailId }: ThumbnailItemProps) => {
         <div className="space-y-2">
           <p className="font-semibold">작성자: {thumbnail.organizer.nickname}</p>
           <div>
-            <LikeArea isLike={thumbnail.isLike} likeCount={thumbnail.likeCount} thumbnailId={thumbnailId} />
+            <LikeContainer id={id} />{" "}
           </div>
 
           <p className="text-gray-600">[{thumbnail.place}]</p>

@@ -5,7 +5,6 @@ import { refreshToken } from "./auth.service";
 // 모임 생성 api
 export const createMeetupApi = async (meetupFormData: FormData): Promise<void> => {
   const token = Cookies.get("accessToken");
-
   const response = await fetch(`${BASE_URL}/api/v1/meetup`, {
     method: "POST",
     headers: {
@@ -27,7 +26,6 @@ export const createMeetupApi = async (meetupFormData: FormData): Promise<void> =
 // id 해당 모임 get api
 export const getMeetupByIdApi = async (meetupId: number) => {
   const token = Cookies.get("accessToken");
-
   const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}`, {
     method: "GET",
     headers: {
@@ -46,19 +44,18 @@ export const getMeetupByIdApi = async (meetupId: number) => {
   // 아니 왜 콘솔에 .json() 넣으면 브라우저 에러 나는 것?
   // 안 그러다기???????????????
 
-  // // 🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠 이거는 필요 없고 onSuccess에서 하면 됨 되는거야 마는거야 🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠 아마 안됨
+  // // 🫠🫠🫠🫠🫠🫠🫠🫠🫠 이거는 필요 없고 onSuccess에서 하면 됨 되는거야 마는거야 🫠🫠🫠🫠🫠🫠🫠 아마 안됨
   // setPreviewImage(`${meetupByIdData.image}`);
 
-  console.log("가져온 데이터: ", meetupByIdData);
-  console.log("meetupId 타입 뭐야?", typeof meetupByIdData.id);
+  // console.log("가져온 데이터: ", meetupByIdData);
+  // console.log("meetupId 타입 뭐야?", typeof meetupByIdData.id);
 
   return meetupByIdData;
 };
 
-// 수정 api
+// 모임 수정 api
 export const editMeetupApi = async (meetupId: number, formData: FormData): Promise<void> => {
   const token = Cookies.get("accessToken");
-
   const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}`, {
     method: "PUT",
     headers: { Authorization: `Bearer ${token}` },
@@ -69,9 +66,8 @@ export const editMeetupApi = async (meetupId: number, formData: FormData): Promi
   }
 
   // 🚨🚨🚨🚨🚨서버 응답 형태 확인용 지금 date랑 checkbox 인풋만 수정이 안되거든요🚨🚨🚨🚨🚨
-
   const responseData = await response.json();
-  console.log("서버 응답:", responseData);
+  console.log("모임 수정 서버 응답:", responseData);
   return responseData;
 };
 

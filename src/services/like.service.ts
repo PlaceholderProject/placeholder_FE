@@ -2,7 +2,6 @@ import { BASE_URL } from "@/constants/baseURL";
 import Cookies from "js-cookie";
 
 // 좋아요 토글 api 수정 후
-
 export const toggleLikeApi = async (thumbnailId: number, isLike: boolean) => {
   const token = Cookies.get("accessToken");
 
