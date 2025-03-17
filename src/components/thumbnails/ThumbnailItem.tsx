@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { BASE_URL } from "@/constants/baseURL";
-import { ThumbnailItemProps } from "@/types/thumbnailType";
 import calculateDays from "@/utils/calculateDays";
 import { useQuery } from "@tanstack/react-query";
 import { getHeadhuntingItemApi } from "@/services/thumbnails.service";
@@ -19,6 +18,11 @@ const ThumbnailItem = ({ id }: { id: Meetup["id"] }) => {
     queryFn: () => getHeadhuntingItemApi(id),
   });
 
+  console.log(thumbnail?.image); // 옵셔널 체이닝 사용
+
+  // console.log(thumbnail.image);
+  // thumbnail?.image && console.log(thumbnail.image);
+
   if (isPending) return <div>로딩중</div>;
   if (isError) return <div>에러발생</div>;
 
@@ -30,7 +34,7 @@ const ThumbnailItem = ({ id }: { id: Meetup["id"] }) => {
         {thumbnail.image && (
           <div className="relative h-48 b-4">
             {/* <Image src={thumbnailImageUrl} alt={`${thumbnail.id}번 광고 이미지 안뜸`} fill className="object-cover rounded" loading="lazy" /> */}
-            {/* 🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩Imageㅅ 써야될거같은데!!!!!🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩🐩 */}
+            {/* 🐩🐩🐩 넥스트 Imageㅅ 써야될거같은데!!!!!🐩🐩🐩🐩 */}
             <img src={thumbnailImageUrl} alt="테스트용 이미지 잘뜨나" className="object-cover rounded" loading="lazy" />
           </div>
         )}
@@ -43,7 +47,7 @@ const ThumbnailItem = ({ id }: { id: Meetup["id"] }) => {
           <p className="text-gray-600">[{thumbnail.place}]</p>
           <p className="text-lg font-bold">{thumbnail.adTitle}</p>
           <div>
-            모임 날짜 : {thumbnail.startedAt === null ? "미정" : thumbnail.startedAt.substring(0, 10)} ~ {thumbnail.endedAt === null ? "미정" : thumbnail.endedAt.substring(0, 10)}{" "}
+            모임 날짜 :{thumbnail.startedAt === null ? "미정" : thumbnail.startedAt.substring(0, 10)} ~ {thumbnail.endedAt === null ? "미정" : thumbnail.endedAt.substring(0, 10)}{" "}
             <p>
               {thumbnail.startedAt && thumbnail.endedAt
                 ? calculateDays({
