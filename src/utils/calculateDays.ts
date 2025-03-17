@@ -1,4 +1,3 @@
-import { DateRange } from "@/types/adType";
 import { Meetup } from "@/types/meetupType";
 
 // const now = new Date();
