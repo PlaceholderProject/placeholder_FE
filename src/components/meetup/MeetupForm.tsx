@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Meetup } from "@/types/meetupType";
+import { NewMeetup } from "@/types/meetupType";
 import { LabeledInputProps } from "@/types/meetupType";
 import { LabeledSelectProps } from "@/types/meetupType";
 import { useRouter } from "next/navigation";
@@ -96,10 +96,12 @@ const MeetupForm = () => {
   const handleMeetupFormSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
-    // 날짜가 오늘보다 과거인지 유효성 검사
+    // ❗️❗️❗️ 이 모든 과정을 제출 전에 실행하고 있고, 하나로 묶어야겠는데?
+    // 1. 모든 날짜가 오늘보다 과거인지 유효성 검사
     const now = new Date();
     now.setHours(0, 0, 0, 0);
 
+    // 2. 필드 이름 케이스별로 가져오기
     const getDateFieldName = (fieldName: string): string => {
       switch (fieldName) {
         case "startedAt":
@@ -113,14 +115,26 @@ const MeetupForm = () => {
       }
     };
 
+    // 3. 인풋 필드에서 날짜값 가져옴
+    // 근데 이거 155번째줄 (현재인지 실행해보고 판단 위)에 있었음
+    const startDate = isStartedAtNull ? null : startedAtRef.current?.value || null;
+    const endDate = isEndedAtNull ? null : endedAtRef.current?.value || null;
+    const adEndDate = adEndedAtRef.current?.value || null;
+
+    // 4. 통과(true)인지 걸리는지(false) 불리언 값 리턴하는 유효성 검사 함수
+
     const validateDate = (date: string | null, fieldName: string): boolean => {
+      // 사용자 입력값 미정이면 true (통과)
       if (!date) {
         console.log("!date일 경우의 date: ", date);
         return true;
       }
+
+      // 사용자 입력 날짜값
       const inputDate = new Date(date);
       inputDate.setHours(0, 0, 0, 0);
 
+      // 사용자 입력 날짜값이 오늘보다 이전이면 false(걸림)
       if (inputDate !== null && inputDate < now) {
         console.log("now값:", now);
         console.log("inputDate값:", inputDate);
@@ -129,6 +143,7 @@ const MeetupForm = () => {
         return false;
       }
 
+      // 모임 시작날짜와 모임 종료 날짜 비교
       if (endDate !== null && startDate !== null && endDate < startDate) {
         const beforeAfter = endDate < startDate;
         console.log("앞뒤틀리니?", beforeAfter);
@@ -139,12 +154,8 @@ const MeetupForm = () => {
       return true;
     };
 
-    const startDate = isStartedAtNull ? null : startedAtRef.current?.value || null;
-    const endDate = isEndedAtNull ? null : endedAtRef.current?.value || null;
-    const adEndDate = adEndedAtRef.current?.value || null;
-
-    // 현재인지 함수 실행해보고 리턴
-
+    // 폼 제출전, 유효성 검사 에함수 실행해보고 통과 못하면 제출 전에 리턴으로 탈출
+    // 모임 시작일이 false(걸림)거나, 모임 종료일이 false(걸림)거나 광고 종료일이 false(걸림)이면 멈추고 나와버림
     if (!validateDate(startDate, "startedAt") || !validateDate(endDate, "endedAt") || !validateDate(adEndDate, "adEndedAt")) {
       console.log("유효성 함수 실행은 됨");
       console.log("설정된 모임 시작일, 모임 종료일, 광고 종료일:", startDate, endDate, adEndDate);
@@ -152,7 +163,7 @@ const MeetupForm = () => {
       return;
     }
 
-    const newMeetup: Meetup = {
+    const newMeetup: NewMeetup = {
       organizer: {
         nickname: organizerNicknameRef.current?.value || "",
         profileImage: organizerProfileImageRef.current?.value || "",

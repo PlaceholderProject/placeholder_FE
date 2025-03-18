@@ -20,6 +20,8 @@ export interface Meetup {
   category: string;
 }
 
+export interface NewMeetup extends Omit<Meetup, "id"> {}
+
 export interface LabeledInputProps {
   id: string;
   name: string;
