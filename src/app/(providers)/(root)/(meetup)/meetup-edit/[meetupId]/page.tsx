@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import MeetupEditForm from "@/components/meetup/MeetupEditForm";
+import MeetupEditForm from "@/components/meetup/EditFormTmp";
 import { useParams } from "next/navigation";
 
 const MeetupEditPage = () => {

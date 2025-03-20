@@ -123,22 +123,20 @@ const MeetupForm = () => {
 
     // 4. 통과(true)인지 걸리는지(false) 불리언 값 리턴하는 유효성 검사 함수
 
-    const validateDate = (date: string | null, fieldName: string): boolean => {
+    const createMeetUpValidateDate = (date: string | null, fieldName: string): boolean => {
       // 사용자 입력값 미정이면 true (통과)
       if (!date) {
         console.log("!date일 경우의 date: ", date);
         return true;
       }
 
-      // 사용자 입력 날짜값
+      // 🐡 사용자 입력 날짜값을 위한 파라미터다. 즉 입력값 그자체가 아니라 ref에 연결된 애들을, 함수 실행할 때 (date) 위치에 넣어 실행하게 되고
+      // 이렇게 쓴 이유는 started랑 ended랑 adEnded 세 종류에 대해 재사용 대응 가능하게 하려고!
       const inputDate = new Date(date);
       inputDate.setHours(0, 0, 0, 0);
 
       // 사용자 입력 날짜값이 오늘보다 이전이면 false(걸림)
       if (inputDate !== null && inputDate < now) {
-        console.log("now값:", now);
-        console.log("inputDate값:", inputDate);
-
         alert(`${getDateFieldName(fieldName)}이 이미 지난 날짜로 설정되었습니다.`);
         return false;
       }
@@ -147,7 +145,7 @@ const MeetupForm = () => {
       if (endDate !== null && startDate !== null && endDate < startDate) {
         const beforeAfter = endDate < startDate;
         console.log("앞뒤틀리니?", beforeAfter);
-        alert("모임 종료일이 시작일보다 빠를 수 없습니다.");
+        alert("모임 종료일은 시작일보다 빠르게 설정할 수 없습니다.");
         return false;
       }
 
@@ -156,7 +154,7 @@ const MeetupForm = () => {
 
     // 폼 제출전, 유효성 검사 에함수 실행해보고 통과 못하면 제출 전에 리턴으로 탈출
     // 모임 시작일이 false(걸림)거나, 모임 종료일이 false(걸림)거나 광고 종료일이 false(걸림)이면 멈추고 나와버림
-    if (!validateDate(startDate, "startedAt") || !validateDate(endDate, "endedAt") || !validateDate(adEndDate, "adEndedAt")) {
+    if (!createMeetUpValidateDate(startDate, "startedAt") || !createMeetUpValidateDate(endDate, "endedAt") || !createMeetUpValidateDate(adEndDate, "adEndedAt")) {
       console.log("유효성 함수 실행은 됨");
       console.log("설정된 모임 시작일, 모임 종료일, 광고 종료일:", startDate, endDate, adEndDate);
 
