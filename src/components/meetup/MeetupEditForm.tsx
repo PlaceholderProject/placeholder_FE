@@ -4,10 +4,12 @@ import { BASE_URL } from "@/constants/baseURL";
 import { editMeetupApi, getMeetupByIdApi } from "@/services/meetup.service";
 import { LabeledInputProps, LabeledSelectProps, Meetup } from "@/types/meetupType";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
+import Cookies from "js-cookie";
 
-const token = process.env.NEXT_PUBLIC_MY_TOKEN;
+// const token = process.env.NEXT_PUBLIC_MY_TOKEN;
+const token = Cookies.get("accessToken");
 
 // 뭔지도 모르고 그냥 써놧네
 const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
@@ -67,7 +69,6 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   // 🍰 이거 나중에 커스텀훅으로 묶을까?
 
   // 체크박스 상태 관리 스테이트
-
   const [isStartedAtNull, setIsStartedAtNull] = useState(false);
   const [isEndedAtNull, setIsEndedAtNull] = useState(false);
 
@@ -110,8 +111,16 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   const categoryOptions = ["운동", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
   const placeOptions = ["서울", "경기", "인천", "강원", "대전", "세종", "충남", "충북", "부산", "울산", "경남", "경북", "대구", "광주", "전남", "전북", "제주", "전국", "미정"];
 
-  // 수정 제출 함수
+  // 미리보기 이미지 변경 핸들 함수
+  const handlePreviewImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const previewFile = event.target.files[0];
+      const previewFileUrl = URL.createObjectURL(previewFile);
+      setPreviewImage(previewFileUrl);
+    }
+  };
 
+  // 모임 수정 후 제출 함수
   const handleEditFormSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -166,7 +175,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
 
       // 오늘 기준으로 본 모임 시작일
       // 이미 시작 => 시작일 수정 X, 아직 시작 안함 => 오늘 이후 O
-      if (previousStartDate && previousStartDate < now) {
+      if (previousStartDate && previousStartDate < now && inputDate !== previousStartDate) {
         alert("이미 시작된 모임의 모임 시작일은 수정할 수 없습니다.");
         return false;
       } else if (previousStartDate && inputDate < now) {
@@ -176,7 +185,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
 
       // 오늘 기준으로 본 모임 종료일
       // 이미 종료 => 기존보다 더 빠르게 수정X, 오늘 이후O
-      if (previousEndDate && previousEndDate < now && inputDate < now) {
+      if (previousEndDate && previousEndDate < now && previousEndDate === inputDate && inputDate < now) {
         alert("이미 종료된 모임의 모임 종료일은 지난 날짜로 설정할 수 없습니다.");
         return false;
       }
@@ -202,8 +211,11 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
         return false;
       }
 
-      if (adEndDate < now) {
+      if (fieldName === "adEndedAt" && inputDate < now) {
+        // adEndDate < now 였는데 오류나서 위처럼 고친거야
+        console.log("광고종료 검사 실행됐니");
         alert("광고 종료일은 지난 날짜로 설정할 수 없습니다.");
+        return false;
       }
 
       // 사용자 입력 날짜값이 오늘보다 이전이면 false(걸림)
@@ -220,50 +232,52 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
       console.log("제출 전 유효성 검사 실행됐음");
       return;
     }
+
+    const editedMeetup: Meetup = {
+      ...previousMeetupData,
+      name: nameRef.current?.value || "",
+      description: descriptionRef.current?.value || "",
+      place: placeRef.current?.value || "",
+      placeDescription: placeDescriptionRef.current?.value || "",
+      startedAt: isStartedAtNull ? null : startedAtRef.current?.value || null,
+      endedAt: isEndedAtNull ? null : endedAtRef.current?.value || null,
+      adTitle: adTitleRef.current?.value || "",
+      adEndedAt: adEndedAtRef.current?.value || null,
+      // 수정전: isPublic: isPublicRef.current?.checked || false,
+      //       isPublic: isPublicRef.current?.checked || false,
+
+      isPublic: isPublicRef.current?.checked || false, //이래도 안됨
+      category: categoryRef.current?.value || "",
+      image: imageRef.current?.value || "",
+    };
+
+    const formData = new FormData();
+
+    formData.append("payload", JSON.stringify(editedMeetup));
+
+    if (imageRef.current?.files?.[0]) {
+      const file = imageRef.current.files[0];
+      formData.append("image", file);
+    }
+
+    // 이게 뭐야
+    const payload = formData.get("payload");
+    console.log("서버로 전송되는 수정된 모임데이터래:", JSON.stringify(payload as string));
+    editMutation.mutate(formData);
+
+    // const handlePreviewImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    //   if (event.target.files && event.target.files[0]) {
+    //     const previewFile = event.target.files[0];
+    //     const previewFileUrl = URL.createObjectURL(previewFile);
+    //     setPreviewImage(previewFileUrl);
+    //   }
+    // };
+
+    if (isPending) return <p>로딩 중...</p>;
+    if (isError) return <p>모임 데이터 로드 에러 발생</p>;
   };
 
   // -- 여기까지 수정 제출 함수 선언 --
-
-  const editedMeetup: Meetup = {
-    ...previousMeetupData,
-    name: nameRef.current?.value || "",
-    description: descriptionRef.current?.value || "",
-    place: placeRef.current?.value || "",
-    placeDescription: placeDescriptionRef.current?.value || "",
-    startedAt: isStartedAtNull ? null : startedAtRef.current?.value || null,
-    endedAt: isEndedAtNull ? null : endedAtRef.current?.value || null,
-    adTitle: adTitleRef.current?.value || "",
-    adEndedAt: adEndedAtRef.current?.value || null,
-    // 수정전: isPublic: isPublicRef.current?.checked || false,
-    isPublic: isPublicRef.current?.checked, //이래도 안됨
-    category: categoryRef.current?.value || "",
-    image: imageRef.current?.value || "",
-  };
-
-  const formData = new FormData();
-
-  formData.append("payload", JSON.stringify(editedMeetup));
-
-  if (imageRef.current?.files?.[0]) {
-    const file = imageRef.current.files[0];
-    formData.append("image", file);
-  }
-
-  // 이게 뭐야ㅕ
-  const payload = formData.get("payload");
-  console.log("서버로 전송되는 수정된 모임데이터래:", JSON.stringify(payload as string));
-  editMutation.mutate(formData);
-
-  const handlePreviewImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      const previewFile = event.target.files[0];
-      const previewFileUrl = URL.createObjectURL(previewFile);
-      setPreviewImage(previewFileUrl);
-    }
-  };
-
-  if (isPending) return <p>로딩 중...</p>;
-  if (isError) return <p>모임 데이터 로드 에러 발생</p>;
 
   return (
     <>
@@ -312,10 +326,12 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
 
         <div>
           {previewImage ? <img src={previewImage} alt="미리보기 이미지" /> : <p>미리보기 이미지가 없습니다.</p>}
-          <LabeledInput id="image" name="image" label="광고글 대표 이미지" type="file" accept="image/jpg, image/jpeg, image/png, image/webp, image/bmp" />
+          <LabeledInput id="image" name="image" label="광고글 대표 이미지" type="file" accept="image/jpg, image/jpeg, image/png, image/webp, image/bmp" onChange={handlePreviewImageChange} />
         </div>
         <button type="submit">수정 완료</button>
       </form>
     </>
   );
 };
+
+export default MeetupEditForm;
