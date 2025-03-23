@@ -1,4 +1,4 @@
-export interface LikeAreaProps {
+export interface LikePartProps {
   isLike: boolean | undefined;
   likeCount: number | undefined;
   onToggle: () => void;

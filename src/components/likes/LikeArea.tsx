@@ -1,10 +1,10 @@
 "use client";
 
-import { LikeAreaProps } from "@/types/likeType";
+import { LikePartProps } from "@/types/likeType";
 import React from "react";
 import LikeItem from "./LikeItem";
 
-const LikeArea = ({ isLike, likeCount, onToggle, isPending = false }: LikeAreaProps) => {
+const LikePart = ({ isLike, likeCount, onToggle, isPending = false }: LikePartProps) => {
   return (
     <div>
       <LikeItem isLike={isLike} likeCount={likeCount} onClick={onToggle} disabled={isPending} />
@@ -12,4 +12,4 @@ const LikeArea = ({ isLike, likeCount, onToggle, isPending = false }: LikeAreaPr
   );
 };
 
-export default LikeArea;
+export default LikePart;

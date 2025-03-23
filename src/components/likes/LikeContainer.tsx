@@ -2,7 +2,8 @@ import { toggleLikeApi } from "@/services/like.service";
 import { LikeContainerProps } from "@/types/likeType";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React from "react";
-import LikeArea from "./LikeArea";
+import { Meetup } from "@/types/meetupType";
+import LikePart from "./LikeArea";
 
 const LikeContainer = ({ id }: LikeContainerProps) => {
   const queryClient = useQueryClient();
@@ -18,13 +19,23 @@ const LikeContainer = ({ id }: LikeContainerProps) => {
       // TODO: 추후 별도의 likes API 생성 시 변경 예정
 
       () => {
-        const headhuntingData = queryClient.getQueryData(["headhuntings", id]);
+        const headhuntingData = queryClient.getQueryData<Meetup>(["headhuntings", id]);
         return {
           isLike: headhuntingData?.isLike ?? false,
           likeCount: headhuntingData?.likeCount ?? 0,
         };
       },
   });
+
+  console.log(
+    "캐시된 모든 쿼리:",
+    queryClient
+      .getQueryCache()
+      .getAll()
+      .map(q => q.queryKey),
+  );
+  console.log("headhuntings 데이터:", queryClient.getQueryData(["headhuntings", id]));
+  console.log("headhuntings 전체:", queryClient.getQueryData(["headhuntings"]));
 
   const likeMutation = useMutation({
     mutationFn: () => toggleLikeApi(id, likeData?.isLike ?? false),
@@ -65,7 +76,7 @@ const LikeContainer = ({ id }: LikeContainerProps) => {
 
   return (
     <>
-      <LikeArea isLike={likeData?.isLike ?? false} likeCount={likeData?.likeCount ?? 0} onToggle={handleToggleLike} isPending={likeMutation.isPending} />
+      <LikePart isLike={likeData?.isLike ?? false} likeCount={likeData?.likeCount ?? 0} onToggle={handleToggleLike} isPending={likeMutation.isPending} />
     </>
   );
 };

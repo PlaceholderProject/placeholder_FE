@@ -2,6 +2,7 @@ import { toggleLikeApi } from "@/services/like.service";
 import { LikeContainerProps } from "@/types/likeType";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import LikeArea from "./LikeArea";
+import { Meetup } from "@/types/meetupType";
 
 const LikeContainerPractice = ({ id }: LikeContainerProps) => {
   const queryClient = useQueryClient();
@@ -13,13 +14,33 @@ const LikeContainerPractice = ({ id }: LikeContainerProps) => {
   } = useQuery({
     queryKey: ["likes", id],
     queryFn: () => {
-      const headhuntingData = queryClient.getQueryData(["headhuntings", id]);
+      //Meetup 타입이라고 명시적으로 추가
+      const headhuntingData = queryClient.getQueryData<Meetup>(["headhuntings", id]);
+      // 부모인 ThumbnailArea와 ThumbnailItem에서 "headhuntings" 쿼리키를 사용하고 있다.
+      // like API가 따로 있는 게 아니고 headhuntings를 가져오고, 개별 광고글에서 like 관련 데이터 가져옴
+
       return {
         isLike: headhuntingData?.isLike ?? false,
         likeCount: headhuntingData?.likeCount ?? 0,
       };
     },
+    // queryFn: fetch 함수. 여기선 서버 호출 없이,
+    // 캐시에 있는 ["headhuntings", id] 데이터에서 isLike, likeCount만 꺼내는 로직
+    // 왜? 이미 ["headhuntings", id] 데이터가 있으면
+    // 굳이 다시 API 호출하지 않고 파생 데이터만 사용하려는 전략
+    // 근데 맨 처음 진입시에도 데이터가 있어야 하는데
+    // 왜 최초 클릭시에 오류가 남?
   });
+
+  console.log(
+    "캐시된 모든 쿼리:",
+    queryClient
+      .getQueryCache()
+      .getAll()
+      .map(q => q.queryKey),
+  );
+  console.log("headhuntings 데이터:", queryClient.getQueryData(["headhuntings", id]));
+  console.log("headhuntings 전체:", queryClient.getQueryData(["headhuntings"]));
 
   const likeMutation = useMutation({
     mutationFn: () => toggleLikeApi(id, likeData?.isLike ?? false),
@@ -37,7 +58,7 @@ const LikeContainerPractice = ({ id }: LikeContainerProps) => {
       return { previousData };
     },
 
-    // 에러 발생시 콜백
+    // 에러 발생시 롤백
 
     onError: (error, variables, context) => {
       queryClient.setQueryData(["likes", id], context?.previousData);
