@@ -5,6 +5,9 @@ import { useQuery } from "@tanstack/react-query";
 import ThumbnailItem from "./ThumbnailItem";
 import { getHeadhuntingsApi } from "@/services/thumbnails.service";
 import { Meetup } from "@/types/meetupType";
+import Cookies from "js-cookie";
+
+const token = Cookies.get("accessToken");
 
 const ThumbnailArea = () => {
   //headhuntings 탠스택쿼리
