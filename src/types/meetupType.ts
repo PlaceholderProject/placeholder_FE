@@ -3,8 +3,8 @@ export interface Meetup {
     nickname: string;
     profileImage: string;
   };
-  isLike?: boolean;
-  likeCount?: number;
+  isLike: boolean;
+  likeCount: number;
   id: number; // 24.01.07 ThumbnailArea에 광고 아이템 하나씩 띄우는데 타입 필요해서 추가함
   // 25.03.14 id 뒤에 물음표 있었는데 ThumbnailArea에서 undefined는 할당할 수 없다고 타입 오류나서 지움
   name: string;

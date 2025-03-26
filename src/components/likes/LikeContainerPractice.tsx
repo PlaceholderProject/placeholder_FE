@@ -1,7 +1,7 @@
 import { toggleLikeApi } from "@/services/like.service";
 import { LikeContainerProps } from "@/types/likeType";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import LikeArea from "./LikeArea";
+import LikePart from "./LikePart";
 import { Meetup } from "@/types/meetupType";
 
 const LikeContainerPractice = ({ id }: LikeContainerProps) => {
@@ -19,6 +19,9 @@ const LikeContainerPractice = ({ id }: LikeContainerProps) => {
       // 부모인 ThumbnailArea와 ThumbnailItem에서 "headhuntings" 쿼리키를 사용하고 있다.
       // like API가 따로 있는 게 아니고 headhuntings를 가져오고, 개별 광고글에서 like 관련 데이터 가져옴
 
+      //현재는 headhunting 데이터에서 like 정보 가져옴
+      // TODO: 추후 별도의 likes API 생성 시 변경 예정
+
       return {
         isLike: headhuntingData?.isLike ?? false,
         likeCount: headhuntingData?.likeCount ?? 0,
@@ -32,28 +35,54 @@ const LikeContainerPractice = ({ id }: LikeContainerProps) => {
     // 왜 최초 클릭시에 오류가 남?
   });
 
-  console.log(
-    "캐시된 모든 쿼리:",
-    queryClient
-      .getQueryCache()
-      .getAll()
-      .map(q => q.queryKey),
-  );
-  console.log("headhuntings 데이터:", queryClient.getQueryData(["headhuntings", id]));
-  console.log("headhuntings 전체:", queryClient.getQueryData(["headhuntings"]));
+  // console.log(
+  //   "캐시된 모든 쿼리:",
+  //   queryClient
+  //     .getQueryCache()
+  //     .getAll()
+  //     .map(q => q.queryKey),
+  // );
+  // console.log("headhuntings 데이터:", queryClient.getQueryData(["headhuntings", id]));
+  // console.log("headhuntings 전체:", queryClient.getQueryData(["headhuntings"]));
 
   const likeMutation = useMutation({
     mutationFn: () => toggleLikeApi(id, likeData?.isLike ?? false),
 
     // 낙관적 업데이트
+
     onMutate: async () => {
+      // 이전 데이터 백업
       const previousData = queryClient.getQueryData(["likes", id]);
 
-      queryClient.setQueryData(["likes", id], (old: any) => ({
-        ...old,
-        isLike: !(old?.isLike ?? false),
-        likeCount: old?.isLike ?? false ? (old?.likeCount ?? 1) - 1 : (old?.likeCount ?? 0) + 1,
-      }));
+      // 초기 데이터 설정 (이전 데이터 없으면 headhuntings 데이터에서 가져옴)
+
+      if (!previousData) {
+        const headhuntingData = queryClient.getQueryData<Meetup>(["headhuntings", id]);
+        queryClient.setQueryData(["likes", id], {
+          isLike: headhuntingData?.isLike ?? false,
+          liekCount: headhuntingData?.likeCount ?? 0,
+        });
+      }
+
+      // 이전 버전
+      // queryClient.setQueryData(["likes", id], (old: any) => ({
+      //   ...old,
+      //   isLike: !(old?.isLike ?? false),
+      //   likeCount: old?.isLike ?? false ? (old?.likeCount ?? 1) - 1 : (old?.likeCount ?? 0) + 1,
+      // }));
+
+      // return { previousData };
+
+      // 새 버전 데이터 업데이트
+
+      queryClient.setQueryData(["likes, id"], (old: any) => {
+        const currentIsLike = old?.isLike ?? false;
+        return {
+          ...old,
+          isLike: !currentIsLike,
+          likeCount: currentIsLike ? (old?.likeCount ?? 1) - 1 : (old?.likeCount ?? 0) + 1,
+        };
+      });
 
       return { previousData };
     },
@@ -81,7 +110,7 @@ const LikeContainerPractice = ({ id }: LikeContainerProps) => {
 
   return (
     <>
-      <LikeArea isLike={likeData?.isLike ?? false} likeCount={likeData?.likeCount ?? 0} onToggle={handleToggleLike} isPending={likeMutation.isPending} />
+      <LikePart isLike={likeData?.isLike ?? false} likeCount={likeData?.likeCount ?? 0} onToggle={handleToggleLike} isPending={likeMutation.isPending} />
     </>
   );
 };

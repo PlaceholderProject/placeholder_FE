@@ -1,13 +1,13 @@
 export interface LikePartProps {
-  isLike: boolean | undefined;
-  likeCount: number | undefined;
+  isLike: boolean;
+  likeCount: number;
   onToggle: () => void;
   isPending?: boolean;
 }
 
 export interface LikeItemProps {
-  isLike: boolean | undefined;
-  likeCount: number | undefined;
+  isLike: boolean;
+  likeCount: number;
   onClick: () => void;
   disabled?: boolean;
 }
