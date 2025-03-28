@@ -1,15 +1,23 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import ThumbnailItem from "./ThumbnailItem";
 import { getHeadhuntingsApi } from "@/services/thumbnails.service";
-import { Meetup } from "@/types/meetupType";
+import { Meetup, SortType } from "@/types/meetupType";
 import Cookies from "js-cookie";
+import SortButtons from "./SortButtons";
 
 const token = Cookies.get("accessToken");
 
 const ThumbnailArea = () => {
+  // 정렬 상태 관리
+
+  const [sortType, setSortType] = useState<SortType>("popular");
+  const handleSortChange = (newSortType: SortType) => {
+    setSortType(newSortType);
+  };
+
   //headhuntings 탠스택쿼리
   const {
     data: headhuntingsData,
@@ -21,12 +29,6 @@ const ThumbnailArea = () => {
     retry: 0,
   });
 
-  // console.log("쿼리 상태:", {
-  //   isPending,
-  //   isError,
-  //   headhuntingsData,
-  // });
-
   if (isPending) return <div>로딩중</div>;
   if (isError) return <div>에러 발생</div>;
 
@@ -35,6 +37,7 @@ const ThumbnailArea = () => {
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
+        <SortButtons currentSort={sortType} handleSortChange={handleSortChange} />
         {thumbnailIds.map((thumbnailId: Meetup["id"]) => (
           <ThumbnailItem key={thumbnailId} id={thumbnailId} />
         ))}

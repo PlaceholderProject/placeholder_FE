@@ -6,10 +6,10 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BASE_URL } from "@/constants/baseURL";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Meetup } from "@/types/meetupType";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
-const token = process.env.NEXT_PUBLIC_MY_TOKEN;
+const token = Cookies.get("accessToken");
 
 const AdDeleteModal = ({ meetupId }: { meetupId: number }) => {
   const dispatch = useDispatch();
@@ -34,6 +34,9 @@ const AdDeleteModal = ({ meetupId }: { meetupId: number }) => {
   };
 
   // 광고글 삭제 함수
+  // -- TO DO --
+  // 이거 ad.servie.ts 로 빼야됨
+
   const deleteAd = async ({ meetupId }: { meetupId: number }) => {
     const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}`, {
       method: "DELETE",
@@ -71,7 +74,7 @@ const AdDeleteModal = ({ meetupId }: { meetupId: number }) => {
         <div className="w-50 h-50 bt-white rounded-lg p-6">
           '삭제하기' 버튼을 클릭하면 광고글이 영구적으로 사라집니다.
           <button type="button" onClick={handleCloseButtonClick}>
-            닫기fa
+            닫기
           </button>
           <button onClick={handleDeleteClick} type="button" disabled={deleteMutation.isPending} className="m-2 w-50 h-10 bg-red-400">
             {deleteMutation.isPending ? "삭제 중.." : "⚠️삭제하기⚠️"}

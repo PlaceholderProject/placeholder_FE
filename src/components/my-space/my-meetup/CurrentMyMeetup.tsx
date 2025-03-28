@@ -131,11 +131,15 @@
 // export default CurrentMyMeetup;
 
 import React from "react";
+import MemberOutContainer from "./MemberOutContainer";
+import RoleIcon from "./RoleIcon";
 
 const CurrentMyMeetup = () => {
   return (
     <>
+      <MemberOutContainer />
       <div>🐱현재 할리스강 6회 정기모임</div>
+      <RoleIcon />
       <div>🐱현재 할리스강 6회 정기모임</div>
       <div>🐱현재 할리스강 6회 정기모임</div>
       <div>🐱현재 할리스강 6회 정기모임</div>
