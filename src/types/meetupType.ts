@@ -17,6 +17,7 @@ export interface Meetup {
   isPublic: boolean;
   image?: string;
   category: string;
+  commentCount: number;
 }
 
 export interface LabeledInputProps {

@@ -35,15 +35,15 @@ const ThumbnailArea = () => {
     retry: 0,
   });
 
-  console.log("쿼리 상태:", {
-    isPending,
-    isError,
-    headhuntingsAsThumbnails,
-  });
+  // console.log("쿼리 상태:", {
+  //   isPending,
+  //   isError,
+  //   headhuntingsAsThumbnails,
+  // });
 
   useEffect(() => {
     if (headhuntingsAsThumbnails) {
-      console.log("받아온 데이터 구조:", headhuntingsAsThumbnails);
+      // console.log("받아온 데이터 구조:", headhuntingsAsThumbnails);
     }
   }, [headhuntingsAsThumbnails]);
 

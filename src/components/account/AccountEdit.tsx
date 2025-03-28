@@ -41,7 +41,7 @@ const AccountEdit = () => {
           );
           setProfileImage(data.image || "/profile.png");
         }
-        console.log(data);
+        // console.log(data);
       };
       fetchUser();
     } else {
@@ -61,11 +61,11 @@ const AccountEdit = () => {
     if (file) {
       const objectUrl = URL.createObjectURL(file);
       setProfileImage(objectUrl); // Blob URL을 React 상태에 설정
-      console.log("Blob URL 생성:", objectUrl);
+      // console.log("Blob URL 생성:", objectUrl);
     }
   };
 
-  console.log("파일 등록시", profileImage);
+  // console.log("파일 등록시", profileImage);
 
   const handleNicknameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value.length > 8) {
@@ -92,8 +92,8 @@ const AccountEdit = () => {
 
     const file = fileInputRef.current?.files?.[0];
 
-    console.log(file?.name);
-    console.log(profileImage);
+    // console.log(file?.name);
+    // console.log(profileImage);
 
     const editedUser = {
       nickname,
@@ -104,11 +104,11 @@ const AccountEdit = () => {
     const response = await editUser(editedUser);
 
     if (response) {
-      console.log("Update successful:", response);
+      // console.log("Update successful:", response);
 
       const imageUrl = response.image ? (response.image.startsWith("http") ? response.image : `${BASE_URL}${response.image}`) : "/profile.png"; // 기본 이미지 경로
 
-      console.log(imageUrl);
+      // console.log(imageUrl);
 
       dispatch(
         setUser({

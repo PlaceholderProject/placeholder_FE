@@ -131,7 +131,7 @@ export const recheckPassword = async (password: string) => {
       body: JSON.stringify({ password: password }),
     });
 
-    console.log("HTTP 상태 코드:", response.status);
+    // console.log("HTTP 상태 코드:", response.status);
 
     if (!response.ok) {
       throw new Error("비밀번호가 잘못되었습니다. 다시 시도해주세요.");

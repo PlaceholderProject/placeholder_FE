@@ -49,8 +49,8 @@ export const getMeetupByIdApi = async (meetupId: number) => {
   // // 🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠 이거는 필요 없고 onSuccess에서 하면 됨 되는거야 마는거야 🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠🫠 아마 안됨
   // setPreviewImage(`${meetupByIdData.image}`);
 
-  console.log("가져온 데이터: ", meetupByIdData);
-  console.log("meetupId 타입 뭐야?", typeof meetupByIdData.id);
+  // console.log("가져온 데이터: ", meetupByIdData);
+  // console.log("meetupId 타입 뭐야?", typeof meetupByIdData.id);
 
   return meetupByIdData;
 };
@@ -71,12 +71,12 @@ export const editMeetupApi = async (meetupId: number, formData: FormData): Promi
   // 🚨🚨🚨🚨🚨서버 응답 형태 확인용 지금 date랑 checkbox 인풋만 수정이 안되거든요🚨🚨🚨🚨🚨
 
   const responseData = await response.json();
-  console.log("서버 응답:", responseData);
+  // console.log("서버 응답:", responseData);
   return responseData;
 };
 
 //모임(광고글) organizer 가져오는 api
 
-export const getOrganizer = async (meetupId: number) => {
-  const response = await fetch(``);
-};
+// export const getOrganizer = async (meetupId: number) => {
+//   const response = await fetch(``);
+// };

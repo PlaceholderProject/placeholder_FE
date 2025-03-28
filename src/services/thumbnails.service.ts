@@ -16,7 +16,7 @@ export const getHeadhuntingsApi = async () => {
     throw new Error("광고글 목록 가져오기 실패");
   }
   const headhuntingsData = await response.json();
-  console.log("가져온 광고글 목록: ", headhuntingsData);
+  // console.log("가져온 광고글 목록: ", headhuntingsData);
   return headhuntingsData;
 };
 
@@ -37,7 +37,7 @@ export const getHeadhuntingItemApi = async (thumbnailId: number) => {
 
   const headhuntingItemData = await response.json();
 
-  console.log("아이템 하나 데이터:", headhuntingItemData);
+  // console.log("아이템 하나 데이터:", headhuntingItemData);
 
   return await headhuntingItemData;
 };

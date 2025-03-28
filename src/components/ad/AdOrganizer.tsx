@@ -13,9 +13,9 @@ const AdOrganizer = ({ meetupId }: { meetupId: number }) => {
     const getAd = async () => {
       try {
         const data = await getAdByIdApi(meetupId);
-        console.log("받아온 전체 데이터:", data); // 전체 데이터 구조 확인
-        console.log("방장 데이터:", data.organizer); // organizer 객체 구조 확인
-        console.log("프사 데이터:", data.organizer.profileImage);
+        // console.log("받아온 전체 데이터:", data); // 전체 데이터 구조 확인
+        // console.log("방장 데이터:", data.organizer); // organizer 객체 구조 확인
+        // console.log("프사 데이터:", data.organizer.profileImage);
         setAdData(data);
       } catch (error) {
         setError(error.message);

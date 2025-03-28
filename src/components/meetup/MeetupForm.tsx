@@ -120,36 +120,36 @@ const MeetupForm = () => {
       return;
     }
     const category = categoryRef.current?.value || "";
-    console.log("Submitted category", category);
-    console.log("카테고리타입뭐야?:", typeof category);
+    // console.log("Submitted category", category);
+    // console.log("카테고리타입뭐야?:", typeof category);
 
     if (!nameRef.current) {
       console.error("nameRef가 인풋에 연걸 안돼있어");
       return;
     }
     const name = nameRef.current?.value || "";
-    console.log("Submitted name:", name);
+    // console.log("Submitted name:", name);
 
     if (!startedAtRef.current) {
       console.error("startedAtRef가 인풋에 연걸 안돼있어");
       return;
     }
     const startedAt = isStartedAtNull ? null : startedAtRef.current.value || null;
-    console.log("Submitted startedAt:", startedAt);
+    // console.log("Submitted startedAt:", startedAt);
 
     if (!endedAtRef.current) {
       console.error("endedAtRef가 인풋에 연걸 안돼있어");
       return;
     }
     const endedAt = isEndedAtNull ? null : endedAtRef.current.value || null;
-    console.log("Submitted endedAt:", endedAt);
+    // console.log("Submitted endedAt:", endedAt);
 
     if (!placeRef.current) {
       console.error("placeRef가 인풋에 연걸 안돼있어");
       return;
     }
     const place = placeRef.current?.value || "";
-    console.log("Submitted place:", place);
+    // console.log("Submitted place:", place);
 
     if (!placeDescriptionRef.current) {
       console.error("placeDescriptionRef가 인풋에 연결 안돼있어");
@@ -157,21 +157,21 @@ const MeetupForm = () => {
     }
 
     const placeDescription = placeDescriptionRef.current?.value || "";
-    console.log("Submitted placeDescription:", placeDescription);
+    // console.log("Submitted placeDescription:", placeDescription);
 
     if (!adTitleRef.current) {
       console.error("adTitleRef가 인풋에 연걸 안돼있어");
       return;
     }
     const adTitle = adTitleRef.current?.value || "";
-    console.log("Submitted adTitle:", adTitle);
+    // console.log("Submitted adTitle:", adTitle);
 
     if (!adEndedAtRef) {
       console.error("adEndedAtRef가 인풋에 연결 안돼있어");
       return;
     }
     const adEndedAt = adEndedAtRef.current?.value || "";
-    console.log("Submitted adEndedAt:", adEndedAt);
+    // console.log("Submitted adEndedAt:", adEndedAt);
 
     if (!descriptionRef) {
       console.error("descriptionRef가 인풋에 연결 안돼있어");
@@ -186,10 +186,10 @@ const MeetupForm = () => {
       return;
     }
     const isPublic = isPublicRef.current?.checked || false;
-    console.log("Submitted isPublic:", isPublic);
+    // console.log("Submitted isPublic:", isPublic);
 
     const image = imageRef.current?.value || "";
-    console.log("Submitted image:", image);
+    // console.log("Submitted image:", image);
 
     const newMeetup: Meetup = {
       name: nameRef.current?.value || "",
@@ -224,16 +224,16 @@ const MeetupForm = () => {
 
     if (imageRef.current?.files?.[0]) {
       const file = imageRef.current.files[0];
-      console.log("이미지 파일 정보:", file.name, file.type, file.size);
+      // console.log("이미지 파일 정보:", file.name, file.type, file.size);
       meetupFormData.append("image", file);
     } else {
-      console.log("imageRef: ", imageRef);
-      console.log("imageRef.current: ", imageRef.current);
-      console.log("imageRef.current.value: ", imageRef.current?.value);
+      // console.log("imageRef: ", imageRef);
+      // console.log("imageRef.current: ", imageRef.current);
+      // console.log("imageRef.current.value: ", imageRef.current?.value);
     }
 
     for (const pair of meetupFormData.entries()) {
-      console.log("meetupFormData 출력:", pair[0], pair[1]); // key와 value 출력
+      // console.log("meetupFormData 출력:", pair[0], pair[1]); // key와 value 출력
     }
 
     createMutation.mutate(meetupFormData, {
@@ -258,7 +258,7 @@ const MeetupForm = () => {
       const previewFileUrl = URL.createObjectURL(previewFile);
       setPreviewImage(previewFileUrl);
     }
-    console.log("미리보기 이미지:", previewImage);
+    // console.log("미리보기 이미지:", previewImage);
   };
 
   return (

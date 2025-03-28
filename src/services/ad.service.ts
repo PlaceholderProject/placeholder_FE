@@ -17,8 +17,8 @@ export const getAdByIdApi = async (meetupId: number) => {
   }
 
   const AdByIdData = await response.json();
-  console.log("가져온 데이터:", AdByIdData);
-  console.log("Ad 타입 뭐야?", typeof AdByIdData.id);
+  // console.log("가져온 데이터:", AdByIdData);
+  // console.log("Ad 타입 뭐야?", typeof AdByIdData.id);
 
   return AdByIdData;
 };

@@ -9,13 +9,15 @@ import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsAuthenticated } from "@/stores/authSlice";
 import { persistor, RootState } from "@/stores/store";
-import { logout } from "@/stores/userSlice";
+import { logout, setUser } from "@/stores/userSlice";
+import { getUser } from "@/services/user.service";
 
 const Header = () => {
   const [isRead, setIsRead] = useState(true);
   const router = useRouter();
 
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const user = useSelector((state: RootState) => state.user.user);
 
   const dispatch = useDispatch();
 
@@ -24,10 +26,26 @@ const Header = () => {
 
     if (accessToken) {
       dispatch(setIsAuthenticated(true));
+      const fetchUser = async () => {
+        const data = await getUser();
+        if (data) {
+          dispatch(
+            setUser({
+              email: data.email,
+              nickname: data.nickname,
+              bio: data.bio,
+              profileImage: data.image,
+            }),
+          );
+        }
+      };
+      fetchUser();
     } else {
       handleLogout();
     }
   }, []);
+
+  console.log("REDUX에 저장된 유저정보", user);
 
   const handleLogout = async () => {
     router.replace("/");
@@ -37,7 +55,7 @@ const Header = () => {
     dispatch(logout());
 
     await persistor.purge();
-    console.log("User data cleared from persist storage.");
+    // console.log("User data cleared from persist storage.");
   };
 
   const handleNotificationPage = () => {

@@ -19,12 +19,12 @@ const AdDeleteModal = ({ meetupId }: { meetupId: number }) => {
 
   // 토글 상태 변화 감지
   React.useEffect(() => {
-    console.log("삭제모달 상태업데이트됨:", isAdDeleteModalOpen);
+    // console.log("삭제모달 상태업데이트됨:", isAdDeleteModalOpen);
   }, [isAdDeleteModalOpen]);
 
   const handleCloseButtonClick = () => {
     dispatch(toggleAdDeleteModal());
-    console.log(isAdDeleteModalOpen);
+    // console.log(isAdDeleteModalOpen);
   };
 
   const handleOverlayClick = (event: React.MouseEvent<HTMLDivElement>) => {

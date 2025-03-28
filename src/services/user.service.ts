@@ -52,7 +52,7 @@ export const getUser = async (retryCount: number = 0): Promise<User | null> => {
       return null;
     }
     const result = await response.json();
-    console.log(result);
+    // console.log(result);
     return result;
   } catch (error) {
     console.error("데이터 가져오기 오류:", error);
