@@ -89,7 +89,7 @@ const MeetupForm = () => {
     },
 
     onError: error => {
-      console.error("모임 생성 오류 발생:", error);
+      console.error("모임 생성 오류 발생:", error.message);
     },
   });
 
@@ -137,7 +137,7 @@ const MeetupForm = () => {
 
       // 사용자 입력 날짜값이 오늘보다 이전이면 false(걸림)
       if (inputDate !== null && inputDate < now) {
-        alert(`${getDateFieldName(fieldName)}이 이미 지난 날짜로 설정되었습니다.`);
+        alert(`${getDateFieldName(fieldName)}은 이미 지난 날짜로 설정할 수 없습니다.`);
         return false;
       }
 
@@ -177,6 +177,8 @@ const MeetupForm = () => {
       isPublic: isPublicRef.current?.checked || false,
       category: categoryRef.current?.value || "",
       image: imageRef.current?.value || "",
+      isLike: false,
+      likeCount: 0,
     };
 
     const meetupFormData = new FormData();

@@ -133,19 +133,35 @@
 import React from "react";
 import MemberOutContainer from "./MemberOutContainer";
 import RoleIcon from "./RoleIcon";
+import { useQuery } from "@tanstack/react-query";
+import { getOngoingMyMeetupsApi } from "@/services/my.space.service";
 
 const CurrentMyMeetup = () => {
+  const {
+    data: myMeetupsData,
+    isPending,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["myMeetups", "ongoing"],
+    queryFn: getOngoingMyMeetupsApi,
+  });
+
+  if (isPending) return <div>로딩중...</div>;
+  if (isError) return <div>에러 : {error.message}</div>;
+  if (!myMeetupsData || myMeetupsData.length === 0) return <div>참여 중인 모임이 없습니다.</div>;
+
   return (
     <>
-      <MemberOutContainer />
-      <div>🐱현재 할리스강 6회 정기모임</div>
-      <RoleIcon />
-      <div>🐱현재 할리스강 6회 정기모임</div>
-      <div>🐱현재 할리스강 6회 정기모임</div>
-      <div>🐱현재 할리스강 6회 정기모임</div>
-      <div>🐱현재 할리스강 6회 정기모임</div>
-      <div>🐱현재 할리스강 6회 정기모임</div>
-      <div>🐱현재 할리스강 6회 정기모임</div>
+      <div className="grid grid-cols-1">
+        {myMeetupsData.map(myMeetup => (
+          <div key={myMeetup.id} className="flex justify-between">
+            <RoleIcon />
+            방장이니?: {`${myMeetup.is_organizer}`} 모임 이름:{myMeetup.name}
+            <MemberOutContainer />
+          </div>
+        ))}
+      </div>
     </>
   );
 };
