@@ -2,23 +2,6 @@ import { BASE_URL } from "@/constants/baseURL";
 import { MyAd, MyMeetup } from "@/types/mySpaceType";
 import Cookies from "js-cookie";
 
-// export const getMyMeetupsApi = async () => {
-//   const token = Cookies.get("accessToken");
-//   const response = await fetch(`${BASE_URL}/api/v1/user/me/meetup`, {
-//     method: "GET",
-//     headers: {
-//       Authorization: `Bearer ${token}`,
-//     },
-//   });
-
-//   if (!response.ok) {
-//     throw new Error("내모임 가져오기 에러발생");
-//   }
-
-//   const myMeetupsData = await response.json();
-//   return myMeetupsData.result;
-// };
-
 // 모임 공통 로직 재사용
 export const getMyMeetups = async (status: string): Promise<MyMeetup[]> => {
   const token = Cookies.get("accessToken");
@@ -49,6 +32,14 @@ export const getMyMeetups = async (status: string): Promise<MyMeetup[]> => {
     throw error;
   }
 };
+
+// 우선 가져오는 기본 로직 있고
+// 가져 오는 순간에 ongoing인지 ended인지 상태를 param으로 넣어서 가져옴
+// ongoing의 isCurrent = true
+// ended의 isCurrent = false
+// 근데 가져온뒤에 시간이 지나면 걔가 ongoing에서 ended로 변하고
+// 그걸 프론트에서 확인해서 컴포넌ㅌ트를 변경해줘야 함?
+// 엥 그냥 도니ㅡㄴ데??????
 
 // 현재 모임
 

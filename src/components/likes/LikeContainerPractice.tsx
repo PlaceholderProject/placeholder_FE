@@ -55,7 +55,6 @@ const LikeContainerPractice = ({ id }: LikeContainerProps) => {
       const previousData = queryClient.getQueryData(["likes", id]);
 
       // 초기 데이터 설정 (이전 데이터 없으면 headhuntings 데이터에서 가져옴)
-
       if (!previousData) {
         const headhuntingData = queryClient.getQueryData<Meetup>(["headhuntings", id]);
         queryClient.setQueryData(["likes", id], {
@@ -73,7 +72,7 @@ const LikeContainerPractice = ({ id }: LikeContainerProps) => {
 
       // return { previousData };
 
-      // 새 버전 데이터 업데이트
+      // 새 버전 likes 쿼리 데이터 업데이트
 
       queryClient.setQueryData(["likes, id"], (old: any) => {
         const currentIsLike = old?.isLike ?? false;
