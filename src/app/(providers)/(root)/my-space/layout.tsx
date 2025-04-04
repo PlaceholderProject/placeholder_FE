@@ -17,7 +17,6 @@ const MySpaceLayout = ({ children }: { children: React.ReactNode }) => {
           <Link className={`font-bold p-4 ${activeMainTab === "myAd" ? "active" : ""}`} onClick={() => setActiveMainTab("myAd")} href="/my-space/my-ad">
             내 광고
           </Link>
-
           <Link className="font-bold p-4" href="/my-space/received-proposal">
             받은 신청서
           </Link>

@@ -5,6 +5,11 @@ import React from "react";
 import { Meetup } from "@/types/meetupType";
 import LikePart from "./LikePart";
 
+// ❗️좋아요 클릭이나 취소시 새로고침을 해야 숫자가 옳게 반영됨
+// 이미 누른거(1)이 또 클릭하면 2가 됐다가 새로고침해야 1이 되고
+// -1도 나왔었음
+// ❗️ 이미 좋아요 누른 1이, 새로고침시 숫자는 남아있는데 하트 빨간게 투명해짐
+
 const LikeContainer = ({ id }: LikeContainerProps) => {
   const queryClient = useQueryClient();
 
@@ -23,16 +28,6 @@ const LikeContainer = ({ id }: LikeContainerProps) => {
     },
   });
 
-  // console.log(
-  //   "캐시된 모든 쿼리:",
-  //   queryClient
-  //     .getQueryCache()
-  //     .getAll()
-  //     .map(q => q.queryKey),
-  // );
-  // console.log("headhuntings 데이터:", queryClient.getQueryData(["headhuntings", id]));
-  // console.log("headhuntings 전체:", queryClient.getQueryData(["headhuntings"]));
-
   const likeMutation = useMutation({
     mutationFn: () => toggleLikeApi(id, likeData?.isLike ?? false),
 
@@ -40,10 +35,10 @@ const LikeContainer = ({ id }: LikeContainerProps) => {
     onMutate: async () => {
       // 이전 데이터 백업
       const previousData = queryClient.getQueryData(["likes", id]);
-
       // headhuntings 쿼리 캐시도 백업
       const previousHeadhunting = queryClient.getQueryData<Meetup>(["headhuntings", id]);
 
+      console.log("likeData가 뭔데? 클릭하면 클릭 이전의전 값이 찍히고있어:", likeData);
       //  처음에 likes 쿼리키 없을 시 설정
       if (!queryClient.getQueryData(["likes", id])) {
         queryClient.setQueryData(["likes", id], {
@@ -59,7 +54,6 @@ const LikeContainer = ({ id }: LikeContainerProps) => {
         likeCount: currentIsLike ? (likeData?.likeCount ?? 1) - 1 : (likeData?.likeCount ?? 0) + 1,
       };
 
-      // likes 쿼리 업데이트
       queryClient.setQueryData(["likes", id], newLikeData);
 
       // headhuntings 쿼리도 함께 업데이트
@@ -103,8 +97,8 @@ const LikeContainer = ({ id }: LikeContainerProps) => {
 
     // 성공 시 관련 쿼리 무효화
     onSuccess: data => {
-      console.log("좋아요 토글 성공:", data);
-      // queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
+      console.log("좋아요 토글 성공시 콘솔:", data);
+      queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
       queryClient.invalidateQueries({ queryKey: ["headhuntings", id] });
       queryClient.invalidateQueries({ queryKey: ["likes", id] });
     },
@@ -114,7 +108,7 @@ const LikeContainer = ({ id }: LikeContainerProps) => {
   if (isError) return <div>에러 발생</div>;
 
   const handleToggleLike = () => {
-    console.log("🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮좋아요 토글 시랳ㅇ됨");
+    console.log("🔮🔮🔮🔮🔮🔮🔮좋아요 토글 시랳ㅇ됨");
 
     likeMutation.mutate();
   };

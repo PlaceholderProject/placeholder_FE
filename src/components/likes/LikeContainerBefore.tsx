@@ -42,7 +42,6 @@ const LikeContainer = ({ id }: LikeContainerProps) => {
       const previousData = queryClient.getQueryData(["likes", id]);
 
       // headhuntings 쿼리 캐시도 백업
-
       const previousHeadhunting = queryClient.getQueryData(["headhuntings", id]);
 
       // 처음에 likes 쿼리키 없을 시 설정

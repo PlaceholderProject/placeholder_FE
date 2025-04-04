@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { BASE_URL } from "@/constants/baseURL";
 import calculateDays from "@/utils/calculateDays";
 import { useQuery } from "@tanstack/react-query";
@@ -18,7 +18,7 @@ const ThumbnailItem = ({ id }: { id: Meetup["id"] }) => {
     queryFn: () => getHeadhuntingItemApi(id),
   });
 
-  console.log(thumbnail?.image); // 옵셔널 체이닝 사용
+  // console.log(thumbnail?.image); // 옵셔널 체이닝 사용
 
   // console.log(thumbnail.image);
   // thumbnail?.image && console.log(thumbnail.image);
