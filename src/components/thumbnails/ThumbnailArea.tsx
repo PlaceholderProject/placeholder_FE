@@ -4,12 +4,17 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import ThumbnailItem from "./ThumbnailItem";
 import { getHeadhuntingsApi } from "@/services/thumbnails.service";
-import { Meetup, SortType } from "@/types/meetupType";
+import { Meetup } from "@/types/meetupType";
 import Cookies from "js-cookie";
+import { useSelector } from "react-redux";
+import { RootState } from "@/stores/store";
 
 const token = Cookies.get("accessToken");
 
 const ThumbnailArea = () => {
+  // 이제 리덕스에서 정렬 타입 가져옴
+  const sortType = useSelector((state: RootState) => state.sort.sortType);
+
   //headhuntings 탠스택쿼리
   const {
     data: headhuntingsData,
@@ -26,32 +31,36 @@ const ThumbnailArea = () => {
 
   console.log("소트전:", headhuntingsData.result);
 
+  let sortedThumbnails = [];
+
   // 인기순 (기본)
-  const sortedByPopularThumbnails = [...headhuntingsData.result].sort((a, b) => {
-    const likeCountA = a.likeCount;
-    const likeCountB = b.likeCount;
-    return likeCountB - likeCountA;
-  });
+  if (sortType === "popular") {
+    sortedThumbnails = [...headhuntingsData.result].sort((a, b) => {
+      const likeCountA = a.likeCount;
+      const likeCountB = b.likeCount;
+      return likeCountB - likeCountA;
+    });
+  } else if (sortType === "adDeadline") {
+    // 마감임박순
+    sortedThumbnails = [...headhuntingsData.result].sort((a, b) => {
+      const deadlineA = new Date(a.adEndedAt).getTime();
+      const deadlineB = new Date(b.adEndedAt).getTime();
+      return deadlineA - deadlineB;
+    });
+  } else if (sortType === "newest") {
+    // 최신순
+    sortedThumbnails = [...headhuntingsData.result].sort((a, b) => {
+      const createdA = new Date(a.createdAt).getTime();
+      const createdB = new Date(b.createdAt).getTime();
+      return createdB - createdA;
+    });
+  }
 
-  // 마감임박순
-  const sortedByAdDeadlineThumbnails = [...headhuntingsData.result].sort((a, b) => {
-    const deadlineA = new Date(a.adEndedAt).getTime();
-    const deadlineB = new Date(b.adEndedAt).getTime();
-    return deadlineA - deadlineB;
-  });
-
-  // 최신순
-  const sortedByCreatedAtThumbnails = [...headhuntingsData.result].sort((a, b) => {
-    const createdA = new Date(a.createdAt).getTime();
-    const createdB = new Date(b.createdAt).getTime();
-    return createdB - createdA;
-  });
-
-  const thumbnailIds = sortedByAdDeadlineThumbnails.map((headhungting: Meetup) => headhungting.id);
+  const thumbnailIds = sortedThumbnails.map((headhungting: Meetup) => headhungting.id);
 
   console.log("썸넬아이디들", thumbnailIds);
 
-  console.log("소트이후?", sortedByAdDeadlineThumbnails);
+  console.log("소트이후?", sortedThumbnails);
 
   // ❗️ 각각 모임 id를 엔드포인트에 붙여서 가져오는 함수에 에러가 난다
   // 왜냐면 [headhuntingsData.result]라고 쓰면, 대괄호로 다시 배열을 씌우게 되므로!
