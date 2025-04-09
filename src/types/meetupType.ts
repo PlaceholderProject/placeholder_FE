@@ -51,3 +51,29 @@ export interface LabeledSelectProps {
 }
 
 export type SortType = "popular" | "newest" | "adDeadline";
+
+export type RegionType =
+  | null
+  | "서울"
+  | "경기"
+  | "인천"
+  | "강원"
+  | "대전"
+  | "세종"
+  | "충남"
+  | "충북"
+  | "부산"
+  | "울산"
+  | "경남"
+  | "경북"
+  | "대구"
+  | "광주"
+  | "전남"
+  | "전북"
+  | "제주"
+  | "미정"
+  | "전국";
+
+export type PurposeType = null | "운동" | "공부" | "취준" | "취미" | "친목" | "맛집" | "여행" | "기타";
+
+export type FilterAreaType = null | "지역별" | "모임 성격별";
