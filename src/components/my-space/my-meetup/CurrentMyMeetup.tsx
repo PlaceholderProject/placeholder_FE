@@ -131,10 +131,12 @@
 // export default CurrentMyMeetup;
 
 import React from "react";
-import MemberOutContainer from "./MemberOutContainer";
 import RoleIcon from "./RoleIcon";
 import { useQuery } from "@tanstack/react-query";
 import { getOngoingMyMeetupsApi } from "@/services/my.space.service";
+import MemberOutContainer from "./MemberOutContainer";
+import Link from "next/link";
+import { BASE_URL } from "@/constants/baseURL";
 
 const CurrentMyMeetup = () => {
   const {
@@ -155,11 +157,13 @@ const CurrentMyMeetup = () => {
     <>
       <div className="grid grid-cols-1">
         {myMeetupsData.map(myMeetup => (
-          <div key={myMeetup.id} className="flex justify-between">
-            <RoleIcon />
+          // --TO DO--
+          // 지도페이지로 이동하게 링크 바꿔야함
+          <Link href="http://localhost:3000/" key={myMeetup.id} className="flex justify-between">
+            <RoleIcon isOrganizer={myMeetup.is_organizer} />
             방장이니?: {`${myMeetup.is_organizer}`} 모임 이름:{myMeetup.name}
             <MemberOutContainer />
-          </div>
+          </Link>
         ))}
       </div>
     </>

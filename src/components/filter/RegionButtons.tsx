@@ -7,7 +7,7 @@ import { setRegion } from "@/stores/filterSlice";
 const RegionButtons = () => {
   const dispatch = useDispatch();
   const { region } = useSelector((state: RootState) => state.filter);
-  const regions: RegionType[] = [null, "서울", "경기", "인천", "강원", "대전", "세종", "충남", "충북", "부산", "울산", "경남", "경북", "대구", "광주", "전남", "전북", "제주", "미정", "전국"];
+  const regions: RegionType[] = ["서울", "경기", "인천", "강원", "대전", "세종", "충남", "충북", "부산", "울산", "경남", "경북", "대구", "광주", "전남", "전북", "제주", "미정", "전국"];
   const handleRegionSelect = (newRegion: RegionType) => {
     dispatch(setRegion(newRegion));
   };

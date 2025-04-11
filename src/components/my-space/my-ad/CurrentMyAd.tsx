@@ -1,9 +1,12 @@
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useState } from "react";
 import { getOngoingMyAdsApi } from "@/services/my.space.service";
 import RoleIcon from "../my-meetup/RoleIcon";
 
 const CurrentMyAd = () => {
+  const [isOrganizer, setIsOrganizer] = useState(true);
   const {
     data: myAdsData,
     isPending,
@@ -24,7 +27,7 @@ const CurrentMyAd = () => {
       <div className="grid grid-cols-1">
         {myAdsData.map(myAd => (
           <div key={myAd.id} className="flex justify-between">
-            <RoleIcon />
+            <RoleIcon isOrganizer={isOrganizer} />
             광고글 이름: {myAd.ad_title} 광고종료일: {myAd.ad_ended_at}
           </div>
         ))}

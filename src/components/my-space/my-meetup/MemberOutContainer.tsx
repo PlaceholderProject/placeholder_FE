@@ -1,15 +1,33 @@
+"use client";
+
 import React, { useState } from "react";
 import OutButton from "./OutButton";
+import { FaRegUserCircle } from "react-icons/fa";
 
 const MemberOutContainer = () => {
-  const [isOrganizer, setIsOrganizer] = useState<boolean>(true);
+  const [isOrganizer, setIsOrganizer] = useState(false);
 
-  // --TO DO--
-  // 이거 나중에 고민해서 모임 각각 렌더링되면서 동적 적용되게끔?
+  // 아이콘 클릭했는데 Link 이동까지 되는 이벤트 버블링 발생,
+  // 이벤트 버블링 방지용
+
+  const handleIconClick = (event: { stopPropagation: () => void; preventDefault: () => void }) => {
+    event.stopPropagation();
+    event.preventDefault();
+
+    alert("멤버 관리 클릭됨 모달떠야돼");
+  };
   return (
-    <div>
-      <OutButton />
-    </div>
+    <>
+      <div>
+        {isOrganizer ? (
+          <OutButton isOrganizer={isOrganizer} />
+        ) : (
+          <button onClick={handleIconClick} className="p-2">
+            <FaRegUserCircle />
+          </button>
+        )}
+      </div>
+    </>
   );
 };
 

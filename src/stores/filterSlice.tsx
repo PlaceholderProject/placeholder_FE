@@ -58,6 +58,7 @@ const filterSlice = createSlice({
         state.region = "서울";
         state.isFilterActive = true;
       }
+
       if (state.isRegionMenuOpen) {
         state.isPurposeMenuOpen = false;
       }
@@ -71,10 +72,9 @@ const filterSlice = createSlice({
         state.isFilterActive = true;
       }
 
-      if (state.isRegionMenuOpen && state.region === null)
-        if (state.isPurposeMenuOpen) {
-          state.isRegionMenuOpen = false;
-        }
+      if (state.isPurposeMenuOpen) {
+        state.isRegionMenuOpen = false;
+      }
     },
 
     // 이게 필요함?
