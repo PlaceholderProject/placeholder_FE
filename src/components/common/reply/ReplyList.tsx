@@ -22,8 +22,6 @@ const ReplyList = () => {
     fetchReplyList();
   }, []);
 
-  console.log(params.meetupId);
-
   return (
     <div className="border-t-[1px] border-[#CFCFCF] w-full p-[10px]">
       {replyList.length === 0 ? <p className="text-[10px]">댓글이 없습니다.</p> : replyList.map(reply => <ReplyItem key={reply.id} reply={reply} />)}
