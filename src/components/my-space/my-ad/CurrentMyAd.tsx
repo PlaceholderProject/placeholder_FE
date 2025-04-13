@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 import { getOngoingMyAdsApi } from "@/services/my.space.service";
 import RoleIcon from "../my-meetup/RoleIcon";
+import Link from "next/link";
 
 const CurrentMyAd = () => {
   const [isOrganizer, setIsOrganizer] = useState(true);
@@ -26,10 +27,12 @@ const CurrentMyAd = () => {
     <>
       <div className="grid grid-cols-1">
         {myAdsData.map(myAd => (
-          <div key={myAd.id} className="flex justify-between">
+          // --TO DO--
+          // 해당 Id 광고페이지로 이동하게 링크 바꿔야함
+          <Link href={`http://localhost:3000/ad/${myAd.id}`} key={myAd.id} className="flex justify-between">
             <RoleIcon isOrganizer={isOrganizer} />
             광고글 이름: {myAd.ad_title} 광고종료일: {myAd.ad_ended_at}
-          </div>
+          </Link>
         ))}
       </div>
     </>

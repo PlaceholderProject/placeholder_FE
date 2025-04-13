@@ -18,6 +18,7 @@ export interface Meetup {
   isPublic: boolean;
   image?: string;
   category: string;
+  createAt: string;
 }
 
 export interface NewMeetup extends Omit<Meetup, "id"> {}

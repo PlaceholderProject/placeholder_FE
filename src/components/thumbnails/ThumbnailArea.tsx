@@ -13,6 +13,9 @@ const token = Cookies.get("accessToken");
 
 const ThumbnailArea = () => {
   // 이제 리덕스에서 정렬 타입 가져옴
+  // SortArea, FilterArea, ThumbnailArea가 한 페이지에서 렌더링되면서
+  // 기능은 따로, 상태나 타입은 한번에 공유
+
   const sortType = useSelector((state: RootState) => state.sort.sortType);
 
   //headhuntings 탠스택쿼리
@@ -24,6 +27,8 @@ const ThumbnailArea = () => {
     queryKey: ["headhuntings"],
     queryFn: getHeadhuntingsApi,
     retry: 0,
+    //-- TO DO--
+    // retry 수정??
   });
 
   if (isPending) return <div>로딩중</div>;
@@ -33,6 +38,8 @@ const ThumbnailArea = () => {
 
   let sortedThumbnails = [];
 
+  // --TODO--
+  // sort 근데 이거 분리 어디다 못하나
   // 인기순 (기본)
   if (sortType === "popular") {
     sortedThumbnails = [...headhuntingsData.result].sort((a, b) => {
@@ -40,19 +47,19 @@ const ThumbnailArea = () => {
       const likeCountB = b.likeCount;
       return likeCountB - likeCountA;
     });
-  } else if (sortType === "adDeadline") {
-    // 마감임박순
-    sortedThumbnails = [...headhuntingsData.result].sort((a, b) => {
-      const deadlineA = new Date(a.adEndedAt).getTime();
-      const deadlineB = new Date(b.adEndedAt).getTime();
-      return deadlineA - deadlineB;
-    });
   } else if (sortType === "newest") {
     // 최신순
     sortedThumbnails = [...headhuntingsData.result].sort((a, b) => {
       const createdA = new Date(a.createdAt).getTime();
       const createdB = new Date(b.createdAt).getTime();
       return createdB - createdA;
+    });
+  } else if (sortType === "adDeadline") {
+    // 마감임박순
+    sortedThumbnails = [...headhuntingsData.result].sort((a, b) => {
+      const deadlineA = new Date(a.adEndedAt).getTime();
+      const deadlineB = new Date(b.adEndedAt).getTime();
+      return deadlineA - deadlineB;
     });
   }
 

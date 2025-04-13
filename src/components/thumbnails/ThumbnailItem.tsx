@@ -59,6 +59,7 @@ const ThumbnailItem = ({ id }: { id: Meetup["id"] }) => {
           </div>
           <p className="text-sm text-gray-500">{thumbnail.adEndedAt?.substring(0, 10)}까지 모집</p>
           <p className="text-sm">공개여부 : {thumbnail.isPublic.toString()}</p>
+          {/* <p className="text-sm text-red-300">생성일: {thumbnail.createdAt?.substring(0, 10)}</p> */}
         </div>
       </div>
     </>

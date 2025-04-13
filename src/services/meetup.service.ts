@@ -23,6 +23,11 @@ export const createMeetupApi = async (meetupFormData: FormData): Promise<void> =
   return await response.json();
 };
 
+// --TODO--
+// meeups, ads, thumbnails
+// id 해당 meetup or ad or thumbnail,
+// 가져오는 함수들 다른 service.ts에 같은 url, 다른 이름으로 중복 로직 있음
+
 // id 해당 모임 get api
 export const getMeetupByIdApi = async (meetupId: number) => {
   const token = Cookies.get("accessToken");

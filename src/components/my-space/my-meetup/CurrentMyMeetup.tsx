@@ -158,7 +158,7 @@ const CurrentMyMeetup = () => {
       <div className="grid grid-cols-1">
         {myMeetupsData.map(myMeetup => (
           // --TO DO--
-          // 지도페이지로 이동하게 링크 바꿔야함
+          // 해당 Id 지도페이지로 이동하게 링크 바꿔야함
           <Link href="http://localhost:3000/" key={myMeetup.id} className="flex justify-between">
             <RoleIcon isOrganizer={myMeetup.is_organizer} />
             방장이니?: {`${myMeetup.is_organizer}`} 모임 이름:{myMeetup.name}

@@ -1,6 +1,11 @@
 import { BASE_URL } from "@/constants/baseURL";
 import Cookies from "js-cookie";
 
+// --TODO--
+// meeups, ads, thumbnails
+// id 해당 meetup or ad or thumbnail,
+// 가져오는 함수들 다른 service.ts에 같은 url, 다른 이름으로 중복 로직 있음
+
 // meetups(headhuntings) 광고글 전부 가져오는 api
 export const getHeadhuntingsApi = async () => {
   const token = Cookies.get("accessToken");

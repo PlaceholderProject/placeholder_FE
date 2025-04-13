@@ -12,7 +12,7 @@ export interface LikeItemProps {
   disabled?: boolean;
 }
 
-export interface LikeContainerProps {
-  id: number;
-  // type?: "headhungting";
-}
+// export interface LikeContainerProps {
+//   id: number;
+//   // type?: "headhungting";
+// }
