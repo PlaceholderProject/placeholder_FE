@@ -11,10 +11,10 @@ import { useParams } from "next/navigation";
 const ReplyForm = () => {
   const [content, setContent] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [parent, setParent] = useState<number | null>(null);
+  const [root, setRoot] = useState<number | null>(null);
   const [recipient, setRecipient] = useState<string | null>(null);
   const user = useSelector((state: RootState) => state.user.user);
-  const parentReply = useSelector((state: RootState) => state.reply);
+  const rootReply = useSelector((state: RootState) => state.reply);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const params = useParams();
@@ -26,9 +26,9 @@ const ReplyForm = () => {
       setIsLoggedIn(true);
     }
 
-    if (parentReply.reply.user.nickname && textareaRef.current) {
-      setRecipient(`@${parentReply.reply.user.nickname}`);
-      setParent(parentReply.reply.id);
+    if (rootReply.reply.user.nickname && textareaRef.current) {
+      setRecipient(`@${rootReply.reply.user.nickname}`);
+      setRoot(rootReply.reply.id);
       textareaRef.current.focus();
     }
 
@@ -38,7 +38,7 @@ const ReplyForm = () => {
     } else {
       setProfileImage("/profile.png");
     }
-  }, [user, user.profileImage, parentReply]);
+  }, [user, user.profileImage, rootReply]);
 
   const handleContentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (event.target.value.length > 300) {
@@ -49,6 +49,7 @@ const ReplyForm = () => {
 
   const handleReplySubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (content.trim().length === 0) return;
     if (params.meetupId) {
       await createReply({ text: content }, params.meetupId);
     }
@@ -57,19 +58,20 @@ const ReplyForm = () => {
 
   const handleNestedReplySubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (parent) {
-      await createNestedReply({ text: content }, parent);
+    if (content.trim().length === 0) return;
+    if (root) {
+      await createNestedReply({ text: content }, root);
     }
   };
 
-  const cancelNestedReply = () => {
-    setParent(null);
+  const handleNestedReplyCancel = () => {
+    setRoot(null);
     setRecipient(null);
   };
 
   return (
     <div className="border-y-[1px] border-[#CFCFCF] w-full flex justify-center items-center p-[20px]">
-      <form className="flex flex-col gap-2" onSubmit={parent ? handleNestedReplySubmit : handleReplySubmit}>
+      <form className="flex flex-col gap-2" onSubmit={root ? handleNestedReplySubmit : handleReplySubmit}>
         <div className="border-[1px] border-[#CFCFCF] w-[263px] h-[92px] flex flex-col justify-center items-center rounded-lg p-[10px] gap-2">
           <div className="flex flex-row w-full items-center gap-1">
             <div className="w-[15px] h-[15px] rounded-full overflow-hidden">
@@ -80,7 +82,7 @@ const ReplyForm = () => {
           {recipient && (
             <div className="text-[8px] w-full flex justify-between">
               {recipient}
-              <button type="button" onClick={cancelNestedReply} className="">
+              <button type="button" onClick={handleNestedReplyCancel} className="">
                 x
               </button>
             </div>
