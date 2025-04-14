@@ -4,10 +4,12 @@ export interface newReplyProps {
 
 export interface ReplyItemProps {
   reply: Reply;
+  allReplies: Reply[];
 }
 
 export type Reply = {
   id: number;
+  root: number | null;
   recipient: string;
   text: string;
   user: { image: string; nickname: string };
