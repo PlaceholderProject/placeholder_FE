@@ -2,18 +2,17 @@
 
 import { useSchedules } from "@/hooks/useSchedule";
 import { useRouter } from "next/navigation";
+import { useCallback } from "react";
+import ScheduleItem from "@/components/schedule/ScheduleItem";
 
-interface ScheduleAreaProps {
-  meetupId: number;
-}
 
-const ScheduleArea = ({ meetupId }: ScheduleAreaProps) => {
+const ScheduleArea = ({ meetupId }: { meetupId: number }) => {
   const router = useRouter();
   const { data: schedules, isPending, error } = useSchedules(meetupId);
 
-  const handleCreateClick = () => {
+  const handleCreateClick = useCallback(() => {
     router.push(`/meetup/${meetupId}/schedule/create`);
-  };
+  }, [router, meetupId]);
 
   if (isPending) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -30,8 +29,11 @@ const ScheduleArea = ({ meetupId }: ScheduleAreaProps) => {
       ) : (
         <div className="flex flex-col gap-4">
           {schedules.map((schedule, index) => (
-            // 나중에 ScheduleItem 컴포넌트로 분리
-            <div key={schedule.id}>Schedule {index + 1}</div>
+            <ScheduleItem
+              key={schedule.id}
+              schedule={schedule}
+              number={index + 1}
+            />
           ))}
           <button onClick={handleCreateClick} className="self-end">
             +

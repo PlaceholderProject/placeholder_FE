@@ -1,13 +1,13 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSchedule } from "@/services/schedule.service";
 import { useDaumPostcodePopup } from "react-daum-postcode";
+import MemberSelector from "@/components/schedule/MemberSelector";
 
-const ScheduleForm = (meetupId: number) => {
+const ScheduleForm = ({ meetupId }: { meetupId: number }) => {
   const router = useRouter();
-
   const scheduledAtRef = useRef<HTMLInputElement>(null);
   const placeRef = useRef<HTMLInputElement>(null);
   const addressRef = useRef<HTMLInputElement>(null);
@@ -16,7 +16,17 @@ const ScheduleForm = (meetupId: number) => {
   const memoRef = useRef<HTMLTextAreaElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
 
+  const [selectedMember, setSelectedMember] = useState<number[]>([]);
+
   const openPostcode = useDaumPostcodePopup(); // 카카오 우편번호 API 팝업
+
+  const handleMemberSelect = (memberId: number) => {
+    setSelectedMember(prev =>
+      prev.includes(memberId)
+        ? prev.filter(id => id !== memberId)
+        : [...prev, memberId],
+    );
+  };
 
   const handleAddressSearch = () => {
     openPostcode({
@@ -24,6 +34,7 @@ const ScheduleForm = (meetupId: number) => {
         if (addressRef.current) addressRef.current.value = data.address;
 
         // 주소를 위경도로 변환
+
         const geocoder = new window.kakao.maps.services.Geocoder();
         geocoder.addressSearch(data.address, (result, status) => {
           if (status === window.kakao.maps.services.Status.OK) {
@@ -47,7 +58,6 @@ const ScheduleForm = (meetupId: number) => {
         latitude: String(latitudeRef.current?.value || "0"),
         longitude: String(longitudeRef.current?.value || "0"),
         memo: memoRef.current?.value || "",
-        participant: [],
       };
 
       formData.append("payload", JSON.stringify(payload));
@@ -57,6 +67,7 @@ const ScheduleForm = (meetupId: number) => {
 
       await createSchedule(meetupId, formData);
       router.push(`/meetup/${meetupId}`);
+      console.log(payload);
     } catch (error) {
       console.error("Failed to create schedule:", error);
     }
@@ -76,7 +87,7 @@ const ScheduleForm = (meetupId: number) => {
 
       <div>
         <label htmlFor="address">주소</label>
-        <input type="text" id="address" ref={addressRef} required />
+        <input type="text" id="address" onClick={handleAddressSearch} ref={addressRef} required />
         <button type="button" onClick={handleAddressSearch} className="bg-gray-300 px-2 py-1">
           우편번호 찾기
         </button>
@@ -90,6 +101,13 @@ const ScheduleForm = (meetupId: number) => {
         <label htmlFor="memo">메모</label>
         <textarea id="memo" ref={memoRef} />
       </div>
+
+
+      <MemberSelector
+        meetupId={meetupId}
+        selectedMember={selectedMember}
+        onMemberSelect={handleMemberSelect}
+      />
 
       <button type="submit">스케줄 생성</button>
     </form>

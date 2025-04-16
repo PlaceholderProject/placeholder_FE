@@ -1,21 +1,31 @@
 "use client";
 
 import { Schedule } from "@/types/scheduleType";
+import { useRouter } from "next/navigation";
+import { useCallback } from "react";
+import { formatDateTime } from "@/utils/scheduleDateUtils";
+import ScheduleNumber from "@/components/schedule/ScheduleNumber";
 
-interface ScheduleItemProps {
-  schedule: Schedule;
-  number: number;
-}
+const ScheduleItem = ({ schedule, number }: { schedule: Schedule; number: number }) => {
 
-const ScheduleItem = ({ schedule, number }: ScheduleItemProps) => {
+  const router = useRouter();
+
+  const handleItemClick = useCallback(() => {
+    router.push(`/meetup/${schedule.meetupId}/schedule/${schedule.id}`);
+  }, [router, schedule.meetupId]);
+
+
   return (
-    <div className="border rounded-lg p-4 mb-2 flex items-start shadow-sm hover:shadow-md transition-shadow">
-      <div className="mr-4 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center">{number}</div>
-      <div className="flex flex-col gap-2 flex-1">
-        <div className="font-semibold text-lg">{schedule.scheduled_at}</div>
-        <div className="font-medium text-gray-800">{schedule.place}</div>
-        <div className="text-gray-600 text-sm">{schedule.address}</div>
-        {schedule.memo && <div className="text-gray-500 text-sm mt-2 bg-gray-50 p-2 rounded">{schedule.memo}</div>}
+    <div onClick={handleItemClick}>
+      <ScheduleNumber number={number} />
+
+      <div>
+        <div>{formatDateTime(schedule.scheduledAt)}</div>
+        <div>{schedule.place}</div>
+        <div>{schedule.address}</div>
+        {schedule.memo && (
+          <div>메모 : {schedule.memo}</div>
+        )}
       </div>
     </div>
   );

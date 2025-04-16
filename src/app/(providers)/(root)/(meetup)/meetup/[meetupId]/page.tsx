@@ -13,15 +13,15 @@ const MeetupPage = ({ params }: MeetupPageProps) => {
   const meetupId = Number(params.meetupId);
 
   return (
-    <div className="">
+    <>
       <MeetupSignboard meetupId={meetupId} />
       <div>
-        <KakaoMaps />
+        <KakaoMaps meetupId={meetupId} />
       </div>
       <div>
         <ScheduleArea meetupId={meetupId} />
       </div>
-    </div>
+    </>
   );
 };
 

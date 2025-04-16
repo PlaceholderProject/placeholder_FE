@@ -1,17 +1,26 @@
-"use client";
-
 import { useQuery } from "@tanstack/react-query";
-import { Schedule } from "@/types/scheduleType";
-import { getSchedules } from "@/services/schedule.service";
+import { getSchedule, getSchedules } from "@/services/schedule.service";
+import { Member, Schedule } from "@/types/scheduleType";
+import { getMeetupMembers } from "@/services/member.service";
 
 export const useSchedules = (meetupId: number) => {
   return useQuery<Schedule[], Error>({
     queryKey: ["schedules", meetupId],
     queryFn: () => getSchedules(meetupId),
-    enabled: !!meetupId,
-    select: data => {
-      if (!data) return [];
-      return [...data].sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime());
-    },
+  });
+};
+
+export const useMeetupMembers = (meetupId: number) => {
+  return useQuery<Member[], Error>({
+    queryKey: ["members", meetupId],
+    queryFn: () => getMeetupMembers(meetupId),
+  });
+};
+
+export const useScheduleDetail = (scheduleId: number) => {
+  return useQuery<Schedule, Error>({
+    queryKey: ["schedule", scheduleId],
+    queryFn: () => getSchedule(scheduleId),
+    enabled: !!scheduleId,
   });
 };

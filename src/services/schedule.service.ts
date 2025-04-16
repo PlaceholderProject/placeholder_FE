@@ -22,7 +22,7 @@ export const getSchedules = async (meetupId: number): Promise<Schedule[]> => {
   return data.result;
 };
 
-//단일 스케줄 가져오기
+// 단일 스케줄 가져오기
 export const getSchedule = async (scheduleId: number): Promise<Schedule> => {
   const token = Cookies.get("accessToken");
 
@@ -33,7 +33,7 @@ export const getSchedule = async (scheduleId: number): Promise<Schedule> => {
     },
   });
 
-  if (!response.ok) throw new Error("스케줄 패치 실패");
+  if (!response.ok) throw new Error("스케줄 조회 실패");
   return response.json();
 };
 
