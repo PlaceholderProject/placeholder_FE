@@ -1,6 +1,7 @@
 "use client";
 
 import { BASE_URL } from "@/constants/baseURL";
+import { checkNickname } from "@/services/auth.service";
 import { editUser, getUser } from "@/services/user.service";
 import { RootState } from "@/stores/store";
 import { setUser } from "@/stores/userSlice";
@@ -41,7 +42,6 @@ const AccountEdit = () => {
           );
           setProfileImage(data.image || "/profile.png");
         }
-        // console.log(data);
       };
       fetchUser();
     } else {
@@ -61,11 +61,8 @@ const AccountEdit = () => {
     if (file) {
       const objectUrl = URL.createObjectURL(file);
       setProfileImage(objectUrl); // Blob URL을 React 상태에 설정
-      // console.log("Blob URL 생성:", objectUrl);
     }
   };
-
-  // console.log("파일 등록시", profileImage);
 
   const handleNicknameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value.length > 8) {
@@ -87,13 +84,35 @@ const AccountEdit = () => {
     setBioTextLength(event.target.value.length);
   };
 
+  const handleCheckNickname = async () => {
+    if (nickname === user.nickname) {
+      alert("사용 가능한 닉네임입니다.");
+      return;
+    }
+    if (!nickname.trim()) {
+      alert("닉네임을 입력해주세요.");
+      return;
+    }
+    if (nickname.length < 2 || nickname.length > 8) {
+      alert("닉네임은 최소 2자 최대 8자까지 가능합니다.");
+      return;
+    }
+    await checkNickname(nickname);
+  };
+
   const handleAccountEditFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const file = fileInputRef.current?.files?.[0];
+    if (!nickname.trim()) {
+      alert("닉네임을 입력해주세요.");
+      return;
+    }
+    if (nickname.length < 2 || nickname.length > 8) {
+      alert("닉네임은 최소 2자 최대 8자까지 가능합니다.");
+      return;
+    }
 
-    // console.log(file?.name);
-    // console.log(profileImage);
+    const file = fileInputRef.current?.files?.[0];
 
     const editedUser = {
       nickname,
@@ -104,11 +123,7 @@ const AccountEdit = () => {
     const response = await editUser(editedUser);
 
     if (response) {
-      // console.log("Update successful:", response);
-
       const imageUrl = response.image ? (response.image.startsWith("http") ? response.image : `${BASE_URL}${response.image}`) : "/profile.png"; // 기본 이미지 경로
-
-      // console.log(imageUrl);
 
       dispatch(
         setUser({
@@ -123,6 +138,7 @@ const AccountEdit = () => {
       alert("회원 정보가가 변경되었습니다.");
       router.replace("/account");
     } else {
+      alert("이미 사용하고 있는 닉네임입니다. 닉네임 중복을 확인해주세요.");
       console.error("Update failed");
       return;
     }
@@ -155,6 +171,9 @@ const AccountEdit = () => {
             <div className="flex flex-col">
               <label htmlFor="nickname">닉네임</label>
               <input type="text" value={nickname} onChange={handleNicknameChange} className="border-2 rounded-md" />
+              <button type="button" onClick={handleCheckNickname}>
+                중복확인
+              </button>
               {nicknameWarning && <p>{nicknameWarning}</p>}
             </div>
             <div className="flex flex-col">
