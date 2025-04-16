@@ -28,7 +28,7 @@ const ReplyArea: React.FC = () => {
     };
     fetchReplyCount();
     fetchReplies();
-  }, []);
+  }, [params.meetupId]);
 
   return (
     <div className="flex flex-col justify-start">

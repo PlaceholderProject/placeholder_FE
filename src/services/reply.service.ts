@@ -83,6 +83,33 @@ export const getReply = async (meetupId: string | string[]) => {
   }
 };
 
+// update reply
+export const editReply = async (text: string, replyId: number) => {
+  try {
+    const accessToken = Cookies.get("accessToken");
+    const response = await fetch(`${BASE_URL}/api/v1/meetup-comment/${replyId}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text }),
+    });
+
+    if (!response.ok) {
+      const errorResult = await response.json();
+      alert(errorResult.detail);
+      return;
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("데이터 가져오기 오류:", error);
+    return null;
+  }
+};
+
 // delete reply
 export const deleteReply = async (replyId: number) => {
   try {

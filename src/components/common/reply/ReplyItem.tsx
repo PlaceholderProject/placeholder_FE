@@ -9,12 +9,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
 import NestedReplyItem from "./NestedReplyItem";
 import { useState } from "react";
-import { deleteReply } from "@/services/reply.service";
+import { deleteReply, editReply } from "@/services/reply.service";
 
 const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies }) => {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user.user);
   const [isVisiableNestedReply, setIsVisiableNestedReply] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [text, setText] = useState(reply.text);
 
   const nestedReplies = allReplies.filter(r => r.root === reply.id);
 
@@ -30,6 +32,23 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies }) => {
     if (confirm("정말로 댓글을 삭제하시겠습니까?")) {
       await deleteReply(replyId);
       alert("정상적으로 삭제되었습니다.");
+    }
+  };
+
+  const handleTextchange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setText(event.target.value);
+  };
+
+  const handleUpdateMode = () => {
+    setIsEditMode(!isEditMode);
+    setText(reply.text);
+  };
+
+  const handleReplyUpdate = async (replyId: number) => {
+    if (confirm("정말로 댓글을 수정하시겠습니까?")) {
+      await editReply(text, replyId);
+      alert("정상적으로 수정되었습니다.");
+      setIsEditMode(false);
     }
   };
 
@@ -51,12 +70,20 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies }) => {
         </span>
         {reply.user.nickname === user.nickname && (
           <span className="flex gap-2">
-            <button>수정</button>
+            <button onClick={handleUpdateMode}>수정</button>
             <button onClick={() => handleReplyDelete(reply.id)}>삭제</button>
           </span>
         )}
       </div>
-      <div className="pl-6 py-2">{reply.text}</div>
+      {isEditMode ? (
+        <div>
+          <textarea value={text} onChange={handleTextchange} />
+          <button onClick={handleUpdateMode}>취소</button>
+          <button onClick={() => handleReplyUpdate(reply.id)}>수정</button>
+        </div>
+      ) : (
+        <div className="pl-6 py-2">{reply.text}</div>
+      )}
       {user.email && (
         <button className="pl-6 text-[#B7B7B7] text-[9px]" onClick={handleReplySave}>
           답글달기
