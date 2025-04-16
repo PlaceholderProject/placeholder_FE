@@ -1,4 +1,5 @@
 import { BASE_URL } from "@/constants/baseURL";
+import { SortType } from "@/types/meetupType";
 import Cookies from "js-cookie";
 
 // --TODO--
@@ -7,9 +8,10 @@ import Cookies from "js-cookie";
 // 가져오는 함수들 다른 service.ts에 같은 url, 다른 이름으로 중복 로직 있음
 
 // meetups(headhuntings) 광고글 전부 가져오는 api
-export const getHeadhuntingsApi = async () => {
+// sortType을 기본 파라미터로 받아 정렬되고 있음
+export const getHeadhuntingsApi = async (sortType: SortType) => {
   const token = Cookies.get("accessToken");
-  const response = await fetch(`${BASE_URL}/api/v1/meetup`, {
+  const response = await fetch(`${BASE_URL}/api/v1/meetup?sort=${sortType}`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -20,7 +22,8 @@ export const getHeadhuntingsApi = async () => {
     throw new Error("광고글 목록 가져오기 실패");
   }
   const headhuntingsData = await response.json();
-  console.log("getHeadhuntingsApi실행!!!1 가져온 광고글 목록: ", headhuntingsData);
+  console.log(`API 호출: ${BASE_URL}/api/v1/meetup?sort=${sortType}`);
+
   return headhuntingsData;
 };
 

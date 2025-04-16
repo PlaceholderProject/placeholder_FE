@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import ThumbnailItem from "./ThumbnailItem";
 import { getHeadhuntingsApi } from "@/services/thumbnails.service";
@@ -24,50 +24,53 @@ const ThumbnailArea = () => {
     isPending,
     isError,
   } = useQuery({
-    queryKey: ["headhuntings"],
-    queryFn: getHeadhuntingsApi,
+    queryKey: ["headhuntings", sortType],
+    queryFn: () => getHeadhuntingsApi(sortType),
     retry: 0,
+    staleTime: 0, // 데이터를 항상 stale로 취급
+    gcTime: 0, // 캐싱하지 않음
     //-- TO DO--
     // retry 수정??
   });
 
+  useEffect(() => {
+    console.log(`정렬 타입 변경 감지: ${sortType}`);
+  }, [sortType]);
   if (isPending) return <div>로딩중</div>;
   if (isError) return <div>에러 발생</div>;
 
-  console.log("소트전:", headhuntingsData.result);
-
-  let sortedThumbnails = [];
+  let sortedThumbnails = headhuntingsData.result;
 
   // --TODO--
   // sort 근데 이거 분리 어디다 못하나
   // 인기순 (기본)
-  if (sortType === "popular") {
-    sortedThumbnails = [...headhuntingsData.result].sort((a, b) => {
-      const likeCountA = a.likeCount;
-      const likeCountB = b.likeCount;
-      return likeCountB - likeCountA;
-    });
-  } else if (sortType === "newest") {
-    // 최신순
-    sortedThumbnails = [...headhuntingsData.result].sort((a, b) => {
-      const createdA = new Date(a.createdAt).getTime();
-      const createdB = new Date(b.createdAt).getTime();
-      return createdB - createdA;
-    });
-  } else if (sortType === "adDeadline") {
-    // 마감임박순
-    sortedThumbnails = [...headhuntingsData.result].sort((a, b) => {
-      const deadlineA = new Date(a.adEndedAt).getTime();
-      const deadlineB = new Date(b.adEndedAt).getTime();
-      return deadlineA - deadlineB;
-    });
-  }
+  // if (sortType === "like") {
+  //   sortedThumbnails = [...headhuntingsData.result].sort((a, b) => {
+  //     const likeCountA = a.likeCount;
+  //     const likeCountB = b.likeCount;
+  //     return likeCountB - likeCountA;
+  //   });
+  // } else if (sortType === "latest") {
+  //   // 최신순
+  //   sortedThumbnails = [...headhuntingsData.result].sort((a, b) => {
+  //     const createdA = new Date(a.createdAt).getTime();
+  //     const createdB = new Date(b.createdAt).getTime();
+  //     return createdB - createdA;
+  //   });
+  // } else if (sortType === "deadline") {
+  //   // 마감임박순
+  //   sortedThumbnails = [...headhuntingsData.result].sort((a, b) => {
+  //     const deadlineA = new Date(a.adEndedAt).getTime();
+  //     const deadlineB = new Date(b.adEndedAt).getTime();
+  //     return deadlineA - deadlineB;
+  //   });
+  // }
 
   const thumbnailIds = sortedThumbnails.map((headhungting: Meetup) => headhungting.id);
 
-  console.log("썸넬아이디들", thumbnailIds);
+  console.log("thumbnailArea 목록: ", headhuntingsData.result);
 
-  console.log("소트이후?", sortedThumbnails);
+  console.log("썸넬아이디들", thumbnailIds);
 
   // ❗️ 각각 모임 id를 엔드포인트에 붙여서 가져오는 함수에 에러가 난다
   // 왜냐면 [headhuntingsData.result]라고 쓰면, 대괄호로 다시 배열을 씌우게 되므로!

@@ -75,9 +75,3 @@ export const editMeetupApi = async (meetupId: number, formData: FormData): Promi
   console.log("모임 수정 서버 응답:", responseData);
   return responseData;
 };
-
-//모임(광고글) organizer 가져오는 api
-
-export const getOrganizer = async (meetupId: number) => {
-  const response = await fetch(``);
-};

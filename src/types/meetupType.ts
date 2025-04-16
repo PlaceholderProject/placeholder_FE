@@ -51,7 +51,7 @@ export interface LabeledSelectProps {
   multiple?: boolean;
 }
 
-export type SortType = "popular" | "newest" | "adDeadline";
+export type SortType = "like" | "latest" | "deadline";
 
 export type RegionType =
   | null

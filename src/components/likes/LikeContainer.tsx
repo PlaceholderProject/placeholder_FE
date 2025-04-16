@@ -129,7 +129,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Meetup } from "@/types/meetupType";
 import LikePart from "./LikePart";
 import { getLikeByIdApi } from "@/services/like.service";
-import { getHeadhuntingsApi } from "@/services/thumbnails.service";
 
 const LikeContainer = ({ id }: { id: Meetup["id"] }) => {
   const queryClient = useQueryClient();
@@ -165,7 +164,7 @@ const LikeContainer = ({ id }: { id: Meetup["id"] }) => {
       console.log("likeData?.currentLikeCount:", likeData?.currentLikeCount);
 
       //headhuntings 쿼리 캐시 백업
-      const previousHeadhuntingData = await getHeadhuntingsApi();
+      // const previousHeadhuntingData = await getHeadhuntingsApi();
 
       // like 쿼리 낙관적 업데이트
       // 새 좋아요 상태 계산
@@ -207,6 +206,7 @@ const LikeContainer = ({ id }: { id: Meetup["id"] }) => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["like", id] });
+      queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
     },
   });
 

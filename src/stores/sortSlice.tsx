@@ -6,7 +6,7 @@ interface SortTypeState {
 }
 
 const initialState: SortTypeState = {
-  sortType: "popular",
+  sortType: "like",
 };
 
 const sortSlice = createSlice({
