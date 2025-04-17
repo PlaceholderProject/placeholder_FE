@@ -42,10 +42,7 @@ const ThumbnailArea = () => {
 
   const today = new Date().toISOString().split("T")[0];
 
-  let sortedThumbnails = headhuntingsData.result.filter((thumbnail: Meetup) => {
-    const adEndDate = new Date(thumbnail.adEndedAt).toISOString().split("T")[0];
-    return adEndDate >= today;
-  });
+  let sortedThumbnails = headhuntingsData.result;
 
   // --TODO--
   // sort 근데 이거 분리 어디다 못하나
