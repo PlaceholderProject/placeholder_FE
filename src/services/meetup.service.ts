@@ -20,6 +20,7 @@ export const createMeetupApi = async (meetupFormData: FormData): Promise<void> =
     console.log(errorText);
     throw new Error("모임 생성 실패");
   }
+  console.log("모임생성함수 실행됨");
   return await response.json();
 };
 

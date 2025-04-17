@@ -207,7 +207,7 @@ const MeetupForm = () => {
       <div>
         <form onSubmit={handleMeetupFormSubmit}>
           <div>
-            <LabeledSelect id="place" name="place" label="모임 성격" options={categoryOptions} ref={categoryRef} required />
+            <LabeledSelect id="category" name="category" label="모임 성격" options={categoryOptions} ref={categoryRef} required />
 
             <LabeledInput id="name" name="name" label="모임 이름(랜덤 생성 버튼 필요)" type="text" ref={nameRef} required />
 
