@@ -38,9 +38,9 @@ const LikeItem = ({ isLike, likeCount, onClick, disabled = false }: LikeItemProp
         className="{`flex items-center space-x-1 ${disabled ? 'opacity-50 cursor-not-allowed' :
       hoever:opacity-80}}"
       >
-        {isLike ? <IoMdHeart className="text-red-500 text-xl" /> : <IoMdHeartEmpty className="text-xl" />}
+        {isLike ? <IoMdHeart className="text-red-500 bg-blue-200 text-md" /> : <IoMdHeartEmpty className="text-xl" />}
       </button>
-      <span className="text-sm">좋아요 수: {likeCount}</span>
+      <div className="text-sm bg-slate-100"> {likeCount}</div>
     </div>
   );
 };

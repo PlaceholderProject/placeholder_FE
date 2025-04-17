@@ -32,24 +32,25 @@ const SortArea = () => {
     console.log(`정렬 변경: ${sortType} -> ${newSortType}`);
 
     dispatch(setSortType(newSortType));
-
-    // 여기다가 SortType에 따른 로직을 따로 쓰게 해야지
-    if (newSortType === "like") {
-      alert("인기순이야");
-    }
-
-    if (newSortType === "latest") {
-      alert("최신순이야");
-    }
-
-    if (newSortType === "deadline") {
-      alert("마감 임받순이야");
-    }
   };
+
+  //   // 여기다가 SortType에 따른 로직을 따로 쓰게 해야지
+  //   if (newSortType === "like") {
+  //     alert("인기순이야");
+  //   }
+
+  //   if (newSortType === "latest") {
+  //     alert("최신순이야");
+  //   }
+
+  //   if (newSortType === "deadline") {
+  //     alert("마감 임받순이야");
+  //   }
+  // };
 
   return (
     <>
-      <div className="flex  justify-items-center justify-center">
+      <div className="flex justify-items-center justify-center">
         <SortButtons currentSort={sortType} handleSortChange={handleSortChange} />
       </div>
     </>

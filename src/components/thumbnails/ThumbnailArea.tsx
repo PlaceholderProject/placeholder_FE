@@ -30,16 +30,22 @@ const ThumbnailArea = () => {
     staleTime: 0, // 데이터를 항상 stale로 취급
     gcTime: 0, // 캐싱하지 않음
     //-- TO DO--
-    // retry 수정??
+    // retry 수정?? staleTime, gcTime 수정?
   });
 
   useEffect(() => {
     console.log(`정렬 타입 변경 감지: ${sortType}`);
   }, [sortType]);
+
   if (isPending) return <div>로딩중</div>;
   if (isError) return <div>에러 발생</div>;
 
-  let sortedThumbnails = headhuntingsData.result;
+  const today = new Date().toISOString().split("T")[0];
+
+  let sortedThumbnails = headhuntingsData.result.filter((thumbnail: Meetup) => {
+    const adEndDate = new Date(thumbnail.adEndedAt).toISOString().split("T")[0];
+    return adEndDate >= today;
+  });
 
   // --TODO--
   // sort 근데 이거 분리 어디다 못하나

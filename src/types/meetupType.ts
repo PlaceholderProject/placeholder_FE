@@ -14,7 +14,7 @@ export interface Meetup {
   startedAt: string | null;
   endedAt: string | null;
   adTitle: string;
-  adEndedAt: string | null;
+  adEndedAt: string;
   isPublic: boolean;
   image?: string;
   category: string;

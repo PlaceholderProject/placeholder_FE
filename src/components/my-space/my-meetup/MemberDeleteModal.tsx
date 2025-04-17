@@ -1,11 +1,11 @@
 "use client";
 import { toggleMemberDeleteModal } from "@/stores/modalSlice";
 import React from "react";
-import { RootState } from "@reduxjs/toolkit/query";
 import { useDispatch, useSelector } from "react-redux";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { BASE_URL } from "@/constants/baseURL";
 import Cookies from "js-cookie";
+import { RootState } from "@/stores/store";
 
 const token = Cookies.get("accessToken");
 

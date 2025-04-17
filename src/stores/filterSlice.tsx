@@ -18,8 +18,8 @@ interface FilterState {
 // ❗️아니 근데 열리는 순간 서울 되는 거면 닫히면 서울 어케됨????
 
 const initialState: FilterState = {
-  region: null,
-  purpose: null,
+  region: "서울",
+  purpose: "운동",
   isFilterActive: false,
   isRegionMenuOpen: false,
   isPurposeMenuOpen: false,
