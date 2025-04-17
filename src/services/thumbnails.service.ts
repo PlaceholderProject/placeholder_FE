@@ -1,5 +1,5 @@
 import { BASE_URL } from "@/constants/baseURL";
-import { SortType } from "@/types/meetupType";
+import { PurposeType, RegionType, SortType } from "@/types/meetupType";
 import Cookies from "js-cookie";
 
 // --TODO--
@@ -9,9 +9,20 @@ import Cookies from "js-cookie";
 
 // meetups(headhuntings) 광고글 전부 가져오는 api
 // sortType을 기본 파라미터로 받아 정렬되고 있음
-export const getHeadhuntingsApi = async (sortType: SortType) => {
+export const getHeadhuntingsApi = async ({ sortType, regionType, purposeType }: { sortType: SortType; regionType?: RegionType; purposeType?: PurposeType }) => {
   const token = Cookies.get("accessToken");
-  const response = await fetch(`${BASE_URL}/api/v1/meetup?sort=${sortType}`, {
+
+  let url = `${BASE_URL}/api/v1/meetup?sort=${sortType}`;
+
+  if (regionType) {
+    url = url + `&place=${regionType}`;
+  }
+
+  if (purposeType) {
+    url = url + `&category=${purposeType}`;
+  }
+
+  const response = await fetch(url, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -22,7 +33,7 @@ export const getHeadhuntingsApi = async (sortType: SortType) => {
     throw new Error("광고글 목록 가져오기 실패");
   }
   const headhuntingsData = await response.json();
-  console.log(`API 호출: ${BASE_URL}/api/v1/meetup?sort=${sortType}`);
+  console.log(`API 호출: ${url}`);
 
   return headhuntingsData;
 };

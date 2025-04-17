@@ -2,8 +2,8 @@ import { PurposeType, RegionType } from "@/types/meetupType";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface FilterState {
-  region: RegionType;
-  purpose: PurposeType;
+  regionType: RegionType;
+  purposeType: PurposeType;
   isFilterActive: boolean;
   isRegionMenuOpen: boolean;
   isPurposeMenuOpen: boolean;
@@ -18,8 +18,8 @@ interface FilterState {
 // ❗️아니 근데 열리는 순간 서울 되는 거면 닫히면 서울 어케됨????
 
 const initialState: FilterState = {
-  region: "서울",
-  purpose: "운동",
+  regionType: "서울",
+  purposeType: "운동",
   isFilterActive: false,
   isRegionMenuOpen: false,
   isPurposeMenuOpen: false,
@@ -30,20 +30,20 @@ const filterSlice = createSlice({
   initialState,
   reducers: {
     setRegion: (state, action: PayloadAction<RegionType>) => {
-      state.region = action.payload;
+      state.regionType = action.payload;
       //지역 필터 눌렸는지는 null 아니거나 모임성격이 null 아니면 true라고?
-      state.isFilterActive = state.region !== null || state.purpose !== null;
+      state.isFilterActive = state.regionType !== null || state.purposeType !== null;
     },
 
     setPurpose: (state, action: PayloadAction<PurposeType>) => {
-      state.purpose = action.payload;
-      state.isFilterActive = state.region !== null || state.purpose !== null;
+      state.purposeType = action.payload;
+      state.isFilterActive = state.regionType !== null || state.purposeType !== null;
     },
 
     // -- TODO-- 이게 왜 리셋인지, 초기화 어떻게 구혀낳ㄹ지, 토글로 할지 생각해봐야됨
     resetFilter: state => {
-      state.region = null;
-      state.purpose = null;
+      state.regionType = null;
+      state.purposeType = null;
       state.isFilterActive = false;
     },
 
@@ -55,7 +55,7 @@ const filterSlice = createSlice({
       state.isRegionMenuOpen = !state.isRegionMenuOpen;
 
       if (state.isRegionMenuOpen) {
-        state.region = "서울";
+        state.regionType = "서울";
         state.isFilterActive = true;
       }
 
@@ -68,7 +68,7 @@ const filterSlice = createSlice({
       state.isPurposeMenuOpen = !state.isPurposeMenuOpen;
 
       if (state.isPurposeMenuOpen) {
-        state.purpose = "운동";
+        state.purposeType = "운동";
         state.isFilterActive = true;
       }
 

@@ -17,6 +17,23 @@ const ThumbnailArea = () => {
   // 기능은 따로, 상태나 타입은 한번에 공유
 
   const sortType = useSelector((state: RootState) => state.sort.sortType);
+  const regionType = useSelector((state: RootState) => state.filter.regionType);
+  const purposeType = useSelector((state: RootState) => state.filter.purposeType);
+  const isFilterActive = useSelector((state: RootState) => state.filter.isFilterActive);
+
+  const getQueryKey = () => {
+    const baseQueryKey = ["headhuntings", sortType];
+    if (isFilterActive) {
+      if (regionType) {
+        baseQueryKey.push("regionType", regionType);
+      }
+      if (purposeType) {
+        baseQueryKey.push("purposeType", purposeType);
+      }
+    }
+
+    return baseQueryKey;
+  };
 
   //headhuntings 탠스택쿼리
   const {
@@ -24,8 +41,13 @@ const ThumbnailArea = () => {
     isPending,
     isError,
   } = useQuery({
-    queryKey: ["headhuntings", sortType],
-    queryFn: () => getHeadhuntingsApi(sortType),
+    queryKey: getQueryKey(),
+    queryFn: () =>
+      getHeadhuntingsApi({
+        sortType,
+        ...(isFilterActive && regionType ? { regionType: regionType } : {}),
+        ...(isFilterActive && purposeType ? { purposeType: purposeType } : {}),
+      }),
     retry: 0,
     staleTime: 0, // 데이터를 항상 stale로 취급
     gcTime: 0, // 캐싱하지 않음

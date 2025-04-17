@@ -9,7 +9,7 @@ import PurposeButtons from "./PurposeButtons";
 const FilterArea = () => {
   const dispatch = useDispatch();
 
-  const { isRegionMenuOpen, isPurposeMenuOpen, region, purpose, isFilterActive } = useSelector((state: RootState) => state.filter);
+  const { isRegionMenuOpen, isPurposeMenuOpen, regionType, purposeType, isFilterActive } = useSelector((state: RootState) => state.filter);
 
   const handleRegionButtonClick = () => {
     dispatch(toggleRegionMenu());
