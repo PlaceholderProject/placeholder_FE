@@ -34,7 +34,6 @@ const ScheduleForm = ({ meetupId }: { meetupId: number }) => {
         if (addressRef.current) addressRef.current.value = data.address;
 
         // 주소를 위경도로 변환
-
         const geocoder = new window.kakao.maps.services.Geocoder();
         geocoder.addressSearch(data.address, (result, status) => {
           if (status === window.kakao.maps.services.Status.OK) {

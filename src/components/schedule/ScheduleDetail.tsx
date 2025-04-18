@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useScheduleDetail } from "@/hooks/useSchedule";
 import { formatDateTime } from "@/utils/scheduleDateUtils";
 
-const ScheduleDetail = ({ scheduleId }: { scheduleId: number }) => {
+const ScheduleDetail = ({ scheduleId }: { scheduleId: string }) => {
   const { data: schedule, isPending, error } = useScheduleDetail(scheduleId);
 
   if (isPending) return <div>로딩 중...</div>;

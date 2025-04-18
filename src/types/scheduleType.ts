@@ -14,12 +14,6 @@ export interface Member {
   role: string;
 }
 
-// 멤버 프로필 정보
-export interface MemberProfile extends Member {
-  nickname: string;
-  profileImage: string | null;
-}
-
 export interface Schedule {
   id: number;
   meetupId: number;
@@ -29,6 +23,6 @@ export interface Schedule {
   latitude: string;
   longitude: string;
   memo: string;
-  image?: string;
+  image: string;
   participant: Participant[];
 }

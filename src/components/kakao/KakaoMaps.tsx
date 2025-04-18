@@ -2,9 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import Script from "next/script";
-import { Map, MapMarker, MarkerClusterer, useMap } from "react-kakao-maps-sdk";
+import { Map, MarkerClusterer, useMap } from "react-kakao-maps-sdk";
 import { useSchedules } from "@/hooks/useSchedule";
 import { Schedule } from "@/types/scheduleType";
+import { useRouter } from "next/navigation";
+import ScheduleNumber from "@/components/schedule/ScheduleNumber";
 
 // bounds 설정을 위한 컴포넌트
 const MapBoundsController = ({ schedules }: { schedules: Schedule[] }) => {
@@ -31,6 +33,7 @@ const MapBoundsController = ({ schedules }: { schedules: Schedule[] }) => {
 };
 
 const KakaoMaps = ({ meetupId }: { meetupId: number }) => {
+  const router = useRouter();
   const [isClient, setIsClient] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const { data: schedules, isPending, error } = useSchedules(meetupId);
@@ -64,26 +67,24 @@ const KakaoMaps = ({ meetupId }: { meetupId: number }) => {
         <Map
           style={{ width: "100%", height: "400px" }}
           center={{
-            // 첫 번째 스케줄 위치 또는 기본값
             lat: Number(schedules[0]?.latitude) || 37.5665,
             lng: Number(schedules[0]?.longitude) || 126.978,
           }}
           level={5}
         >
-          {/* 마커 설정 */}
+          {/* 마커 설정 - ScheduleNumber 컴포넌트 사용 */}
           <MarkerClusterer averageCenter minLevel={8}>
-            {schedules.map(schedule => (
-              <MapMarker
+            {schedules.map((schedule, index) => (
+              <ScheduleNumber
                 key={schedule.id}
+                number={index + 1}
+                isMapMarker={true}
                 position={{
                   lat: Number(schedule.latitude),
                   lng: Number(schedule.longitude),
                 }}
-              >
-                <div style={{ padding: "5px", whiteSpace: "nowrap" }}>
-                  {schedule.place}
-                </div>
-              </MapMarker>
+                onClick={() => router.push(`/meetup/${meetupId}/schedule/${schedule.id}`)}
+              />
             ))}
           </MarkerClusterer>
 

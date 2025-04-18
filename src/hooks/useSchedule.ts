@@ -6,21 +6,21 @@ import { getMeetupMembers } from "@/services/member.service";
 export const useSchedules = (meetupId: number) => {
   return useQuery<Schedule[], Error>({
     queryKey: ["schedules", meetupId],
-    queryFn: () => getSchedules(meetupId),
+    queryFn: () => getSchedules(Number(meetupId)),
   });
 };
 
 export const useMeetupMembers = (meetupId: number) => {
   return useQuery<Member[], Error>({
     queryKey: ["members", meetupId],
-    queryFn: () => getMeetupMembers(meetupId),
+    queryFn: () => getMeetupMembers(Number(meetupId)),
   });
 };
 
 export const useScheduleDetail = (scheduleId: number) => {
   return useQuery<Schedule, Error>({
     queryKey: ["schedule", scheduleId],
-    queryFn: () => getSchedule(scheduleId),
+    queryFn: () => getSchedule(Number(scheduleId)),
     enabled: !!scheduleId,
   });
 };

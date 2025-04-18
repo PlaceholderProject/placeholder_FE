@@ -7,6 +7,7 @@ import ScheduleItem from "@/components/schedule/ScheduleItem";
 
 
 const ScheduleArea = ({ meetupId }: { meetupId: number }) => {
+
   const router = useRouter();
   const { data: schedules, isPending, error } = useSchedules(meetupId);
 
