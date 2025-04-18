@@ -2,15 +2,19 @@ import React from "react";
 import { TypePurposeType } from "@/types/meetupType";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
-import { setCatregory } from "@/stores/filterSlice";
+import { resetFilter, setCatregory } from "@/stores/filterSlice";
 
 const CategoryButtons = () => {
   const dispatch = useDispatch();
   const { category } = useSelector((state: RootState) => state.filter);
   const categories: TypePurposeType[] = ["운동", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
 
-  const handlePurposeSelect = (newPurpose: TypePurposeType) => {
-    dispatch(setCatregory(newPurpose));
+  const handlePurposeSelect = (newCategory: TypePurposeType) => {
+    if (category === newCategory) {
+      dispatch(resetFilter());
+    } else {
+      dispatch(setCatregory(newCategory));
+    }
   };
 
   return (

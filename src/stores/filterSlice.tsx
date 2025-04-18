@@ -56,11 +56,12 @@ const filterSlice = createSlice({
 
       if (state.isPlaceMenuOpen) {
         state.place = "서울";
+        state.category = null;
         state.isFilterActive = true;
-      }
-
-      if (state.isPlaceMenuOpen) {
         state.isCategoryMenuOpen = false;
+      } else if (!state.isCategoryMenuOpen) {
+        state.place = null;
+        state.isFilterActive = false;
       }
     },
 
@@ -69,10 +70,8 @@ const filterSlice = createSlice({
 
       if (state.isCategoryMenuOpen) {
         state.category = "운동";
+        state.place = null;
         state.isFilterActive = true;
-      }
-
-      if (state.isCategoryMenuOpen) {
         state.isPlaceMenuOpen = false;
       }
     },

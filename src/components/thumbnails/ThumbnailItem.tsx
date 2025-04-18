@@ -37,7 +37,7 @@ const ThumbnailItem = ({ id }: { id: Meetup["id"] }) => {
             <Link href={`http://localhost:3000/ad/${thumbnail.id}`} className="relative h-48 b-4">
               {/* <Image src={thumbnailImageUrl} alt={`${thumbnail.id}번 광고 이미지 안뜸`} fill className="object-cover rounded" loading="lazy" /> */}
               {/* 🐩🐩🐩 넥스트 Imageㅅ 써야될거같은데!!!!!🐩🐩🐩🐩 */}
-              <img src={thumbnailImageUrl} alt="테스트용 이미지 잘뜨나" className={`object-cover rounded ${!thumbnail.isPublic ? "opacity-60" : ""}`} loading="lazy" />
+              <img src={thumbnailImageUrl} alt="thumbnailImage" className={`object-cover rounded ${!thumbnail.isPublic ? "opacity-60" : ""}`} loading="lazy" />
             </Link>
           )}
           <div className="space-y-2">
