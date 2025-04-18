@@ -34,6 +34,8 @@ export const getHeadhuntingsApi = async ({ sortType, place, category }: { sortTy
   }
   const headhuntingsData = await response.json();
   console.log(`API 호출: ${url}`);
+  console.log("API 전체 응답 데이터:", headhuntingsData);
+  console.log("응답 데이터 개수:", headhuntingsData.result?.length);
 
   return headhuntingsData;
 };

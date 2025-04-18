@@ -8,6 +8,8 @@ const PlaceButtons = () => {
   const dispatch = useDispatch();
   const { place } = useSelector((state: RootState) => state.filter);
   const places: TypeRegionType[] = ["서울", "경기", "인천", "강원", "대전", "세종", "충남", "충북", "부산", "울산", "경남", "경북", "대구", "광주", "전남", "전북", "제주", "미정", "전국"];
+  // --TO DO--
+  // PlaceButtons.tsx CategoryButtons.tsx에서 중복 코드 간결화
   const handlePlaceSelect = (newPlace: TypeRegionType) => {
     if (place === newPlace) {
       dispatch(resetFilter());

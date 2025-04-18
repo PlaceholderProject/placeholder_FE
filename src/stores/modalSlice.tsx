@@ -20,7 +20,6 @@ const modalSlice = createSlice({
     toggleMemberDeleteModal: state => {
       state.isMemberDeleteModalOpen = !state.isMemberDeleteModalOpen;
     },
-    // 제이든선생님 여기다가 다른 모달 toggle 하는 리듀서들 쭉쭉 추가하면 됩니다!
   },
 });
 

@@ -8,7 +8,8 @@ const CategoryButtons = () => {
   const dispatch = useDispatch();
   const { category } = useSelector((state: RootState) => state.filter);
   const categories: TypePurposeType[] = ["운동", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
-
+  // --TO DO--
+  // PlaceButtons.tsx CategoryButtons.tsx에서 중복 코드 간결화
   const handlePurposeSelect = (newCategory: TypePurposeType) => {
     if (category === newCategory) {
       dispatch(resetFilter());

@@ -34,9 +34,8 @@ const AdDeleteModal = ({ meetupId }: { meetupId: number }) => {
   };
 
   // 광고글 삭제 함수
-  // -- TO DO --
+  // --TO DO--
   // 이거 ad.servie.ts 로 빼야됨
-
   const deleteAd = async ({ meetupId }: { meetupId: number }) => {
     const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}`, {
       method: "DELETE",

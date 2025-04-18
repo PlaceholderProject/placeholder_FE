@@ -53,6 +53,9 @@ export interface LabeledSelectProps {
 
 export type SortType = "like" | "latest" | "deadline";
 
+// --TO DO--
+// PlaceButtons.tsx CategoryButtons.tsx에서 중복 코드 간결화
+
 export type TypeRegionType =
   | null
   | "서울"

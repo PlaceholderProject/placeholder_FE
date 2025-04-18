@@ -91,3 +91,27 @@ export const getOngoingMyAdsApi = async () => {
 export const getEndedMyAdsApi = async () => {
   return getMyAds("ended");
 };
+
+// 모임 멤버 가져오기 Api
+export const getMyMeetupMembersApi = async (meetupId: number) => {
+  const token = Cookies.get("accessToken");
+  const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}/member`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) {
+    console.log("멤버 조회 실패");
+    throw new Error("멤버 조회에 실패했습니다.");
+  }
+  console.log(response);
+  return response.json();
+};
+
+//모임 멤버 삭제하기 Api
+
+// export const deleteMeetupMemberApi = async(meetupId: number, memberId: number) => {
+//   const token = Cookies.get("accessToken");
+//   const response = await fetch(`${BASE_URL}/api/v1/meetup/`)
+// }
