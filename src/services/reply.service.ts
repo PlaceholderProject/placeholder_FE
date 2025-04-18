@@ -2,7 +2,7 @@ import { BASE_URL } from "@/constants/baseURL";
 import { newReplyProps } from "@/types/replyType";
 import Cookies from "js-cookie";
 
-// create reply
+// create-reply
 export const createReply = async (newReply: newReplyProps, meetupId: string | string[]) => {
   const accessToken = Cookies.get("accessToken");
   try {
@@ -32,7 +32,7 @@ export const createReply = async (newReply: newReplyProps, meetupId: string | st
   }
 };
 
-// create nested reply
+// create-nested-reply
 export const createNestedReply = async (newReply: newReplyProps, replyId: number) => {
   const accessToken = Cookies.get("accessToken");
   try {
@@ -83,7 +83,7 @@ export const getReply = async (meetupId: string | string[]) => {
   }
 };
 
-// update reply
+// update-reply
 export const editReply = async (text: string, replyId: number) => {
   try {
     const accessToken = Cookies.get("accessToken");
@@ -110,7 +110,7 @@ export const editReply = async (text: string, replyId: number) => {
   }
 };
 
-// delete reply
+// delete-reply
 export const deleteReply = async (replyId: number) => {
   try {
     const accessToken = Cookies.get("accessToken");

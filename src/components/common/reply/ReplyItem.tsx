@@ -21,7 +21,17 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies }) => {
   const nestedReplies = allReplies.filter(r => r.root === reply.id);
 
   const handleReplySave = () => {
-    dispatch(setReply({ id: reply.id, root: reply.root, recipient: reply.recipient, user: { nickname: reply.user.nickname, image: reply.user.image }, text: reply.text, createdAt: reply.createdAt }));
+    dispatch(
+      setReply({
+        id: reply.id,
+        root: reply.root,
+        recipient: reply.recipient,
+        user: { nickname: reply.user.nickname, image: reply.user.image },
+        text: reply.text,
+        createdAt: reply.createdAt,
+        isOrganizer: reply.isOrganizer,
+      }),
+    );
   };
 
   const handleNestedReplyToggle = () => {
@@ -65,7 +75,10 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies }) => {
               unoptimized={true}
             />
           </div>
-          <span>{reply.user.nickname}✨</span>
+          <span>
+            {reply.isOrganizer && "👑 "}
+            {reply.user.nickname}✨
+          </span>
           <span className="text-[#B7B7B7]">{transformCreatedDate(reply.createdAt)}</span>
         </span>
         {reply.user.nickname === user.nickname && (

@@ -28,7 +28,10 @@ const NestedReplyItem = ({ nestedReply }: { nestedReply: Reply }) => {
               unoptimized={true}
             />
           </div>
-          <span>{nestedReply.user.nickname}✨</span>
+          <span>
+            {nestedReply.isOrganizer && "👑 "}
+            {nestedReply.user.nickname}✨
+          </span>
           <span className="text-[#B7B7B7]">{transformCreatedDate(nestedReply.createdAt)}</span>
         </span>
         {nestedReply.user.nickname === user.nickname && (

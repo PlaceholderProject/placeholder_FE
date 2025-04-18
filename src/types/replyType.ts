@@ -14,4 +14,5 @@ export type Reply = {
   text: string;
   user: { image: string; nickname: string };
   createdAt: string;
+  isOrganizer: boolean;
 };

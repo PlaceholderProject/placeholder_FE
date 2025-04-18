@@ -8,6 +8,7 @@ interface ReplyState {
     user: { nickname: string; image: string };
     text: string;
     createdAt: string;
+    isOrganizer: boolean;
   };
 }
 
@@ -19,6 +20,7 @@ const initialState: ReplyState = {
     user: { nickname: "", image: "" },
     text: "",
     createdAt: "",
+    isOrganizer: false,
   },
 };
 
