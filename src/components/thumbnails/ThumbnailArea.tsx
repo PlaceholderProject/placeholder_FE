@@ -17,18 +17,18 @@ const ThumbnailArea = () => {
   // 기능은 따로, 상태나 타입은 한번에 공유
 
   const sortType = useSelector((state: RootState) => state.sort.sortType);
-  const regionType = useSelector((state: RootState) => state.filter.regionType);
-  const purposeType = useSelector((state: RootState) => state.filter.purposeType);
+  const place = useSelector((state: RootState) => state.filter.place);
+  const category = useSelector((state: RootState) => state.filter.category);
   const isFilterActive = useSelector((state: RootState) => state.filter.isFilterActive);
 
   const getQueryKey = () => {
     const baseQueryKey = ["headhuntings", sortType];
     if (isFilterActive) {
-      if (regionType) {
-        baseQueryKey.push("regionType", regionType);
+      if (place) {
+        baseQueryKey.push("place", place);
       }
-      if (purposeType) {
-        baseQueryKey.push("purposeType", purposeType);
+      if (category) {
+        baseQueryKey.push("category", category);
       }
     }
 
@@ -45,8 +45,8 @@ const ThumbnailArea = () => {
     queryFn: () =>
       getHeadhuntingsApi({
         sortType,
-        ...(isFilterActive && regionType ? { regionType: regionType } : {}),
-        ...(isFilterActive && purposeType ? { purposeType: purposeType } : {}),
+        ...(isFilterActive && place ? { place: place } : {}),
+        ...(isFilterActive && category ? { category: category } : {}),
       }),
     retry: 0,
     staleTime: 0, // 데이터를 항상 stale로 취급
@@ -62,7 +62,7 @@ const ThumbnailArea = () => {
   if (isPending) return <div>로딩중</div>;
   if (isError) return <div>에러 발생</div>;
 
-  const today = new Date().toISOString().split("T")[0];
+  // const today = new Date().toISOString().split("T")[0];
 
   let sortedThumbnails = headhuntingsData.result;
 

@@ -1,22 +1,22 @@
 "use client";
 import React from "react";
-import { toggleRegionMenu, togglePurposeMenu, setRegion, setPurpose, resetFilter } from "@/stores/filterSlice";
+import { togglePlaceMenu, toggleCategoryMenu, setPlace, setCatregory, resetFilter } from "@/stores/filterSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
-import RegionButtons from "./RegionButtons";
-import PurposeButtons from "./PurposeButtons";
+import CategoryButtons from "./CategoryButtons";
+import PlaceButtons from "./PlaceButtons";
 
 const FilterArea = () => {
   const dispatch = useDispatch();
 
-  const { isRegionMenuOpen, isPurposeMenuOpen, regionType, purposeType, isFilterActive } = useSelector((state: RootState) => state.filter);
+  const { isPlaceMenuOpen, isCategoryMenuOpen, place, category, isFilterActive } = useSelector((state: RootState) => state.filter);
 
-  const handleRegionButtonClick = () => {
-    dispatch(toggleRegionMenu());
+  const handlePlaceButtonClick = () => {
+    dispatch(togglePlaceMenu());
   };
 
-  const handlePurposeButtonClick = () => {
-    dispatch(togglePurposeMenu());
+  const handleCategoryButtonClick = () => {
+    dispatch(toggleCategoryMenu());
   };
 
   const handleResetFilter = () => {
@@ -26,11 +26,11 @@ const FilterArea = () => {
   return (
     <div>
       <div>
-        <button className={`px-4 py-2 rounded-lg border ${isRegionMenuOpen ? "bg-blue-100 border-blue-300" : "border-gray-300"}`} onClick={handleRegionButtonClick}>
+        <button className={`px-4 py-2 rounded-lg border ${isPlaceMenuOpen ? "bg-blue-100 border-blue-300" : "border-gray-300"}`} onClick={handlePlaceButtonClick}>
           지역별
         </button>
 
-        <button className={`px-4 py-2 rounded-lg border ${isPurposeMenuOpen ? "bg-blue-100 border-blue-300" : "border-gray-300"}`} onClick={handlePurposeButtonClick}>
+        <button className={`px-4 py-2 rounded-lg border ${isCategoryMenuOpen ? "bg-blue-100 border-blue-300" : "border-gray-300"}`} onClick={handleCategoryButtonClick}>
           모임 성격별
         </button>
 
@@ -42,8 +42,8 @@ const FilterArea = () => {
           "선택된 필터가 없습니다."
         )}
       </div>
-      {isRegionMenuOpen && !isPurposeMenuOpen && <RegionButtons />}
-      {isPurposeMenuOpen && !isRegionMenuOpen && <PurposeButtons />}
+      {isPlaceMenuOpen && !isCategoryMenuOpen && <PlaceButtons />}
+      {isCategoryMenuOpen && !isPlaceMenuOpen && <CategoryButtons />}
     </div>
   );
 };

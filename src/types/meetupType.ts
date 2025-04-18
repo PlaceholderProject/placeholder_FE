@@ -53,7 +53,7 @@ export interface LabeledSelectProps {
 
 export type SortType = "like" | "latest" | "deadline";
 
-export type RegionType =
+export type TypeRegionType =
   | null
   | "서울"
   | "경기"
@@ -75,6 +75,6 @@ export type RegionType =
   | "미정"
   | "전국";
 
-export type PurposeType = null | "운동" | "공부" | "취준" | "취미" | "친목" | "맛집" | "여행" | "기타";
+export type TypePurposeType = null | "운동" | "공부" | "취준" | "취미" | "친목" | "맛집" | "여행" | "기타";
 
 export type FilterAreaType = null | "지역별" | "모임 성격별";
