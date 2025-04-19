@@ -1,12 +1,25 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createSchedule } from "@/services/schedule.service";
+import { createSchedule, getSchedule, updateSchedule } from "@/services/schedule.service";
 import { useDaumPostcodePopup } from "react-daum-postcode";
 import MemberSelector from "@/components/schedule/MemberSelector";
+import { Schedule } from "@/types/scheduleType";
 
-const ScheduleForm = ({ meetupId }: { meetupId: number }) => {
+interface ScheduleFormProps {
+  meetupId: number;
+  mode?: "create" | "edit";
+  scheduleId?: number;
+  initialData?: Schedule;
+}
+
+const ScheduleForm = ({
+                        meetupId,
+                        mode = "create",
+                        scheduleId,
+                        initialData,
+                      }: ScheduleFormProps) => {
   const router = useRouter();
   const scheduledAtRef = useRef<HTMLInputElement>(null);
   const placeRef = useRef<HTMLInputElement>(null);
@@ -17,8 +30,66 @@ const ScheduleForm = ({ meetupId }: { meetupId: number }) => {
   const imageRef = useRef<HTMLInputElement>(null);
 
   const [selectedMember, setSelectedMember] = useState<number[]>([]);
+  const [isPending, setIsPending] = useState(mode === "edit" && !initialData);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const openPostcode = useDaumPostcodePopup(); // 카카오 우편번호 API 팝업
+  const openPostcode = useDaumPostcodePopup();
+
+  // 수정 모드에서 초기 데이터 가져오기
+  useEffect(() => {
+    const fetchScheduleData = async () => {
+      if (mode === "edit" && scheduleId && !initialData) {
+        try {
+          setIsPending(true);
+          const data = await getSchedule(scheduleId);
+
+          // 폼 필드 초기화
+          if (scheduledAtRef.current) {
+            // datetime-local 입력에 맞는 형식으로 변환
+            const date = new Date(data.scheduledAt);
+            const formattedDate = date.toISOString().slice(0, 16);
+            scheduledAtRef.current.value = formattedDate;
+          }
+          if (placeRef.current) placeRef.current.value = data.place;
+          if (addressRef.current) addressRef.current.value = data.address;
+          if (latitudeRef.current) latitudeRef.current.value = data.latitude;
+          if (longitudeRef.current) longitudeRef.current.value = data.longitude;
+          if (memoRef.current) memoRef.current.value = data.memo;
+
+          // 참석자 초기화
+          const participantIds = data.participant.map(p => p.id);
+          setSelectedMember(participantIds);
+
+          setIsPending(false);
+        } catch (error: unknown) {
+          setErrorMessage("스케줄 정보를 불러오는 데 실패했습니다.");
+          setIsPending(false);
+          console.error("Schedule fetch error:", error);
+        }
+      }
+    };
+
+    fetchScheduleData();
+  }, [mode, scheduleId, initialData]);
+
+  // 초기 데이터가 제공된 경우 폼 초기화
+  useEffect(() => {
+    if (initialData && mode === "edit") {
+      if (scheduledAtRef.current) {
+        const date = new Date(initialData.scheduledAt);
+        const formattedDate = date.toISOString().slice(0, 16);
+        scheduledAtRef.current.value = formattedDate;
+      }
+      if (placeRef.current) placeRef.current.value = initialData.place;
+      if (addressRef.current) addressRef.current.value = initialData.address;
+      if (latitudeRef.current) latitudeRef.current.value = initialData.latitude;
+      if (longitudeRef.current) longitudeRef.current.value = initialData.longitude;
+      if (memoRef.current) memoRef.current.value = initialData.memo;
+
+      const participantIds = initialData.participant.map(p => parseInt(p.nickname));
+      setSelectedMember(participantIds);
+    }
+  }, [initialData, mode]);
 
   const handleMemberSelect = (memberId: number) => {
     setSelectedMember(prev =>
@@ -57,6 +128,7 @@ const ScheduleForm = ({ meetupId }: { meetupId: number }) => {
         latitude: String(latitudeRef.current?.value || "0"),
         longitude: String(longitudeRef.current?.value || "0"),
         memo: memoRef.current?.value || "",
+        participant: selectedMember,
       };
 
       formData.append("payload", JSON.stringify(payload));
@@ -64,13 +136,25 @@ const ScheduleForm = ({ meetupId }: { meetupId: number }) => {
         formData.append("image", imageRef.current.files[0]);
       }
 
-      await createSchedule(meetupId, formData);
+      if (mode === "create") {
+        await createSchedule(meetupId, formData);
+      } else if (mode === "edit" && scheduleId) {
+        await updateSchedule(scheduleId, formData);
+      }
+
       router.push(`/meetup/${meetupId}`);
-      console.log(payload);
-    } catch (error) {
-      console.error("Failed to create schedule:", error);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(`Failed to ${mode} schedule:`, error.message);
+      } else {
+        console.error(`Failed to ${mode} schedule with unknown error`);
+      }
+      setErrorMessage(`스케줄 ${mode === "create" ? "생성" : "수정"}에 실패했습니다.`);
     }
   };
+
+  if (isPending) return <div>데이터를 불러오는 중...</div>;
+  if (errorMessage) return <div>에러: {errorMessage}</div>;
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col space-y-4 p-4">
@@ -101,6 +185,10 @@ const ScheduleForm = ({ meetupId }: { meetupId: number }) => {
         <textarea id="memo" ref={memoRef} />
       </div>
 
+      <div>
+        <label htmlFor="image">이미지</label>
+        <input type="file" id="image" ref={imageRef} accept="image/*" />
+      </div>
 
       <MemberSelector
         meetupId={meetupId}
@@ -108,7 +196,9 @@ const ScheduleForm = ({ meetupId }: { meetupId: number }) => {
         onMemberSelect={handleMemberSelect}
       />
 
-      <button type="submit">스케줄 생성</button>
+      <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+        {mode === "create" ? "스케줄 생성" : "스케줄 수정"}
+      </button>
     </form>
   );
 };
