@@ -1,27 +1,15 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getAdByIdApi } from "@/services/ad.service";
-import { Meetup } from "@/types/meetupType";
+
+import { useAdItem } from "@/hooks/useAdItem";
 
 const AdSignboard = ({ meetupId }: { meetupId: number }) => {
-  const [adData, setAdData] = useState<Meetup>();
-  const [error, setError] = useState<string | null>(null);
+  const { adData, error, isPending } = useAdItem(meetupId);
 
-  useEffect(() => {
-    const getAd = async () => {
-      try {
-        const data = await getAdByIdApi(meetupId);
-        setAdData(data);
-      } catch (error) {
-        setError(error.message);
-      }
-    };
-    getAd();
-  }, [meetupId]);
-
-  if (error) return <div>에러 발생: {error}</div>;
-  if (!adData) return <div>로딩중...</div>;
+  if (error) return <div>에러 발생 : {error.message} </div>;
+  if (isPending) return <div>로딩중...</div>;
+  if (!adData) return null;
 
   return (
     <>

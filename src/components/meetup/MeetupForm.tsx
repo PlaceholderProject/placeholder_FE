@@ -1,13 +1,11 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Meetup } from "@/types/meetupType";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { NewMeetup } from "@/types/meetupType";
 import { LabeledInputProps } from "@/types/meetupType";
 import { LabeledSelectProps } from "@/types/meetupType";
 import { useRouter } from "next/navigation";
-import { refreshToken } from "@/services/auth.service";
-import { BASE_URL } from "@/constants/baseURL";
 import { createMeetupApi } from "@/services/meetup.service";
 
 const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(({ id, name, label, type, placeholder, value, defaultValue, disabled, required, checked, onChange }, ref) => {
@@ -57,6 +55,8 @@ const MeetupForm = () => {
   const queryClient = useQueryClient();
 
   // Ref
+  const organizerNicknameRef = useRef<HTMLInputElement>(null);
+  const organizerProfileImageRef = useRef<HTMLInputElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
   const startedAtRef = useRef<HTMLInputElement>(null);
   const endedAtRef = useRef<HTMLInputElement>(null);
@@ -72,6 +72,7 @@ const MeetupForm = () => {
   // 체크 박스 상태 관리 위한 스테이트
   const [isStartedAtNull, setIsStartedAtNull] = useState(false);
   const [isEndedAtNull, setIsEndedAtNull] = useState(false);
+
   // 미리보기 스테이트
   const [previewImage, setPreviewImage] = useState("/meetup_default_image.jpg");
 
@@ -88,167 +89,107 @@ const MeetupForm = () => {
     },
 
     onError: error => {
-      console.error("모임 생성 오류 발생:", error);
+      console.error("모임 생성 오류 발생:", error.message);
     },
   });
-
-  // 모임 생성 api
-  // const createMeetupApi = async (blobFormData: FormData): Promise<void> => {
-  //   const response = await fetch(`${BASE_URL}/api/v1/meetup`, {
-  //     method: "POST",
-  //     headers: {
-  //       // ContentType: "multipart/formdata",
-  //       Authorization: `Bearer ${token}`,
-  //     },
-  //     body: blobFormData,
-  //   });
-
-  //   if (!response.ok) {
-  //     const errorText = await response.text();
-  //     await refreshToken();
-  //     console.log(errorText);
-  //     throw new Error("모임 생성 실패");
-  //   }
-  //   return await response.json();
-  // };
 
   const handleMeetupFormSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!categoryRef.current) {
-      console.error("categoryRef가 인풋에 연결 안돼있어");
+    // ❗️❗️❗️ 이 모든 과정을 제출 전에 실행하고 있고, 하나로 묶어야겠는데?
+    // 1. 모든 날짜가 오늘보다 과거인지 유효성 검사
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    // 2. 필드 이름 케이스별로 가져오기
+    const getDateFieldName = (fieldName: string): string => {
+      switch (fieldName) {
+        case "startedAt":
+          return "모임 시작일";
+        case "endedAt":
+          return "모임 종료일";
+        case "adEndedAt":
+          return "광고 종료일";
+        default:
+          return fieldName;
+      }
+    };
+
+    // 3. 인풋 필드에서 날짜값 가져옴
+    // 근데 이거 155번째줄 (현재인지 실행해보고 판단 위)에 있었음
+    const startDate = isStartedAtNull ? null : startedAtRef.current?.value || null;
+    const endDate = isEndedAtNull ? null : endedAtRef.current?.value || null;
+    const adEndDate = adEndedAtRef.current?.value || null;
+
+    // 4. 통과(true)인지 걸리는지(false) 불리언 값 리턴하는 유효성 검사 함수
+
+    const createMeetUpValidateDate = (date: string | null, fieldName: string): boolean => {
+      // 사용자 입력값 미정이면 true (통과)
+      if (!date) {
+        console.log("!date일 경우의 date: ", date);
+        return true;
+      }
+
+      // 🐡 사용자 입력 날짜값을 위한 파라미터다. 즉 입력값 그자체가 아니라 ref에 연결된 애들을, 함수 실행할 때 (date) 위치에 넣어 실행하게 되고
+      // 이렇게 쓴 이유는 started랑 ended랑 adEnded 세 종류에 대해 재사용 대응 가능하게 하려고!
+      const inputDate = new Date(date);
+      inputDate.setHours(0, 0, 0, 0);
+
+      // 사용자 입력 날짜값이 오늘보다 이전이면 false(걸림)
+      if (inputDate !== null && inputDate < now) {
+        alert(`${getDateFieldName(fieldName)}은 이미 지난 날짜로 설정할 수 없습니다.`);
+        return false;
+      }
+
+      // 모임 시작날짜와 모임 종료 날짜 비교
+      if (endDate !== null && startDate !== null && endDate < startDate) {
+        const beforeAfter = endDate < startDate;
+        console.log("앞뒤틀리니?", beforeAfter);
+        alert("모임 종료일은 시작일보다 빠르게 설정할 수 없습니다.");
+        return false;
+      }
+
+      return true;
+    };
+
+    // 폼 제출전, 유효성 검사 에함수 실행해보고 통과 못하면 제출 전에 리턴으로 탈출
+    // 모임 시작일이 false(걸림)거나, 모임 종료일이 false(걸림)거나 광고 종료일이 false(걸림)이면 멈추고 나와버림
+    if (!createMeetUpValidateDate(startDate, "startedAt") || !createMeetUpValidateDate(endDate, "endedAt") || !createMeetUpValidateDate(adEndDate, "adEndedAt")) {
+      console.log("유효성 함수 실행은 됨");
+      console.log("설정된 모임 시작일, 모임 종료일, 광고 종료일:", startDate, endDate, adEndDate);
+
       return;
     }
-    const category = categoryRef.current?.value || "";
-    // console.log("Submitted category", category);
-    // console.log("카테고리타입뭐야?:", typeof category);
 
-    if (!nameRef.current) {
-      console.error("nameRef가 인풋에 연걸 안돼있어");
-      return;
-    }
-    const name = nameRef.current?.value || "";
-    // console.log("Submitted name:", name);
-
-    if (!startedAtRef.current) {
-      console.error("startedAtRef가 인풋에 연걸 안돼있어");
-      return;
-    }
-    const startedAt = isStartedAtNull ? null : startedAtRef.current.value || null;
-    // console.log("Submitted startedAt:", startedAt);
-
-    if (!endedAtRef.current) {
-      console.error("endedAtRef가 인풋에 연걸 안돼있어");
-      return;
-    }
-    const endedAt = isEndedAtNull ? null : endedAtRef.current.value || null;
-    // console.log("Submitted endedAt:", endedAt);
-
-    if (!placeRef.current) {
-      console.error("placeRef가 인풋에 연걸 안돼있어");
-      return;
-    }
-    const place = placeRef.current?.value || "";
-    // console.log("Submitted place:", place);
-
-    if (!placeDescriptionRef.current) {
-      console.error("placeDescriptionRef가 인풋에 연결 안돼있어");
-      return;
-    }
-
-    const placeDescription = placeDescriptionRef.current?.value || "";
-    // console.log("Submitted placeDescription:", placeDescription);
-
-    if (!adTitleRef.current) {
-      console.error("adTitleRef가 인풋에 연걸 안돼있어");
-      return;
-    }
-    const adTitle = adTitleRef.current?.value || "";
-    // console.log("Submitted adTitle:", adTitle);
-
-    if (!adEndedAtRef) {
-      console.error("adEndedAtRef가 인풋에 연결 안돼있어");
-      return;
-    }
-    const adEndedAt = adEndedAtRef.current?.value || "";
-    // console.log("Submitted adEndedAt:", adEndedAt);
-
-    if (!descriptionRef) {
-      console.error("descriptionRef가 인풋에 연결 안돼있어");
-      return;
-    }
-
-    const description = descriptionRef.current?.value || "";
-    console.log("Submitted description:", description);
-
-    if (!isPublicRef) {
-      console.error("isPublicRef가 인풋에 연결 안돼있어");
-      return;
-    }
-    const isPublic = isPublicRef.current?.checked || false;
-    // console.log("Submitted isPublic:", isPublic);
-
-    const image = imageRef.current?.value || "";
-    // console.log("Submitted image:", image);
-
-    const newMeetup: Meetup = {
+    const newMeetup: NewMeetup = {
+      organizer: {
+        nickname: organizerNicknameRef.current?.value || "",
+        profileImage: organizerProfileImageRef.current?.value || "",
+      },
       name: nameRef.current?.value || "",
       description: descriptionRef.current?.value || "",
       place: placeRef.current?.value || "",
       placeDescription: placeDescriptionRef.current?.value || "",
-      startedAt: startedAt,
-      endedAt: endedAt,
+      startedAt: startDate,
+      endedAt: endDate,
       adTitle: adTitleRef.current?.value || "",
-      adEndedAt: adEndedAtRef.current?.value || "",
-      isPublic: isPublicRef.current?.checked || false, // `checked`로 값 가져오기
+      adEndedAt: adEndDate,
+      isPublic: isPublicRef.current?.checked || false,
       category: categoryRef.current?.value || "",
       image: imageRef.current?.value || "",
+      isLike: false,
+      likeCount: 0,
+      createAt: "",
     };
 
     const meetupFormData = new FormData();
-
-    // 이미지 파일 추가
-
-    // 이 코드면 meetup도 image도 binary로 나옴 => 바이너리가 필요할 때만 블롭으로 변환하세요
-    // blob 사용하지 않으면 타입 정보 손실 위험성이 있다고 한다 pereplexity가 알려줌..
-
-    // blobFormData.append("newMeetup", JSON.stringify(newMeetup));
-
     meetupFormData.append("payload", JSON.stringify(newMeetup));
 
-    // formData.append("newMeetup", JSON.stringify(newMeetup));
-
-    // if (imageRef.current?.files?.[0]) {
-    //   blobFormData.append("image", imageRef.current.files[0]);
-    // }
-
     if (imageRef.current?.files?.[0]) {
-      const file = imageRef.current.files[0];
-      // console.log("이미지 파일 정보:", file.name, file.type, file.size);
-      meetupFormData.append("image", file);
-    } else {
-      // console.log("imageRef: ", imageRef);
-      // console.log("imageRef.current: ", imageRef.current);
-      // console.log("imageRef.current.value: ", imageRef.current?.value);
+      meetupFormData.append("image", imageRef.current.files[0]);
     }
 
-    for (const pair of meetupFormData.entries()) {
-      // console.log("meetupFormData 출력:", pair[0], pair[1]); // key와 value 출력
-    }
-
-    createMutation.mutate(meetupFormData, {
-      // 버튼 클릭되면 handleMeetupForm 실행
-      // => 그 안에 지금 createMutation.mutate(formData) 있는거고
-      // createMutation은 invalidasteQueries를 해
-      // createMutation 안에 달린 mutationFn가 createMeetupApi 함수야 ("POST")
-      // 원래 createMeetup 함수였는데 api 여서 이름 바꾼거야
-      //
-
-      // 🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵  코드잇 보고 넣어봄 🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵🩵
-      onSuccess: () => {
-        alert("모임 생성 성공!!!!");
-      },
-    });
+    createMutation.mutate(meetupFormData);
   };
 
   // 이미지 미리보기 스테이트

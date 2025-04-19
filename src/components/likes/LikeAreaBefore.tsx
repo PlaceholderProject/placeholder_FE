@@ -1,15 +1,14 @@
 "use client";
 
-import { LikeAreaProps } from "@/types/likeType";
+import { LikePartProps } from "@/types/likeType";
 import React from "react";
 import LikeItem from "./LikeItem";
 import { BASE_URL } from "@/constants/baseURL";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toggleLikeApi } from "@/services/like.service";
-// import { toggleLikeApi } from "@/services/like.service";
 const token = process.env.NEXT_PUBLIC_MY_TOKEN;
 
-const LikeArea = ({ isLike, likeCount, thumbnailId }: LikeAreaProps) => {
+const LikeAreaBefore = ({ isLike, likeCount, thumbnailId }: LikePartProps) => {
   // 💿💿💿광고글 하나의 해당 유저 좋아요 누르기, 취소하기 => 💿💿클릭햇을 때 달아주고 수정로직 잇어야돼!!!!!!!!💿💿💿
   // 없어도돼.. 서버에서 다 구현해주심..🥹🥹🥹🥹🥹
 
@@ -108,4 +107,4 @@ const LikeArea = ({ isLike, likeCount, thumbnailId }: LikeAreaProps) => {
   );
 };
 
-export default LikeArea;
+export default LikeAreaBefore;

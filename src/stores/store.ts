@@ -5,6 +5,8 @@ import storage from "redux-persist/lib/storage";
 import { createTransform, FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE } from "redux-persist";
 import nonModalReducer from "./nonModalSlice";
 import modalReducer from "./modalSlice";
+import sortReducer from "./sortSlice";
+import filterReducer from "./filterSlice";
 import replyReducer from "./replySlice";
 
 // 데이터 직렬화/비직렬화 변환 설정
@@ -31,6 +33,9 @@ export const store = configureStore({
     modal: modalReducer,
     reply: replyReducer,
     user: persistedUserReducer,
+
+    sort: sortReducer,
+    filter: filterReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

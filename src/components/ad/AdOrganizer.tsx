@@ -4,28 +4,14 @@ import React, { useEffect, useState } from "react";
 import { getAdByIdApi } from "@/services/ad.service";
 import { Meetup } from "@/types/meetupType";
 import { BASE_URL } from "@/constants/baseURL";
+import { useAdItem } from "@/hooks/useAdItem";
 
 const AdOrganizer = ({ meetupId }: { meetupId: number }) => {
-  const [adData, setAdData] = useState<Meetup>();
-  const [error, setError] = useState<string | null>(null);
+  const { adData, error, isPending } = useAdItem(meetupId);
 
-  useEffect(() => {
-    const getAd = async () => {
-      try {
-        const data = await getAdByIdApi(meetupId);
-        // console.log("받아온 전체 데이터:", data); // 전체 데이터 구조 확인
-        // console.log("방장 데이터:", data.organizer); // organizer 객체 구조 확인
-        // console.log("프사 데이터:", data.organizer.profileImage);
-        setAdData(data);
-      } catch (error) {
-        setError(error.message);
-      }
-    };
-    getAd();
-  }, [meetupId]);
-
-  if (error) return <div>에러 발생: {error}</div>;
-  if (!adData) return <div>로딩중...</div>;
+  if (error) return <div>에러 발생: {error.message}</div>;
+  if (isPending) return <div>로딩중..</div>;
+  if (!adData) return null;
 
   const profileImageUrl = `${BASE_URL}${adData.organizer.profileImage}`;
 
@@ -34,7 +20,7 @@ const AdOrganizer = ({ meetupId }: { meetupId: number }) => {
       <div>
         <h4>작성자: </h4>
         <div>{adData.organizer.nickname}</div>
-        <img src={profileImageUrl} alt={"방장프사"} />
+        <img src={profileImageUrl} alt={"방장 프로필 사진"} />
       </div>
     </>
   );

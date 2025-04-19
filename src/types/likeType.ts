@@ -1,11 +1,18 @@
-export interface LikeAreaProps {
-  isLike: boolean | undefined;
-  likeCount: number | undefined;
-  thumbnailId: number | undefined;
+export interface LikePartProps {
+  isLike: boolean;
+  likeCount: number;
+  onToggle: () => void;
+  isPending?: boolean;
 }
 
 export interface LikeItemProps {
-  isLike: boolean | undefined;
-  likeCount: number | undefined;
-  handleToggleLike: () => void;
+  isLike: boolean;
+  likeCount: number;
+  onClick: () => void;
+  disabled?: boolean;
 }
+
+// export interface LikeContainerProps {
+//   id: number;
+//   // type?: "headhungting";
+// }
