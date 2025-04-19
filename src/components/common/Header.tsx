@@ -16,6 +16,7 @@ const Header = () => {
   const router = useRouter();
 
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const user = useSelector((state: RootState) => state.user.user);
 
   const dispatch = useDispatch();
 
@@ -29,15 +30,15 @@ const Header = () => {
     }
   }, []);
 
+  console.log("REDUX에 저장된 유저정보", user);
+
   const handleLogout = async () => {
-    router.replace("/");
     Cookies.remove("accessToken");
     Cookies.remove("refreshToken");
     dispatch(setIsAuthenticated(false));
     dispatch(logout());
 
     await persistor.purge();
-    console.log("User data cleared from persist storage.");
   };
 
   const handleNotificationPage = () => {

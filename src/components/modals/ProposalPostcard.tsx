@@ -3,7 +3,7 @@
 import { createProposal } from "@/services/proposal.service";
 import React, { useState } from "react";
 
-const ProposalPostcard = () => {
+const ProposalPostcard = ({ meetupId }: { meetupId: number }) => {
   const [proposalText, setProposalText] = useState("");
 
   const handleProposalText = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -14,7 +14,7 @@ const ProposalPostcard = () => {
     e.preventDefault();
 
     await createProposal(proposalText, meetupId); // meetupId 보내야줘야함
-    console.log(proposalText);
+    // console.log(proposalText);
   };
 
   return (

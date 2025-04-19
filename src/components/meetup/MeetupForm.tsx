@@ -199,7 +199,7 @@ const MeetupForm = () => {
       const previewFileUrl = URL.createObjectURL(previewFile);
       setPreviewImage(previewFileUrl);
     }
-    console.log("미리보기 이미지:", previewImage);
+    // console.log("미리보기 이미지:", previewImage);
   };
 
   return (

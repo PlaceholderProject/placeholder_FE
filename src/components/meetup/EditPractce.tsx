@@ -69,14 +69,14 @@ const EditPractice = ({ meetupId }: { meetupId: number }) => {
     });
 
     if (!response.ok) {
-      console.log("가져오기 실패 :", response.status, response.statusText);
+      // console.log("가져오기 실패 :", response.status, response.statusText);
       throw new Error("해당 id 모임 가져오기 실패");
     }
 
     const meetupByIdData = await response.json();
 
     setPreviewImage(`${meetupByIdData.image}`);
-    console.log(meetupByIdData.image);
+    // console.log(meetupByIdData.image);
 
     return meetupByIdData;
   };

@@ -1,18 +1,24 @@
 "use client";
 
 import React from "react";
-import Cookies from "js-cookie";
+import ProposalPostcard from "../modals/ProposalPostcard";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/stores/store";
+import { toggleProposalPostcardModal } from "@/stores/modalSlice";
 
 const AdButton = ({ meetupId }: { meetupId: number }) => {
-  const token = Cookies.get("accessToken");
+  const dispatch = useDispatch();
+  const { isProposalPostcardModalOpen } = useSelector((state: RootState) => state.modal);
 
-  const handleAdNonModalInteraction = () => alert("광고 수정삭제 논모달 외부영역 상호작용 테스트");
+  const handleProposalModal = () => {
+    dispatch(toggleProposalPostcardModal());
+  };
+
   return (
     <>
-      <button type="button" onClick={handleAdNonModalInteraction}>
-        {" "}
-        <h3>여기는 이제 전역상태 변화에 따라 무지막지하게 변화할 버튼이 들어갑니당..</h3>
-        <div>AdButton</div>
+      {isProposalPostcardModalOpen && <ProposalPostcard meetupId={meetupId} />}
+      <button onClick={handleProposalModal} className="bg-slate-300">
+        신청하기
       </button>
     </>
   );

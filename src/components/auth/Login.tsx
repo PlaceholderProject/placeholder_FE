@@ -9,6 +9,8 @@ import { FaEyeSlash } from "react-icons/fa";
 import { login } from "@/services/auth.service";
 import { setIsAuthenticated } from "@/stores/authSlice";
 import { useDispatch } from "react-redux";
+import { getUser } from "@/services/user.service";
+import { setUser } from "@/stores/userSlice";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -46,6 +48,20 @@ const Login = () => {
     const response = await login({ email, password });
     if (response) {
       dispatch(setIsAuthenticated(true));
+      const fetchUser = async () => {
+        const data = await getUser();
+        if (data) {
+          dispatch(
+            setUser({
+              email: data.email,
+              nickname: data.nickname,
+              bio: data.bio,
+              profileImage: data.image,
+            }),
+          );
+        }
+      };
+      fetchUser();
       router.replace("/");
     }
   };

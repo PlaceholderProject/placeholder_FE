@@ -1,13 +1,16 @@
 "use client";
 
 import { PASSWORD_REGULAR_EXPRESSION } from "@/constants/regularExpressionConstants";
+import { useCreateUser } from "@/hooks/useUser";
 import { checkEmail, checkNickname } from "@/services/auth.service";
-import { createUser } from "@/services/user.service";
+import { setIsCheckedEmail, setIsCheckedNickname } from "@/stores/authSlice";
+import { RootState } from "@/stores/store";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -25,9 +28,15 @@ const Signup = () => {
 
   const router = useRouter();
 
+  const dispatch = useDispatch();
+  const { isCheckedEmail, isCheckedNickname } = useSelector((state: RootState) => state.auth);
+
+  const createUserMutation = useCreateUser();
+
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
   };
+
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!PASSWORD_REGULAR_EXPRESSION.test(event.target.value)) {
       setPasswordWarning("비밀번호는 숫자 1개, 특수문자 1개를 포함하여 6~15자리 사이여야 합니다.");
@@ -46,6 +55,7 @@ const Signup = () => {
 
     setPasswordConfirm(event.target.value);
   };
+
   const handleNicknameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value.length > 8) {
       setNicknameWarning("닉네임은 최소 2자 최대 8자까지 가능합니다.");
@@ -54,6 +64,7 @@ const Signup = () => {
     }
     setNickname(event.target.value);
   };
+
   const handleBioChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (event.target.value.length > 40) {
       setBioWarning("자기소개는 최대 40자까지 작성이 가능합니다.");
@@ -66,11 +77,13 @@ const Signup = () => {
   };
 
   const handleCheckEmail = async () => {
-    await checkEmail(email);
+    const isCheckEmail = await checkEmail(email);
+    if (isCheckEmail) dispatch(setIsCheckedEmail(isCheckEmail));
   };
 
   const handleCheckNickname = async () => {
-    await checkNickname(nickname);
+    const isCheckNickname = await checkNickname(nickname);
+    if (isCheckNickname) dispatch(setIsCheckedNickname(isCheckNickname));
   };
 
   const handleTogglePassword = () => {
@@ -88,6 +101,10 @@ const Signup = () => {
       alert("이메일을 작성해주세요.");
       return;
     }
+    if (!isCheckedEmail) {
+      alert("이메일을 중복확인해주세요.");
+      return;
+    }
     if (!password.trim()) {
       alert("비밀번호를 작성해주세요.");
       return;
@@ -100,17 +117,18 @@ const Signup = () => {
       alert("닉네임을 작성해주세요.");
       return;
     }
-
+    if (!isCheckedNickname) {
+      alert("닉네임을 중복확인해주세요.");
+      return;
+    }
     if (password.trim() !== passwordConfirm.trim()) {
       alert("비밀번호가 일치하지 않습니다. 비밀번호를 다시 입력해주세요.");
       return;
     }
-
     if (!PASSWORD_REGULAR_EXPRESSION.test(password)) {
       alert("비밀번호는 숫자 1개, 특수문자 1개를 포함하여 6~15자리 사이여야 합니다.");
       return;
     }
-
     if (nickname.length < 2 || nickname.length > 8) {
       alert("닉네임은 최소 2자 최대 8자까지 가능합니다.");
       return;
@@ -123,11 +141,14 @@ const Signup = () => {
       bio,
     };
 
-    const result = await createUser(newUser);
-    if (result) {
-      alert(`${newUser.nickname}님 회원가입을 축하드립니다.`);
-      router.replace("/login");
-    }
+    try {
+      const result = await createUserMutation.mutateAsync(newUser);
+
+      if (result) {
+        alert(`${newUser.nickname}님 회원가입을 축하드립니다.`);
+        router.replace("/login");
+      }
+    } catch (error) {}
   };
 
   return (

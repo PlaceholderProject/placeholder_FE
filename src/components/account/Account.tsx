@@ -4,53 +4,33 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { FaChevronRight } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
-import { getUser } from "@/services/user.service";
-import { setUser } from "@/stores/userSlice";
 import { BASE_URL } from "@/constants/baseURL";
 
 const Account = () => {
-  const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user.user);
 
   const [profileImage, setProfileImage] = useState<string>("");
 
   useEffect(() => {
-    if (!user.email) {
-      const fetchUser = async () => {
-        const data = await getUser();
-        if (data) {
-          dispatch(
-            setUser({
-              email: data.email,
-              nickname: data.nickname,
-              bio: data.bio,
-              profileImage: data.image,
-            }),
-          );
-          setProfileImage(data.image || "/profile.png");
-        }
-        console.log(data);
-      };
-      fetchUser();
+    if (user.profileImage) {
+      const imagePath = user.profileImage.startsWith("http") ? user.profileImage : `${BASE_URL}${user.profileImage}`;
+      setProfileImage(imagePath);
     } else {
-      if (user.profileImage) {
-        const imagePath = user.profileImage.startsWith("http") ? user.profileImage : `${BASE_URL}${user.profileImage}`;
-        setProfileImage(imagePath);
-      } else {
-        setProfileImage("/profile.png");
-      }
+      setProfileImage("/profile.png");
     }
-  }, [dispatch, user]);
+  }, [user]);
 
-  console.log(user.profileImage);
+  // console.log(user.profileImage);
 
   return (
     <div className="flex flex-col items-center">
       <h2 className="">계정 관리</h2>
       <div className="border-2 flex flex-col items-center rounded-xl">
-        <Image src={profileImage || "/profile.png"} alt="프로필 이미지" width="100" height="100" unoptimized={true} />
+        <div className="w-[100px] h-[100px] rounded-full overflow-hidden">
+          <Image src={profileImage || "/profile.png"} alt="프로필 이미지" width="100" height="100" unoptimized={true} />
+        </div>
         <p>
           🎉<span className="font-bold">{user.nickname}</span>님, 환영합니다.
         </p>
