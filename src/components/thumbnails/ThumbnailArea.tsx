@@ -2,59 +2,110 @@
 
 import React, { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Meetup } from "@/types/meetupType";
 import ThumbnailItem from "./ThumbnailItem";
 import { getHeadhuntingsApi } from "@/services/thumbnails.service";
+import { Meetup } from "@/types/meetupType";
+import Cookies from "js-cookie";
+import { useSelector } from "react-redux";
+import { RootState } from "@/stores/store";
+
+const token = Cookies.get("accessToken");
 
 const ThumbnailArea = () => {
-  // // meetups(headhuntings) 가져오는 api
-  // const getHeadhuntingsApi = async () => {
-  //   const response = await fetch(`${BASE_URL}/api/v1/meetup`, {
-  //     method: "GET",
-  //     headers: {
-  //       Authorization: `Bearer ${token}`,
-  //     },
-  //   });
+  // 이제 리덕스에서 정렬 타입 가져옴
+  // SortArea, FilterArea, ThumbnailArea가 한 페이지에서 렌더링되면서
+  // 기능은 따로, 상태나 타입은 한번에 공유
 
-  //   if (!response.ok) {
-  //     throw new Error("광고글 목록 가져오기 실패");
-  //   }
-  //   const headhuntingsData = await response.json();
-  //   console.log("가져온 광고글 목록: ", headhuntingsData);
-  //   return headhuntingsData;
-  // };
+  const sortType = useSelector((state: RootState) => state.sort.sortType);
+  const place = useSelector((state: RootState) => state.filter.place);
+  const category = useSelector((state: RootState) => state.filter.category);
+  const isFilterActive = useSelector((state: RootState) => state.filter.isFilterActive);
+
+  const getQueryKey = () => {
+    const baseQueryKey = ["headhuntings", sortType];
+    if (isFilterActive) {
+      if (place) {
+        baseQueryKey.push("place", place);
+      }
+      if (category) {
+        baseQueryKey.push("category", category);
+      }
+    }
+
+    return baseQueryKey;
+  };
 
   //headhuntings 탠스택쿼리
   const {
-    data: headhuntingsAsThumbnails,
+    data: headhuntingsData,
     isPending,
     isError,
   } = useQuery({
-    queryKey: ["headhuntings", "thumbnail"],
-    queryFn: getHeadhuntingsApi,
+    queryKey: getQueryKey(),
+    queryFn: () =>
+      getHeadhuntingsApi({
+        sortType,
+        ...(isFilterActive && place ? { place: place } : {}),
+        ...(isFilterActive && category ? { category: category } : {}),
+      }),
     retry: 0,
-  });
-
-  console.log("쿼리 상태:", {
-    isPending,
-    isError,
-    headhuntingsAsThumbnails,
+    staleTime: 0, // 데이터를 항상 stale로 취급
+    gcTime: 0, // 캐싱하지 않음
+    //-- TO DO--
+    // retry 수정?? staleTime, gcTime 수정?
   });
 
   useEffect(() => {
-    if (headhuntingsAsThumbnails) {
-      console.log("받아온 데이터 구조:", headhuntingsAsThumbnails);
-    }
-  }, [headhuntingsAsThumbnails]);
+    console.log(`정렬 타입 변경 감지: ${sortType}`);
+  }, [sortType]);
 
-  if (isPending) return <div>로딩중...</div>;
+  if (isPending) return <div>로딩중</div>;
   if (isError) return <div>에러 발생</div>;
+
+  // const today = new Date().toISOString().split("T")[0];
+
+  let sortedThumbnails = headhuntingsData.result;
+
+  // --TODO--
+  // sort 근데 이거 분리 어디다 못하나
+  // 인기순 (기본)
+  // if (sortType === "like") {
+  //   sortedThumbnails = [...headhuntingsData.result].sort((a, b) => {
+  //     const likeCountA = a.likeCount;
+  //     const likeCountB = b.likeCount;
+  //     return likeCountB - likeCountA;
+  //   });
+  // } else if (sortType === "latest") {
+  //   // 최신순
+  //   sortedThumbnails = [...headhuntingsData.result].sort((a, b) => {
+  //     const createdA = new Date(a.createdAt).getTime();
+  //     const createdB = new Date(b.createdAt).getTime();
+  //     return createdB - createdA;
+  //   });
+  // } else if (sortType === "deadline") {
+  //   // 마감임박순
+  //   sortedThumbnails = [...headhuntingsData.result].sort((a, b) => {
+  //     const deadlineA = new Date(a.adEndedAt).getTime();
+  //     const deadlineB = new Date(b.adEndedAt).getTime();
+  //     return deadlineA - deadlineB;
+  //   });
+  // }
+
+  const thumbnailIds = sortedThumbnails.map((headhungting: Meetup) => headhungting.id);
+
+  console.log("thumbnailArea 목록: ", headhuntingsData.result);
+
+  console.log("썸넬아이디들", thumbnailIds);
+
+  // ❗️ 각각 모임 id를 엔드포인트에 붙여서 가져오는 함수에 에러가 난다
+  // 왜냐면 [headhuntingsData.result]라고 쓰면, 대괄호로 다시 배열을 씌우게 되므로!
+  // 스프레드 문법 써야함
 
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
-        {headhuntingsAsThumbnails.result.map((thumbnail: Meetup) => (
-          <ThumbnailItem key={thumbnail.id} thumbnail={thumbnail} />
+        {thumbnailIds.map((thumbnailId: Meetup["id"]) => (
+          <ThumbnailItem key={thumbnailId} id={thumbnailId} />
         ))}
       </div>
     </>

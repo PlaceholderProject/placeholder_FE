@@ -6,25 +6,14 @@ import calculateDays from "@/utils/calculateDays";
 import AdNonModal from "./AdNonModal";
 import { Meetup } from "@/types/meetupType";
 import { BASE_URL } from "@/constants/baseURL";
+import { useAdItem } from "@/hooks/useAdItem";
 
 const AdDetail = ({ meetupId }: { meetupId: number }) => {
-  const [adData, setAdData] = useState<Meetup>();
-  const [error, setError] = useState<string | null>(null);
+  const { adData, error, isPending } = useAdItem(meetupId);
 
-  useEffect(() => {
-    const getAd = async () => {
-      try {
-        const data = await getAdByIdApi(meetupId);
-        setAdData(data);
-      } catch (error) {
-        setError(error.message);
-      }
-    };
-    getAd();
-  }, [meetupId]);
-
-  if (error) return <div>에러 발생: {error}</div>;
-  if (!adData) return <div>로딩중...</div>;
+  if (error) return <div>에러 발생: {error.message}</div>;
+  if (isPending) return <div>로딩중...</div>;
+  if (!adData) return null;
 
   const startedAt = adData.startedAt;
   const endedAt = adData.endedAt;
