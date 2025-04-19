@@ -129,3 +129,45 @@
 // // }
 
 // export default CurrentMyMeetup;
+
+import React from "react";
+import RoleIcon from "./RoleIcon";
+import { useQuery } from "@tanstack/react-query";
+import { getOngoingMyMeetupsApi } from "@/services/my.space.service";
+import MemberOutContainer from "./MemberOutContainer";
+import Link from "next/link";
+import { BASE_URL } from "@/constants/baseURL";
+
+const CurrentMyMeetup = () => {
+  const {
+    data: myMeetupsData,
+    isPending,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["myMeetups", "ongoing"],
+    queryFn: getOngoingMyMeetupsApi,
+  });
+
+  if (isPending) return <div>로딩중...</div>;
+  if (isError) return <div>에러 : {error.message}</div>;
+  if (!myMeetupsData || myMeetupsData.length === 0) return <div>참여 중인 모임이 없습니다.</div>;
+
+  return (
+    <>
+      <div className="grid grid-cols-1">
+        {myMeetupsData.map(myMeetup => (
+          // --TO DO--
+          // 해당 Id 지도페이지로 이동하게 링크 바꿔야함
+          <Link href="http://localhost:3000/" key={myMeetup.id} className="flex justify-between">
+            <RoleIcon isOrganizer={myMeetup.is_organizer} />
+            방장이니?: {`${myMeetup.is_organizer}`} 모임 이름:{myMeetup.name}
+            <MemberOutContainer />
+          </Link>
+        ))}
+      </div>
+    </>
+  );
+};
+
+export default CurrentMyMeetup;

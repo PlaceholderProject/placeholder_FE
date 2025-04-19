@@ -1,7 +1,43 @@
 import React from "react";
 
+import RoleIcon from "./RoleIcon";
+import { useQuery } from "@tanstack/react-query";
+import { getEndedMyMeetupsApi } from "@/services/my.space.service";
+import MemberOutContainer from "./MemberOutContainer";
+
 const PastMyMeetup = () => {
-  return <div>지난 내 모임 보기</div>;
+  const {
+    data: myMeetupsData,
+    isPending,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["myMeetups", "ended"],
+    queryFn: getEndedMyMeetupsApi,
+  });
+
+  if (isPending) return <div>로딩 중...</div>;
+  if (isError) return <div> 에러 발생: {error.message}</div>;
+  if (!myMeetupsData || myMeetupsData.length === 0) return <div>참여했던 모임이 없습니다.</div>;
+
+  return (
+    <>
+      <div className="grid grid-cols-1">
+        {myMeetupsData.map(
+          myMeetup => (
+            console.log(typeof myMeetup.is_organizer),
+            (
+              <div key={myMeetup.id} className="flex justify-between">
+                <RoleIcon isOrganizer={myMeetup.is_organizer} />
+                모임이름: {myMeetup.name}
+                <MemberOutContainer />
+              </div>
+            )
+          ),
+        )}
+      </div>
+    </>
+  );
 };
 
 export default PastMyMeetup;
