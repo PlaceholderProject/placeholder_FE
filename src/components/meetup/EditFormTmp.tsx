@@ -198,7 +198,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   if (isPending) return <p>Pending...</p>;
   if (isError) return <p>모임 데이터 로드 error남</p>;
 
-  console.log("🔮🔮🔮🔮🔮🔮  성공한 미리보기 previousMeetupData.image 스트링🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮 : ", previousMeetupData.image);
+  // console.log("🔮🔮🔮🔮🔮🔮  성공한 미리보기 previousMeetupData.image 스트링🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮🔮 : ", previousMeetupData.image);
   return (
     <>
       <img src={`http://localhost:8000${previousMeetupData.image}`} alt="성공한 테스트" />

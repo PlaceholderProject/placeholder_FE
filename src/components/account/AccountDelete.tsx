@@ -5,23 +5,30 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PasswordRecheck from "../auth/PasswordRecheck";
 import Link from "next/link";
-import { deleteUser } from "@/services/user.service";
 import { setIsAuthenticated } from "@/stores/authSlice";
 import Cookies from "js-cookie";
+import { useDeleteUser } from "@/hooks/useUser";
 
 const AccountDelete = () => {
   const [isDeletedAccount, setIsDeletedAccount] = useState(false);
   const isPasswordRechecked = useSelector((state: RootState) => state.auth.isPasswordRechecked);
 
+  const deleteUserMutation = useDeleteUser();
+
   const dispatch = useDispatch();
 
   const handleDeleteUserButton = async () => {
-    const response = await deleteUser();
-    if (response) {
-      Cookies.remove("accessToken");
-      Cookies.remove("refreshToken");
-      dispatch(setIsAuthenticated(false));
-      setIsDeletedAccount(true);
+    try {
+      const response = await deleteUserMutation.mutateAsync(); // ✅ 비동기 호출
+
+      if (response) {
+        Cookies.remove("accessToken");
+        Cookies.remove("refreshToken");
+        dispatch(setIsAuthenticated(false));
+        setIsDeletedAccount(true);
+      }
+    } catch (error) {
+      alert("탈퇴에 실패했습니다. 다시 시도해주세요.");
     }
   };
 

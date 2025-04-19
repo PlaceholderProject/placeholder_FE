@@ -19,6 +19,7 @@ export interface Meetup {
   image?: string;
   category: string;
   createAt: string;
+  commentCount: number;
 }
 
 export interface NewMeetup extends Omit<Meetup, "id"> {}

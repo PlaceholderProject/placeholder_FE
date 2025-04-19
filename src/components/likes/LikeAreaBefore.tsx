@@ -45,11 +45,11 @@ const LikeAreaBefore = ({ isLike, likeCount, thumbnailId }: LikePartProps) => {
     onMutate: async () => {
       // 이전 데이터 백업
       const previousLikeData = queryClient.getQueryData(["headhuntings", "thumbnail", thumbnailId]);
-      console.log("기존 데이터:", previousLikeData);
+      // console.log("기존 데이터:", previousLikeData);
 
       // 낙관적 UI 업데이트
       queryClient.setQueryData(["headhuntings", "thumbnail", thumbnailId], (oldLikeData: any) => {
-        console.log("업뎃되는 옛날 데이터:", oldLikeData);
+        // console.log("업뎃되는 옛날 데이터:", oldLikeData);
         return {
           ...oldLikeData,
           isLike: !isLike,
@@ -59,7 +59,7 @@ const LikeAreaBefore = ({ isLike, likeCount, thumbnailId }: LikePartProps) => {
 
       //업뎃 이후 업뎃된데이터 확인
       const updatedData = queryClient.getQueryData(["headhuntings", "thumbnail", thumbnailId]);
-      console.log("업뎃 이후 데이터:", updatedData);
+      // console.log("업뎃 이후 데이터:", updatedData);
 
       return { previousLikeData };
     },
@@ -77,7 +77,7 @@ const LikeAreaBefore = ({ isLike, likeCount, thumbnailId }: LikePartProps) => {
 
     //🥹🥹🥹 성공 시 리페치, 얘만 전체 리페치
     onSuccess: () => {
-      console.log("Success - invalidating queries");
+      // console.log("Success - invalidating queries");
       queryClient.invalidateQueries({ queryKey: ["headhuntings", "thumbnail"] });
     },
 

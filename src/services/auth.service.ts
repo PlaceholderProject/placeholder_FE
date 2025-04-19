@@ -20,6 +20,7 @@ export const checkEmail = async (email: string) => {
       return;
     } else {
       alert("사용 가능한 이메일입니다.");
+      return true;
     }
   } catch (error) {
     console.error("네트워크 오류:", error);
@@ -28,7 +29,7 @@ export const checkEmail = async (email: string) => {
 };
 
 // 회원가입페이지 : 닉네임 중복확인
-export const checkNickname = async (nickName: string) => {
+export const checkNickname = async (nickname: string) => {
   try {
     const response = await fetch(`${BASE_URL}/api/v1/auth/nickname`, {
       method: "POST",
@@ -36,7 +37,7 @@ export const checkNickname = async (nickName: string) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        nickName,
+        nickname,
       }),
     });
 
@@ -45,6 +46,7 @@ export const checkNickname = async (nickName: string) => {
       return;
     } else {
       alert("사용 가능한 닉네임입니다.");
+      return true;
     }
   } catch (error) {
     console.error("네트워크 오류:", error);
@@ -129,7 +131,7 @@ export const recheckPassword = async (password: string) => {
       body: JSON.stringify({ password: password }),
     });
 
-    console.log("HTTP 상태 코드:", response.status);
+    // console.log("HTTP 상태 코드:", response.status);
 
     if (!response.ok) {
       throw new Error("비밀번호가 잘못되었습니다. 다시 시도해주세요.");

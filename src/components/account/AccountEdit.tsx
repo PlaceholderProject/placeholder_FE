@@ -1,7 +1,8 @@
 "use client";
 
 import { BASE_URL } from "@/constants/baseURL";
-import { editUser, getUser } from "@/services/user.service";
+import { useEditUser, useUser } from "@/hooks/useUser";
+import { checkNickname } from "@/services/auth.service";
 import { RootState } from "@/stores/store";
 import { setUser } from "@/stores/userSlice";
 import Image from "next/image";
@@ -21,6 +22,10 @@ const AccountEdit = () => {
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
+  const { data, isLoading } = useUser();
+
+  const editUserMutation = useEditUser();
+
   const user = useSelector((state: RootState) => state.user.user);
   const dispatch = useDispatch();
 
@@ -29,7 +34,6 @@ const AccountEdit = () => {
   useEffect(() => {
     if (!user.email) {
       const fetchUser = async () => {
-        const data = await getUser();
         if (data) {
           dispatch(
             setUser({
@@ -41,7 +45,6 @@ const AccountEdit = () => {
           );
           setProfileImage(data.image || "/profile.png");
         }
-        console.log(data);
       };
       fetchUser();
     } else {
@@ -56,16 +59,15 @@ const AccountEdit = () => {
     }
   }, [user]);
 
+  if (!data) return;
+
   const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const objectUrl = URL.createObjectURL(file);
       setProfileImage(objectUrl); // Blob URL을 React 상태에 설정
-      console.log("Blob URL 생성:", objectUrl);
     }
   };
-
-  console.log("파일 등록시", profileImage);
 
   const handleNicknameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value.length > 8) {
@@ -87,13 +89,35 @@ const AccountEdit = () => {
     setBioTextLength(event.target.value.length);
   };
 
+  const handleCheckNickname = async () => {
+    if (nickname === user.nickname) {
+      alert("사용 가능한 닉네임입니다.");
+      return;
+    }
+    if (!nickname.trim()) {
+      alert("닉네임을 입력해주세요.");
+      return;
+    }
+    if (nickname.length < 2 || nickname.length > 8) {
+      alert("닉네임은 최소 2자 최대 8자까지 가능합니다.");
+      return;
+    }
+    await checkNickname(nickname);
+  };
+
   const handleAccountEditFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const file = fileInputRef.current?.files?.[0];
+    if (!nickname.trim()) {
+      alert("닉네임을 입력해주세요.");
+      return;
+    }
+    if (nickname.length < 2 || nickname.length > 8) {
+      alert("닉네임은 최소 2자 최대 8자까지 가능합니다.");
+      return;
+    }
 
-    console.log(file?.name);
-    console.log(profileImage);
+    const file = fileInputRef.current?.files?.[0];
 
     const editedUser = {
       nickname,
@@ -101,32 +125,32 @@ const AccountEdit = () => {
       profileImage: file || null,
     };
 
-    const response = await editUser(editedUser);
+    try {
+      const response = await editUserMutation.mutateAsync(editedUser);
 
-    if (response) {
-      console.log("Update successful:", response);
+      if (response) {
+        const imageUrl = response.image ? (response.image.startsWith("http") ? response.image : `${BASE_URL}${response.image}`) : null;
 
-      const imageUrl = response.image ? (response.image.startsWith("http") ? response.image : `${BASE_URL}${response.image}`) : "/profile.png"; // 기본 이미지 경로
+        dispatch(
+          setUser({
+            email: response.email,
+            nickname: response.nickname,
+            bio: response.bio,
+            profileImage: imageUrl,
+          }),
+        );
 
-      console.log(imageUrl);
-
-      dispatch(
-        setUser({
-          email: response.email,
-          nickname: response.nickname,
-          bio: response.bio,
-          profileImage: imageUrl,
-        }),
-      );
-      setProfileImage(imageUrl);
-
-      alert("회원 정보가가 변경되었습니다.");
-      router.replace("/account");
-    } else {
-      console.error("Update failed");
-      return;
+        setProfileImage(imageUrl);
+        alert("회원 정보가 변경되었습니다.");
+        router.replace("/account");
+      }
+    } catch (error) {
+      alert("이미 사용 중인 닉네임입니다. 닉네임 중복을 확인해주세요.");
+      console.error("Update failed:", error);
     }
   };
+
+  if (isLoading) return <div>로딩중</div>;
 
   return (
     <div>
@@ -136,7 +160,7 @@ const AccountEdit = () => {
           <form onSubmit={handleAccountEditFormSubmit}>
             <div>
               <div className="w-[200px] h-[200px] rounded-full relative bg-slate-300 overflow-hidden">
-                <Image src={profileImage || "/profile.png"} alt="프로필 이미지" fill className="object-cover" />
+                <Image src={profileImage ? profileImage : "/profile.png"} alt="프로필 이미지" fill className="object-cover" />
               </div>
 
               <label htmlFor="profileImage" className="cursor-pointer rounded-full">
@@ -155,6 +179,9 @@ const AccountEdit = () => {
             <div className="flex flex-col">
               <label htmlFor="nickname">닉네임</label>
               <input type="text" value={nickname} onChange={handleNicknameChange} className="border-2 rounded-md" />
+              <button type="button" onClick={handleCheckNickname}>
+                중복확인
+              </button>
               {nicknameWarning && <p>{nicknameWarning}</p>}
             </div>
             <div className="flex flex-col">

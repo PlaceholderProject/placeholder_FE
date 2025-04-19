@@ -7,6 +7,7 @@ import nonModalReducer from "./nonModalSlice";
 import modalReducer from "./modalSlice";
 import sortReducer from "./sortSlice";
 import filterReducer from "./filterSlice";
+import replyReducer from "./replySlice";
 
 // 데이터 직렬화/비직렬화 변환 설정
 const transform = createTransform(
@@ -30,7 +31,7 @@ export const store = configureStore({
     auth: authReducer,
     nonModal: nonModalReducer,
     modal: modalReducer,
-
+    reply: replyReducer,
     user: persistedUserReducer,
 
     sort: sortReducer,
