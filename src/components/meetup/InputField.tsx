@@ -1,14 +1,9 @@
-import React from 'react'
-
+import React from "react";
 
 export const a = "good";
 
 const InputField = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
+  return <div></div>;
+};
 
-export default InputField
+export default InputField;
