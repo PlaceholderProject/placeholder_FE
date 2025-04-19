@@ -13,10 +13,10 @@ const AdButton = ({ meetupId }: { meetupId: number }) => {
 
   return (
     <>
-      {/*{isProposalPostcardModalOpen && <ProposalPostcard meetupId={meetupId} />}*/}
-      {/*<button onClick={handleProposalModal} className="bg-slate-300">*/}
-      {/*  신청하기*/}
-      {/*</button>*/}
+      {/* {isProposalPostcardModalOpen && <ProposalPostcard meetupId={meetupId} />}
+      <button onClick={handleProposalModal} className="bg-slate-300">
+        신청하기
+      </button> */}
     </>
   );
 };
