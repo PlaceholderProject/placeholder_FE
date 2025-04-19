@@ -1,8 +1,8 @@
 "use client";
 
 import { PASSWORD_REGULAR_EXPRESSION } from "@/constants/regularExpressionConstants";
+import { useCreateUser } from "@/hooks/useUser";
 import { checkEmail, checkNickname } from "@/services/auth.service";
-import { createUser } from "@/services/user.service";
 import { setIsCheckedEmail, setIsCheckedNickname } from "@/stores/authSlice";
 import { RootState } from "@/stores/store";
 import Link from "next/link";
@@ -30,6 +30,8 @@ const Signup = () => {
 
   const dispatch = useDispatch();
   const { isCheckedEmail, isCheckedNickname } = useSelector((state: RootState) => state.auth);
+
+  const createUserMutation = useCreateUser();
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
@@ -139,12 +141,14 @@ const Signup = () => {
       bio,
     };
 
-    const result = await createUser(newUser);
+    try {
+      const result = await createUserMutation.mutateAsync(newUser);
 
-    if (result) {
-      alert(`${newUser.nickname}님 회원가입을 축하드립니다.`);
-      router.replace("/login");
-    }
+      if (result) {
+        alert(`${newUser.nickname}님 회원가입을 축하드립니다.`);
+        router.replace("/login");
+      }
+    } catch (error) {}
   };
 
   return (

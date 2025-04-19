@@ -1,8 +1,8 @@
 "use client";
 
 import { BASE_URL } from "@/constants/baseURL";
+import { useEditUser, useUser } from "@/hooks/useUser";
 import { checkNickname } from "@/services/auth.service";
-import { editUser, getUser } from "@/services/user.service";
 import { RootState } from "@/stores/store";
 import { setUser } from "@/stores/userSlice";
 import Image from "next/image";
@@ -22,6 +22,10 @@ const AccountEdit = () => {
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
+  const { data, isLoading } = useUser();
+
+  const editUserMutation = useEditUser();
+
   const user = useSelector((state: RootState) => state.user.user);
   const dispatch = useDispatch();
 
@@ -30,7 +34,6 @@ const AccountEdit = () => {
   useEffect(() => {
     if (!user.email) {
       const fetchUser = async () => {
-        const data = await getUser();
         if (data) {
           dispatch(
             setUser({
@@ -55,6 +58,8 @@ const AccountEdit = () => {
       setBio(user.bio || "");
     }
   }, [user]);
+
+  if (!data) return;
 
   const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -120,29 +125,32 @@ const AccountEdit = () => {
       profileImage: file || null,
     };
 
-    const response = await editUser(editedUser);
+    try {
+      const response = await editUserMutation.mutateAsync(editedUser);
 
-    if (response) {
-      const imageUrl = response.image ? (response.image.startsWith("http") ? response.image : `${BASE_URL}${response.image}`) : "/profile.png"; // 기본 이미지 경로
+      if (response) {
+        const imageUrl = response.image ? (response.image.startsWith("http") ? response.image : `${BASE_URL}${response.image}`) : null;
 
-      dispatch(
-        setUser({
-          email: response.email,
-          nickname: response.nickname,
-          bio: response.bio,
-          profileImage: imageUrl,
-        }),
-      );
-      setProfileImage(imageUrl);
+        dispatch(
+          setUser({
+            email: response.email,
+            nickname: response.nickname,
+            bio: response.bio,
+            profileImage: imageUrl,
+          }),
+        );
 
-      alert("회원 정보가가 변경되었습니다.");
-      router.replace("/account");
-    } else {
-      alert("이미 사용하고 있는 닉네임입니다. 닉네임 중복을 확인해주세요.");
-      console.error("Update failed");
-      return;
+        setProfileImage(imageUrl);
+        alert("회원 정보가 변경되었습니다.");
+        router.replace("/account");
+      }
+    } catch (error) {
+      alert("이미 사용 중인 닉네임입니다. 닉네임 중복을 확인해주세요.");
+      console.error("Update failed:", error);
     }
   };
+
+  if (isLoading) return <div>로딩중</div>;
 
   return (
     <div>
@@ -152,7 +160,7 @@ const AccountEdit = () => {
           <form onSubmit={handleAccountEditFormSubmit}>
             <div>
               <div className="w-[200px] h-[200px] rounded-full relative bg-slate-300 overflow-hidden">
-                <Image src={profileImage || "/profile.png"} alt="프로필 이미지" fill className="object-cover" />
+                <Image src={profileImage ? profileImage : "/profile.png"} alt="프로필 이미지" fill className="object-cover" />
               </div>
 
               <label htmlFor="profileImage" className="cursor-pointer rounded-full">

@@ -5,36 +5,28 @@ import ReplyForm from "./ReplyForm";
 import ReplyList from "./ReplyList";
 import { getMeetupByIdApi } from "@/services/meetup.service";
 import { useParams } from "next/navigation";
-import { Reply } from "@/types/replyType";
-import { getReply } from "@/services/reply.service";
 
 const ReplyArea: React.FC = () => {
-  const params = useParams();
+  const { meetupId } = useParams();
   const [replyCount, setReplyCount] = useState<number>(0);
-  const [replies, setReplies] = useState<Reply[]>([]);
+
+  if (!meetupId) return;
 
   useEffect(() => {
     const fetchReplyCount = async () => {
-      if (params.meetupId) {
-        const meetup = await getMeetupByIdApi(Number(params.meetupId));
+      if (meetupId) {
+        const meetup = await getMeetupByIdApi(Number(meetupId));
         setReplyCount(meetup.commentCount);
       }
     };
-    const fetchReplies = async () => {
-      if (params.meetupId) {
-        const result = await getReply(params.meetupId);
-        setReplies(result.result);
-      }
-    };
     fetchReplyCount();
-    fetchReplies();
-  }, [params.meetupId]);
+  }, [meetupId]);
 
   return (
     <div className="flex flex-col justify-start">
       <ReplyForm />
       <div className="text-[10px] m-2 font-[700]">댓글 {replyCount}개</div>
-      <ReplyList replies={replies} />
+      <ReplyList meetupId={meetupId} />
     </div>
   );
 };

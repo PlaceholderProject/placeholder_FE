@@ -9,14 +9,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
 import NestedReplyItem from "./NestedReplyItem";
 import { useState } from "react";
-import { deleteReply, editReply } from "@/services/reply.service";
+import { useDeleteReply, useEditReply } from "@/hooks/useReply";
 
-const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies }) => {
+const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId }) => {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user.user);
   const [isVisiableNestedReply, setIsVisiableNestedReply] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [text, setText] = useState(reply.text);
+
+  const editReplyMutation = useEditReply(meetupId);
+  const deleteReplyMutation = useDeleteReply(meetupId);
 
   const nestedReplies = allReplies.filter(r => r.root === reply.id);
 
@@ -40,7 +43,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies }) => {
 
   const handleReplyDelete = async (replyId: number) => {
     if (confirm("정말로 댓글을 삭제하시겠습니까?")) {
-      await deleteReply(replyId);
+      await deleteReplyMutation.mutate(replyId);
       alert("정상적으로 삭제되었습니다.");
     }
   };
@@ -56,7 +59,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies }) => {
 
   const handleReplyUpdate = async (replyId: number) => {
     if (confirm("정말로 댓글을 수정하시겠습니까?")) {
-      await editReply(text, replyId);
+      await editReplyMutation.mutate({ text, replyId });
       alert("정상적으로 수정되었습니다.");
       setIsEditMode(false);
     }

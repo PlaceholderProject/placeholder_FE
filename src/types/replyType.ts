@@ -5,6 +5,7 @@ export interface newReplyProps {
 export interface ReplyItemProps {
   reply: Reply;
   allReplies: Reply[];
+  meetupId: string | string[];
 }
 
 export type Reply = {

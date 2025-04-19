@@ -5,8 +5,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
 import Image from "next/image";
 import { BASE_URL } from "@/constants/baseURL";
-import { createNestedReply, createReply } from "@/services/reply.service";
 import { useParams } from "next/navigation";
+import { useCreateNestedReply, useCreateReply } from "@/hooks/useReply";
 
 const ReplyForm = () => {
   const [content, setContent] = useState("");
@@ -17,7 +17,12 @@ const ReplyForm = () => {
   const rootReply = useSelector((state: RootState) => state.reply);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const params = useParams();
+  const { meetupId } = useParams();
+
+  if (!meetupId) return;
+
+  const createReplyMutation = useCreateReply(meetupId);
+  const createNestedReplyMutation = useCreateNestedReply(root!, meetupId);
 
   const [profileImage, setProfileImage] = useState<string>("");
 
@@ -50,9 +55,7 @@ const ReplyForm = () => {
   const handleReplySubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (content.trim().length === 0) return;
-    if (params.meetupId) {
-      await createReply({ text: content }, params.meetupId);
-    }
+    createReplyMutation.mutate({ text: content });
     setContent("");
   };
 
@@ -60,7 +63,7 @@ const ReplyForm = () => {
     event.preventDefault();
     if (content.trim().length === 0) return;
     if (root) {
-      await createNestedReply({ text: content }, root);
+      createNestedReplyMutation.mutate({ text: content });
     }
   };
 
