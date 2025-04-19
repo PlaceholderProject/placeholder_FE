@@ -1,7 +1,11 @@
-import React from "react";
+import ScheduleDetail from "@/components/schedule/ScheduleDetail";
 
-const page = () => {
-  return <div>page</div>;
+const ScheduleDetailPage = ({ params }: { params: { scheduleId: string } }) => {
+  const { scheduleId } = params;
+
+  return (
+    <ScheduleDetail scheduleId={scheduleId} />
+  );
 };
 
-export default page;
+export default ScheduleDetailPage;
