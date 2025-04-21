@@ -10,8 +10,6 @@ const ReplyArea: React.FC = () => {
   const { meetupId } = useParams();
   const [replyCount, setReplyCount] = useState<number>(0);
 
-  if (!meetupId) return;
-
   useEffect(() => {
     const fetchReplyCount = async () => {
       if (meetupId) {
@@ -21,6 +19,8 @@ const ReplyArea: React.FC = () => {
     };
     fetchReplyCount();
   }, [meetupId]);
+
+  console.log("commentCount", replyCount);
 
   return (
     <div className="flex flex-col justify-start">

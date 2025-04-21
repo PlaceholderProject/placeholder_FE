@@ -19,10 +19,8 @@ const ReplyForm = () => {
 
   const { meetupId } = useParams();
 
-  if (!meetupId) return;
-
-  const createReplyMutation = useCreateReply(meetupId);
-  const createNestedReplyMutation = useCreateNestedReply(root!, meetupId);
+  const createReplyMutation = useCreateReply(meetupId!);
+  const createNestedReplyMutation = useCreateNestedReply(root!, meetupId!);
 
   const [profileImage, setProfileImage] = useState<string>("");
 

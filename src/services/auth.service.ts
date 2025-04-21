@@ -28,7 +28,7 @@ export const checkEmail = async (email: string) => {
   }
 };
 
-// 회원가입페이지 : 닉네임 중복확인
+// 회원가입페이지, 회원정보수정페이지 : 닉네임 중복확인
 export const checkNickname = async (nickname: string) => {
   try {
     const response = await fetch(`${BASE_URL}/api/v1/auth/nickname`, {

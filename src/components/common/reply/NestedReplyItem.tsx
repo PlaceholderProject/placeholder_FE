@@ -15,6 +15,9 @@ const NestedReplyItem = ({ nestedReply }: { nestedReply: Reply }) => {
       alert("정상적으로 삭제되었습니다.");
     }
   };
+
+  console.log(nestedReply.recipient);
+
   return (
     <div className="mx-4 my-2">
       <div className="flex justify-between">
