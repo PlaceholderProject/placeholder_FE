@@ -5,7 +5,7 @@ import { EditedUserProps, User } from "@/types/userType";
 import { NewUserProps } from "@/types/authType";
 
 // create user
-export const createUser = async (newUser: NewUserProps) => {
+export const createUser = async (newUser: NewUserProps): Promise<number | undefined> => {
   try {
     const response = await fetch(`${BASE_URL}/api/v1/user`, {
       method: "POST",
