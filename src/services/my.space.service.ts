@@ -3,11 +3,13 @@ import { MyAd, MyMeetup } from "@/types/mySpaceType";
 import Cookies from "js-cookie";
 
 // 모임 공통 로직 재사용
-export const getMyMeetups = async (status: string): Promise<MyMeetup[]> => {
+export const getMyMeetupsApi = async (status: string, page: number, size: number): Promise<MyMeetup[]> => {
   const token = Cookies.get("accessToken");
   try {
     const queryParams = new URLSearchParams();
     queryParams.append("status", status);
+    queryParams.append("page", page.toString());
+    queryParams.append("size", size.toString());
 
     const response = await fetch(`${BASE_URL}/api/v1/user/me/meetup?${queryParams.toString()}`, {
       method: "GET",
@@ -42,15 +44,16 @@ export const getMyMeetups = async (status: string): Promise<MyMeetup[]> => {
 // 엥 그냥 도니ㅡㄴ데??????
 
 // 현재 모임
+// --TO DO-- param 동적으로 넣어줘야됨
+// export const getOngoingMyMeetupsApi = async () => {
+//   return getMyMeetupsApi();
+// };
 
-export const getOngoingMyMeetupsApi = async () => {
-  return getMyMeetups("ongoing");
-};
-
-// 과거 몽ㅁ
-export const getEndedMyMeetupsApi = async () => {
-  return getMyMeetups("ended");
-};
+// 과거 모임
+// --TO DO-- param 동적으로 넣어줘야됨
+// export const getEndedMyMeetupsApi = async () => {
+//   return getMyMeetupsApi("ended", "1", "10");
+// };
 
 // 광고 공통로직
 export const getMyAds = async (status: string): Promise<MyAd[]> => {
@@ -81,13 +84,11 @@ export const getMyAds = async (status: string): Promise<MyAd[]> => {
 };
 
 // 현광고
-
 export const getOngoingMyAdsApi = async () => {
   return getMyAds("ongoing");
 };
 
 // 지난광고
-
 export const getEndedMyAdsApi = async () => {
   return getMyAds("ended");
 };

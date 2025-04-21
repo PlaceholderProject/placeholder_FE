@@ -130,23 +130,30 @@
 
 // export default CurrentMyMeetup;
 
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import RoleIcon from "./RoleIcon";
 import { useQuery } from "@tanstack/react-query";
-import { getOngoingMyMeetupsApi } from "@/services/my.space.service";
 import MemberOutContainer from "./MemberOutContainer";
+import { getMyMeetupsApi } from "@/services/my.space.service";
 import Link from "next/link";
-import { BASE_URL } from "@/constants/baseURL";
 
+// 코드잇꺼에는 이게 왜 들어가지????? 그냥 상수로 넣어주고 쿼리에 쓰라고??
+// const SIZE_LIMIT = 10;
 const CurrentMyMeetup = () => {
+  const [page, setPage] = useState(1);
+
   const {
     data: myMeetupsData,
     isPending,
     isError,
     error,
   } = useQuery({
+    // --TO DO--
+    // 쿼리키는 어쩐디?
     queryKey: ["myMeetups", "ongoing"],
-    queryFn: getOngoingMyMeetupsApi,
+    queryFn: () => getMyMeetupsApi("ongoing", page, 10),
   });
 
   if (isPending) return <div>로딩중...</div>;

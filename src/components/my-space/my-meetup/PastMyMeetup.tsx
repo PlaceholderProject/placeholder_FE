@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 
 import RoleIcon from "./RoleIcon";
 import { useQuery } from "@tanstack/react-query";
-import { getEndedMyMeetupsApi } from "@/services/my.space.service";
 import MemberOutContainer from "./MemberOutContainer";
+import { getMyMeetupsApi } from "@/services/my.space.service";
 
+const SIZE_LIMIT = 10;
 const PastMyMeetup = () => {
+  const [page, setPage] = useState(1);
   const {
     data: myMeetupsData,
     isPending,
@@ -13,7 +15,7 @@ const PastMyMeetup = () => {
     error,
   } = useQuery({
     queryKey: ["myMeetups", "ended"],
-    queryFn: getEndedMyMeetupsApi,
+    queryFn: () => getMyMeetupsApi("ended", page, SIZE_LIMIT),
   });
 
   if (isPending) return <div>로딩 중...</div>;
