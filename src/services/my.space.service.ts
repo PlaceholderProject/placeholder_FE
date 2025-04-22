@@ -1,9 +1,9 @@
 import { BASE_URL } from "@/constants/baseURL";
-import { MyAd, MyMeetup } from "@/types/mySpaceType";
+import { MyAdItem, MyMeetupItem, MyMeetupsResponse } from "@/types/mySpaceType";
 import Cookies from "js-cookie";
 
 // 모임 공통 로직 재사용
-export const getMyMeetupsApi = async (status: string, page: number, size: number): Promise<MyMeetup[]> => {
+export const getMyMeetupsApi = async (status: string, page: number, size: number): Promise<MyMeetupsResponse> => {
   const token = Cookies.get("accessToken");
   try {
     const queryParams = new URLSearchParams();
@@ -18,8 +18,6 @@ export const getMyMeetupsApi = async (status: string, page: number, size: number
       },
     });
 
-    console.log("API 응답 온 status:", response.status);
-
     if (!response.ok) {
       const errorText = await response.text();
       console.error("API error response:", errorText);
@@ -28,7 +26,8 @@ export const getMyMeetupsApi = async (status: string, page: number, size: number
     }
 
     const myMeetupsData = await response.json();
-    return myMeetupsData.result;
+    console.log("내공간 데이터:", myMeetupsData);
+    return myMeetupsData;
   } catch (error) {
     console.error("API 호출 실패:", error);
     throw error;
@@ -56,7 +55,7 @@ export const getMyMeetupsApi = async (status: string, page: number, size: number
 // };
 
 // 광고 공통로직
-export const getMyAds = async (status: string): Promise<MyAd[]> => {
+export const getMyAds = async (status: string): Promise<MyAdItem[]> => {
   const token = Cookies.get("accessToken");
 
   try {
@@ -76,7 +75,7 @@ export const getMyAds = async (status: string): Promise<MyAd[]> => {
 
     const myAdsData = await response.json();
     console.log("내광고 데이터", myAdsData);
-    return myAdsData.result;
+    return myAdsData;
   } catch (error) {
     console.error("광고 api 호출 실패", error);
     throw error;

@@ -35,6 +35,9 @@ const CurrentMyAd = () => {
           </Link>
         ))}
       </div>
+      <div>
+        <button>여기에 숫자 들어감</button>
+      </div>
     </>
   );
 };
