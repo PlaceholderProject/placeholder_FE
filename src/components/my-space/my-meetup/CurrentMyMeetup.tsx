@@ -78,12 +78,12 @@ const CurrentMyMeetup = () => {
   };
 
   // 이전/이후 그룹 버튼 핸들러
-  const handlePrevGroupClick = () => {
+  const handlePreviousGroupClick = () => {
     // 현재 그룹의 첫 페이지 계산
     const currentGroup = Math.ceil(page / BUTTONS_PER_GROUP);
     // 이전 그룹의 마지막 페이지로 이동
-    const prevGroupLastPage = (currentGroup - 1) * BUTTONS_PER_GROUP;
-    setPage(prevGroupLastPage);
+    const previousGroupLastPage = (currentGroup - 1) * BUTTONS_PER_GROUP;
+    setPage(previousGroupLastPage);
   };
 
   const handleNextGroupClick = () => {
@@ -110,7 +110,7 @@ const CurrentMyMeetup = () => {
   const currentGroup = Math.ceil(page / BUTTONS_PER_GROUP);
 
   // 이전 그룹 존재 여부
-  const hasPrevGroup = currentGroup > 1;
+  const hasPreviousGroup = currentGroup > 1;
 
   // 다음 그룹 존재 여부
   const hasNextGroup = currentGroup * BUTTONS_PER_GROUP < totalPages;
@@ -145,6 +145,7 @@ const CurrentMyMeetup = () => {
           <Link href={`http://localhost:3000/meetup/${myMeetup.id}`} key={myMeetup.id} className="flex justify-between">
             <RoleIcon isOrganizer={myMeetup.is_organizer} />
             방장이니?: {`${myMeetup.is_organizer}`} 모임 이름:{myMeetup.name}
+            모임종료일: {myMeetup.ended_at}
             <MemberOutContainer />
           </Link>
         ))}
@@ -152,7 +153,7 @@ const CurrentMyMeetup = () => {
 
       <div className="flex flex-row justify-center items-center mt-4 space-x-1">
         {/* 이전 그룹 버튼 */}
-        <button onClick={handlePrevGroupClick} disabled={!hasPrevGroup} className={`px-3 py-1 ${!hasPrevGroup ? "text-gray-300 cursor-not-allowed" : ""}`}>
+        <button onClick={handlePreviousGroupClick} disabled={!hasPreviousGroup} className={`px-3 py-1 ${!hasPreviousGroup ? "text-gray-300 cursor-not-allowed" : ""}`}>
           <FaArrowAltCircleLeft />
         </button>
 

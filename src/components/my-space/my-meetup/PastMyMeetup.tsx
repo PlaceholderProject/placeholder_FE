@@ -20,18 +20,19 @@ const PastMyMeetup = () => {
 
   if (isPending) return <div>로딩 중...</div>;
   if (isError) return <div> 에러 발생: {error.message}</div>;
-  if (!myMeetupsData || myMeetupsData.length === 0) return <div>참여했던 모임이 없습니다.</div>;
+  if (!myMeetupsData || myMeetupsData.result.length === 0) return <div>참여했던 모임이 없습니다.</div>;
 
   return (
     <>
       <div className="grid grid-cols-1">
-        {myMeetupsData.map(
+        {myMeetupsData.result.map(
           myMeetup => (
             console.log(typeof myMeetup.is_organizer),
             (
               <div key={myMeetup.id} className="flex justify-between">
                 <RoleIcon isOrganizer={myMeetup.is_organizer} />
                 모임이름: {myMeetup.name}
+                모임종료일: {myMeetup.ended_at}
                 <MemberOutContainer />
               </div>
             )

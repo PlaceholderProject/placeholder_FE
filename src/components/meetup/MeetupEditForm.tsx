@@ -182,13 +182,17 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
         alert("모임 시작일은 오늘보다 이전으로 설정할 수 없습니다.");
         return false;
       }
-
+      // --TO DO--
+      // 이미 종료된 모임 : 그냥 영원히 매장
       // 오늘 기준으로 본 모임 종료일
       // 이미 종료 => 기존보다 더 빠르게 수정X, 오늘 이후O
       if (previousEndDate && previousEndDate < now && previousEndDate === inputDate && inputDate < now) {
         alert("이미 종료된 모임의 모임 종료일은 지난 날짜로 설정할 수 없습니다.");
         return false;
       }
+
+      //-------------------------------------
+
       // 아직 종료 안 함 => 기존보다 이르게 O 오늘보다 이르게 X 오늘 이후 O
       if (previousEndDate && previousEndDate >= now && inputDate < now) {
         alert("모임 종료일은 지난 날짜로 설정할 수 없습니다.");

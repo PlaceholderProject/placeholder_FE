@@ -126,7 +126,6 @@ const MeetupForm = () => {
     const createMeetUpValidateDate = (date: string | null, fieldName: string): boolean => {
       // 사용자 입력값 미정이면 true (통과)
       if (!date) {
-        console.log("!date일 경우의 date: ", date);
         return true;
       }
 
@@ -152,7 +151,7 @@ const MeetupForm = () => {
       return true;
     };
 
-    // 폼 제출전, 유효성 검사 에함수 실행해보고 통과 못하면 제출 전에 리턴으로 탈출
+    // 폼 제출전, 유효성 검사 에 함수 실행해보고 통과 못하면 제출 전에 리턴으로 탈출
     // 모임 시작일이 false(걸림)거나, 모임 종료일이 false(걸림)거나 광고 종료일이 false(걸림)이면 멈추고 나와버림
     if (!createMeetUpValidateDate(startDate, "startedAt") || !createMeetUpValidateDate(endDate, "endedAt") || !createMeetUpValidateDate(adEndDate, "adEndedAt")) {
       console.log("유효성 함수 실행은 됨");
