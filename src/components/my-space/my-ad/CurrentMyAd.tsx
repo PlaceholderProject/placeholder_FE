@@ -101,7 +101,9 @@ const CurrentMyAd = () => {
         <button onClick={handlePreviousGroupClick} disabled={!hasPreviousGroup} className={`px-3 py-1 ${!hasPreviousGroup ? "text-gray-300 cursor-not-allowed" : ""}`}>
           <FaArrowAltCircleLeft />
         </button>
-        <div className="flex justify-centerl space-x-1 min-w-[180px]">{renderPageButtons()}</div>
+
+        {/* 페이지버튼 */}
+        <div className="flex justify-center space-x-1 min-w-[180px]">{renderPageButtons()}</div>
         {/* 다음그룹 버튼 */}
         <button onClick={handleNextGroupClick} disabled={!hasNextGroup} className={`px-3 py-1 ${!hasNextGroup ? "text-gray-300 cursor-not-allowed" : ""}`}>
           <FaArrowAltCircleRight />

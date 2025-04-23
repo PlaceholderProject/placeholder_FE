@@ -3,9 +3,12 @@
 import React, { useState } from "react";
 import RoleIcon from "../my-meetup/RoleIcon";
 import { useQuery } from "@tanstack/react-query";
-import { getEndedMyAdsApi } from "@/services/my.space.service";
+import { getMyAdsApi } from "@/services/my.space.service";
+
+const SIZE_LIMIT = 10;
 
 const PastMyAd = () => {
+  const [page, setPage] = useState(1);
   const [isOrganizer, setIsOrganizer] = useState(true);
 
   const {
@@ -15,7 +18,7 @@ const PastMyAd = () => {
     error,
   } = useQuery({
     queryKey: ["myAds", "ended"],
-    queryFn: getEndedMyAdsApi,
+    queryFn: () => getMyAdsApi("ended", page, SIZE_LIMIT),
   });
 
   if (isPending) return <div>로딩중..</div>;
