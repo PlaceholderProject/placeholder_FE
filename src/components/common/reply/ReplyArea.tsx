@@ -20,13 +20,11 @@ const ReplyArea: React.FC = () => {
     fetchReplyCount();
   }, [meetupId]);
 
-  console.log("commentCount", replyCount);
-
   return (
     <div className="flex flex-col justify-start">
       <ReplyForm />
       <div className="text-[10px] m-2 font-[700]">댓글 {replyCount}개</div>
-      <ReplyList meetupId={meetupId} />
+      {meetupId && <ReplyList meetupId={meetupId} />}
     </div>
   );
 };
