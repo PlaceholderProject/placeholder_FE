@@ -246,7 +246,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
       startedAt: isStartedAtNull ? null : startedAtRef.current?.value || null,
       endedAt: isEndedAtNull ? null : endedAtRef.current?.value || null,
       adTitle: adTitleRef.current?.value || "",
-      adEndedAt: adEndedAtRef.current?.value || null,
+      adEndedAt: adEndedAtRef.current?.value || "",
       // 수정전: isPublic: isPublicRef.current?.checked || false,
       //       isPublic: isPublicRef.current?.checked || false,
 

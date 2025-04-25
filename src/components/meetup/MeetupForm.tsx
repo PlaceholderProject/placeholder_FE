@@ -119,7 +119,7 @@ const MeetupForm = () => {
     // 근데 이거 155번째줄 (현재인지 실행해보고 판단 위)에 있었음
     const startDate = isStartedAtNull ? null : startedAtRef.current?.value || null;
     const endDate = isEndedAtNull ? null : endedAtRef.current?.value || null;
-    const adEndDate = adEndedAtRef.current?.value || null;
+    const adEndDate = adEndedAtRef.current?.value || "";
 
     // 4. 통과(true)인지 걸리는지(false) 불리언 값 리턴하는 유효성 검사 함수
 

@@ -4,7 +4,7 @@ export interface PaginationButtonProps {
   endPage: number;
   hasPreviousGroup: boolean;
   hasNextGroup: boolean;
-  onPageButtonClick: () => void;
+  onPageButtonClick: (page: number) => void;
   onPreviousGroupButtonClick: () => void;
   onNextGroupButtonClick: () => void;
 }

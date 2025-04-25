@@ -5,11 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import ThumbnailItem from "./ThumbnailItem";
 import { getHeadhuntingsApi } from "@/services/thumbnails.service";
 import { Meetup } from "@/types/meetupType";
-import Cookies from "js-cookie";
 import { useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
-
-const token = Cookies.get("accessToken");
 
 const ThumbnailArea = () => {
   // 이제 리덕스에서 정렬 타입 가져옴
