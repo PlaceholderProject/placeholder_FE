@@ -29,14 +29,63 @@ export const createProposal = async (proposalText: string, meetupId: number) => 
 
     return result;
   } catch (error) {
-    // console.log(error);
+    console.log(error);
     alert("신청서를 보내는 도중 오류가 발생했습니다. 다시 시도해주세요.");
     return;
   }
 };
 
+// 받은 신청서 페이지 : 내가 방장인 모임 목록 가져오기
+export const getOrganizedMeetups = async () => {
+  const accessToken = Cookies.get("accessToken");
+
+  try {
+    const response = await fetch("http://localhost:8000/api/v1/user/me/meetup?status=ongoing&organizer=true", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Accept: "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || "알 수 없는 오류");
+    }
+
+    const { result } = await response.json();
+    console.log("내가 주최한 ongoing 모임 목록:", result);
+    return result;
+  } catch (error) {
+    console.error("모임 정보를 가져오는데 실패했습니다:", error);
+  }
+};
+
 // 받은 신청서 페이지 : 받은 신청서 가져오기
-export const getReceivedProposal = async () => {};
+export const getReceivedProposals = async (meetupId: number) => {
+  const accessToken = Cookies.get("accessToken");
+
+  try {
+    const response = await fetch(`http://localhost:8000/api/v1/meetup/${meetupId}/proposal`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Accept: "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || "알 수 없는 오류");
+    }
+
+    const { result } = await response.json();
+    console.log("신청서 목록:", result);
+    return result;
+  } catch (error) {
+    console.error("모임 정보를 가져오는데 실패했습니다:", error);
+  }
+};
 
 // 보낸 신청서 페이지 : 보낸 신청서 가져오기
 export const getSentProposal = async () => {};
