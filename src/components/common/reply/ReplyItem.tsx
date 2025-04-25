@@ -21,7 +21,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId }) =>
   const editReplyMutation = useEditReply(meetupId);
   const deleteReplyMutation = useDeleteReply(meetupId);
 
-  const nestedReplies = allReplies.filter(r => r.root === reply.id);
+  const nestedReplies = allReplies.filter(r => r.root === reply.id).reverse();
 
   const handleNestedReplyFormToggle = () => {
     setIsVisiableNestedReplyForm(!isVisiableNestedReplyForm);

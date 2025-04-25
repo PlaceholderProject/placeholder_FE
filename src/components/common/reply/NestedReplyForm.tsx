@@ -1,7 +1,7 @@
 "use client";
 
 import { useCreateNestedReply } from "@/hooks/useReply";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
 import { Reply } from "@/types/replyType";
@@ -25,17 +25,11 @@ const NestedReplyForm = ({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const user = useSelector((state: RootState) => state.user.user);
-  const reply = useSelector((state: RootState) => state.reply.reply);
+  const nestedReply = useSelector((state: RootState) => state.reply.reply);
 
   const dispatch = useDispatch();
 
-  const createNestedReplyMutation = useCreateNestedReply(rootReply.id, meetupId);
-
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.focus();
-    }
-  }, [reply]);
+  const createNestedReplyMutation = useCreateNestedReply(nestedReply.id ? nestedReply.id : rootReply.id, meetupId);
 
   const handleContentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (event.target.value.length > 300) {
@@ -47,9 +41,6 @@ const NestedReplyForm = ({
   const handleNestedReplySubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (content.trim().length === 0) return;
-    // if (reply.user.nickname) {
-    //   createNestedReplyMutation.mutate({ text: content });
-    // }
     if (rootReply.id) {
       createNestedReplyMutation.mutate({ text: content });
     }
@@ -63,17 +54,15 @@ const NestedReplyForm = ({
     dispatch(resetReply());
   };
 
-  console.log(reply);
-
   return (
     <div className="w-full flex">
       <form className="flex flex-col gap-2 w-full" onSubmit={handleNestedReplySubmit}>
         <div className="border-[1px] border-[#CFCFCF] w-full h-[70px] flex flex-col justify-center items-center rounded-lg p-[10px] gap-2">
-          <div className="text-[8px] w-full flex justify-between">@ {reply.user.nickname ? reply.user.nickname : rootReply.user.nickname}</div>
+          <div className="text-[8px] w-full flex justify-between">@ {nestedReply.user.nickname ? nestedReply.user.nickname : rootReply.user.nickname}</div>
           <textarea
             ref={textareaRef}
             className="h-[50px] w-full text-[8px]"
-            placeholder={user.email ? `${reply.user.nickname ? reply.user.nickname : rootReply.user.nickname}님에게 답글 다는 중` : "로그인한 이후에 댓글을 작성할 수 있습니다."}
+            placeholder={user.email ? `${nestedReply.user.nickname ? nestedReply.user.nickname : rootReply.user.nickname}님에게 답글 다는 중` : "로그인한 이후에 댓글을 작성할 수 있습니다."}
             onChange={handleContentChange}
             value={content}
             disabled={!user.email}
