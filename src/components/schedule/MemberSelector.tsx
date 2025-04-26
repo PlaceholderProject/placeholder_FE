@@ -1,6 +1,7 @@
 import { useMeetupMembers } from "@/hooks/useSchedule";
 import { Member } from "@/types/scheduleType";
 import Image from "next/image";
+import { getImageURL } from "@/utils/getImageURL";
 
 interface MemberSelectorProps {
   meetupId: number,
@@ -11,8 +12,7 @@ interface MemberSelectorProps {
 const MemberSelector = ({ meetupId, selectedMember, onMemberSelect }: MemberSelectorProps) => {
 
   const { data: members, isPending } = useMeetupMembers(meetupId);
-
-  let profileImage;
+  
   return (
     <div className="space-y-2">
       <label className="font-medium">참석자 등록하기</label>
@@ -22,26 +22,31 @@ const MemberSelector = ({ meetupId, selectedMember, onMemberSelect }: MemberSele
             멤버 정보를 불러오는 중...
           </div>
         ) : members?.length ? (
-          members.map((member: Member) => (
-            <div key={member.id} className="flex items-center py-2 border-b">
+          members.map((participant: Member) => (
+            <div key={participant.id} className="flex items-center py-2 border-b">
               <div className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full mr-2">
-                {member.user.image ? (
-                  <img
-                    src={member.user.image}
-                    alt={member.user.nickname}
+                {participant.user.image ? (
+                  <Image
+                    src={getImageURL(participant.user.image)}
+                    alt={participant.user.nickname}
+                    width={32}
+                    height={32}
                     className="w-full h-full object-cover rounded-full"
                   />
-                ) : <Image src={profileImage || "/profile.png"} alt="프로필 이미지" width="100" height="100"
-                           unoptimized={true} />}
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-500">
+                    {participant.user.nickname.charAt(0)}
+                  </div>
+                )}
               </div>
               <div className="flex-1 font-medium">
-                {member.role === "organizer" && "👑 "}
-                {member.user.nickname}
+                {participant.role === "organizer" && "👑 "}
+                {participant.user.nickname}
               </div>
               <input
                 type="checkbox"
-                checked={selectedMember.includes(member.id)}
-                onChange={() => onMemberSelect(member.id)}
+                checked={selectedMember.includes(participant.id)}
+                onChange={() => onMemberSelect(participant.id)}
                 className="w-5 h-5"
               />
             </div>
