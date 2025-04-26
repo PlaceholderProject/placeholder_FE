@@ -1,8 +1,19 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./authSlice";
 import userReducer from "./userSlice";
+import notificationReducer from "./notificationSlice";
 import storage from "redux-persist/lib/storage";
-import { createTransform, FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE } from "redux-persist";
+import {
+  createTransform,
+  FLUSH,
+  PAUSE,
+  PERSIST,
+  persistReducer,
+  persistStore,
+  PURGE,
+  REGISTER,
+  REHYDRATE,
+} from "redux-persist";
 import nonModalReducer from "./nonModalSlice";
 import modalReducer from "./modalSlice";
 import sortReducer from "./sortSlice";
@@ -33,7 +44,7 @@ export const store = configureStore({
     modal: modalReducer,
     reply: replyReducer,
     user: persistedUserReducer,
-
+    notification: notificationReducer,
     sort: sortReducer,
     filter: filterReducer,
   },
