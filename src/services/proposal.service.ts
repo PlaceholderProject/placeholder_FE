@@ -9,6 +9,7 @@ export const createProposal = async (proposalText: string, meetupId: number) => 
       method: "POST",
       headers: {
         Authorization: `Bearer ${accessToken}`,
+        Accept: "application/json",
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ text: proposalText }),
@@ -25,7 +26,7 @@ export const createProposal = async (proposalText: string, meetupId: number) => 
       return;
     }
 
-    const result = response.status;
+    const result = await response.json();
 
     return result;
   } catch (error) {
@@ -89,3 +90,29 @@ export const getReceivedProposals = async (meetupId: number) => {
 
 // 보낸 신청서 페이지 : 보낸 신청서 가져오기
 export const getSentProposal = async () => {};
+
+// 광고페이지 : 나의 신청서 상태
+
+export const getMyProposalStatus = async (meetupId: number) => {
+  const accessToken = Cookies.get("accessToken");
+
+  try {
+    const response = await fetch(`http://localhost:8000/api/v1/meetup/${meetupId}/proposal/status`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Accept: "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || "알 수 없는 오류");
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    return null;
+  }
+};

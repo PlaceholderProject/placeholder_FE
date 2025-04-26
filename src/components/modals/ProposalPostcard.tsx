@@ -14,7 +14,7 @@ const ProposalPostcard = ({ meetupId }: { meetupId: number }) => {
     e.preventDefault();
 
     await createProposal(proposalText, meetupId); // meetupId 보내야줘야함
-    // console.log(proposalText);
+    console.log(proposalText);
   };
 
   return (
