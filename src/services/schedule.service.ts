@@ -68,12 +68,24 @@ export const updateSchedule = async (scheduleId: number, formData: FormData): Pr
   const token = Cookies.get("accessToken");
 
   try {
+    // FormData에서 JSON 데이터 추출
+    const payloadStr = formData.get("payload") as string;
+    const payload = JSON.parse(payloadStr);
+
     const response = await fetch(`${BASE_URL}/api/v1/schedule/${scheduleId}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
-      body: formData,
+      body: JSON.stringify({
+        scheduledAt: payload.scheduled_at,
+        place: payload.place,
+        address: payload.address,
+        latitude: payload.latitude,
+        longitude: payload.longitude,
+        memo: payload.memo,
+      }),
     });
 
     if (!response.ok) {
