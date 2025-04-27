@@ -4,28 +4,29 @@ import React from "react";
 import { BASE_URL } from "@/constants/baseURL";
 import calculateDays from "@/utils/calculateDays";
 import { useQuery } from "@tanstack/react-query";
-import { getHeadhuntingItemApi } from "@/services/thumbnails.service";
 import LikeContainer from "../likes/LikeContainer";
 import { Meetup } from "@/types/meetupType";
 import Link from "next/link";
 
-const ThumbnailItem = ({ id }: { id: Meetup["id"] }) => {
-  const {
-    data: thumbnail,
-    isPending,
-    isError,
-  } = useQuery({
-    queryKey: ["headhuntings", id],
-    queryFn: () => getHeadhuntingItemApi(id),
-  });
+// id 였는데 썸네일 객체를 직접 전달하도록 수정
+// 구조분해할당, 타입지정
+const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
+  // const {
+  //   data: thumbnail,
+  //   isPending,
+  //   isError,
+  // } = useQuery({
+  //   queryKey: ["headhuntings", id],
+  //   queryFn: () => getHeadhuntingItemApi(id),
+  // });
 
   // console.log(thumbnail?.image); // 옵셔널 체이닝 사용
 
   // console.log(thumbnail.image);
   // thumbnail?.image && console.log(thumbnail.image);
 
-  if (isPending) return <div>로딩중</div>;
-  if (isError) return <div>에러발생</div>;
+  // if (isPending) return <div>로딩중</div>;
+  // if (isError) return <div>에러발생</div>;
 
   const thumbnailImageUrl = `${BASE_URL}${thumbnail.image}`;
 
@@ -45,7 +46,7 @@ const ThumbnailItem = ({ id }: { id: Meetup["id"] }) => {
 
             {!thumbnail.isPublic && <span className="bg-[#D9D9D9] text-[#FFF] text-[10px] p-1 rounded-md">비공개</span>}
             <div className="pointer-events-auto">
-              <LikeContainer id={id} />{" "}
+              <LikeContainer id={thumbnail.id} />{" "}
             </div>
 
             <p>[{thumbnail.place}]</p>
