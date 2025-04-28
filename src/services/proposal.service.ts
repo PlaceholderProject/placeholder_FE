@@ -41,7 +41,7 @@ export const getOrganizedMeetups = async () => {
   const accessToken = Cookies.get("accessToken");
 
   try {
-    const response = await fetch("http://localhost:8000/api/v1/user/me/meetup?organizer=true", {
+    const response = await fetch(`${BASE_URL}/api/v1/user/me/meetup?organizer=true`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -67,7 +67,7 @@ export const getReceivedProposals = async (meetupId: number) => {
   const accessToken = Cookies.get("accessToken");
 
   try {
-    const response = await fetch(`http://localhost:8000/api/v1/meetup/${meetupId}/proposal`, {
+    const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}/proposal`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -88,12 +88,64 @@ export const getReceivedProposals = async (meetupId: number) => {
   }
 };
 
+// 받은 신청서 페이지 : 신청서 수락하기
+export const acceptProposal = async (proposalId: number) => {
+  const accessToken = Cookies.get("accessToken");
+
+  try {
+    const response = await fetch(`${BASE_URL}/api/v1/proposal/${proposalId}/acceptance`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Accept: "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || "알 수 없는 오류");
+    }
+
+    const result = await response.json();
+    console.log("수락한 신청서:", result);
+    return result;
+  } catch (error) {
+    console.error("신청서 수락을 실패했습니다:", error);
+  }
+};
+
+// 받은 신청서 페이지 : 신청서 거절하기
+export const refuseProposal = async (proposalId: number) => {
+  const accessToken = Cookies.get("accessToken");
+
+  try {
+    const response = await fetch(`${BASE_URL}/api/v1/proposal/${proposalId}/refuse`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Accept: "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || "알 수 없는 오류");
+    }
+
+    const result = await response.json();
+    console.log("거절한 신청서:", result);
+    return result;
+  } catch (error) {
+    console.error("신청서 거절을 실패했습니다:", error);
+  }
+};
+
 // 보낸 신청서 페이지 : 보낸 신청서 가져오기
 export const getSentProposal = async () => {
   const accessToken = Cookies.get("accessToken");
 
   try {
-    const response = await fetch(`http://localhost:8000/api/v1/user/me/proposal`, {
+    const response = await fetch(`${BASE_URL}/api/v1/user/me/proposal`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -120,7 +172,7 @@ export const getMyProposalStatus = async (meetupId: number) => {
   const accessToken = Cookies.get("accessToken");
 
   try {
-    const response = await fetch(`http://localhost:8000/api/v1/meetup/${meetupId}/proposal/status`, {
+    const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}/proposal/status`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,

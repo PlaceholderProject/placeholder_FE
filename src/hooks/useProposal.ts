@@ -1,5 +1,28 @@
-import { useQuery } from "@tanstack/react-query";
-import { getMyProposalStatus, getOrganizedMeetups, getReceivedProposals, getSentProposal } from "@/services/proposal.service";
+import { acceptProposal, getMyProposalStatus, getOrganizedMeetups, getReceivedProposals, getSentProposal, refuseProposal } from "@/services/proposal.service";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
+// 신청서 수락
+export const useAcceptProposal = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (proposalId: number) => acceptProposal(proposalId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["proposal"] });
+    },
+  });
+};
+// 신청서 거절
+export const useRefuseProposal = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (proposalId: number) => refuseProposal(proposalId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["proposal"] });
+    },
+  });
+};
 
 // 내가 방장인 모임 목록 가져오기
 export const useOrganizedMeetups = () => {
@@ -14,11 +37,12 @@ export const useOrganizedMeetups = () => {
 // 모임Id로 검색한 내가 방장인 신청서 목록 가져오기
 export const useProposalsByMeetupId = (meetupId: number) => {
   return useQuery({
-    queryKey: ["proposal", meetupId],
+    queryKey: ["proposals", meetupId],
     queryFn: () => getReceivedProposals(meetupId!),
     staleTime: 1000 * 60 * 5,
     retry: 1,
     enabled: !!meetupId,
+    select: data => data ?? [],
   });
 };
 

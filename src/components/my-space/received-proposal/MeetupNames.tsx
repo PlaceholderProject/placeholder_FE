@@ -14,7 +14,6 @@ const MeetupNames = () => {
 
   if (isLoading) return <p>로딩 중...</p>;
   if (isError) return <p>에러 발생: {error.message}</p>;
-  console.log(organizedMeetups);
   return (
     <ul className="flex flex-row gap-2">
       {!organizedMeetups.length && <div>받은 신청서가 없습니다.</div>}
