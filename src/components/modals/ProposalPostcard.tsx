@@ -2,9 +2,14 @@
 
 import { createProposal } from "@/services/proposal.service";
 import React, { useState } from "react";
+import ModalLayout from "./ModalLayout";
+import { useDispatch } from "react-redux";
+import { toggleProposalPostcardModal } from "@/stores/modalSlice";
 
 const ProposalPostcard = ({ meetupId }: { meetupId: number }) => {
   const [proposalText, setProposalText] = useState("");
+
+  const dispatch = useDispatch();
 
   const handleProposalText = (e: React.ChangeEvent<HTMLInputElement>) => {
     setProposalText(e.target.value);
@@ -17,18 +22,24 @@ const ProposalPostcard = ({ meetupId }: { meetupId: number }) => {
     console.log(proposalText);
   };
 
-  return (
-    <div className="bg-red-100 w-[280px] h-[287px] rounded-3xl flex flex-col justify-center items-center">
-      <h1>모임참여 신청하기</h1>
-      <form onSubmit={handleProposalSubmit}>
-        <div className="flex flex-col">
-          <label htmlFor="proposal">방장에게 할말</label>
-          <input type="text" value={proposalText} onChange={handleProposalText} />
-        </div>
+  const handleClose = () => {
+    dispatch(toggleProposalPostcardModal());
+  };
 
-        <button type="submit">신청하기</button>
-      </form>
-    </div>
+  return (
+    <ModalLayout onClose={handleClose}>
+      <div className="bg-red-100 w-[280px] h-[287px] rounded-3xl flex flex-col justify-center items-center">
+        <h1>모임참여 신청하기</h1>
+        <form onSubmit={handleProposalSubmit}>
+          <div className="flex flex-col">
+            <label htmlFor="proposal">방장에게 할말</label>
+            <input type="text" value={proposalText} onChange={handleProposalText} />
+          </div>
+
+          <button type="submit">신청하기</button>
+        </form>
+      </div>
+    </ModalLayout>
   );
 };
 
