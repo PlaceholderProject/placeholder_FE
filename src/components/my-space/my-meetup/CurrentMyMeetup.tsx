@@ -66,12 +66,15 @@ const CurrentMyMeetup = () => {
     <>
       <div className="grid grid-cols-1">
         {myMeetupsData.result.map(myMeetup => (
-          <Link href={`http://localhost:3000/meetup/${myMeetup.id}`} key={myMeetup.id} className="flex justify-between">
-            <RoleIcon isOrganizer={myMeetup.is_organizer} />
-            방장이니?: {`${myMeetup.is_organizer}`} 모임 이름:{myMeetup.name}
-            모임종료일: {myMeetup.ended_at}
+          <div key={myMeetup.id} className="flex justify-between items-center">
+            <Link href={`http://localhost:3000/meetup/${myMeetup.id}`} className="flex items-center grow">
+              <RoleIcon isOrganizer={myMeetup.is_organizer} />
+              {/* <span>방장이니?: {`${myMeetup.is_organizer}`}</span> */}
+              <span>{myMeetup.name}</span>
+              {/* <span>모임종료일: {myMeetup.ended_at}</span> */}
+            </Link>
             <MemberOutContainer />
-          </Link>
+          </div>
         ))}
       </div>
 

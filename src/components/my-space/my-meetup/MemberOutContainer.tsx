@@ -18,8 +18,9 @@ const MemberOutContainer = () => {
 
   const handleMemberButtonClick = (event: { stopPropagation: () => void; preventDefault: () => void }) => {
     // 이벤트 버블링과 기본 동작 모두 방지
-    event.stopPropagation();
-    event.preventDefault();
+    // event.stopPropagation();
+    // event.preventDefault();
+    // 근데 Link 안에서 밖으로 빼니까 전파 안 일어남
 
     //모달 토글
     dispatch(toggleMemberDeleteModal());
@@ -28,7 +29,8 @@ const MemberOutContainer = () => {
   return (
     <>
       {/* 스탑프로퍼게이션 왜 ㄷ르어감? */}
-      <div onClick={e => e.stopPropagation()}>
+      {/* <div onClick={e => e.stopPropagation()}> */}
+      <div>
         {isOrganizer ? (
           <OutButton isOrganizer={isOrganizer} />
         ) : (

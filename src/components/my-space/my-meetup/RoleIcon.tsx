@@ -7,7 +7,7 @@ const RoleIcon = ({ isOrganizer }: { isOrganizer: boolean }) => {
   return (
     <>
       <div>
-        방장이니?{`${isOrganizer}`}
+        {/* 방장이니?{`${isOrganizer}`} */}
         {isOrganizer ? "👑" : "🤝"}
       </div>
     </>

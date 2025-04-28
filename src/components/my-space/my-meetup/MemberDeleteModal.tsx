@@ -49,9 +49,9 @@ const MemberDeleteModal = () => {
 
   return (
     <>
-      <div className="fixed inset-0 w-50 h-50 bg-black bg-opacity-10 flex items-center justify-center z-50" onClick={handleOverlayClick}>
-        <div onClick={handleOverlayClick} className="bg-white w-70 p-6 mb-4 items-center" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0 }}>
-          <div className="bg-white p-6 rounded-md shadow-lg" onClick={handleModalLayerClick}>
+      <div className="fixed inset-0 w-50 h-50 bg-black bg-opacity-5 flex items-center justify-center z-50" onClick={handleOverlayClick}>
+        <div onClick={handleOverlayClick}>
+          <div className="bg-white p-6 rounded-md shadow-sm" onClick={handleModalLayerClick}>
             <h3>강ㅌ퇴냐 탈퇴냐</h3>
             <p>이 멤버 진짜 쫓아내?</p>
             <div className="flex justify-end space-x-2">
