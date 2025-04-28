@@ -17,19 +17,23 @@ const MemberOutContainer = () => {
   // 이벤트 버블링 방지용
 
   const handleMemberButtonClick = (event: { stopPropagation: () => void; preventDefault: () => void }) => {
+    // 이벤트 버블링과 기본 동작 모두 방지
     event.stopPropagation();
     event.preventDefault();
+
+    //모달 토글
     dispatch(toggleMemberDeleteModal());
     console.log("멤버모달 열렸니?", isMemberDeleteModalOpen);
   };
   return (
     <>
-      <div>
+      {/* 스탑프로퍼게이션 왜 ㄷ르어감? */}
+      <div onClick={e => e.stopPropagation()}>
         {isOrganizer ? (
           <OutButton isOrganizer={isOrganizer} />
         ) : (
           <button onClick={handleMemberButtonClick} className="p-2">
-            <FaRegUserCircle />
+            <FaRegUserCircle size={20} />
           </button>
         )}
         <MemberDeleteModal />
