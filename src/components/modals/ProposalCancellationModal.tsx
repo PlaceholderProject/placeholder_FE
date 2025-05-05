@@ -1,24 +1,33 @@
 import { toggleProposalCancellationModal } from "@/stores/modalSlice";
 import { useDispatch } from "react-redux";
 import ModalLayout from "./ModalLayout";
+import { SentProposal } from "@/types/proposalType";
+import { useCancelProposal } from "@/hooks/useProposal";
 
-const ProposalCancellationModal = () => {
+const ProposalCancellationModal = ({ proposal }: { proposal: SentProposal }) => {
   const dispatch = useDispatch();
+  const cancelMutation = useCancelProposal();
 
   const handleClose = () => {
     dispatch(toggleProposalCancellationModal());
   };
 
+  const handleProposalCancel = () => {
+    cancelMutation.mutate(proposal.id);
+  };
+
   return (
     <ModalLayout onClose={handleClose}>
       <div className="flex flex-col gap-4">
-        <h2 className="text-xl font-bold">신청 취소</h2>
-        <p>정말 신청을 취소하시겠습니까?</p>
+        <h1>{proposal.meetup_name}</h1>
+        <p>신청을 취소할까요?</p>
         <div className="flex justify-end gap-2">
           <button onClick={handleClose} className="px-4 py-2 bg-gray-300 rounded">
-            닫기
+            아니요
           </button>
-          <button className="px-4 py-2 bg-red-500 text-white rounded">취소하기</button>
+          <button onClick={handleProposalCancel} disabled={cancelMutation.isPending} className="px-4 py-2 bg-red-500 text-white rounded">
+            {cancelMutation.isPending ? "취소 중..." : "네"}
+          </button>
         </div>
       </div>
     </ModalLayout>

@@ -41,7 +41,7 @@ export const getOrganizedMeetups = async () => {
   const accessToken = Cookies.get("accessToken");
 
   try {
-    const response = await fetch(`${BASE_URL}/api/v1/user/me/meetup?organizer=true`, {
+    const response = await fetch(`${BASE_URL}/api/v1/user/me/meetup?organizer=true&status=ongoing`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -167,7 +167,6 @@ export const getSentProposal = async () => {
 };
 
 // 광고페이지 : 나의 신청서 상태
-
 export const getMyProposalStatus = async (meetupId: number) => {
   const accessToken = Cookies.get("accessToken");
 
@@ -189,5 +188,35 @@ export const getMyProposalStatus = async (meetupId: number) => {
     return result;
   } catch (error) {
     return null;
+  }
+};
+
+// 보낸신청서페이지 : 신청서 취소
+export const cancelProposal = async (proposalId: number) => {
+  const accessToken = Cookies.get("accessToken");
+  try {
+    const response = await fetch(`${BASE_URL}/api/v1/proposal/${proposalId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorResult = await response.json();
+      throw new Error(errorResult.detail || "신청서 취소에 실패했습니다.");
+    }
+
+    // 응답 본문 확인
+    const contentLength = response.headers.get("content-length");
+    if (!contentLength || parseInt(contentLength) === 0) {
+      console.warn("서버에서 빈 응답을 반환했습니다.");
+      return { message: "Proposal canceled successfully." }; // 기본 메시지
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("신청서 취소 중 오류", error);
   }
 };

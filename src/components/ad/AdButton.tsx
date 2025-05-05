@@ -33,8 +33,16 @@ const AdButton = ({ meetupId }: { meetupId: number }) => {
             <button>취소하기</button>
             <div>수락 대기 중</div>
           </div>
+        ) : proposal.status === "acceptance" ? (
+          <div>
+            <div>수락 완료</div>
+            <button>입장하기</button>
+          </div>
         ) : (
-          <div>아니</div>
+          <div>
+            <div>거절됨</div>
+            <div>입장하기</div>
+          </div>
         )
       ) : (
         <div>
