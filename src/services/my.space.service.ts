@@ -104,16 +104,25 @@ export const getMyMeetupMembersApi = async (meetupId: number) => {
     },
   });
   if (!response.ok) {
-    console.log("멤버 조회 실패");
-    throw new Error("멤버 조회에 실패했습니다.");
+    const errorText = await response.text();
+    console.log("멤버 조회 api 에러 응답", errorText);
+    throw new Error("멤버 조회에 실패.");
   }
-  console.log(response);
-  return response.json();
+
+  const myMeetupMembersData = await response.json();
+  console.log("멤버 데이터:", myMeetupMembersData);
+  return myMeetupMembersData;
 };
 
 //모임 멤버 삭제하기 Api
+export const deleteMeetupMemberApi = async (member_id: number) => {
+  const token = Cookies.get("accessToken");
+  const response = await fetch(`${BASE_URL}/api/v1/member/${member_id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
-// export const deleteMeetupMemberApi = async(meetupId: number, memberId: number) => {
-//   const token = Cookies.get("accessToken");
-//   const response = await fetch(`${BASE_URL}/api/v1/meetup/`)
-// }
+  return response.json();
+};

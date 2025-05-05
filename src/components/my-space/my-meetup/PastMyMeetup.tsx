@@ -65,19 +65,14 @@ const PastMyMeetup = () => {
   return (
     <>
       <div className="grid grid-cols-1">
-        {myMeetupsData.result.map(
-          myMeetup => (
-            console.log(typeof myMeetup.is_organizer),
-            (
-              <div key={myMeetup.id} className="flex justify-between">
-                <RoleIcon isOrganizer={myMeetup.is_organizer} />
-                모임이름: {myMeetup.name}
-                모임종료일: {myMeetup.ended_at}
-                <MemberOutContainer />
-              </div>
-            )
-          ),
-        )}
+        {myMeetupsData.result.map(myMeetup => (
+          <div key={myMeetup.id} className="flex justify-between">
+            <RoleIcon isOrganizer={myMeetup.is_organizer} />
+            모임이름: {myMeetup.name}
+            모임종료일: {myMeetup.ended_at}
+            <MemberOutContainer meetupId={myMeetup.id} isOrganizer={myMeetup.is_organizer} />
+          </div>
+        ))}
       </div>
       {/* 버튼 영역 */}
 

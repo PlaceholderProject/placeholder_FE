@@ -73,7 +73,7 @@ const CurrentMyMeetup = () => {
               <span>{myMeetup.name}</span>
               {/* <span>모임종료일: {myMeetup.ended_at}</span> */}
             </Link>
-            <MemberOutContainer />
+            <MemberOutContainer meetupId={myMeetup.id} isOrganizer={myMeetup.is_organizer} />
           </div>
         ))}
       </div>
