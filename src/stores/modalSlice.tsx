@@ -3,17 +3,11 @@ import { createSlice } from "@reduxjs/toolkit";
 interface ModalState {
   isAdDeleteModalOpen: boolean;
   isMemberDeleteModalOpen: boolean;
-  isProposalPostcardModalOpen: boolean;
-  isProposalCancellationModalOpen: boolean;
-  isProposalDeletionModalOpen: boolean;
 }
 
 const initialState: ModalState = {
   isAdDeleteModalOpen: false,
   isMemberDeleteModalOpen: false,
-  isProposalPostcardModalOpen: false,
-  isProposalCancellationModalOpen: false,
-  isProposalDeletionModalOpen: false,
 };
 
 const modalSlice = createSlice({
@@ -26,17 +20,8 @@ const modalSlice = createSlice({
     toggleMemberDeleteModal: state => {
       state.isMemberDeleteModalOpen = !state.isMemberDeleteModalOpen;
     },
-    toggleProposalPostcardModal: state => {
-      state.isProposalPostcardModalOpen = !state.isProposalPostcardModalOpen;
-    },
-    toggleProposalCancellationModal: state => {
-      state.isProposalCancellationModalOpen = !state.isProposalCancellationModalOpen;
-    },
-    toggleProposalDeletionModal: state => {
-      state.isProposalDeletionModalOpen = !state.isProposalDeletionModalOpen;
-    },
   },
 });
 
-export const { toggleAdDeleteModal, toggleMemberDeleteModal, toggleProposalPostcardModal, toggleProposalCancellationModal, toggleProposalDeletionModal } = modalSlice.actions;
+export const { toggleAdDeleteModal, toggleMemberDeleteModal } = modalSlice.actions;
 export default modalSlice.reducer;

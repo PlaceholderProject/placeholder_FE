@@ -1,24 +1,31 @@
-import { toggleProposalDeletionModal } from "@/stores/modalSlice";
-import { useDispatch } from "react-redux";
+import { FaTimesCircle } from "react-icons/fa";
 import ModalLayout from "./ModalLayout";
+import { ProposalDeletionModalProps } from "@/types/proposalType";
 
-const ProposalDeletionModal = () => {
-  const dispatch = useDispatch();
-
-  const handleClose = () => {
-    dispatch(toggleProposalDeletionModal());
+const ProposalDeletionModal = ({ proposal, onClose }: ProposalDeletionModalProps) => {
+  const handleProposalHide = () => {
+    console.log(proposal);
+    onClose(); // 작업 완료 후 모달 닫기
   };
-
   return (
-    <ModalLayout onClose={handleClose}>
-      <div className="flex flex-col gap-4">
-        <h2 className="text-xl font-bold">신청 삭제</h2>
-        <p>정말 신청을 삭제하시겠습니까?</p>
-        <div className="flex justify-end gap-2">
-          <button onClick={handleClose} className="px-4 py-2 bg-gray-300 rounded">
-            닫기
+    <ModalLayout onClose={onClose}>
+      <div className="flex flex-col gap-4 w-full items-center">
+        <h2 className="text-[20px]">{proposal.meetup_name}</h2>
+        <p className="text-[14px]">신청서를 숨길까요?</p>
+        <p className="flex flex-col w-full items-center text-[13px] text-[#949394]">
+          <div>신청은 유지됩니다.</div>
+          <div className="w-full flex items-center justify-center">
+            취소를 원하시면 &nbsp; <FaTimesCircle />를 눌러주세요.
+          </div>
+        </p>
+
+        <div className="flex flex-col gap-2 w-full">
+          <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded-lg text-[13px]">
+            아니요
           </button>
-          <button className="px-4 py-2 bg-red-500 text-white rounded">취소하기</button>
+          <button onClick={handleProposalHide} className="px-4 py-2 bg-[#FBFFA9] rounded-lg text-[13px] ">
+            숨기기
+          </button>
         </div>
       </div>
     </ModalLayout>

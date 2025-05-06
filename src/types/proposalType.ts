@@ -12,3 +12,26 @@ export type ReceivedProposal = {
   text: string;
   user: { id: number; nickname: string; image: string };
 };
+
+export interface SentProposalItemProps {
+  proposal: SentProposal;
+  isModalOpen: boolean;
+  modalType: "cancellation" | "deletion" | null;
+  onModalOpen: (proposalId: number, type: "cancellation" | "deletion") => void;
+  onModalClose: () => void;
+}
+
+export interface ProposalCancellationModalProps {
+  proposal: SentProposal;
+  onClose: () => void;
+}
+
+export interface ProposalDeletionModalProps {
+  proposal: SentProposal;
+  onClose: () => void;
+}
+
+export interface ProposalPostcardProps {
+  meetupId: number;
+  onClose: () => void;
+}

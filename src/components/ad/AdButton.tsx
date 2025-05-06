@@ -1,15 +1,18 @@
 "use client";
 
 import { RootState } from "@/stores/store";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import ProposalPostcard from "../modals/ProposalPostcard";
-import { toggleProposalPostcardModal } from "@/stores/modalSlice";
 import { useMyProposalStatus } from "@/hooks/useProposal";
 import { useAdItem } from "@/hooks/useAdItem";
+import Link from "next/link";
+import ProposalCancellationModal from "../modals/ProposalCancellationModal";
+import { useState } from "react";
 
 const AdButton = ({ meetupId }: { meetupId: number }) => {
-  const dispatch = useDispatch();
-  const { isProposalPostcardModalOpen } = useSelector((state: RootState) => state.modal);
+  const [isProposalPostcardOpen, setIsProposalPostcardOpen] = useState(false);
+  const [isProposalCancellationOpen, setIsProposalCancellationOpen] = useState(false);
+
   const user = useSelector((state: RootState) => state.user.user);
 
   const { data: proposal, isLoading } = useMyProposalStatus(meetupId);
@@ -17,42 +20,51 @@ const AdButton = ({ meetupId }: { meetupId: number }) => {
 
   if (isLoading) return <p>로딩 중...</p>;
 
-  console.log(proposal);
-
   const handleProposalModal = () => {
-    dispatch(toggleProposalPostcardModal());
+    setIsProposalPostcardOpen(prev => !prev);
+  };
+
+  const handleCancellationModal = () => {
+    setIsProposalCancellationOpen(prev => !prev);
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 items-center py-6 px-12">
       {user.nickname === adData?.organizer.nickname ? (
-        <button>입장하기</button>
+        <Link href={`/meetup/${meetupId}`} className="bg-[#006B8B] w-full text-center p-1 rounded-md text-white">
+          입장하기
+        </Link>
       ) : proposal ? (
         proposal.status === "pending" ? (
-          <div>
-            <button>취소하기</button>
-            <div>수락 대기 중</div>
+          <div className="flex flex-row gap-2 w-full">
+            <button onClick={handleCancellationModal} className="bg-[#F9617A] w-full text-center p-1 rounded-md text-white">
+              취소하기
+            </button>
+            <div className="bg-[#E8E8E8] w-full text-center p-1 rounded-md">수락 대기 중</div>
           </div>
         ) : proposal.status === "acceptance" ? (
-          <div>
-            <div>수락 완료</div>
-            <button>입장하기</button>
+          <div className="flex flex-row gap-2 w-full">
+            <div className="bg-[#E8E8E8] w-full text-center p-1 rounded-md">수락 완료</div>
+            <Link href={`/meetup/${meetupId}`} className="bg-[#006B8B] w-full text-center p-1 rounded-md text-white">
+              입장하기
+            </Link>
           </div>
         ) : (
-          <div>
-            <div>거절됨</div>
-            <div>입장하기</div>
+          <div className="flex flex-row gap-2 w-full">
+            <div className="bg-[#E8E8E8] w-full text-center p-1 rounded-md">거절됨</div>
+            <div className="bg-[#E8E8E8] w-full text-center p-1 rounded-md">입장하기</div>
           </div>
         )
       ) : (
-        <div>
-          <button onClick={handleProposalModal} className="bg-slate-300">
+        <div className="flex flex-row gap-2 w-full">
+          <button onClick={handleProposalModal} className="bg-[#FBFFA9] w-full text-center p-1 rounded-md">
             신청하기
           </button>
-          <button>입장하기</button>
-          {isProposalPostcardModalOpen && <ProposalPostcard meetupId={meetupId} />}
+          <div className="bg-[#E8E8E8] w-full text-center p-1 rounded-md">입장하기</div>
+          {isProposalPostcardOpen && <ProposalPostcard meetupId={meetupId} onClose={() => setIsProposalPostcardOpen(false)} />}
         </div>
       )}
+      {isProposalCancellationOpen && <ProposalCancellationModal proposal={proposal} onClose={() => setIsProposalCancellationOpen(false)} />}
     </div>
   );
 };

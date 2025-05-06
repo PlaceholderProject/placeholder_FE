@@ -75,7 +75,7 @@ export const useCancelProposal = () => {
       queryClient.invalidateQueries({ queryKey: ["myMeetups", "organizer", "ongoing"] });
       queryClient.invalidateQueries({ queryKey: ["proposal"] });
     },
-    onError: (error: any) => {
+    onError: error => {
       alert(error.message || "신청서 취소 중 오류가 발생했습니다.");
     },
   });

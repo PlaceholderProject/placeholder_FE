@@ -81,7 +81,7 @@ export const getReceivedProposals = async (meetupId: number) => {
     }
 
     const { result } = await response.json();
-    console.log("신청서 목록:", result);
+    console.log(`${meetupId}신청서 목록:`, result);
     return result;
   } catch (error) {
     console.error("모임 정보를 가져오는데 실패했습니다:", error);
@@ -185,8 +185,10 @@ export const getMyProposalStatus = async (meetupId: number) => {
     }
 
     const result = await response.json();
+    console.log("500에러 확인", result);
     return result;
   } catch (error) {
+    // console.error("상태를 가져오는데 실패했습니다:", error);
     return null;
   }
 };

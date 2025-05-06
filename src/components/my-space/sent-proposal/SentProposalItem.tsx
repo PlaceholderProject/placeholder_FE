@@ -3,25 +3,17 @@
 import ProposalCancellationModal from "@/components/modals/ProposalCancellationModal";
 import { transformCreatedDate } from "@/utils/ReplyDateFormat";
 import { FaUser, FaUserCheck, FaUserTimes, FaTimesCircle, FaTrashAlt } from "react-icons/fa";
-import { RootState } from "@/stores/store";
-import { useDispatch, useSelector } from "react-redux";
-import { toggleProposalCancellationModal, toggleProposalDeletionModal } from "@/stores/modalSlice";
 import ProposalDeletionModal from "@/components/modals/ProposalDeletionModal";
-import { SentProposal } from "@/types/proposalType";
+import { SentProposalItemProps } from "@/types/proposalType";
 
-const SentProposalItem = ({ proposal }: { proposal: SentProposal }) => {
-  const { isProposalCancellationModalOpen, isProposalDeletionModalOpen } = useSelector((state: RootState) => state.modal);
-  const dispatch = useDispatch();
-
+const SentProposalItem = ({ proposal, isModalOpen, modalType, onModalOpen, onModalClose }: SentProposalItemProps) => {
   const handleCancellationModalOpen = () => {
-    dispatch(toggleProposalCancellationModal());
+    onModalOpen(proposal.id, "cancellation");
   };
 
   const handleProposalDelete = () => {
-    dispatch(toggleProposalDeletionModal());
+    onModalOpen(proposal.id, "deletion");
   };
-
-  console.log(proposal);
 
   return (
     <div className="flex flex-row items-center gap-5 border-2 rounded-xl justify-between p-4 ">
@@ -54,11 +46,11 @@ const SentProposalItem = ({ proposal }: { proposal: SentProposal }) => {
         <button onClick={handleCancellationModalOpen}>
           <FaTimesCircle />
         </button>
-        {isProposalCancellationModalOpen && <ProposalCancellationModal proposal={proposal} />}
+        {isModalOpen && modalType === "cancellation" && <ProposalCancellationModal proposal={proposal} onClose={onModalClose} />}
         <button onClick={handleProposalDelete}>
           <FaTrashAlt />
         </button>
-        {isProposalDeletionModalOpen && <ProposalDeletionModal proposal={proposal} />}
+        {isModalOpen && modalType === "deletion" && <ProposalDeletionModal proposal={proposal} onClose={onModalClose} />}
       </div>
     </div>
   );

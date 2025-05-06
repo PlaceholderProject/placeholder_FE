@@ -1,20 +1,32 @@
 "use client";
 
 import { useSentProposal } from "@/hooks/useProposal";
-import React from "react";
+import React, { useState } from "react";
 import SentProposalItem from "./SentProposalItem";
 import { SentProposal } from "@/types/proposalType";
 
 const SentProposals = () => {
   const { data: proposals, isLoading } = useSentProposal();
+  const [selectedProposalId, setSelectedProposalId] = useState<number | null>(null);
+  const [modalType, setModalType] = useState<"cancellation" | "deletion" | null>(null);
 
   if (isLoading) return <div>로딩중</div>;
-  console.log("이거", proposals);
+
+  const handleModalOpen = (proposalId: number, type: "cancellation" | "deletion") => {
+    setSelectedProposalId(proposalId);
+    setModalType(type);
+  };
+
+  const handleModalClose = () => {
+    setSelectedProposalId(null);
+    setModalType(null);
+  };
+
   return (
     <ul className="p-5 flex flex-col gap-3">
       {proposals.map((proposal: SentProposal) => (
         <li key={proposal.id}>
-          <SentProposalItem proposal={proposal} />
+          <SentProposalItem proposal={proposal} isModalOpen={selectedProposalId === proposal.id} modalType={modalType} onModalOpen={handleModalOpen} onModalClose={handleModalClose} />
         </li>
       ))}
     </ul>
