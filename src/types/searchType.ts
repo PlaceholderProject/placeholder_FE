@@ -11,7 +11,12 @@ export type SearchedType = {
   isPublic: boolean;
   likeCount: number;
   meetup: string;
-  organizer: { nickname: string; profileImage: string | null };
+  organizer: AdOrganizerType;
   place: string;
   startedAt: string;
+};
+
+type AdOrganizerType = {
+  nickname: string;
+  profileImage: string | null;
 };

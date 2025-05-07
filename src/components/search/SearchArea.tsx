@@ -1,7 +1,7 @@
 "use client";
 
 import { getSearchedAd } from "@/services/search.service";
-import { setSearchedAds } from "@/stores/searchSlice";
+import { setSearchedAds, setSearchField } from "@/stores/searchSlice";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
@@ -31,6 +31,7 @@ const SearchArea = () => {
     }
     const result = await getSearchedAd(range, keyword);
     dispatch(setSearchedAds(result));
+    dispatch(setSearchField({ range, keyword }));
 
     router.push("/search");
   };
