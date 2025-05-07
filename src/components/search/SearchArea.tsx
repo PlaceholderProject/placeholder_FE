@@ -1,11 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
+import { getSearchedAd } from "@/services/search.service";
+import { setSearchedAds } from "@/stores/searchSlice";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
+import { useDispatch } from "react-redux";
 
 const SearchArea = () => {
   const [range, setRange] = useState("ad_title");
   const [keyword, setKeyword] = useState("");
+
+  const router = useRouter();
+
+  const dispatch = useDispatch();
 
   const handleRange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setRange(event.target.value);
@@ -15,10 +23,16 @@ const SearchArea = () => {
     setKeyword(event.target.value);
   };
 
-  const handleKeywordSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleKeywordSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("range", range);
-    console.log("keyword", keyword);
+    if (keyword.trim().length === 0) {
+      alert("검색어를 입력해주세요.");
+      return;
+    }
+    const result = await getSearchedAd(range, keyword);
+    dispatch(setSearchedAds(result));
+
+    router.push("/search");
   };
 
   return (

@@ -1,7 +1,8 @@
+import { SearchedType } from "@/types/searchType";
 import React from "react";
 
-const SearchedResultItem = () => {
-  return <div>SearchedResultItem</div>;
+const SearchedResultItem = ({ ad }: { ad: SearchedType }) => {
+  return <div>{ad.adTitle}</div>;
 };
 
 export default SearchedResultItem;
