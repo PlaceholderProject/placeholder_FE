@@ -17,11 +17,11 @@ const ReceivedProposals = () => {
   const receivedProposals = data?.filter((proposal: ReceivedProposal) => proposal.status === "pending");
 
   if (!receivedProposals || receivedProposals.length === 0) {
-    return <p>받은 신청서가 없습니다.</p>;
+    return <p className="flex justify-center mt-24">받은 신청서가 없습니다.</p>;
   }
 
   return (
-    <ul className="p-5 flex flex-col gap-2">
+    <ul className="px-4 flex flex-col gap-2">
       {receivedProposals.map((proposal: ReceivedProposal) => (
         <li key={proposal.id}>
           <ReceivedProposalItem proposal={proposal} />

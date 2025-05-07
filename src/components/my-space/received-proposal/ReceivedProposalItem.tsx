@@ -20,28 +20,28 @@ const ReceivedProposalItem = ({ proposal }: { proposal: ReceivedProposal }) => {
   };
 
   return (
-    <div className="flex flex-row justify-between border-2 rounded-lg p-3">
+    <div className="flex flex-row justify-between bg-[#FEFFEC] rounded-xl p-4 shadow-lg">
       <div>
         <div className="flex flex-row gap-2 items-center">
-          <div className="w-[30px] h-[30px] rounded-full overflow-hidden">
+          <div className="w-[20px] h-[20px] rounded-full overflow-hidden">
             <Image
               src={proposal.user.image ? (proposal.user.image.startsWith("http") ? proposal.user.image : `${BASE_URL}${proposal.user.image}`) : "/profile.png"}
               alt="프로필 이미지"
-              width="30"
-              height="30"
+              width="20"
+              height="20"
               unoptimized={true}
             />
           </div>
-          <span>{proposal.user.nickname}</span>
-          <span>날짜</span>
+          <span className="text-[13px]">{proposal.user.nickname}</span>
+          <span className="text-[#B7B7B7] text-[13px]">날짜</span>
         </div>
-        <p>{proposal.text}</p>
+        <p className="pt-2 text-[13px]">{proposal.text}</p>
       </div>
-      <div className="flex flex-row items-center">
-        <button onClick={handleProposalAccept}>
+      <div className="flex flex-row items-center gap-3">
+        <button onClick={handleProposalAccept} className="text-[#028AB3] text-[26px]">
           <FaUserCheck />
         </button>
-        <button onClick={handleProposalRefuse}>
+        <button onClick={handleProposalRefuse} className="text-[#F9617A] text-[26px]">
           <FaUserTimes />
         </button>
       </div>

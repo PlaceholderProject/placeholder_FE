@@ -13,6 +13,14 @@ export type ReceivedProposal = {
   user: { id: number; nickname: string; image: string };
 };
 
+export type OrganizedMeetup = {
+  ended_at: string;
+  id: number;
+  is_current: boolean;
+  is_organizer: boolean;
+  name: string;
+};
+
 export interface SentProposalItemProps {
   proposal: SentProposal;
   isModalOpen: boolean;

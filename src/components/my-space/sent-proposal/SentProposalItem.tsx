@@ -16,33 +16,39 @@ const SentProposalItem = ({ proposal, isModalOpen, modalType, onModalOpen, onMod
   };
 
   return (
-    <div className="flex flex-row items-center gap-5 border-2 rounded-xl justify-between p-4 ">
-      <div>
+    <div className="flex flex-row items-center gap-4 rounded-xl justify-between py-4 px-6 bg-[#FEFFEC] shadow-md ">
+      <div className="px-1">
         {proposal.status === "pending" ? (
-          <div>
-            <FaUser />
-            대기중
+          <div className="flex flex-col items-center text-[#C0C0C0]">
+            <div className="text-[24px]">
+              <FaUser />
+            </div>
+            <div className="text-[10px] whitespace-nowrap">대기중</div>
           </div>
         ) : proposal.status === "acceptance" ? (
-          <div>
-            <FaUserCheck />
-            수락됨
+          <div className="flex flex-col items-center text-[#028AB3]">
+            <div className="text-[26px]">
+              <FaUserCheck />
+            </div>
+            <div className="text-[10px] whitespace-nowrap">수락됨</div>
           </div>
         ) : (
-          <div>
-            <FaUserTimes />
-            거절됨
+          <div className="flex flex-col items-center text-[#F9617A]">
+            <div className="text-[26px]">
+              <FaUserTimes />
+            </div>
+            <div className="text-[10px] whitespace-nowrap">거절됨</div>
           </div>
         )}
       </div>
       <div className="w-[400px]">
-        <div>{proposal.meetup_name}</div>
-        <div>
-          {proposal.text}
-          <span>{transformCreatedDate(proposal.created_at)}</span>
+        <div className="text-[20px] font-semibold">{proposal.meetup_name}</div> {/* 광고제목으로 바꿔야 함 */}
+        <div className="text-[13px]">
+          {proposal.text}&nbsp;&nbsp;
+          <span className="text-[#B7B7B7]">{transformCreatedDate(proposal.created_at)}</span>
         </div>
       </div>
-      <div className="flex gap-4">
+      <div className="flex gap-6 text-[20px] text-[#868282]">
         <button onClick={handleCancellationModalOpen}>
           <FaTimesCircle />
         </button>
