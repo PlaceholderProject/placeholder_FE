@@ -1,15 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getAdByIdApi } from "@/services/ad.service";
 import calculateDays from "@/utils/calculateDays";
 import AdNonModal from "./AdNonModal";
-import { Meetup } from "@/types/meetupType";
 import { BASE_URL } from "@/constants/baseURL";
 import { useAdItem } from "@/hooks/useAdItem";
 
 const AdDetail = ({ meetupId }: { meetupId: number }) => {
   const { adData, error, isPending } = useAdItem(meetupId);
+  const [isAuthorized, setIsAuthorized] = useState(false);
 
   if (error) return <div>에러 발생: {error.message}</div>;
   if (isPending) return <div>로딩중...</div>;
@@ -30,7 +29,7 @@ const AdDetail = ({ meetupId }: { meetupId: number }) => {
         <div>⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯</div>
         <div>🩵 모임이름 : {adData.name}</div>
 
-        <AdNonModal meetupId={meetupId} />
+        {isAuthorized ?? <AdNonModal meetupId={meetupId} />}
         <div>
           🍎 모임장소 : [{adData.place}] {adData.placeDescription}
         </div>
@@ -45,7 +44,6 @@ const AdDetail = ({ meetupId }: { meetupId: number }) => {
               : ""}
           </div>
           <br />
-          🐥🐥🐥🐥 날짜 계산 함수가 실행이 된다는 것 자체가 미정이 하나도 없단 뜻이고 day냐 days냐는 함수자체에서 판단해주면 된다고 생각해,, 맞지..?🐥🐥
         </div>
 
         <div>{adData.description}</div>

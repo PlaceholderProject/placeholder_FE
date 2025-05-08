@@ -179,6 +179,7 @@ const MeetupForm = () => {
       isLike: false,
       likeCount: 0,
       createAt: "",
+      commentCount: 0,
     };
 
     const meetupFormData = new FormData();

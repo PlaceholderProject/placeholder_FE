@@ -10,8 +10,7 @@ const AdClientSideWrapper = ({ meetupId }: { meetupId: number }) => {
     <>
       <div>
         <QueryClientProvider client={queryClient}>
-          <div>🧼🧼🧼🧼🧼🧼🧼🧼🧼🧼🧼🧼🧼🧼</div>
-          <div>유저 인터렉티브 있는 CSR 컴포넌트들이 들어갈거예욥 근데 이제 CSS는 1도 고려하지 않은...</div>
+          <div>--TO DO-- AdClientSideWrapper 이브와 논의🧼</div>
         </QueryClientProvider>
       </div>
     </>
