@@ -1,4 +1,4 @@
-import { acceptProposal, cancelProposal, getMyProposalStatus, getOrganizedMeetups, getReceivedProposals, getSentProposal, refuseProposal } from "@/services/proposal.service";
+import { acceptProposal, cancelProposal, getMyProposalStatus, getOrganizedMeetups, getReceivedProposals, getSentProposal, hideProposal, refuseProposal } from "@/services/proposal.service";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 // 신청서 수락
@@ -8,7 +8,7 @@ export const useAcceptProposal = () => {
   return useMutation({
     mutationFn: (proposalId: number) => acceptProposal(proposalId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["proposal"] });
+      queryClient.invalidateQueries({ queryKey: ["receivedProposals"] });
     },
   });
 };
@@ -19,7 +19,7 @@ export const useRefuseProposal = () => {
   return useMutation({
     mutationFn: (proposalId: number) => refuseProposal(proposalId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["proposal"] });
+      queryClient.invalidateQueries({ queryKey: ["receivedProposals"] });
     },
   });
 };
@@ -37,7 +37,7 @@ export const useOrganizedMeetups = () => {
 // 모임Id로 검색한 내가 방장인 신청서 목록 가져오기
 export const useProposalsByMeetupId = (meetupId: number) => {
   return useQuery({
-    queryKey: ["proposals", meetupId],
+    queryKey: ["receivedProposals", meetupId],
     queryFn: () => getReceivedProposals(meetupId!),
     staleTime: 1000 * 60 * 5,
     retry: 1,
@@ -73,10 +73,22 @@ export const useCancelProposal = () => {
       alert("신청서가 성공적으로 취소되었습니다.");
       // 필요하면 캐시 무효화
       queryClient.invalidateQueries({ queryKey: ["myMeetups", "organizer", "ongoing"] });
-      queryClient.invalidateQueries({ queryKey: ["proposal"] });
+      queryClient.invalidateQueries({ queryKey: ["sentProposals"] });
     },
     onError: error => {
       alert(error.message || "신청서 취소 중 오류가 발생했습니다.");
+    },
+  });
+};
+
+// 신청서 숨김
+export const useHideProposal = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (proposalId: number) => hideProposal(proposalId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["sentProposals"] });
     },
   });
 };

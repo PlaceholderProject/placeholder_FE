@@ -42,22 +42,24 @@ const SentProposalItem = ({ proposal, isModalOpen, modalType, onModalOpen, onMod
         )}
       </div>
       <div className="w-[400px]">
-        <div className="text-[20px] font-semibold">{proposal.meetup_name}</div> {/* 광고제목으로 바꿔야 함 */}
+        <div className="text-[20px] font-semibold">{proposal.meetup_ad_title}</div>
         <div className="text-[13px]">
           {proposal.text}&nbsp;&nbsp;
           <span className="text-[#B7B7B7]">{transformCreatedDate(proposal.created_at)}</span>
         </div>
       </div>
-      <div className="flex gap-6 text-[20px] text-[#868282]">
-        <button onClick={handleCancellationModalOpen}>
-          <FaTimesCircle />
+      <div className="flex gap-6 text-[15px] text-white whitespace-nowrap">
+        <button onClick={handleCancellationModalOpen} className="bg-[#F9617A] p-2 rounded-lg">
+          취소
+          {/* <FaTimesCircle /> */}
         </button>
-        {isModalOpen && modalType === "cancellation" && <ProposalCancellationModal proposal={proposal} onClose={onModalClose} />}
-        <button onClick={handleProposalDelete}>
-          <FaTrashAlt />
+        <button onClick={handleProposalDelete} className="bg-[#868282] p-2 rounded-lg">
+          숨기기
+          {/* <FaTrashAlt /> */}
         </button>
-        {isModalOpen && modalType === "deletion" && <ProposalDeletionModal proposal={proposal} onClose={onModalClose} />}
       </div>
+      {isModalOpen && modalType === "cancellation" && <ProposalCancellationModal proposal={proposal} onClose={onModalClose} />}
+      {isModalOpen && modalType === "deletion" && <ProposalDeletionModal proposal={proposal} onClose={onModalClose} />}
     </div>
   );
 };

@@ -2,6 +2,7 @@ export type SentProposal = {
   id: number;
   created_at: string;
   meetup_name: string;
+  meetup_ad_title: string;
   status: string;
   text: string;
 };

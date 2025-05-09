@@ -17,7 +17,7 @@ const ModalLayout = ({ children, onClose }: ModalLayoutProps) => {
         className="bg-white w-[280px] h-[287px] p-6 rounded-xl shadow-lg flex items-center justify-center"
         onClick={e => e.stopPropagation()} // 안쪽 누르면 닫기 막기
       >
-        {children}
+        {children}행
       </div>
     </div>
   );

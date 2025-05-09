@@ -159,7 +159,7 @@ export const getSentProposal = async () => {
     }
 
     const { result } = await response.json();
-    console.log("신청서 목록들:", result);
+    console.log("보낸 신청서 목록들:", result);
     return result;
   } catch (error) {
     console.error("모임 정보를 가져오는데 실패했습니다:", error);
@@ -220,5 +220,35 @@ export const cancelProposal = async (proposalId: number) => {
     return data;
   } catch (error) {
     console.error("신청서 취소 중 오류", error);
+  }
+};
+
+// 보낸신청서페이지 : 신청서 숨기기
+export const hideProposal = async (proposalId: number) => {
+  const accessToken = Cookies.get("accessToken");
+  try {
+    const response = await fetch(`${BASE_URL}/api/v1/proposal/${proposalId}/hide`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || "알 수 없는 오류");
+    }
+
+    // if (response) {
+    //   console.log(response);
+    //   return;
+    // }
+
+    console.log("신청서 숨기기 성공~");
+    // const result = await response.json();
+    // console.log("숨긴 신청서:", result);
+    return;
+  } catch (error) {
+    console.error("신청서 숨기기를 실패했습니다:", error);
   }
 };
