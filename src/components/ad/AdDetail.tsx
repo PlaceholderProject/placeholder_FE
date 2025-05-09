@@ -5,6 +5,7 @@ import calculateDays from "@/utils/calculateDays";
 import AdNonModal from "./AdNonModal";
 import { BASE_URL } from "@/constants/baseURL";
 import { useAdItem } from "@/hooks/useAdItem";
+import Image from "next/image";
 
 const AdDetail = ({ meetupId, userNickname }: { meetupId: number; userNickname: string }) => {
   const { adData, error, isPending } = useAdItem(meetupId);
@@ -37,7 +38,7 @@ const AdDetail = ({ meetupId, userNickname }: { meetupId: number; userNickname: 
       <div>
         <div>⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯</div>
         {/* <Image width={50} height={20} src={imageUrl} alt={"모임 광고글 이미지"} /> */}
-        <img src={imageUrl} alt={"모임 광고글 이미지"} />
+        <Image src={imageUrl} alt="모임 광고글 이미지" width={150} height={100} />
 
         <div>⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯</div>
         <div>🩵 모임이름 : {adData.name}</div>

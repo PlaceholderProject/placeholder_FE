@@ -7,6 +7,7 @@ import { LabeledInputProps } from "@/types/meetupType";
 import { LabeledSelectProps } from "@/types/meetupType";
 import { useRouter } from "next/navigation";
 import { createMeetupApi } from "@/services/meetup.service";
+import Image from "next/image";
 
 const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(({ id, name, label, type, placeholder, value, defaultValue, disabled, required, checked, onChange }, ref) => {
   return (
@@ -262,7 +263,7 @@ const MeetupForm = () => {
 
           <div>
             <h4>선택된 이미지</h4>
-            <img src={previewImage} alt="previewImage" />
+            <Image src={previewImage} alt="previewImage" width={150} height={100} />
             <LabeledInput
               id="image"
               name="image"

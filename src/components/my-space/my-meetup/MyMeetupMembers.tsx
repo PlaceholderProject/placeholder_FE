@@ -9,6 +9,7 @@ import OutButton from "./OutButton";
 import { MeetupMemberProps } from "@/types/myMeetupMemberType";
 import { MyMeetupMember } from "@/types/myMeetupMemberType";
 import { MyMeetupUser } from "@/types/myMeetupMemberType";
+import Image from "next/image";
 
 // const MyMeetupMembers = (meetupId: number) => {
 
@@ -48,7 +49,7 @@ const MyMeetupMembers: React.FC<{ meetupId: MyMeetupItem["id"] }> = ({ meetupId 
       {myMeetupMembersData.result.map((myMeetupMember: MyMeetupMember) => (
         <div key={myMeetupMember.id}>
           {myMeetupMember.id}
-          <img src={`${BASE_URL}${myMeetupMember.user?.image}`} className="size-8 rounded-full" />
+          <Image src={`${BASE_URL}${myMeetupMember.user?.image}`} alt="내 모임 회원 이미지" width={50} height={50} className="size-8 rounded-full" />
           {myMeetupMember.user?.nickname}
           {myMeetupMember.role} {myMeetupMember.user?.id}
           {/* <OutButton onClick={() => handleDeleteClick(myMeetupMember.id)} /> */}

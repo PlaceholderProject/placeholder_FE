@@ -7,6 +7,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import Cookies from "js-cookie";
+import Image from "next/image";
 
 // const token = process.env.NEXT_PUBLIC_MY_TOKEN;
 const token = Cookies.get("accessToken");
@@ -329,7 +330,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
         <LabeledInput id="isPublic" name="isPublic" label="공개 여부" type="checkbox" ref={isPublicRef} defaultChecked={previousMeetupData?.isPublic} />
 
         <div>
-          {previewImage ? <img src={previewImage} alt="미리보기 이미지" /> : <p>미리보기 이미지가 없습니다.</p>}
+          {previewImage ? <Image src={previewImage} alt="미리보기 이미지" width={100} height={80} /> : <p>미리보기 이미지가 없습니다.</p>}
           <LabeledInput id="image" name="image" label="광고글 대표 이미지" type="file" accept="image/jpg, image/jpeg, image/png, image/webp, image/bmp" onChange={handlePreviewImageChange} />
         </div>
         <button type="submit">수정 완료</button>
