@@ -2,7 +2,7 @@
 
 import ProposalCancellationModal from "@/components/modals/ProposalCancellationModal";
 import { transformCreatedDate } from "@/utils/ReplyDateFormat";
-import { FaUser, FaUserCheck, FaUserTimes, FaTimesCircle, FaTrashAlt } from "react-icons/fa";
+import { FaUser, FaUserCheck, FaUserTimes } from "react-icons/fa";
 import ProposalDeletionModal from "@/components/modals/ProposalDeletionModal";
 import { SentProposalItemProps } from "@/types/proposalType";
 
@@ -58,7 +58,8 @@ const SentProposalItem = ({ proposal, isModalOpen, modalType, onModalOpen, onMod
           {/* <FaTrashAlt /> */}
         </button>
       </div>
-      {isModalOpen && modalType === "cancellation" && <ProposalCancellationModal proposal={proposal} onClose={onModalClose} />}
+      {isModalOpen && modalType === "cancellation" &&
+        <ProposalCancellationModal proposal={proposal} onClose={onModalClose} />}
       {isModalOpen && modalType === "deletion" && <ProposalDeletionModal proposal={proposal} onClose={onModalClose} />}
     </div>
   );
