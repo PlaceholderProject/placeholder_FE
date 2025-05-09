@@ -10,8 +10,6 @@ const ReplyArea: React.FC = () => {
   const { meetupId } = useParams();
   const [replyCount, setReplyCount] = useState<number>(0);
 
-  if (!meetupId) return;
-
   useEffect(() => {
     const fetchReplyCount = async () => {
       if (meetupId) {
@@ -26,7 +24,7 @@ const ReplyArea: React.FC = () => {
     <div className="flex flex-col justify-start">
       <ReplyForm />
       <div className="text-[10px] m-2 font-[700]">댓글 {replyCount}개</div>
-      <ReplyList meetupId={meetupId} />
+      {meetupId && <ReplyList meetupId={meetupId} />}
     </div>
   );
 };

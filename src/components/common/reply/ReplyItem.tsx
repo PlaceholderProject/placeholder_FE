@@ -1,44 +1,30 @@
 "use client";
 
 import { BASE_URL } from "@/constants/baseURL";
-import { setReply } from "@/stores/replySlice";
 import { ReplyItemProps } from "@/types/replyType";
 import { transformCreatedDate } from "@/utils/ReplyDateFormat";
 import Image from "next/image";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
 import NestedReplyItem from "./NestedReplyItem";
 import { useState } from "react";
 import { useDeleteReply, useEditReply } from "@/hooks/useReply";
+import NestedReplyForm from "./NestedReplyForm";
 
 const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId }) => {
-  const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user.user);
   const [isVisiableNestedReply, setIsVisiableNestedReply] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [text, setText] = useState(reply.text);
+  const [isVisiableNestedReplyForm, setIsVisiableNestedReplyForm] = useState(false);
 
   const editReplyMutation = useEditReply(meetupId);
   const deleteReplyMutation = useDeleteReply(meetupId);
 
-  const nestedReplies = allReplies.filter(r => r.root === reply.id);
+  const nestedReplies = allReplies.filter(r => r.root === reply.id).reverse();
 
-  const handleReplySave = () => {
-    dispatch(
-      setReply({
-        id: reply.id,
-        root: reply.root,
-        recipient: reply.recipient,
-        user: { nickname: reply.user.nickname, image: reply.user.image },
-        text: reply.text,
-        createdAt: reply.createdAt,
-        isOrganizer: reply.isOrganizer,
-      }),
-    );
-  };
-
-  const handleNestedReplyToggle = () => {
-    setIsVisiableNestedReply(!isVisiableNestedReply);
+  const handleNestedReplyFormToggle = () => {
+    setIsVisiableNestedReplyForm(!isVisiableNestedReplyForm);
   };
 
   const handleReplyDelete = async (replyId: number) => {
@@ -100,27 +86,37 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId }) =>
       ) : (
         <div className="pl-6 py-2">{reply.text}</div>
       )}
-      {user.email && (
-        <button className="pl-6 text-[#B7B7B7] text-[9px]" onClick={handleReplySave}>
-          답글달기
-        </button>
-      )}
-
       {nestedReplies.length > 0 && (
         <div>
           {!isVisiableNestedReply && (
-            <button onClick={handleNestedReplyToggle} className="px-6 py-2 text-[#B7B7B7]">
+            <button onClick={() => setIsVisiableNestedReply(true)} className="px-6 py-2 text-[#B7B7B7]">
               ---- 답글 {nestedReplies.length}개 더 보기
             </button>
           )}
           {isVisiableNestedReply && (
             <div>
               {nestedReplies.map(nestedReply => (
-                <NestedReplyItem key={nestedReply.id} nestedReply={nestedReply} />
+                <NestedReplyItem key={nestedReply.id} nestedReply={nestedReply} meetupId={meetupId} handleReplyUpdate={handleReplyUpdate} setIsVisiableNestedReplyForm={setIsVisiableNestedReplyForm} />
               ))}
-              <button onClick={handleNestedReplyToggle} className="px-6 text-[#B7B7B7]">
-                답글 접기
-              </button>
+              {user.email &&
+                (isVisiableNestedReplyForm ? (
+                  <NestedReplyForm
+                    rootReply={reply}
+                    meetupId={meetupId}
+                    setIsVisiableNestedReplyForm={setIsVisiableNestedReplyForm}
+                    isVisiableNestedReplyForm={isVisiableNestedReplyForm}
+                    setIsVisiableNestedReply={setIsVisiableNestedReply}
+                  />
+                ) : (
+                  <div className="flex justify-between px-4">
+                    <button className="text-[#B7B7B7]" onClick={handleNestedReplyFormToggle}>
+                      답글달기
+                    </button>
+                    <button onClick={() => setIsVisiableNestedReply(false)} className="text-[#B7B7B7]">
+                      답글 접기
+                    </button>
+                  </div>
+                ))}
             </div>
           )}
         </div>

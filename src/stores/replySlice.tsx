@@ -31,8 +31,11 @@ const replySlice = createSlice({
     setReply(state, action: PayloadAction<ReplyState["reply"]>) {
       state.reply = action.payload;
     },
+    resetReply() {
+      return initialState;
+    },
   },
 });
 
-export const { setReply } = replySlice.actions;
+export const { setReply, resetReply } = replySlice.actions;
 export default replySlice.reducer;
