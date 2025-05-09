@@ -6,9 +6,19 @@ import AdNonModal from "./AdNonModal";
 import { BASE_URL } from "@/constants/baseURL";
 import { useAdItem } from "@/hooks/useAdItem";
 
-const AdDetail = ({ meetupId }: { meetupId: number }) => {
+const AdDetail = ({ meetupId, userNickname }: { meetupId: number; userNickname: string }) => {
   const { adData, error, isPending } = useAdItem(meetupId);
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const organizerNickname = adData?.organizer.nickname;
+
+  useEffect(() => {
+    if (organizerNickname === userNickname) {
+      setIsAuthorized(true);
+      console.log(`유즈 이펙트 안 트루냐? ${isAuthorized}`);
+    } else {
+      setIsAuthorized(false);
+    }
+  }, [adData, userNickname]);
 
   if (error) return <div>에러 발생: {error.message}</div>;
   if (isPending) return <div>로딩중...</div>;
@@ -18,6 +28,9 @@ const AdDetail = ({ meetupId }: { meetupId: number }) => {
   const endedAt = adData.endedAt;
 
   const imageUrl = `${BASE_URL}${adData.image}`;
+
+  console.log("애드데이터?", adData);
+  console.log(`유즈 이펙트 외부 트루냐? ${isAuthorized}`);
 
   return (
     <>
@@ -29,7 +42,8 @@ const AdDetail = ({ meetupId }: { meetupId: number }) => {
         <div>⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯</div>
         <div>🩵 모임이름 : {adData.name}</div>
 
-        {isAuthorized ?? <AdNonModal meetupId={meetupId} />}
+        <div>방장이름:{adData.organizer.nickname}</div>
+        {isAuthorized && <AdNonModal meetupId={meetupId} />}
         <div>
           🍎 모임장소 : [{adData.place}] {adData.placeDescription}
         </div>
