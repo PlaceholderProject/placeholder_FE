@@ -1,20 +1,55 @@
+"use client";
 import { BASE_URL } from "@/constants/baseURL";
-import { deleteReply } from "@/services/reply.service";
+import { useDeleteReply } from "@/hooks/useReply";
+import { setReply } from "@/stores/replySlice";
 import { RootState } from "@/stores/store";
 import { Reply } from "@/types/replyType";
 import { transformCreatedDate } from "@/utils/ReplyDateFormat";
+import { Dispatch, SetStateAction } from "react";
 import Image from "next/image";
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-const NestedReplyItem = ({ nestedReply }: { nestedReply: Reply }) => {
+const NestedReplyItem = ({
+  nestedReply,
+  meetupId,
+  handleReplyUpdate,
+  setIsVisiableNestedReplyForm,
+}: {
+  nestedReply: Reply;
+  meetupId: string | string[];
+  handleReplyUpdate: (replyId: number) => void;
+  setIsVisiableNestedReplyForm: Dispatch<SetStateAction<boolean>>;
+}) => {
   const user = useSelector((state: RootState) => state.user.user);
+  const deleteReplyMutation = useDeleteReply(meetupId);
+
+  const dispatch = useDispatch();
+
+  const [text, setText] = useState("");
+  const [isEditMode, setIsEditMode] = useState(false);
+
   const handleReplyDelete = async (replyId: number) => {
     if (confirm("정말로 답글을 삭제하시겠습니까?")) {
-      await deleteReply(replyId);
+      await deleteReplyMutation.mutate(replyId);
       alert("정상적으로 삭제되었습니다.");
     }
   };
+
+  const handleTextchange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setText(event.target.value);
+  };
+
+  const handleUpdateMode = () => {
+    setIsEditMode(!isEditMode);
+    setText(nestedReply.text);
+  };
+
+  const selectNickname = () => {
+    setIsVisiableNestedReplyForm(true);
+    dispatch(setReply(nestedReply));
+  };
+
   return (
     <div className="mx-4 my-2">
       <div className="flex justify-between">
@@ -36,14 +71,30 @@ const NestedReplyItem = ({ nestedReply }: { nestedReply: Reply }) => {
         </span>
         {nestedReply.user.nickname === user.nickname && (
           <span className="flex gap-2">
-            <button>수정</button>
+            <button
+              onClick={() => {
+                handleUpdateMode();
+              }}
+            >
+              수정
+            </button>
             <button onClick={() => handleReplyDelete(nestedReply.id)}>삭제</button>
           </span>
         )}
       </div>
-      <div className="pl-6">
-        <span>@{nestedReply.recipient}</span> {nestedReply.text}
-      </div>
+      {isEditMode ? (
+        <div>
+          <textarea value={text} onChange={handleTextchange} />
+          <button onClick={handleUpdateMode}>취소</button>
+          <button onClick={() => handleReplyUpdate(nestedReply.id)}>수정</button>
+        </div>
+      ) : (
+        <div onClick={selectNickname} className="pl-6">
+          <span>
+            @{nestedReply.recipient} {nestedReply.text}
+          </span>
+        </div>
+      )}
     </div>
   );
 };
