@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import { Participant } from "@/types/scheduleType";
+import Image from "next/image";
+import { getImageURL } from "@/utils/getImageURL";
 
 interface AttendeePopoverProps {
   participants: Participant[];
@@ -43,19 +44,13 @@ const AttendeePopover = ({ participants }: AttendeePopoverProps) => {
         className="flex items-center space-x-2 cursor-pointer text-gray-700 hover:text-gray-900"
       >
         <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-          {participants[0].image ? (
-            <Image
-              src={participants[0].image}
-              alt={participants[0].nickname}
-              width={32}
-              height={32}
-              className="object-cover"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-500">
-              {participants[0].nickname.charAt(0)}
-            </div>
-          )}
+          <Image
+            src={getImageURL(participants[0].image)}
+            alt={participants[0].nickname}
+            width={32}
+            height={32}
+            className="w-full h-full object-cover"
+          />
         </div>
         <span>{displayAttendee}</span>
       </button>
@@ -67,19 +62,13 @@ const AttendeePopover = ({ participants }: AttendeePopoverProps) => {
               {participants.map((participant, index) => (
                 <div key={index} className="flex items-center px-3 py-2 hover:bg-gray-100">
                   <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 mr-3 flex-shrink-0">
-                    {participant.image ? (
-                      <Image
-                        src={participant.image}
-                        alt={participant.nickname}
-                        width={32}
-                        height={32}
-                        className="object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-500">
-                        {participant.nickname.charAt(0)}
-                      </div>
-                    )}
+                    <Image
+                      src={getImageURL(participant.image)}
+                      alt={participant.nickname}
+                      width={32}
+                      height={32}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <span className="text-sm text-gray-700">{participant.nickname}</span>
                 </div>

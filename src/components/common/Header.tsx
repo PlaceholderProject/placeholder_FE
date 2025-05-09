@@ -3,22 +3,22 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { FaRegBell } from "react-icons/fa6";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsAuthenticated } from "@/stores/authSlice";
 import { persistor, RootState } from "@/stores/store";
 import { logout } from "@/stores/userSlice";
+import { setHasUnreadNotifications } from "@/stores/notificationSlice";
 
 const Header = () => {
-  const [isRead, setIsRead] = useState(true);
-  const router = useRouter();
-
+  const hasUnreadNotifications = useSelector((state: RootState) => state.notification.hasUnread);
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const user = useSelector((state: RootState) => state.user.user);
 
   const dispatch = useDispatch();
+  const router = useRouter();
 
   useEffect(() => {
     const accessToken = Cookies.get("accessToken");
@@ -30,20 +30,20 @@ const Header = () => {
     }
   }, []);
 
-  console.log("REDUX에 저장된 유저정보", user);
+  console.log(user);
 
   const handleLogout = async () => {
     Cookies.remove("accessToken");
     Cookies.remove("refreshToken");
     dispatch(setIsAuthenticated(false));
     dispatch(logout());
+    dispatch(setHasUnreadNotifications(false));
 
     await persistor.purge();
   };
 
   const handleNotificationPage = () => {
     router.replace("/notification");
-    setIsRead(false);
   };
 
   return (
@@ -59,7 +59,8 @@ const Header = () => {
                 <button onClick={handleNotificationPage}>
                   <FaRegBell color="#D9D9D9" size="20" />
                 </button>
-                {isRead && <div className="bg-[#F9617A] w-2 h-2 rounded-full absolute right-0 top-0"></div>}
+                {hasUnreadNotifications &&
+                  <div className="bg-[#F9617A] w-2 h-2 rounded-full absolute right-0 top-0"></div>}
               </div>
               <button onClick={handleLogout} className="w-20 h-8 bg-[#FEFFEC]">
                 로그아웃
