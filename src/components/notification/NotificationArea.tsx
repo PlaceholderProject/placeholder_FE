@@ -1,18 +1,15 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { getNotifications } from "@/services/notification.service";
 import { useDispatch } from "react-redux";
 import { setIsAuthenticated } from "@/stores/authSlice";
 import NotificationItem from "@/components/notification/NotificationItem";
+import { useNotificationList } from "@/hooks/useNotification";
 
 const NotificationArea = () => {
   const dispatch = useDispatch();
 
-  const { data: notifications, isPending, Error } = useQuery({
-    queryKey: ["notifications"], queryFn: getNotifications,
-  });
+  const { data: notifications, isPending, error } = useNotificationList();
 
   useEffect(() => {
     if (notifications) {
@@ -22,7 +19,7 @@ const NotificationArea = () => {
   }, [notifications, dispatch]);
 
   if (isPending) return <div>Loading...</div>;
-  if (Error) return <div>Error</div>;
+  if (error) return <div>Error</div>;
 
   return (
     <div className="max-w-3xl mx-auto">

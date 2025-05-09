@@ -2,12 +2,12 @@
 
 import { Notification } from "@/types/NotificationType";
 import { useRouter } from "next/navigation";
-import { useNotification } from "@/hooks/useNotification";
 import { formatNotificationDate } from "@/utils/NotificationdateUtils";
+import { useNotificationRead } from "@/hooks/useNotification";
 
 const NotificationItem = ({ id, message, url, is_read, created_at }: Notification) => {
   const router = useRouter();
-  const { markAsRead } = useNotification(id);
+  const { markAsRead } = useNotificationRead(id);
 
   const formattedDate = created_at ? formatNotificationDate(created_at) : "";
 

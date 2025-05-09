@@ -24,9 +24,9 @@ export const getNotifications = async (): Promise<Notification[]> => {
 
 // 알림 읽음 여부
 export const markNotificationAsRead = async (notificationId: number) => {
-  const token = Cookies.get("token");
+  const token = Cookies.get("accessToken");
 
-  const response = await fetch(`${BASE_URL}/api/v1/notifications/${notificationId}/read`, {
+  const response = await fetch(`${BASE_URL}/api/v1/notification/${notificationId}/read`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
   });
