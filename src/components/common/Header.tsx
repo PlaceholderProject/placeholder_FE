@@ -30,7 +30,7 @@ const Header = () => {
     }
   }, []);
 
-  console.log("REDUX에 저장된 유저정보", user);
+  console.log(user);
 
   const handleLogout = async () => {
     Cookies.remove("accessToken");
