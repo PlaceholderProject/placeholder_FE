@@ -2,10 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createSchedule, getSchedule, updateSchedule } from "@/services/schedule.service";
-import { useDaumPostcodePopup } from "react-daum-postcode";
 import MemberSelector from "@/components/schedule/MemberSelector";
 import { Schedule } from "@/types/scheduleType";
+import { useCreateSchedule, useScheduleDetail, useUpdateSchedule } from "@/hooks/useSchedule";
+import { useDaumPostcodePopup } from "react-daum-postcode";
 
 interface ScheduleFormProps {
   meetupId: number;
@@ -18,9 +18,21 @@ const ScheduleForm = ({
                         meetupId,
                         mode = "create",
                         scheduleId,
-                        initialData,
                       }: ScheduleFormProps) => {
   const router = useRouter();
+  //카카오 우편 API 팝업
+  const openPostcode = useDaumPostcodePopup();
+
+  const createMutation = useCreateSchedule(meetupId);
+  const updateMutation = useUpdateSchedule(scheduleId || 0);
+  const { data: scheduleData, isPending: isLoadingSchedule } = useScheduleDetail(
+    mode === "edit" && scheduleId ? scheduleId : undefined,
+    {
+      enabled: mode === "edit" && !!scheduleId,
+    },
+  );
+
+  // 폼 Ref들
   const scheduledAtRef = useRef<HTMLInputElement>(null);
   const placeRef = useRef<HTMLInputElement>(null);
   const addressRef = useRef<HTMLInputElement>(null);
@@ -29,68 +41,38 @@ const ScheduleForm = ({
   const memoRef = useRef<HTMLTextAreaElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
 
+  //멤버 상태관리
   const [selectedMember, setSelectedMember] = useState<number[]>([]);
-  const [isPending, setIsPending] = useState(mode === "edit" && !initialData);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const openPostcode = useDaumPostcodePopup();
-
-  // 수정 모드에서 초기 데이터 가져오기
+  // 폼 초기화
   useEffect(() => {
-    const fetchScheduleData = async () => {
-      if (mode === "edit" && scheduleId && !initialData) {
-        try {
-          setIsPending(true);
-          const data = await getSchedule(scheduleId);
-
-          // 폼 필드 초기화
-          if (scheduledAtRef.current) {
-            // datetime-local 입력에 맞는 형식으로 변환
-            const date = new Date(data.scheduledAt);
-            const formattedDate = date.toISOString().slice(0, 16);
-            scheduledAtRef.current.value = formattedDate;
-          }
-          if (placeRef.current) placeRef.current.value = data.place;
-          if (addressRef.current) addressRef.current.value = data.address;
-          if (latitudeRef.current) latitudeRef.current.value = data.latitude;
-          if (longitudeRef.current) longitudeRef.current.value = data.longitude;
-          if (memoRef.current) memoRef.current.value = data.memo;
-
-          // 참석자 초기화
-          const participantIds = data.participant.map(p => p.id);
-          setSelectedMember(participantIds);
-
-          setIsPending(false);
-        } catch (error: unknown) {
-          setErrorMessage("스케줄 정보를 불러오는 데 실패했습니다.");
-          setIsPending(false);
-          console.error("Schedule fetch error:", error);
-        }
-      }
-    };
-
-    fetchScheduleData();
-  }, [mode, scheduleId, initialData]);
-
-  // 초기 데이터가 제공된 경우 폼 초기화
-  useEffect(() => {
-    if (initialData && mode === "edit") {
+    if (mode === "edit" && scheduleData) {
+      // 폼 필드 초기화
       if (scheduledAtRef.current) {
-        const date = new Date(initialData.scheduledAt);
+        const date = new Date(scheduleData.scheduledAt);
         const formattedDate = date.toISOString().slice(0, 16);
         scheduledAtRef.current.value = formattedDate;
       }
-      if (placeRef.current) placeRef.current.value = initialData.place;
-      if (addressRef.current) addressRef.current.value = initialData.address;
-      if (latitudeRef.current) latitudeRef.current.value = initialData.latitude;
-      if (longitudeRef.current) longitudeRef.current.value = initialData.longitude;
-      if (memoRef.current) memoRef.current.value = initialData.memo;
+      if (placeRef.current) placeRef.current.value = scheduleData.place;
+      if (addressRef.current) addressRef.current.value = scheduleData.address;
+      if (latitudeRef.current) latitudeRef.current.value = scheduleData.latitude;
+      if (longitudeRef.current) longitudeRef.current.value = scheduleData.longitude;
+      if (memoRef.current) memoRef.current.value = scheduleData.memo;
 
-      const participantIds = initialData.participant.map(p => parseInt(p.nickname));
+      // 참석자 초기화
+      const participantIds = scheduleData.participant.map(p => {
+        if (typeof p === "object" && p !== null) {
+          if ("id" in p) return p.id;
+          if ("nickname" in p) return parseInt(p.nickname);
+        }
+        return 0; // 또는 다른 기본값
+      }) as number[];
+
       setSelectedMember(participantIds);
     }
-  }, [initialData, mode]);
+  }, [scheduleData, mode]);
 
+  // 멤버 선택 처리
   const handleMemberSelect = (memberId: number) => {
     setSelectedMember(prev =>
       prev.includes(memberId)
@@ -99,6 +81,7 @@ const ScheduleForm = ({
     );
   };
 
+  // 주소 검색 처리
   const handleAddressSearch = () => {
     openPostcode({
       onComplete: data => {
@@ -116,45 +99,51 @@ const ScheduleForm = ({
     });
   };
 
+  // 폼 제출 처리
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const formData = new FormData();
+    const payload = {
+      scheduled_at: scheduledAtRef.current?.value || "",
+      place: placeRef.current?.value || "",
+      address: addressRef.current?.value || "",
+      latitude: String(latitudeRef.current?.value || "0"),
+      longitude: String(longitudeRef.current?.value || "0"),
+      memo: memoRef.current?.value || "",
+      participant: selectedMember,
+    };
+
+    formData.append("payload", JSON.stringify(payload));
+    if (imageRef.current?.files?.[0]) {
+      formData.append("image", imageRef.current.files[0]);
+    }
+
     try {
-      const formData = new FormData();
-      const payload = {
-        scheduled_at: scheduledAtRef.current?.value || "",
-        place: placeRef.current?.value || "",
-        address: addressRef.current?.value || "",
-        latitude: String(latitudeRef.current?.value || "0"),
-        longitude: String(longitudeRef.current?.value || "0"),
-        memo: memoRef.current?.value || "",
-        participant: selectedMember,
-      };
-
-      formData.append("payload", JSON.stringify(payload));
-      if (imageRef.current?.files?.[0]) {
-        formData.append("image", imageRef.current.files[0]);
-      }
-
       if (mode === "create") {
-        await createSchedule(meetupId, formData);
-      } else if (mode === "edit" && scheduleId) {
-        await updateSchedule(scheduleId, formData);
+        await createMutation.mutateAsync(formData);
+      } else if (mode === "edit" && scheduleId && updateMutation) {
+        await updateMutation.mutateAsync({ scheduleId, formData });
       }
-
       router.push(`/meetup/${meetupId}`);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error(`Failed to ${mode} schedule:`, error.message);
-      } else {
-        console.error(`Failed to ${mode} schedule with unknown error`);
-      }
-      setErrorMessage(`스케줄 ${mode === "create" ? "생성" : "수정"}에 실패했습니다.`);
+    } catch (error) {
+      console.error(`Failed to ${mode} schedule:`, error);
     }
   };
 
-  if (isPending) return <div>데이터를 불러오는 중...</div>;
-  if (errorMessage) return <div>에러: {errorMessage}</div>;
+  // 로딩 상태 처리
+  if (mode === "edit" && isLoadingSchedule) {
+    return <div className="p-4 text-center">데이터를 불러오는 중...</div>;
+  }
+
+  // 에러 상태 처리
+  if (createMutation.isError || (updateMutation && updateMutation.isError)) {
+    return (
+      <div className="p-4 text-center text-red-500">
+        {`스케줄 ${mode === "create" ? "생성" : "수정"}에 실패했습니다.`}
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col space-y-4 p-4">

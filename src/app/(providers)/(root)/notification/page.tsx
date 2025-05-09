@@ -1,7 +1,8 @@
 import React from "react";
+import NotificationArea from "@/components/notification/NotificationArea";
 
 const page = () => {
-  return <div>page</div>;
+  return <NotificationArea />;
 };
 
 export default page;

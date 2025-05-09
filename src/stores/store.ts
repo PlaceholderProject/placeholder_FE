@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./authSlice";
 import userReducer from "./userSlice";
+import notificationReducer from "./notificationSlice";
 import storage from "redux-persist/lib/storage";
 import { createTransform, FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE } from "redux-persist";
 import nonModalReducer from "./nonModalSlice";
@@ -36,6 +37,7 @@ export const store = configureStore({
     reply: replyReducer,
     user: persistedUserReducer,
     proposal: proposalReducer,
+    notification: notificationReducer,
     sort: sortReducer,
     filter: filterReducer,
     search: searchReducer,
