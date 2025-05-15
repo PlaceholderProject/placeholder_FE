@@ -18,7 +18,7 @@ export interface Meetup {
   isPublic: boolean;
   image?: string;
   category: string;
-  createAt: string;
+  createdAt: string;
   commentCount: number;
 }
 

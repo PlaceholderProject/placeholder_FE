@@ -62,8 +62,9 @@ const ThumbnailArea = () => {
     isError,
   } = useInfiniteQuery({
     queryKey: getQueryKey(),
-    queryFn: ({ pageParam = 1 }) =>
-      getHeadhuntingsApi(
+    queryFn: ({ pageParam = 1 }) => {
+      console.log("ThumbnailArea에서 데이터 fetch 시작, 쿼리 키는 이것이다:", getQueryKey());
+      return getHeadhuntingsApi(
         {
           sortType,
           ...(isFilterActive && place ? { place: place } : {}),
@@ -71,7 +72,8 @@ const ThumbnailArea = () => {
         },
         pageParam,
         10,
-      ),
+      );
+    },
     initialPageParam: 1,
     getNextPageParam: lastPage => {
       if (lastPage.next) {
@@ -82,6 +84,15 @@ const ThumbnailArea = () => {
       return undefined;
     },
   });
+
+  // useEffect 추가 - 데이터 변경 감지
+  useEffect(() => {
+    if (headhuntingsData) {
+      console.log("ThumbnailArea 데이터 변경:", headhuntingsData);
+      const allItems = headhuntingsData.pages.flatMap(page => page.result);
+      console.log("모든 아이템 목록:", allItems);
+    }
+  }, [headhuntingsData]);
 
   useEffect(() => {
     console.log(`정렬 타입 변경 감지: ${sortType}`);
@@ -136,6 +147,12 @@ const ThumbnailArea = () => {
 
   // 모든 페이지 데이터를 하나의 배열로 합침
   const allThumbnails = headhuntingsData?.pages.flatMap(page => page.result) || [];
+  console.log("필터 적용 전 모든 데이터:", allThumbnails);
+
+  // sortedThumbnails 변수를 만들 때 필터링 확인
+  // 여기에 추가 필터링 로직이 있는지 확인하고 로깅
+
+  console.log("화면에 표시할 데이터:", allThumbnails);
 
   // sort 이거 얻다 불니하고 싶었는데 이 로직을 백엔드에서 처리해줬다
   // 인기순 (기본)

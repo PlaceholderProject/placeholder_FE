@@ -74,6 +74,9 @@ const MeetupForm = () => {
   const [isStartedAtNull, setIsStartedAtNull] = useState(false);
   const [isEndedAtNull, setIsEndedAtNull] = useState(false);
 
+  // 제출 로딩상태 관리 스테이트 추가
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // 미리보기 스테이트
   const [previewImage, setPreviewImage] = useState("/meetup_default_image.jpg");
 
@@ -84,17 +87,37 @@ const MeetupForm = () => {
   // useMutation은 최상단에 위치시키라고 함
   const createMutation = useMutation({
     mutationFn: (meetupFormData: FormData) => createMeetupApi(meetupFormData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["meetups"] });
-      router.push("/");
-    },
+    // onSuccess: data => {
+    //   console.log("모임 새성 성공:", data);
+    //   console.log("쿼리 무효화 시작");
+    //   console.log(
+    //     "현재 쿼리 키 목록을 직접 뽑아내 보도록 하겠읍낟",
+    //     queryClient
+    //       .getQueryCache()
+    //       .getAll()
+    //       .map(query => query.queryKey),
+    //   );
+    //   queryClient.invalidateQueries({ queryKey: ["meetups"] });
+    //   console.log("meetups 쿼리 무효화 햇어");
+    //   queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
+    //   console.log("headhuntings 쿼리 무효화함");
+    //   // 메인 가기
+    //   router.push("/");
 
-    onError: error => {
-      console.error("모임 생성 오류 발생:", error.message);
-    },
+    //   //지연 후 새로고침
+    //   // setTimeout(() => {
+    //   //   window.location.reload();
+    //   // }, 200);
+    // },
+
+    // onError: error => {
+    //   console.error("모임 생성 오류 발생:", error.message);
+    // },
   });
 
-  const handleMeetupFormSubmit = (event: React.FormEvent) => {
+  // async 함수로 변경함
+
+  const handleMeetupFormSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     // ❗️❗️❗️ 이 모든 과정을 제출 전에 실행하고 있고, 하나로 묶어야겠는데?
@@ -160,6 +183,8 @@ const MeetupForm = () => {
       console.log("유효성 함수 실행은 됨");
       console.log("설정된 모임 시작일, 모임 종료일, 광고 종료일:", startDate, endDate, adEndDate);
 
+      // 제출 상태 다시 초기화 추가
+      setIsSubmitting(false);
       return;
     }
 
@@ -181,9 +206,11 @@ const MeetupForm = () => {
       image: imageRef.current?.value || "",
       isLike: false,
       likeCount: 0,
-      createAt: "",
+      createdAt: "",
       commentCount: 0,
     };
+
+    console.log("생성할 새모임 데이터:", newMeetup);
 
     const meetupFormData = new FormData();
     meetupFormData.append("payload", JSON.stringify(newMeetup));
@@ -192,7 +219,21 @@ const MeetupForm = () => {
       meetupFormData.append("image", imageRef.current.files[0]);
     }
 
-    createMutation.mutate(meetupFormData);
+    // createMutation.mutate(meetupFormData);
+    // 그냥 뮤테이션 이었는데 이거를 아래처럼 try catch 블록으로 mutateAsync 사용하게 리팩토링
+
+    try {
+      await createMutation.mutateAsync(meetupFormData);
+      queryClient.invalidateQueries({ queryKey: ["meetups"] });
+      queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
+      alert("모임 생성에 성공했습니다!");
+      router.push("/");
+    } catch (error: any) {
+      console.error("모임 생성 오류 발생:", error?.message || "알 수 없는 오류");
+      alert(`모임 생성 중 오류가 발생했습니다: ${error?.message || "알 수 없는 오류"}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // 이미지 미리보기 스테이트

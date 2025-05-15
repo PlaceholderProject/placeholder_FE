@@ -163,7 +163,7 @@ const MeetupFormPractice = () => {
       image: imageRef.current?.value || "",
       isLike: false,
       likeCount: 0,
-      createAt: "",
+      createdAt: "",
       commentCount: 0,
     };
 

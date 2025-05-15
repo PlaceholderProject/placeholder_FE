@@ -5,6 +5,9 @@ import { refreshToken } from "./auth.service";
 // 모임 생성 api
 export const createMeetupApi = async (meetupFormData: FormData): Promise<void> => {
   const token = Cookies.get("accessToken");
+
+  //FormDAta 내용 확인
+  console.log("FormData 페이로드:", JSON.parse(meetupFormData.get("payload") as string));
   const response = await fetch(`${BASE_URL}/api/v1/meetup`, {
     method: "POST",
     headers: {
@@ -20,8 +23,9 @@ export const createMeetupApi = async (meetupFormData: FormData): Promise<void> =
     console.log(errorText);
     throw new Error("모임 생성 실패");
   }
-  console.log("모임생성함수 실행됨");
-  return await response.json();
+  const responseDataToCheck = await response.json();
+  console.log("서버 응답 데이터 확인:", responseDataToCheck);
+  return await responseDataToCheck;
 };
 
 // --TODO--
