@@ -189,8 +189,8 @@ const ThumbnailArea = () => {
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
-        {allThumbnails.map((thumbnail: Meetup) => {
-          return <ThumbnailItem key={thumbnail.id} thumbnail={thumbnail} />;
+        {allThumbnails.map((thumbnail: Meetup, index: number) => {
+          return <ThumbnailItem key={`${thumbnail.id}-${index}`} thumbnail={thumbnail} />;
         })}
         {/* 더 불러오기 */}
         {/* {hasNextPage && (

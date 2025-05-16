@@ -6,8 +6,8 @@ interface SortTypeState {
 }
 
 const initialState: SortTypeState = {
-  sortType: "latest",
-  // sortType: "like",
+  // sortType: "latest",
+  sortType: "like",
 };
 
 const sortSlice = createSlice({
