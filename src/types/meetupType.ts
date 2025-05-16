@@ -40,6 +40,7 @@ export interface LabeledInputProps {
   defaultChecked?: boolean;
   accept?: string;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  maxLength?: number;
 }
 
 export interface LabeledSelectProps {

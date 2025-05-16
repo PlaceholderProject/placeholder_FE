@@ -8,8 +8,9 @@ import { LabeledSelectProps } from "@/types/meetupType";
 import { useRouter } from "next/navigation";
 import { createMeetupApi } from "@/services/meetup.service";
 import Image from "next/image";
+import { eventNames } from "process";
 
-const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(({ id, name, label, type, placeholder, value, defaultValue, disabled, required, checked, onChange }, ref) => {
+const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(({ id, name, label, type, placeholder, value, defaultValue, disabled, required, checked, onChange, maxLength }, ref) => {
   return (
     <>
       <div>
@@ -26,6 +27,7 @@ const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(({ id
           checked={checked}
           onChange={onChange}
           ref={ref}
+          maxLength={maxLength}
         />
       </div>
     </>
@@ -69,6 +71,33 @@ const MeetupForm = () => {
   const isPublicRef = useRef<HTMLInputElement>(null); //초기값 왜 null
   const categoryRef = useRef<HTMLSelectElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
+
+  // 글자수 관리 위한 스테이트
+  const [nameLength, setNameLength] = useState(0);
+  const [placeLength, setPlaceLength] = useState(0);
+  const [adTitleLength, setAdTitleLength] = useState(0);
+  const [descriptionLength, setDescriptionLength] = useState(0);
+
+  const handleNameLengthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNameLength(event.target.value.length);
+  };
+
+  const handlePlaceLengthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPlaceLength(event.target.value.length);
+  };
+
+  const handleAdTitleLengthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAdTitleLength(event.target.value.length);
+  };
+
+  const handleDescriptionLengthChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDescriptionLength(event.target.value.length);
+  };
+
+  const MAX_NAME_LENGTH = 15;
+  const MAX_PLACE_LENGTH = 20;
+  const MAX_AD_TITLE_LENGTH = 15;
+  const MAX_DESCRIPTION_LENGTH = 60;
 
   // 체크 박스 상태 관리 위한 스테이트
   const [isStartedAtNull, setIsStartedAtNull] = useState(false);
@@ -252,9 +281,13 @@ const MeetupForm = () => {
         <form onSubmit={handleMeetupFormSubmit}>
           <div>
             <LabeledSelect id="category" name="category" label="모임 성격" options={categoryOptions} ref={categoryRef} required />
-
-            <LabeledInput id="name" name="name" label="모임 이름(랜덤 생성 버튼 필요)" type="text" ref={nameRef} required />
-
+            <div>
+              <LabeledInput id="name" name="name" label="모임 이름" type="text" ref={nameRef} required onChange={handleNameLengthChange} maxLength={MAX_NAME_LENGTH} />
+              <span className="text-gray-400 text-sm">
+                {nameLength <= MAX_NAME_LENGTH ? nameLength : MAX_NAME_LENGTH} / {MAX_NAME_LENGTH} 자
+              </span>
+              {nameLength > MAX_NAME_LENGTH && <p className="text-red-500 text-sm">모임 이름은 최대 {MAX_NAME_LENGTH}자까지 입력할 수 있습니다.</p>}
+            </div>
             <LabeledInput id="startedAt" name="startedAt" label="모임 시작 날짜" type="date" ref={startedAtRef} disabled={isStartedAtNull} required />
             <LabeledInput
               id="startedAtUndecided"
@@ -293,15 +326,52 @@ const MeetupForm = () => {
             />
 
             <LabeledSelect id="category" name="category" label="모임 지역" options={placeOptions} ref={placeRef} required />
-            <LabeledInput id="placeDescription" name="placeDescription" label="모임 장소" type="text" placeholder="만날 곳의 대략적 위치를 적어주세요. 예) 강남역" ref={placeDescriptionRef} required />
 
-            <LabeledInput id="adTitle" name="adTitle" label="광고글 제목" type="text" ref={adTitleRef} required />
+            <div>
+              <LabeledInput
+                id="placeDescription"
+                name="placeDescription"
+                label="모임 장소"
+                type="text"
+                placeholder="만날 곳의 대략적 위치를 적어주세요. 예) 강남역"
+                ref={placeDescriptionRef}
+                required
+                onChange={handlePlaceLengthChange}
+                maxLength={MAX_PLACE_LENGTH}
+              />
+              <span className="text-gray-400 text-sm">
+                {placeLength <= MAX_PLACE_LENGTH ? placeLength : MAX_PLACE_LENGTH} / {MAX_PLACE_LENGTH} 자
+              </span>
+              {placeLength > MAX_PLACE_LENGTH && <p className="text-red-500 text-sm">모임 장소 설명은 최대 {MAX_PLACE_LENGTH}자까지 입력할 수 있습니다.</p>}
+            </div>
+
+            <div>
+              <LabeledInput id="adTitle" name="adTitle" label="광고글 제목" type="text" ref={adTitleRef} required onChange={handleAdTitleLengthChange} maxLength={MAX_AD_TITLE_LENGTH} />
+
+              <span className="text-gray-400 text-sm">
+                {adTitleLength <= MAX_AD_TITLE_LENGTH ? adTitleLength : MAX_AD_TITLE_LENGTH} / {MAX_AD_TITLE_LENGTH} 자
+              </span>
+              {adTitleLength > MAX_AD_TITLE_LENGTH && <p className="text-red-500 tet-sm">광고글 제목은 최대 {MAX_AD_TITLE_LENGTH}자 까지 입력할 수 있습니다.</p>}
+            </div>
 
             <LabeledInput id="adEndedAt" name="adEndedAt" label="광고 종료 날짜" type="date" ref={adEndedAtRef} required />
           </div>
           <div>
             <label htmlFor="description">광고글 설명</label>
-            <textarea id="description" name="description" defaultValue="" placeholder="멤버 광고글에 보일 설명을 적어주세요." ref={descriptionRef}></textarea>
+            <textarea
+              id="description"
+              name="description"
+              defaultValue=""
+              placeholder="멤버 광고글에 보일 설명을 적어주세요."
+              ref={descriptionRef}
+              maxLength={MAX_DESCRIPTION_LENGTH}
+              onChange={handleDescriptionLengthChange}
+            />
+            <span className="text-gray-400 text-sm">
+              {" "}
+              {descriptionLength <= MAX_DESCRIPTION_LENGTH ? descriptionLength : MAX_DESCRIPTION_LENGTH} / {MAX_DESCRIPTION_LENGTH} 자
+            </span>
+            {descriptionLength > MAX_DESCRIPTION_LENGTH && <p className="text-red-500 text-sm">광고글 설명은 최대 {MAX_DESCRIPTION_LENGTH}자 까지 입력할 수 있습니다.</p>}
           </div>
 
           <div>
