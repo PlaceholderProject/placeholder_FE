@@ -69,9 +69,39 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   // 🍰 useEffect를 시작, 종료 날짜 미정 체크에 또 써야 하는데
   // 🍰 이거 나중에 커스텀훅으로 묶을까?
 
+  // 글자수 관리 위한 스테이트
+  const [nameLength, setNameLength] = useState(0);
+  const [placeLength, setPlaceLength] = useState(0);
+  const [adTitleLength, setAdTitleLength] = useState(0);
+  const [descriptionLength, setDescriptionLength] = useState(0);
+
+  const handleNameLengthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNameLength(event.target.value.length);
+  };
+
+  const handlePlaceLengthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPlaceLength(event.target.value.length);
+  };
+
+  const handleAdTitleLengthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAdTitleLength(event.target.value.length);
+  };
+
+  const handleDescriptionLengthChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDescriptionLength(event.target.value.length);
+  };
+
+  const MAX_NAME_LENGTH = 15;
+  const MAX_PLACE_LENGTH = 20;
+  const MAX_AD_TITLE_LENGTH = 15;
+  const MAX_DESCRIPTION_LENGTH = 60;
+
   // 체크박스 상태 관리 스테이트
   const [isStartedAtNull, setIsStartedAtNull] = useState(false);
   const [isEndedAtNull, setIsEndedAtNull] = useState(false);
+
+  // 제출 로딩상태 관리 스테이트 추가
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const router = useRouter();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -101,12 +131,12 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
 
   const editMutation = useMutation<void, Error, FormData>({
     mutationFn: formData => editMeetupApi(meetupId, formData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["meetup", meetupId] });
-      queryClient.invalidateQueries({ queryKey: ["meetups"] });
-      alert("onSucess invalidate 모임 정보 수정 성공");
-      router.push("/");
-    },
+    // onSuccess: () => {
+    //   queryClient.invalidateQueries({ queryKey: ["meetup", meetupId] });
+    //   queryClient.invalidateQueries({ queryKey: ["meetups"] });
+    //   alert("onSucess invalidate 모임 정보 수정 성공");
+    //   router.push("/");
+    // },
   });
 
   const categoryOptions = ["운동", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
@@ -122,7 +152,8 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   };
 
   // 모임 수정 후 제출 함수
-  const handleEditFormSubmit = (event: React.FormEvent) => {
+  // async함수로 수정함
+  const handleEditFormSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     // 유효성 검사 빌드업 시작
@@ -256,20 +287,33 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
       image: imageRef.current?.value || "",
     };
 
-    const formData = new FormData();
+    const editedFormData = new FormData();
 
-    formData.append("payload", JSON.stringify(editedMeetup));
+    editedFormData.append("payload", JSON.stringify(editedMeetup));
 
     if (imageRef.current?.files?.[0]) {
       const file = imageRef.current.files[0];
-      formData.append("image", file);
+      editedFormData.append("image", file);
     }
 
     // 이게 뭐야
-    const payload = formData.get("payload");
-    console.log("서버로 전송되는 수정된 모임데이터래:", JSON.stringify(payload as string));
-    editMutation.mutate(formData);
 
+    const payload = editedFormData.get("payload");
+    console.log("서버로 전송되는 수정된 모임데이터래:", JSON.stringify(payload as string));
+
+    // editMutation.mutate(formData);
+    // 위처럼 뮤테이션이던 것을 아래 트라이캐치 블록에서 mutateAsync()
+
+    try {
+      await editMutation.mutateAsync(editedFormData);
+      queryClient.invalidateQueries({ queryKey: ["meetup", meetupId] });
+      queryClient.invalidateQueries({ queryKey: ["meetups"] });
+
+      router.push("/");
+    } catch (error: any) {
+      console.error("모임 수정 오류:", error?.message || "알 수 없는 오류 발생");
+      alert(`모임 수정중 오류 발생: ${error?.message || "알수없는 오류"}`);
+    }
     // const handlePreviewImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     //   if (event.target.files && event.target.files[0]) {
     //     const previewFile = event.target.files[0];
@@ -287,53 +331,131 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   return (
     <>
       <form onSubmit={handleEditFormSubmit}>
-        <LabeledInput id="name" name="name" label="모임 이름" type="text" ref={nameRef} defaultValue={previousMeetupData?.name} required />
-        <LabeledSelect id="category" name="category" label="모임 성격" options={categoryOptions} ref={categoryRef} defaultValue={previousMeetupData?.category} required />
-        <LabeledInput
-          id="startedAt"
-          name="startedAt"
-          label="모임 시작 날짜"
-          type="date"
-          ref={startedAtRef}
-          defaultValue={previousMeetupData?.startedAt ? previousMeetupData.startedAt.substring(0, 10) : undefined}
-          disabled={isStartedAtNull}
-          required
-        />
-        <LabeledInput
-          id="startedAtUndecided"
-          name="startedAtUndecided"
-          label="미정"
-          type="checkbox"
-          checked={isStartedAtNull}
-          onChange={event => {
-            setIsStartedAtNull(event?.target.checked);
-          }}
-        />
-
-        <LabeledInput id="endedAt" name="endedAt" label="모임 종료 날짜" type="date" ref={endedAtRef} defaultValue={previousMeetupData?.endedAt?.substring(0, 10)} disabled={isEndedAtNull} required />
-        <LabeledInput
-          id="endedAtUndecided"
-          name="endedAtUndecided"
-          label="미정"
-          type="checkbox"
-          checked={isEndedAtNull}
-          onChange={event => {
-            setIsEndedAtNull(event?.target.checked);
-          }}
-        />
-        <LabeledSelect id="place" name="place" label="모임 지역" options={placeOptions} ref={placeRef} defaultValue={previousMeetupData?.place} required />
-        <LabeledInput id="placeDescription" name="placeDescription" label="모임 장소 설명" type="text" ref={placeDescriptionRef} defaultValue={previousMeetupData?.placeDescription} required />
-        <LabeledInput id="adTitle" name="adTitle" label="광고 제목" type="text" ref={adTitleRef} defaultValue={previousMeetupData?.adTitle} required />
-        <LabeledInput id="adEndedAt" name="adEndedAt" label="광고 종료 날짜" type="date" ref={adEndedAtRef} defaultValue={previousMeetupData?.adEndedAt?.substring(0, 10)} required />
-        <label htmlFor="description">광고글 설명</label>
-        <textarea id="description" name="description" ref={descriptionRef} defaultValue={previousMeetupData?.description || ""} placeholder="설명을 작성하세요" />
-        <LabeledInput id="isPublic" name="isPublic" label="공개 여부" type="checkbox" ref={isPublicRef} defaultChecked={previousMeetupData?.isPublic} />
-
         <div>
-          {previewImage ? <Image src={previewImage} alt="미리보기 이미지" width={100} height={80} /> : <p>미리보기 이미지가 없습니다.</p>}
-          <LabeledInput id="image" name="image" label="광고글 대표 이미지" type="file" accept="image/jpg, image/jpeg, image/png, image/webp, image/bmp" onChange={handlePreviewImageChange} />
+          <LabeledSelect id="category" name="category" label="모임 성격" options={categoryOptions} ref={categoryRef} defaultValue={previousMeetupData?.category} required />
+          <div>
+            <LabeledInput
+              id="name"
+              name="name"
+              label="모임 이름"
+              type="text"
+              ref={nameRef}
+              defaultValue={previousMeetupData?.name}
+              required
+              onChange={handleNameLengthChange}
+              maxLength={MAX_NAME_LENGTH}
+            />
+            <span className="text-gray-400 text-sm">
+              {nameLength <= MAX_NAME_LENGTH ? nameLength : MAX_NAME_LENGTH} / {MAX_NAME_LENGTH} 자
+            </span>
+            {nameLength > MAX_NAME_LENGTH && <p className="text-red-500 text-sm">모임 이름은 최대 {MAX_NAME_LENGTH}자까지 입력할 수 있습니다.</p>}
+          </div>
+          <LabeledInput
+            id="startedAt"
+            name="startedAt"
+            label="모임 시작 날짜"
+            type="date"
+            ref={startedAtRef}
+            defaultValue={previousMeetupData?.startedAt ? previousMeetupData.startedAt.substring(0, 10) : undefined}
+            disabled={isStartedAtNull}
+            required
+          />
+          <LabeledInput
+            id="startedAtUndecided"
+            name="startedAtUndecided"
+            label="미정"
+            type="checkbox"
+            checked={isStartedAtNull}
+            onChange={event => {
+              setIsStartedAtNull(event?.target.checked);
+            }}
+          />
+
+          <LabeledInput
+            id="endedAt"
+            name="endedAt"
+            label="모임 종료 날짜"
+            type="date"
+            ref={endedAtRef}
+            defaultValue={previousMeetupData?.endedAt?.substring(0, 10)}
+            disabled={isEndedAtNull}
+            required
+          />
+          <LabeledInput
+            id="endedAtUndecided"
+            name="endedAtUndecided"
+            label="미정"
+            type="checkbox"
+            checked={isEndedAtNull}
+            onChange={event => {
+              setIsEndedAtNull(event?.target.checked);
+            }}
+          />
+          <LabeledSelect id="place" name="place" label="모임 지역" options={placeOptions} ref={placeRef} defaultValue={previousMeetupData?.place} required />
+
+          <div>
+            {" "}
+            <LabeledInput
+              id="placeDescription"
+              name="placeDescription"
+              label="모임 장소 설명"
+              type="text"
+              ref={placeDescriptionRef}
+              defaultValue={previousMeetupData?.placeDescription}
+              required
+              maxLength={MAX_PLACE_LENGTH}
+              onChange={handlePlaceLengthChange}
+            />
+            <span className="text-gray-400 text-sm">
+              {placeLength <= MAX_PLACE_LENGTH ? placeLength : MAX_PLACE_LENGTH} / {MAX_PLACE_LENGTH} 자
+            </span>
+            {placeLength > MAX_PLACE_LENGTH && <p className="text-red-500 text-sm">모임 장소 설명은 최대 {MAX_PLACE_LENGTH}자까지 입력할 수 있습니다.</p>}
+          </div>
+
+          <div>
+            <LabeledInput
+              id="adTitle"
+              name="adTitle"
+              label="광고 제목"
+              type="text"
+              ref={adTitleRef}
+              defaultValue={previousMeetupData?.adTitle}
+              required
+              onChange={handleAdTitleLengthChange}
+              maxLength={MAX_AD_TITLE_LENGTH}
+            />
+            <span className="text-gray-400 text-sm">
+              {adTitleLength <= MAX_AD_TITLE_LENGTH ? adTitleLength : MAX_AD_TITLE_LENGTH} / {MAX_AD_TITLE_LENGTH} 자
+            </span>
+            {adTitleLength > MAX_AD_TITLE_LENGTH && <p className="text-red-500 tet-sm">광고글 제목은 최대 {MAX_AD_TITLE_LENGTH}자 까지 입력할 수 있습니다.</p>}
+          </div>
+
+          <LabeledInput id="adEndedAt" name="adEndedAt" label="광고 종료 날짜" type="date" ref={adEndedAtRef} defaultValue={previousMeetupData?.adEndedAt?.substring(0, 10)} required />
+          <div>
+            <label htmlFor="description">광고글 설명</label>
+            <textarea
+              id="description"
+              name="description"
+              ref={descriptionRef}
+              defaultValue={previousMeetupData?.description || ""}
+              placeholder="멤버 광고글에 보일 설명을 적어주세요"
+              maxLength={MAX_DESCRIPTION_LENGTH}
+              onChange={handleDescriptionLengthChange}
+            />
+            <span className="text-gray-400 text-sm">
+              {" "}
+              {descriptionLength <= MAX_DESCRIPTION_LENGTH ? descriptionLength : MAX_DESCRIPTION_LENGTH} / {MAX_DESCRIPTION_LENGTH} 자
+            </span>
+            {descriptionLength > MAX_DESCRIPTION_LENGTH && <p className="text-red-500 text-sm">광고글 설명은 최대 {MAX_DESCRIPTION_LENGTH}자 까지 입력할 수 있습니다.</p>}
+          </div>
+          <LabeledInput id="isPublic" name="isPublic" label="공개 여부" type="checkbox" ref={isPublicRef} defaultChecked={previousMeetupData?.isPublic} />
+
+          <div>
+            {previewImage ? <Image src={previewImage} alt="미리보기 이미지" width={100} height={80} /> : <p>미리보기 이미지가 없습니다.</p>}
+            <LabeledInput id="image" name="image" label="광고글 대표 이미지" type="file" accept="image/jpg, image/jpeg, image/png, image/webp, image/bmp" onChange={handlePreviewImageChange} />
+          </div>
+          <button type="submit">수정 완료</button>
         </div>
-        <button type="submit">수정 완료</button>
       </form>
     </>
   );
