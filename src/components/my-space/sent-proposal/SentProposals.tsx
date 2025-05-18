@@ -38,8 +38,6 @@ const SentProposals = () => {
     return <p className="mt-24 flex justify-center">보낸 신청서가 없습니다.</p>;
   }
 
-  console.log("길이", sentProposals.length);
-
   return (
     <div>
       <ul className="mt-6 flex flex-col gap-5 p-5">

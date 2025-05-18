@@ -163,8 +163,6 @@ export const getSentProposal = async (page: number) => {
 
     return {
       proposals: data.result,
-      hasNext: Boolean(data.next),
-      hasPrev: Boolean(data.previous),
       total: data.total,
     };
   } catch (error) {
