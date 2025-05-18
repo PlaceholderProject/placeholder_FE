@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/common/Header";
 import ReduxProvider from "@/stores/ReduxProvider";
 import QueryProvider from "./(providers)/_providers/QueryProvider";
+import NavigationBar from "@/components/common/NavigationBar";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -33,6 +34,7 @@ export default function RootLayout({
           <QueryProvider>
             <Header />
             {children}
+            <NavigationBar />
           </QueryProvider>
         </ReduxProvider>
       </body>
