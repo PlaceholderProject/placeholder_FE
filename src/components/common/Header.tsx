@@ -7,10 +7,10 @@ import { useCallback, useEffect } from "react";
 import { FaRegBell } from "react-icons/fa6";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
-import { setIsAuthenticated } from "@/stores/authSlice";
 import { persistor, RootState } from "@/stores/store";
-import { logout } from "@/stores/userSlice";
+import { setIsAuthenticated } from "@/stores/authSlice";
 import { setHasUnreadNotifications } from "@/stores/notificationSlice";
+import { logout } from "@/stores/userSlice";
 
 const Header = () => {
   const hasUnreadNotifications = useSelector((state: RootState) => state.notification.hasUnread);
@@ -26,7 +26,7 @@ const Header = () => {
     dispatch(setHasUnreadNotifications(false));
 
     await persistor.purge();
-  }, [dispatch]);
+  }, []);
 
   useEffect(() => {
     const accessToken = Cookies.get("accessToken");
@@ -36,7 +36,7 @@ const Header = () => {
     } else {
       handleLogout();
     }
-  }, [dispatch, handleLogout]);
+  }, []);
 
   const handleNotificationPage = () => {
     router.replace("/notification");
@@ -52,7 +52,7 @@ const Header = () => {
           {isAuthenticated ? (
             <div className="flex flex-row items-center gap-3">
               <div className="relative h-[17px]">
-                <button onClick={handleNotificationPage} className="bg-slate-300">
+                <button onClick={handleNotificationPage} className="">
                   <FaRegBell color="#D9D9D9" size="17" />
                   {hasUnreadNotifications && <div className="absolute right-0 top-0 h-2 w-2 rounded-full bg-[#F9617A]"></div>}
                 </button>

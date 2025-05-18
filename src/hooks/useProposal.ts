@@ -56,10 +56,13 @@ export const useMyProposalStatus = (meetupId: number) => {
 };
 
 // 내가 보낸 신청서들 가져오기
-export const useSentProposal = () => {
+export const useSentProposal = (page: number) => {
   return useQuery({
-    queryKey: ["sentProposals"],
-    queryFn: getSentProposal,
+    queryKey: ["sentProposals", page],
+    queryFn: () => getSentProposal(page),
+    staleTime: 1000 * 60 * 5,
+    retry: 1,
+    select: data => data ?? [],
   });
 };
 
