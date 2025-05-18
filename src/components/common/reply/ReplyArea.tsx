@@ -7,7 +7,9 @@ import { getMeetupByIdApi } from "@/services/meetup.service";
 import { useParams } from "next/navigation";
 
 const ReplyArea: React.FC = () => {
-  const { meetupId } = useParams();
+  const { meetupId, scheduleId } = useParams();
+
+  console.log(useParams());
   const [replyCount, setReplyCount] = useState<number>(0);
 
   useEffect(() => {
@@ -16,6 +18,9 @@ const ReplyArea: React.FC = () => {
         const meetup = await getMeetupByIdApi(Number(meetupId));
         setReplyCount(meetup.commentCount);
       }
+      if (scheduleId) {
+        // setReplyCount()
+      }
     };
     fetchReplyCount();
   }, [meetupId]);
@@ -23,8 +28,8 @@ const ReplyArea: React.FC = () => {
   return (
     <div className="flex flex-col justify-start">
       <ReplyForm />
-      <div className="text-[10px] m-2 font-[700]">댓글 {replyCount}개</div>
-      {meetupId && <ReplyList meetupId={meetupId} />}
+      <div className="m-2 text-[10px] font-[700]">댓글 {replyCount}개</div>
+      {meetupId && scheduleId && <ReplyList meetupId={meetupId} scheduleId={scheduleId} />}
     </div>
   );
 };
