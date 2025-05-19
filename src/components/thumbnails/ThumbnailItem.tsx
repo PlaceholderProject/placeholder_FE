@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BASE_URL } from "@/constants/baseURL";
 import calculateDays from "@/utils/calculateDays";
 import { useQuery } from "@tanstack/react-query";
@@ -26,10 +26,27 @@ const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
   // console.log(thumbnail.image);
   // thumbnail?.image && console.log(thumbnail.image);
 
+  const [profileImageSource, setProfileImageSource] = useState("/profile.png");
+  const thumbnailImageUrl = `${BASE_URL}${thumbnail.image}`;
   // if (isPending) return <div>로딩중</div>;
   // if (isError) return <div>에러발생</div>;
+  if (!thumbnail) return null;
 
-  const thumbnailImageUrl = `${BASE_URL}${thumbnail.image}`;
+  useEffect(() => {
+    if (thumbnail && thumbnail.organizer && thumbnail.organizer.profileImage) {
+      const profileImageUrl = thumbnail?.organizer.profileImage.startsWith("http") ? thumbnail.organizer.profileImage : `${BASE_URL}${thumbnail.organizer.profileImage}`;
+      console.log("작성자 프사 URL", profileImageUrl);
+      // HTMLImageElement를 사용하여 이미지 존재 여부 확인
+      const imgElement = document.createElement("img");
+      imgElement.onload = () => setProfileImageSource(profileImageUrl);
+      imgElement.onerror = () => {
+        console.error("이미지로딩 실패", profileImageUrl);
+        setProfileImageSource("/profile.png");
+      };
+    } else {
+      console.log("작성자 프사 이미지 없음:", thumbnail?.organizer);
+    }
+  }, [thumbnail]);
 
   return (
     <>
@@ -51,6 +68,7 @@ const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
             </Link>
           )}
           <div className="space-y-2">
+            <Image src={profileImageSource} width="20" height="20" alt="작성자 프로필 이미지" style={{ width: "auto", height: "auto" }} />
             <p className=" text-[12px] text-#[484848]">작성자: {thumbnail.organizer.nickname}</p>
 
             {!thumbnail.isPublic && <span className="bg-[#D9D9D9] text-[#FFF] text-[10px] p-1 rounded-md">비공개</span>}
