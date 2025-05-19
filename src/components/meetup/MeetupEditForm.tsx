@@ -14,7 +14,7 @@ const token = Cookies.get("accessToken");
 
 // 뭔지도 모르고 그냥 써놧네
 const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
-  ({ id, name, label, type, placeholder, value, defaultValue, defaultChecked, disabled, required, checked, onChange }, ref) => (
+  ({ id, name, label, type, placeholder, value, defaultValue, defaultChecked, disabled, required, checked, onChange, maxLength }, ref) => (
     <div>
       <label htmlFor={id}>{label}</label>
       <input
@@ -30,6 +30,7 @@ const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
         checked={checked}
         onChange={onChange}
         ref={ref}
+        maxLength={maxLength}
       />
     </div>
   ),
@@ -348,7 +349,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
             <span className="text-gray-400 text-sm">
               {nameLength <= MAX_NAME_LENGTH ? nameLength : MAX_NAME_LENGTH} / {MAX_NAME_LENGTH} 자
             </span>
-            {nameLength > MAX_NAME_LENGTH && <p className="text-red-500 text-sm">모임 이름은 최대 {MAX_NAME_LENGTH}자까지 입력할 수 있습니다.</p>}
+            {nameLength >= MAX_NAME_LENGTH && <p className="text-red-500 text-sm">모임 이름은 최대 {MAX_NAME_LENGTH}자까지 입력할 수 있습니다.</p>}
           </div>
           <LabeledInput
             id="startedAt"
@@ -409,7 +410,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
             <span className="text-gray-400 text-sm">
               {placeLength <= MAX_PLACE_LENGTH ? placeLength : MAX_PLACE_LENGTH} / {MAX_PLACE_LENGTH} 자
             </span>
-            {placeLength > MAX_PLACE_LENGTH && <p className="text-red-500 text-sm">모임 장소 설명은 최대 {MAX_PLACE_LENGTH}자까지 입력할 수 있습니다.</p>}
+            {placeLength >= MAX_PLACE_LENGTH && <p className="text-red-500 text-sm">모임 장소 설명은 최대 {MAX_PLACE_LENGTH}자까지 입력할 수 있습니다.</p>}
           </div>
 
           <div>
@@ -427,7 +428,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
             <span className="text-gray-400 text-sm">
               {adTitleLength <= MAX_AD_TITLE_LENGTH ? adTitleLength : MAX_AD_TITLE_LENGTH} / {MAX_AD_TITLE_LENGTH} 자
             </span>
-            {adTitleLength > MAX_AD_TITLE_LENGTH && <p className="text-red-500 tet-sm">광고글 제목은 최대 {MAX_AD_TITLE_LENGTH}자 까지 입력할 수 있습니다.</p>}
+            {adTitleLength >= MAX_AD_TITLE_LENGTH && <p className="text-red-500 tet-sm">광고글 제목은 최대 {MAX_AD_TITLE_LENGTH}자 까지 입력할 수 있습니다.</p>}
           </div>
 
           <LabeledInput id="adEndedAt" name="adEndedAt" label="광고 종료 날짜" type="date" ref={adEndedAtRef} defaultValue={previousMeetupData?.adEndedAt?.substring(0, 10)} required />
@@ -446,7 +447,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
               {" "}
               {descriptionLength <= MAX_DESCRIPTION_LENGTH ? descriptionLength : MAX_DESCRIPTION_LENGTH} / {MAX_DESCRIPTION_LENGTH} 자
             </span>
-            {descriptionLength > MAX_DESCRIPTION_LENGTH && <p className="text-red-500 text-sm">광고글 설명은 최대 {MAX_DESCRIPTION_LENGTH}자 까지 입력할 수 있습니다.</p>}
+            {descriptionLength >= MAX_DESCRIPTION_LENGTH && <p className="text-red-500 text-sm">광고글 설명은 최대 {MAX_DESCRIPTION_LENGTH}자 까지 입력할 수 있습니다.</p>}
           </div>
           <LabeledInput id="isPublic" name="isPublic" label="공개 여부" type="checkbox" ref={isPublicRef} defaultChecked={previousMeetupData?.isPublic} />
 
