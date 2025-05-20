@@ -1,15 +1,22 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getAdByIdApi } from "@/services/ad.service";
 import calculateDays from "@/utils/calculateDays";
 import AdNonModal from "./AdNonModal";
-import { Meetup } from "@/types/meetupType";
 import { BASE_URL } from "@/constants/baseURL";
 import { useAdItem } from "@/hooks/useAdItem";
+import Image from "next/image";
 
-const AdDetail = ({ meetupId }: { meetupId: number }) => {
+const AdDetail = ({ meetupId, userNickname }: { meetupId: number; userNickname: string }) => {
   const { adData, error, isPending } = useAdItem(meetupId);
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const organizerNickname = adData?.organizer.nickname;
+
+  useEffect(() => {
+    const isMatch = organizerNickname === userNickname;
+    setIsAuthorized(isMatch);
+    console.log(`유즈 이펙트 안 : 방장 닉넴=${organizerNickname}. 유저 닉넴=${userNickname}, 같니?: ${isMatch}`);
+  }, [adData, userNickname]);
 
   if (error) return <div>에러 발생: {error.message}</div>;
   if (isPending) return <div>로딩중...</div>;
@@ -25,12 +32,13 @@ const AdDetail = ({ meetupId }: { meetupId: number }) => {
       <div>
         <div>⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯</div>
         {/* <Image width={50} height={20} src={imageUrl} alt={"모임 광고글 이미지"} /> */}
-        <img src={imageUrl} alt={"모임 광고글 이미지"} />
+        <Image src={imageUrl} alt="모임 광고글 이미지" width={150} height={100} />
 
         <div>⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯</div>
         <div>🩵 모임이름 : {adData.name}</div>
 
-        <AdNonModal meetupId={meetupId} />
+        <div>방장이름:{adData.organizer.nickname}</div>
+        {isAuthorized && <AdNonModal meetupId={meetupId} />}
         <div>
           🍎 모임장소 : [{adData.place}] {adData.placeDescription}
         </div>
@@ -45,7 +53,6 @@ const AdDetail = ({ meetupId }: { meetupId: number }) => {
               : ""}
           </div>
           <br />
-          🐥🐥🐥🐥 날짜 계산 함수가 실행이 된다는 것 자체가 미정이 하나도 없단 뜻이고 day냐 days냐는 함수자체에서 판단해주면 된다고 생각해,, 맞지..?🐥🐥
         </div>
 
         <div>{adData.description}</div>

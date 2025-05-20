@@ -1,13 +1,15 @@
 import { BASE_URL } from "@/constants/baseURL";
-import { MyAd, MyMeetup } from "@/types/mySpaceType";
+import { MyAdsResponse, MyMeetupsResponse } from "@/types/mySpaceType";
 import Cookies from "js-cookie";
 
 // 모임 공통 로직 재사용
-export const getMyMeetups = async (status: string): Promise<MyMeetup[]> => {
+export const getMyMeetupsApi = async (status: string, page: number, size: number): Promise<MyMeetupsResponse> => {
   const token = Cookies.get("accessToken");
   try {
     const queryParams = new URLSearchParams();
     queryParams.append("status", status);
+    queryParams.append("page", page.toString());
+    queryParams.append("size", size.toString());
 
     const response = await fetch(`${BASE_URL}/api/v1/user/me/meetup?${queryParams.toString()}`, {
       method: "GET",
@@ -15,8 +17,6 @@ export const getMyMeetups = async (status: string): Promise<MyMeetup[]> => {
         Authorization: `Bearer ${token}`,
       },
     });
-
-    console.log("API 응답 온 status:", response.status);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -26,7 +26,8 @@ export const getMyMeetups = async (status: string): Promise<MyMeetup[]> => {
     }
 
     const myMeetupsData = await response.json();
-    return myMeetupsData.result;
+    console.log("내공간 데이터:", myMeetupsData);
+    return myMeetupsData;
   } catch (error) {
     console.error("API 호출 실패:", error);
     throw error;
@@ -42,23 +43,26 @@ export const getMyMeetups = async (status: string): Promise<MyMeetup[]> => {
 // 엥 그냥 도니ㅡㄴ데??????
 
 // 현재 모임
+// --TO DO-- param 동적으로 넣어줘야됨
+// export const getOngoingMyMeetupsApi = async () => {
+//   return getMyMeetupsApi();
+// };
 
-export const getOngoingMyMeetupsApi = async () => {
-  return getMyMeetups("ongoing");
-};
-
-// 과거 몽ㅁ
-export const getEndedMyMeetupsApi = async () => {
-  return getMyMeetups("ended");
-};
+// 과거 모임
+// --TO DO-- param 동적으로 넣어줘야됨
+// export const getEndedMyMeetupsApi = async () => {
+//   return getMyMeetupsApi("ended", "1", "10");
+// };
 
 // 광고 공통로직
-export const getMyAds = async (status: string): Promise<MyAd[]> => {
+export const getMyAdsApi = async (status: string, page: number, size: number): Promise<MyAdsResponse> => {
   const token = Cookies.get("accessToken");
 
   try {
     const queryParams = new URLSearchParams();
     queryParams.append("status", status);
+    queryParams.append("page", page.toString());
+    queryParams.append("size", size.toString());
 
     const response = await fetch(`${BASE_URL}/api/v1/user/me/ad?${queryParams.toString()}`, {
       method: "GET",
@@ -73,24 +77,22 @@ export const getMyAds = async (status: string): Promise<MyAd[]> => {
 
     const myAdsData = await response.json();
     console.log("내광고 데이터", myAdsData);
-    return myAdsData.result;
+    return myAdsData;
   } catch (error) {
     console.error("광고 api 호출 실패", error);
     throw error;
   }
 };
 
-// 현광고
+// // 현광고
+// export const getOngoingMyAdsApi = async () => {
+//   return getMyAds("ongoing");
+// };
 
-export const getOngoingMyAdsApi = async () => {
-  return getMyAds("ongoing");
-};
-
-// 지난광고
-
-export const getEndedMyAdsApi = async () => {
-  return getMyAds("ended");
-};
+// // 지난광고
+// export const getEndedMyAdsApi = async () => {
+//   return getMyAds("ended");
+// };
 
 // 모임 멤버 가져오기 Api
 export const getMyMeetupMembersApi = async (meetupId: number) => {
@@ -102,16 +104,25 @@ export const getMyMeetupMembersApi = async (meetupId: number) => {
     },
   });
   if (!response.ok) {
-    console.log("멤버 조회 실패");
-    throw new Error("멤버 조회에 실패했습니다.");
+    const errorText = await response.text();
+    console.log("멤버 조회 api 에러 응답", errorText);
+    throw new Error("멤버 조회에 실패.");
   }
-  console.log(response);
-  return response.json();
+
+  const myMeetupMembersData = await response.json();
+  console.log("멤버 데이터:", myMeetupMembersData);
+  return myMeetupMembersData;
 };
 
 //모임 멤버 삭제하기 Api
+export const deleteMeetupMemberApi = async (member_id: number) => {
+  const token = Cookies.get("accessToken");
+  const response = await fetch(`${BASE_URL}/api/v1/member/${member_id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
-// export const deleteMeetupMemberApi = async(meetupId: number, memberId: number) => {
-//   const token = Cookies.get("accessToken");
-//   const response = await fetch(`${BASE_URL}/api/v1/meetup/`)
-// }
+  return response.json();
+};

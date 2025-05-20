@@ -4,6 +4,12 @@ import Link from "next/link";
 import React, { useState } from "react";
 
 const MySpaceLayout = ({ children }: { children: React.ReactNode }) => {
+  // --NOTE--
+  // 메인 탭 기본값이 myMeetup이어서 my-space/my-meetup으로 url 엔드 포인트 타이핑 해서 들어가도
+  // 내 광고가 아닌 내 모임이 기본으로 뜬다
+  // 그런데 유저가 내 공간(모임, 광고 모두 포함) 버튼 - 내 모임 - 내광고 순서로 접근하는 것 외에
+  // 기획상 내광고로 한 번에 접근할 경로는 아직 없으므로 그냥 둠
+
   const [activeMainTab, setActiveMainTab] = useState<"myMeetup" | "myAd">("myMeetup");
 
   return (

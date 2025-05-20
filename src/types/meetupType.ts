@@ -18,7 +18,7 @@ export interface Meetup {
   isPublic: boolean;
   image?: string;
   category: string;
-  createAt: string;
+  createdAt: string;
   commentCount: number;
 }
 
@@ -40,6 +40,7 @@ export interface LabeledInputProps {
   defaultChecked?: boolean;
   accept?: string;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  maxLength?: number;
 }
 
 export interface LabeledSelectProps {

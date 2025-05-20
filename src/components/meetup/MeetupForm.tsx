@@ -7,8 +7,9 @@ import { LabeledInputProps } from "@/types/meetupType";
 import { LabeledSelectProps } from "@/types/meetupType";
 import { useRouter } from "next/navigation";
 import { createMeetupApi } from "@/services/meetup.service";
+import Image from "next/image";
 
-const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(({ id, name, label, type, placeholder, value, defaultValue, disabled, required, checked, onChange }, ref) => {
+const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(({ id, name, label, type, placeholder, value, defaultValue, disabled, required, checked, onChange, maxLength }, ref) => {
   return (
     <>
       <div>
@@ -25,6 +26,7 @@ const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(({ id
           checked={checked}
           onChange={onChange}
           ref={ref}
+          maxLength={maxLength}
         />
       </div>
     </>
@@ -69,9 +71,39 @@ const MeetupForm = () => {
   const categoryRef = useRef<HTMLSelectElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
 
+  // 글자수 관리 위한 스테이트
+  const [nameLength, setNameLength] = useState(0);
+  const [placeLength, setPlaceLength] = useState(0);
+  const [adTitleLength, setAdTitleLength] = useState(0);
+  const [descriptionLength, setDescriptionLength] = useState(0);
+
+  const handleNameLengthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNameLength(event.target.value.length);
+  };
+
+  const handlePlaceLengthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPlaceLength(event.target.value.length);
+  };
+
+  const handleAdTitleLengthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAdTitleLength(event.target.value.length);
+  };
+
+  const handleDescriptionLengthChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDescriptionLength(event.target.value.length);
+  };
+
+  const MAX_NAME_LENGTH = 15;
+  const MAX_PLACE_LENGTH = 20;
+  const MAX_AD_TITLE_LENGTH = 15;
+  const MAX_DESCRIPTION_LENGTH = 60;
+
   // 체크 박스 상태 관리 위한 스테이트
   const [isStartedAtNull, setIsStartedAtNull] = useState(false);
   const [isEndedAtNull, setIsEndedAtNull] = useState(false);
+
+  // 제출 로딩상태 관리 스테이트 추가
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // 미리보기 스테이트
   const [previewImage, setPreviewImage] = useState("/meetup_default_image.jpg");
@@ -83,17 +115,37 @@ const MeetupForm = () => {
   // useMutation은 최상단에 위치시키라고 함
   const createMutation = useMutation({
     mutationFn: (meetupFormData: FormData) => createMeetupApi(meetupFormData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["meetups"] });
-      router.push("/");
-    },
+    // onSuccess: data => {
+    //   console.log("모임 새성 성공:", data);
+    //   console.log("쿼리 무효화 시작");
+    //   console.log(
+    //     "현재 쿼리 키 목록을 직접 뽑아내 보도록 하겠읍낟",
+    //     queryClient
+    //       .getQueryCache()
+    //       .getAll()
+    //       .map(query => query.queryKey),
+    //   );
+    //   queryClient.invalidateQueries({ queryKey: ["meetups"] });
+    //   console.log("meetups 쿼리 무효화 햇어");
+    //   queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
+    //   console.log("headhuntings 쿼리 무효화함");
+    //   // 메인 가기
+    //   router.push("/");
 
-    onError: error => {
-      console.error("모임 생성 오류 발생:", error.message);
-    },
+    //   //지연 후 새로고침
+    //   // setTimeout(() => {
+    //   //   window.location.reload();
+    //   // }, 200);
+    // },
+
+    // onError: error => {
+    //   console.error("모임 생성 오류 발생:", error.message);
+    // },
   });
 
-  const handleMeetupFormSubmit = (event: React.FormEvent) => {
+  // async 함수로 변경함
+
+  const handleMeetupFormSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     // ❗️❗️❗️ 이 모든 과정을 제출 전에 실행하고 있고, 하나로 묶어야겠는데?
@@ -117,16 +169,17 @@ const MeetupForm = () => {
 
     // 3. 인풋 필드에서 날짜값 가져옴
     // 근데 이거 155번째줄 (현재인지 실행해보고 판단 위)에 있었음
+    // 이거 그러면 null로 들어가는건 알겠는데 광고종료날짜가 ""로들어가기도 한다는 것임?
+    // 어떤 시점에 어떤 값이지?
     const startDate = isStartedAtNull ? null : startedAtRef.current?.value || null;
     const endDate = isEndedAtNull ? null : endedAtRef.current?.value || null;
-    const adEndDate = adEndedAtRef.current?.value || null;
+    const adEndDate = adEndedAtRef.current?.value || "";
 
     // 4. 통과(true)인지 걸리는지(false) 불리언 값 리턴하는 유효성 검사 함수
 
     const createMeetUpValidateDate = (date: string | null, fieldName: string): boolean => {
       // 사용자 입력값 미정이면 true (통과)
       if (!date) {
-        console.log("!date일 경우의 date: ", date);
         return true;
       }
 
@@ -152,12 +205,14 @@ const MeetupForm = () => {
       return true;
     };
 
-    // 폼 제출전, 유효성 검사 에함수 실행해보고 통과 못하면 제출 전에 리턴으로 탈출
+    // 폼 제출전, 유효성 검사 에 함수 실행해보고 통과 못하면 제출 전에 리턴으로 탈출
     // 모임 시작일이 false(걸림)거나, 모임 종료일이 false(걸림)거나 광고 종료일이 false(걸림)이면 멈추고 나와버림
     if (!createMeetUpValidateDate(startDate, "startedAt") || !createMeetUpValidateDate(endDate, "endedAt") || !createMeetUpValidateDate(adEndDate, "adEndedAt")) {
       console.log("유효성 함수 실행은 됨");
       console.log("설정된 모임 시작일, 모임 종료일, 광고 종료일:", startDate, endDate, adEndDate);
 
+      // 제출 상태 다시 초기화 추가
+      setIsSubmitting(false);
       return;
     }
 
@@ -179,8 +234,11 @@ const MeetupForm = () => {
       image: imageRef.current?.value || "",
       isLike: false,
       likeCount: 0,
-      createAt: "",
+      createdAt: "",
+      commentCount: 0,
     };
+
+    console.log("생성할 새모임 데이터:", newMeetup);
 
     const meetupFormData = new FormData();
     meetupFormData.append("payload", JSON.stringify(newMeetup));
@@ -189,7 +247,21 @@ const MeetupForm = () => {
       meetupFormData.append("image", imageRef.current.files[0]);
     }
 
-    createMutation.mutate(meetupFormData);
+    // createMutation.mutate(meetupFormData);
+    // 그냥 뮤테이션 이었는데 이거를 아래처럼 try catch 블록으로 mutateAsync 사용하게 리팩토링
+
+    try {
+      await createMutation.mutateAsync(meetupFormData);
+      queryClient.invalidateQueries({ queryKey: ["meetups"] });
+      queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
+      alert("모임 생성에 성공했습니다!");
+      router.push("/");
+    } catch (error: any) {
+      console.error("모임 생성 오류 발생:", error?.message || "알 수 없는 오류");
+      alert(`모임 생성 중 오류가 발생했습니다: ${error?.message || "알 수 없는 오류"}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // 이미지 미리보기 스테이트
@@ -208,9 +280,13 @@ const MeetupForm = () => {
         <form onSubmit={handleMeetupFormSubmit}>
           <div>
             <LabeledSelect id="category" name="category" label="모임 성격" options={categoryOptions} ref={categoryRef} required />
-
-            <LabeledInput id="name" name="name" label="모임 이름(랜덤 생성 버튼 필요)" type="text" ref={nameRef} required />
-
+            <div>
+              <LabeledInput id="name" name="name" label="모임 이름" type="text" ref={nameRef} required onChange={handleNameLengthChange} maxLength={MAX_NAME_LENGTH} />
+              <span className="text-gray-400 text-sm">
+                {nameLength <= MAX_NAME_LENGTH ? nameLength : MAX_NAME_LENGTH} / {MAX_NAME_LENGTH} 자
+              </span>
+              {nameLength >= MAX_NAME_LENGTH && <p className="text-red-500 text-sm">모임 이름은 최대 {MAX_NAME_LENGTH}자까지 입력할 수 있습니다.</p>}
+            </div>
             <LabeledInput id="startedAt" name="startedAt" label="모임 시작 날짜" type="date" ref={startedAtRef} disabled={isStartedAtNull} required />
             <LabeledInput
               id="startedAtUndecided"
@@ -249,20 +325,57 @@ const MeetupForm = () => {
             />
 
             <LabeledSelect id="category" name="category" label="모임 지역" options={placeOptions} ref={placeRef} required />
-            <LabeledInput id="placeDescription" name="placeDescription" label="모임 장소" type="text" placeholder="만날 곳의 대략적 위치를 적어주세요. 예) 강남역" ref={placeDescriptionRef} required />
 
-            <LabeledInput id="adTitle" name="adTitle" label="광고글 제목" type="text" ref={adTitleRef} required />
+            <div>
+              <LabeledInput
+                id="placeDescription"
+                name="placeDescription"
+                label="모임 장소"
+                type="text"
+                placeholder="만날 곳의 대략적 위치를 적어주세요. 예) 강남역"
+                ref={placeDescriptionRef}
+                required
+                onChange={handlePlaceLengthChange}
+                maxLength={MAX_PLACE_LENGTH}
+              />
+              <span className="text-gray-400 text-sm">
+                {placeLength <= MAX_PLACE_LENGTH ? placeLength : MAX_PLACE_LENGTH} / {MAX_PLACE_LENGTH} 자
+              </span>
+              {placeLength >= MAX_PLACE_LENGTH && <p className="text-red-500 text-sm">모임 장소 설명은 최대 {MAX_PLACE_LENGTH}자까지 입력할 수 있습니다.</p>}
+            </div>
+
+            <div>
+              <LabeledInput id="adTitle" name="adTitle" label="광고글 제목" type="text" ref={adTitleRef} required onChange={handleAdTitleLengthChange} maxLength={MAX_AD_TITLE_LENGTH} />
+
+              <span className="text-gray-400 text-sm">
+                {adTitleLength <= MAX_AD_TITLE_LENGTH ? adTitleLength : MAX_AD_TITLE_LENGTH} / {MAX_AD_TITLE_LENGTH} 자
+              </span>
+              {adTitleLength >= MAX_AD_TITLE_LENGTH && <p className="text-red-500 tet-sm">광고글 제목은 최대 {MAX_AD_TITLE_LENGTH}자 까지 입력할 수 있습니다.</p>}
+            </div>
 
             <LabeledInput id="adEndedAt" name="adEndedAt" label="광고 종료 날짜" type="date" ref={adEndedAtRef} required />
           </div>
           <div>
             <label htmlFor="description">광고글 설명</label>
-            <textarea id="description" name="description" defaultValue="" placeholder="멤버 광고글에 보일 설명을 적어주세요." ref={descriptionRef}></textarea>
+            <textarea
+              id="description"
+              name="description"
+              defaultValue=""
+              placeholder="멤버 광고글에 보일 설명을 적어주세요."
+              ref={descriptionRef}
+              maxLength={MAX_DESCRIPTION_LENGTH}
+              onChange={handleDescriptionLengthChange}
+            />
+            <span className="text-gray-400 text-sm">
+              {" "}
+              {descriptionLength <= MAX_DESCRIPTION_LENGTH ? descriptionLength : MAX_DESCRIPTION_LENGTH} / {MAX_DESCRIPTION_LENGTH} 자
+            </span>
+            {descriptionLength >= MAX_DESCRIPTION_LENGTH && <p className="text-red-500 text-sm">광고글 설명은 최대 {MAX_DESCRIPTION_LENGTH}자 까지 입력할 수 있습니다.</p>}
           </div>
 
           <div>
             <h4>선택된 이미지</h4>
-            <img src={previewImage} alt="previewImage" />
+            <Image src={previewImage} alt="previewImage" width={100} height={100} />
             <LabeledInput
               id="image"
               name="image"

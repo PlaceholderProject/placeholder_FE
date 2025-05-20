@@ -21,6 +21,9 @@ const modalSlice = createSlice({
     toggleAdDeleteModal: state => {
       state.isAdDeleteModalOpen = !state.isAdDeleteModalOpen;
     },
+    closeAdDeleteModal: state => {
+      state.isAdDeleteModalOpen = false;
+    },
     toggleMemberDeleteModal: state => {
       state.isMemberDeleteModalOpen = !state.isMemberDeleteModalOpen;
     },
@@ -35,7 +38,7 @@ const modalSlice = createSlice({
 
 export const {
   toggleAdDeleteModal,
-  toggleMemberDeleteModal,
+  closeAdDeleteModal, toggleMemberDeleteModal,
   toggleMeetupInfoModal,
   toggleMeetupMembersModal,
 } = modalSlice.actions;

@@ -9,10 +9,13 @@ import Cookies from "js-cookie";
 
 // meetups(headhuntings) 광고글 전부 가져오는 api
 // sortType을 기본 파라미터로 받아 정렬되고 있음
-export const getHeadhuntingsApi = async ({ sortType, place, category }: { sortType: SortType; place?: TypeRegionType; category?: TypePurposeType }) => {
+export const getHeadhuntingsApi = async ({ sortType, place, category }: { sortType: SortType; place?: TypeRegionType; category?: TypePurposeType }, page: number = 1, size: number = 10) => {
   const token = Cookies.get("accessToken");
+  const queryParams = new URLSearchParams();
+  queryParams.append("page", page.toString());
+  queryParams.append("size", size.toString());
 
-  let url = `${BASE_URL}/api/v1/meetup?sort=${sortType}`;
+  let url = `${BASE_URL}/api/v1/meetup?sort=${sortType}&${queryParams.toString()}`;
 
   if (place) {
     url = url + `&place=${place}`;
@@ -33,7 +36,7 @@ export const getHeadhuntingsApi = async ({ sortType, place, category }: { sortTy
     throw new Error("광고글 목록 가져오기 실패");
   }
   const headhuntingsData = await response.json();
-  console.log(`API 호출: ${url}`);
+  console.log(`API 호출 경로: ${url}`);
   console.log("API 전체 응답 데이터:", headhuntingsData);
   console.log("응답 데이터 개수:", headhuntingsData.result?.length);
 

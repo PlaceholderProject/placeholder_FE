@@ -1,171 +1,93 @@
-// import React from "react";
+"use client";
 
-// // import {
-// //   // ...
-// //   keepPreviousData,
-// // } from '@tanstack/react-query';
-
-// // const {
-// //   data: postsData,
-// //   isPending,
-// //   isError,
-// // } = useQuery({
-// //     queryKey: ['posts', page],
-// //     queryFn: () => getPosts(page, PAGE_LIMIT),
-// //     placeholderData: keepPreviousData,
-// // });
-
-// const {
-//   data: postsData,
-//   isPending,
-//   isError,
-//   isPlaceholderData,
-// } = useQuery({
-//   queryKey: ["posts", page],
-//   queryFn: () => getPosts(page, PAGE_LIMIT),
-//   placeholderData: keepPreviousData,
-// });
-
-// // ...
-
-// // return (
-// //   ...
-// //     <div>
-// //     <ul>
-// //       {posts.map((post) => (
-// //         <li key={post.id}>{`${post.user.name}: ${post.content}`}</li>
-// //       ))}
-// //     </ul>
-// //     <div>
-// //       <button
-// //         disabled={page === 0}
-// //         onClick={() => setPage((old) => Math.max(old - 1, 0))}
-// //       >
-// //         &lt;
-// //       </button>
-// //       <button
-// //         disabled={isPlaceholderData || !postsData?.hasMore}
-// //         onClick={() => setPage((old) => old + 1)}
-// //       >
-// //         &gt;
-// //       </button>
-// //     </div>
-// //   </div>
-
-// // );
-
-// // ...
-
-// // useEffect(() => {
-// //   if (!isPlaceholderData && postsData?.hasMore) {
-// //     queryClient.prefetchQuery({
-// //       queryKey: ['posts', page + 1],
-// //       queryFn: () => getPosts(page + 1, PAGE_LIMIT),
-// //     });
-// //   }
-// // }, [isPlaceholderData, postsData, queryClient, page]);
-// // ...
-
-// import { useState } from "react";
-// import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-// import { getPosts, uploadPosts, getUserInfo } from "./api";
-
-// const PAGE_LIMIT = 3;
-
-// function HomePage() {
-//   const [page, setPage] = useState(0);
-//   const {
-//     data: postData,
-//     isPending,
-//     isError,
-//   } = useQuery({
-//     queryKey: ["posts", page],
-//     queryFn: () => getPosts(page, PAGE_LIMIT),
-//   });
-
-//   const posts = postsData?.results ?? [];
-
-//   return (
-//     <>
-//       <div>
-//         {currentUserName ? loginMessage : <button onClick={handleLoginButtonClick}>codeit으로 로그인</button>}
-//         <form onSubmit={handleSubmit}>
-//           <textarea name="content" value={content} onChage={handleInputChange} />
-//           <button disabled={!content}>업로드</button>
-//         </form>
-//       </div>
-
-//       <div>
-//         <ul>
-//           {posts.map(post => {
-//             <li key={post.id}>
-//               {post.user.name}: {post.content}
-//             </li>;
-//           })}
-//         </ul>
-//         <div>
-//           <button disabled={page === 0} onClick={() => setPage(old => Math.max(old - 1, 0))}>
-//             &lt;
-//           </button>
-//           <button disabled={!postsData?.hasMore} onClick={() => setPage(old => old + 1)}>
-//             &gt;
-//           </button>
-//         </div>
-//       </div>
-//     </>
-//   );
-// }
-
-// export default HomePage;
-
-// const CurrentMyMeetup = () => {
-//   const getCurrentMyMeetupsApi = () => {};
-//   return <div>현재 내 모임 보기</div>;
-// };
-
-// // export async function getPosts(page = 0, limit = 10) {
-// //   const response = await fetch(`${BASE_URL}/posts?page=${page}&limit={limit}`);
-// //   return await response.json();
-// // }
-
-// export default CurrentMyMeetup;
-
-import React from "react";
+import React, { useState } from "react";
 import RoleIcon from "./RoleIcon";
 import { useQuery } from "@tanstack/react-query";
-import { getOngoingMyMeetupsApi } from "@/services/my.space.service";
 import MemberOutContainer from "./MemberOutContainer";
+import { getMyMeetupsApi } from "@/services/my.space.service";
 import Link from "next/link";
-import { BASE_URL } from "@/constants/baseURL";
+import { SIZE_LIMIT, BUTTONS_PER_GROUP } from "@/constants/pagination";
+import PaginationButtons from "../PaginationButtons";
 
 const CurrentMyMeetup = () => {
+  const [page, setPage] = useState(1);
+
+  const handlePageButtonClick = (newPage: number) => {
+    setPage(newPage);
+  };
+
+  // 이전/이후 그룹 버튼 핸들러
+  const handlePreviousGroupButtonClick = () => {
+    // 현재 그룹의 첫 페이지 계산
+    const currentGroup = Math.ceil(page / BUTTONS_PER_GROUP);
+    // 이전 그룹의 마지막 페이지로 이동
+    const previousGroupLastPage = (currentGroup - 1) * BUTTONS_PER_GROUP;
+    setPage(previousGroupLastPage);
+  };
+
+  const handleNextGroupButtonClick = () => {
+    // 현재 그룹의 마지막 페이지 계산
+    const currentGroup = Math.ceil(page / BUTTONS_PER_GROUP);
+    // 다음 그룹의 첫 페이지로 이동
+    const nextGroupFirstPage = currentGroup * BUTTONS_PER_GROUP + 1;
+    setPage(nextGroupFirstPage);
+  };
+
   const {
     data: myMeetupsData,
     isPending,
     isError,
     error,
   } = useQuery({
-    queryKey: ["myMeetups", "ongoing"],
-    queryFn: getOngoingMyMeetupsApi,
+    queryKey: ["myMeetups", "ongoing", page],
+    queryFn: () => getMyMeetupsApi("ongoing", page, SIZE_LIMIT),
   });
+
+  const totalPages = Math.ceil((myMeetupsData?.total ?? 0) / SIZE_LIMIT);
+
+  // 현재 페이지가 속한 그룹 계산
+  const currentGroup = Math.ceil(page / BUTTONS_PER_GROUP);
+
+  // 이전 그룹 존재 여부
+  const hasPreviousGroup = currentGroup > 1;
+
+  // 다음 그룹 존재 여부
+  const hasNextGroup = currentGroup * BUTTONS_PER_GROUP < totalPages;
+
+  // 현재 그룹에 표시할 페이지 버튼 범위 계산
+  const startPage = (currentGroup - 1) * BUTTONS_PER_GROUP + 1;
+  const endPage = Math.min(currentGroup * BUTTONS_PER_GROUP, totalPages);
 
   if (isPending) return <div>로딩중...</div>;
   if (isError) return <div>에러 : {error.message}</div>;
-  if (!myMeetupsData || myMeetupsData.length === 0) return <div>참여 중인 모임이 없습니다.</div>;
+  if (!myMeetupsData || myMeetupsData.result.length === 0) return <div>참여 중인 모임이 없습니다.</div>;
 
   return (
     <>
       <div className="grid grid-cols-1">
-        {myMeetupsData.map(myMeetup => (
-          // --TO DO--
-          // 해당 Id 지도페이지로 이동하게 링크 바꿔야함
-          <Link href="http://localhost:3000/" key={myMeetup.id} className="flex justify-between">
-            <RoleIcon isOrganizer={myMeetup.is_organizer} />
-            방장이니?: {`${myMeetup.is_organizer}`} 모임 이름:{myMeetup.name}
-            <MemberOutContainer />
-          </Link>
+        {myMeetupsData.result.map(myMeetup => (
+          <div key={myMeetup.id} className="flex justify-between items-center">
+            <Link href={`http://localhost:3000/meetup/${myMeetup.id}`} className="flex items-center grow">
+              <RoleIcon isOrganizer={myMeetup.is_organizer} />
+              {/* <span>방장이니?: {`${myMeetup.is_organizer}`}</span> */}
+              <span>{myMeetup.name}</span>
+              {/* <span>모임종료일: {myMeetup.ended_at}</span> */}
+            </Link>
+            <MemberOutContainer meetupId={myMeetup.id} isOrganizer={myMeetup.is_organizer} />
+          </div>
         ))}
       </div>
+
+      <PaginationButtons
+        page={page}
+        startPage={startPage}
+        endPage={endPage}
+        hasPreviousGroup={hasPreviousGroup}
+        hasNextGroup={hasNextGroup}
+        onPageButtonClick={handlePageButtonClick}
+        onPreviousGroupButtonClick={handlePreviousGroupButtonClick}
+        onNextGroupButtonClick={handleNextGroupButtonClick}
+      />
     </>
   );
 };
