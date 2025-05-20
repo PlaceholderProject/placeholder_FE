@@ -65,8 +65,10 @@ const AdDetailTmp = ({ meetupId, userNickname }: { meetupId: number; userNicknam
 
   // 컴포넌트 렌더링 중 "애드데이터?", "유즈 이펙트 외부 트루냐? true" 출력 (이제 isAuthorized는 true)
 
-  // 이런 동작이 발생하는 이유는 React의 상태 업데이트가 비동기적으로 이루어지기 때문입니다. setIsAuthorized(true)를 호출해도 즉시 isAuthorized 값이 업데이트되지 않고, 다음 렌더링 사이클에서 업데이트됩니다.
-  // 그리고 useEffect 내부에서 현재 렌더링 주기의 isAuthorized 값을 참조하면 이전 값이 출력됩니다. 따라서 "유즈 이펙트 안 트루냐? false"에서는 여전히 false가 출력되는 것입니다.
+  // 이런 동작이 발생하는 이유는 React의 상태 업데이트가 비동기적으로 이루어지기 때문이다.
+  // setIsAuthorized(true)를 호출해도 즉시 isAuthorized 값이 업데이트되지 않고, 다음 렌더링 사이클에서 업데이트!
+  // 그리고 useEffect 내부에서 현재 렌더링 주기의 isAuthorized 값을 참조하면 이전 값이 출력됩.
+  // 따라서 "유즈 이펙트 안 트루냐? false"에서는 여전히 false가 출력되는 것.
 
   return (
     <>
