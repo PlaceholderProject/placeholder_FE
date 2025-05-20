@@ -6,6 +6,7 @@ export interface ReplyItemProps {
   reply: Reply;
   allReplies: Reply[];
   meetupId: string | string[];
+  scheduleId: string | string[];
 }
 
 export type Reply = {

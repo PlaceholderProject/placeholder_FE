@@ -1,18 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { newReplyProps } from "@/types/replyType";
-import {
-  createScheduleNestedReply,
-  createScheduleReply,
-  deleteScheduleReply,
-  getScheduleReply,
-  updateScheduleReply,
-} from "@/services/scheduleReply.service";
+import { createScheduleNestedReply, createScheduleReply, deleteScheduleReply, getScheduleReply, updateScheduleReply } from "@/services/scheduleReply.service";
 
-export const useScheduleReply = (scheduleId: number) => {
+export const useScheduleReply = (scheduleId: number, options?: { enabled?: boolean }) => {
   return useQuery({
-    queryKey: ["scheduleComments", scheduleId],
+    queryKey: ["scheduleReply", scheduleId],
     queryFn: () => getScheduleReply(scheduleId),
-    enabled: !!scheduleId,
+    enabled: options?.enabled,
   });
 };
 
@@ -22,7 +16,7 @@ export const useCreateScheduleReply = (scheduleId: number) => {
   return useMutation({
     mutationFn: (data: newReplyProps) => createScheduleReply(data, scheduleId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["scheduleComments", scheduleId] });
+      queryClient.invalidateQueries({ queryKey: ["scheduleReply", scheduleId] });
     },
   });
 };
@@ -33,7 +27,7 @@ export const useCreateScheduleNestedReply = (replyId: number, scheduleId: number
   return useMutation({
     mutationFn: (data: newReplyProps) => createScheduleNestedReply(data, replyId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["scheduleComments", scheduleId] });
+      queryClient.invalidateQueries({ queryKey: ["scheduleReply", scheduleId] });
     },
   });
 };
@@ -42,10 +36,9 @@ export const useUpdateScheduleReply = (scheduleId: number) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ text, commentId }: { text: string; commentId: number }) =>
-      updateScheduleReply(text, commentId),
+    mutationFn: ({ text, replyId }: { text: string; replyId: number }) => updateScheduleReply(text, replyId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["scheduleComments", scheduleId] });
+      queryClient.invalidateQueries({ queryKey: ["scheduleReply", scheduleId] });
     },
   });
 };
@@ -54,9 +47,9 @@ export const useDeleteScheduleReply = (scheduleId: number) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (commentId: number) => deleteScheduleReply(commentId),
+    mutationFn: (replyId: number) => deleteScheduleReply(replyId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["scheduleComments", scheduleId] });
+      queryClient.invalidateQueries({ queryKey: ["scheduleReply", scheduleId] });
     },
   });
 };

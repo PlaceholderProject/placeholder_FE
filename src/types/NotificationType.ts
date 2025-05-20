@@ -1,9 +1,9 @@
 export interface Notification {
-  id: number;
-  message: string;
-  url: string;
+  id: number | null;
+  message: string | null;
+  url: string | null;
   is_read: boolean;
-  created_at: string;
+  created_at?: string;
 }
 
 export interface NotificationResponse {

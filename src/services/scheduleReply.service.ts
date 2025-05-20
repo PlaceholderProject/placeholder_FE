@@ -58,9 +58,15 @@ export const createScheduleNestedReply = async (newReply: newReplyProps, replyId
 
 // 스케줄 댓글 목록 조회
 export const getScheduleReply = async (scheduleId: number) => {
+  const accessToken = Cookies.get("accessToken");
   try {
     const response = await fetch(`${BASE_URL}/api/v1/schedule/${scheduleId}/comment`, {
       method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
     });
 
     if (!response.ok) {

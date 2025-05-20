@@ -1,13 +1,13 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { createReply, createNestedReply, getReply, editReply, deleteReply } from "@/services/reply.service"; // 파일 경로는 상황에 맞게 수정
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createNestedReply, createReply, deleteReply, editReply, getReply } from "@/services/reply.service"; // 파일 경로는 상황에 맞게 수정
 import { newReplyProps } from "@/types/replyType";
 
 // 댓글 목록 조회
-export const useReplyList = (meetupId: string | string[]) => {
+export const useReplyList = (meetupId: string | string[], options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ["replyList", meetupId],
     queryFn: () => getReply(meetupId),
-    // staleTime: 1000 * 60, // 1분
+    enabled: options?.enabled,
   });
 };
 
