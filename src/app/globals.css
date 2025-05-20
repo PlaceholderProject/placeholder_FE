@@ -3,86 +3,86 @@
 @tailwind utilities;
 
 html, body {
-    font-family: 'Pretendard', sans-serif;
-    overflow-x: hidden;
+  font-family: 'Pretendard', sans-serif;
+  overflow-x: hidden;
 }
 
 /* 기본 스크롤 컨테이너 스타일 - 반응형 UX에 유용함 */
 .scroll-container {
-    display: flex;
-    scroll-snap-type: x mandatory;
-    scroll-padding: 0;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
+  display: flex;
+  scroll-snap-type: x mandatory;
+  scroll-padding: 0;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 .scroll-item {
-    flex: 0 0 auto;
-    scroll-snap-align: center;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  flex: 0 0 auto;
+  scroll-snap-align: center;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .scroll-container::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 /* 유용한 유틸리티 */
 @layer utilities {
-    .text-gradient {
-        background: linear-gradient(to right, #9b5de5, #f15bb5, #fee440, #00bbf9);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
+  .text-gradient {
+    background: linear-gradient(to right, #9b5de5, #f15bb5, #fee440, #00bbf9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 }
 
 /* Pretendard 폰트 설정 (기본 폰트로 사용) */
 @font-face {
-    font-family: 'Pretendard';
-    src: url('/fonts/Pretendard-Regular.woff2') format('woff2');
-    font-weight: 400;
-    font-style: normal;
+  font-family: 'Pretendard';
+  src: url('/fonts/Pretendard-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
 }
 
 @font-face {
-    font-family: 'Pretendard';
-    src: url('/fonts/Pretendard-Medium.woff2') format('woff2');
-    font-weight: 500;
-    font-style: normal;
+  font-family: 'Pretendard';
+  src: url('/fonts/Pretendard-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
 }
 
 @font-face {
-    font-family: 'Pretendard';
-    src: url('/fonts/Pretendard-Bold.woff2') format('woff2');
-    font-weight: 700;
-    font-style: normal;
+  font-family: 'Pretendard';
+  src: url('/fonts/Pretendard-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
 }
 
 /* 반응형 관련 유틸리티 클래스 */
 @media (max-width: 768px) {
-    .mobile-only {
-        display: block;
-    }
-
-    .desktop-only {
-        display: none;
-    }
+  .mobile-only {
+    display: block;
+  }
+  
+  .desktop-only {
+    display: none;
+  }
 }
 
 @media (min-width: 769px) {
-    .mobile-only {
-        display: none;
-    }
-
-    .desktop-only {
-        display: block;
-    }
+  .mobile-only {
+    display: none;
+  }
+  
+  .desktop-only {
+    display: block;
+  }
 }
 
 /* 커서 스타일 */
 .cursor-wait {
-    cursor: wait;
+  cursor: wait;
 }
