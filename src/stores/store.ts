@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./authSlice";
 import userReducer from "./userSlice";
+import notificationReducer from "./notificationSlice";
 import storage from "redux-persist/lib/storage";
 import { createTransform, FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE } from "redux-persist";
 import nonModalReducer from "./nonModalSlice";
@@ -8,6 +9,8 @@ import modalReducer from "./modalSlice";
 import sortReducer from "./sortSlice";
 import filterReducer from "./filterSlice";
 import replyReducer from "./replySlice";
+import proposalReducer from "./proposalSlice";
+import searchReducer from "./searchSlice";
 
 // 데이터 직렬화/비직렬화 변환 설정
 const transform = createTransform(
@@ -33,9 +36,11 @@ export const store = configureStore({
     modal: modalReducer,
     reply: replyReducer,
     user: persistedUserReducer,
-
+    proposal: proposalReducer,
+    notification: notificationReducer,
     sort: sortReducer,
     filter: filterReducer,
+    search: searchReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

@@ -2,22 +2,21 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { deleteSchedule } from "@/services/schedule.service";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
-import { useQueryClient } from "@tanstack/react-query";
+import { useDeleteSchedule } from "@/hooks/useSchedule";
 
-interface ScheduleActionsProps {
+interface ScheduleThreeDotsMenuProps {
   scheduleId: number;
   meetupId: number;
 }
 
-const ScheduleActions = ({ scheduleId, meetupId }: ScheduleActionsProps) => {
+const ScheduleThreeDotsMenu = ({ scheduleId, meetupId }: ScheduleThreeDotsMenuProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const queryClient = useQueryClient();
+
+  const deleteScheduleMutation = useDeleteSchedule(meetupId);
 
   // 메뉴 외부 클릭 감지
   useEffect(() => {
@@ -38,22 +37,17 @@ const ScheduleActions = ({ scheduleId, meetupId }: ScheduleActionsProps) => {
     router.push(`/meetup/${meetupId}/schedule/${scheduleId}/edit`);
   };
 
-  const handleDeleteClick = async () => {
+  const handleDeleteClick = () => {
     if (window.confirm("정말로 이 스케줄을 삭제하시겠습니까?")) {
-      try {
-        setIsDeleting(true);
-        await deleteSchedule(scheduleId);
-
-        queryClient.invalidateQueries({ queryKey: ["schedules", meetupId] });
-
-        router.refresh();
-      } catch (err) {
-        console.error("스케줄 삭제 오류 발생:", err);
-        alert("스케줄 삭제에 실패했습니다. 다시 시도해주세요.");
-      } finally {
-        setIsDeleting(false);
-        setMenuOpen(false);
-      }
+      deleteScheduleMutation.mutate(scheduleId, {
+        onSuccess: () => {
+          router.refresh();
+          setMenuOpen(false);
+        },
+        onError: () => {
+          alert("스케줄 삭제 실패");
+        },
+      });
     }
   };
 
@@ -78,11 +72,11 @@ const ScheduleActions = ({ scheduleId, meetupId }: ScheduleActionsProps) => {
             </button>
             <button
               onClick={handleDeleteClick}
-              disabled={isDeleting}
+              disabled={deleteScheduleMutation.isPending}
               className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
             >
               <FiTrash2 className="mr-2" />
-              {isDeleting ? "삭제 중..." : "삭제하기"}
+              {deleteScheduleMutation.isPending ? "삭제 중..." : "삭제하기"}
             </button>
           </div>
         </div>
@@ -91,4 +85,4 @@ const ScheduleActions = ({ scheduleId, meetupId }: ScheduleActionsProps) => {
   );
 };
 
-export default ScheduleActions;
+export default ScheduleThreeDotsMenu;

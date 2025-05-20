@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useScheduleDetail } from "@/hooks/useSchedule";
 import { formatDateTime } from "@/utils/scheduleDateUtils";
 import AttendeePopover from "@/components/schedule/AttendeePopover";
+import ScheduleNumber from "@/components/schedule/ScheduleNumber";
 
 const ScheduleDetail = ({ scheduleId }: { scheduleId: number }) => {
   const { data: schedule, isPending, error } = useScheduleDetail(scheduleId);
@@ -17,12 +18,8 @@ const ScheduleDetail = ({ scheduleId }: { scheduleId: number }) => {
       <div className="w-full p-4 rounded-md ">
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center">
-            <span
-              className="bg-blue-700 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold mr-2">
-              1
-            </span>
+            <ScheduleNumber number={scheduleId} />
             <div>
-              {/* 날짜 포맷팅 유틸 함수 사용 */}
               <div className="text-sm  font-semibold">
                 {formatDateTime(schedule.scheduledAt)}
               </div>
