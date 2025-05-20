@@ -7,15 +7,17 @@ import Image from "next/image";
 import { BASE_URL } from "@/constants/baseURL";
 import { useParams } from "next/navigation";
 import { useCreateReply } from "@/hooks/useReply";
+import { useCreateScheduleReply } from "@/hooks/useScheduleReply";
 
 const ReplyForm = () => {
   const [content, setContent] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const user = useSelector((state: RootState) => state.user.user);
 
-  const { meetupId } = useParams();
+  const { meetupId, scheduleId } = useParams();
 
   const createReplyMutation = useCreateReply(meetupId!);
+  const createScheduleMutation = useCreateScheduleReply(Number(scheduleId));
 
   const [profileImage, setProfileImage] = useState<string>("");
 
@@ -42,14 +44,19 @@ const ReplyForm = () => {
   const handleReplySubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (content.trim().length === 0) return;
-    createReplyMutation.mutate({ text: content });
+    if (scheduleId) {
+      createScheduleMutation.mutate({ text: content });
+    } else {
+      createReplyMutation.mutate({ text: content });
+    }
     setContent("");
   };
 
   return (
     <div className="border-y-[1px] border-[#CFCFCF] w-full flex justify-center items-center p-[20px]">
       <form className="flex flex-col gap-2" onSubmit={handleReplySubmit}>
-        <div className="border-[1px] border-[#CFCFCF] w-[263px] h-[92px] flex flex-col justify-center items-center rounded-lg p-[10px] gap-2">
+        <div
+          className="border-[1px] border-[#CFCFCF] w-[263px] h-[92px] flex flex-col justify-center items-center rounded-lg p-[10px] gap-2">
           <div className="flex flex-row w-full items-center gap-1">
             <div className="w-[15px] h-[15px] rounded-full overflow-hidden">
               <Image src={profileImage || "/profile.png"} alt="프로필 이미지" width="15" height="15" unoptimized={true} />

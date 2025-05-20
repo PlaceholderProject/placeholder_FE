@@ -10,8 +10,9 @@ import NestedReplyItem from "./NestedReplyItem";
 import { useState } from "react";
 import { useDeleteReply, useEditReply } from "@/hooks/useReply";
 import NestedReplyForm from "./NestedReplyForm";
+import { useDeleteScheduleReply, useUpdateScheduleReply } from "@/hooks/useScheduleReply";
 
-const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId }) => {
+const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId, scheduleId }) => {
   const user = useSelector((state: RootState) => state.user.user);
   const [isVisiableNestedReply, setIsVisiableNestedReply] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -20,6 +21,8 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId }) =>
 
   const editReplyMutation = useEditReply(meetupId);
   const deleteReplyMutation = useDeleteReply(meetupId);
+  const editScheduleReplyMutation = useUpdateScheduleReply(Number(scheduleId));
+  const deleteScheduleReplyMutation = useDeleteScheduleReply(Number(scheduleId));
 
   const nestedReplies = allReplies.filter(r => r.root === reply.id).reverse();
 
@@ -29,7 +32,11 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId }) =>
 
   const handleReplyDelete = async (replyId: number) => {
     if (confirm("정말로 댓글을 삭제하시겠습니까?")) {
-      await deleteReplyMutation.mutate(replyId);
+      if (scheduleId) {
+        await deleteScheduleReplyMutation.mutate(replyId);
+      } else if (meetupId) {
+        await deleteReplyMutation.mutate(replyId);
+      }
       alert("정상적으로 삭제되었습니다.");
     }
   };
@@ -45,7 +52,11 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId }) =>
 
   const handleReplyUpdate = async (replyId: number) => {
     if (confirm("정말로 댓글을 수정하시겠습니까?")) {
-      await editReplyMutation.mutate({ text, replyId });
+      if (scheduleId) {
+        await editScheduleReplyMutation.mutate({ text, replyId });
+      } else if (meetupId) {
+        await editReplyMutation.mutate({ text, replyId });
+      }
       alert("정상적으로 수정되었습니다.");
       setIsEditMode(false);
     }
@@ -54,8 +65,8 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId }) =>
   return (
     <div className="m-2 text-[10px]">
       <div className="flex justify-between">
-        <span className="flex flex-row gap-1 items-center">
-          <div className="w-[15px] h-[15px] rounded-full overflow-hidden">
+        <span className="flex flex-row items-center gap-1">
+          <div className="h-[15px] w-[15px] overflow-hidden rounded-full">
             <Image
               src={reply.user.image ? (reply.user.image.startsWith("http") ? reply.user.image : `${BASE_URL}${reply.user.image}`) : "/profile.png"}
               alt="프로필 이미지"
@@ -84,7 +95,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId }) =>
           <button onClick={() => handleReplyUpdate(reply.id)}>수정</button>
         </div>
       ) : (
-        <div className="pl-6 py-2">{reply.text}</div>
+        <div className="py-2 pl-6">{reply.text}</div>
       )}
       {nestedReplies.length > 0 && (
         <div>

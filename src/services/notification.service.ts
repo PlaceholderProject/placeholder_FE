@@ -21,16 +21,18 @@ export const getNotifications = async (): Promise<Notification[]> => {
   return data.result;
 };
 
-
 // 알림 읽음 여부
-export const markNotificationAsRead = async (notificationId: number) => {
+export const markNotificationAsRead = async (notificationId: number): Promise<void> => {
   const token = Cookies.get("accessToken");
 
   const response = await fetch(`${BASE_URL}/api/v1/notification/${notificationId}/read`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
   });
+
   if (!response.ok) {
     throw new Error("알림 읽음 처리 실패");
   }
+  
+  return;
 };
