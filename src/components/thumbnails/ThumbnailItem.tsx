@@ -51,7 +51,7 @@ const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
   return (
     <>
       <div className={`border rounded-lg p-4 ${!thumbnail.isPublic ? " pointer-events-none text-[#D9D9D9]" : ""}`}>
-        <div className={thumbnail.isPublic ? "bg-red-200" : "bg-gray-100"}>
+        <div className={thumbnail.isPublic ? "bg-primary" : "bg-gray-100"}>
           {thumbnail.image && (
             <Link href={`http://localhost:3000/ad/${thumbnail.id}`} className="relative h-48 b-4">
               {/* <Image src={thumbnailImageUrl} alt={`${thumbnail.id}번 광고 이미지 안뜸`} fill className="object-cover rounded" loading="lazy" /> */}
@@ -71,7 +71,7 @@ const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
             <Image src={profileImageSource} width="20" height="20" alt="작성자 프로필 이미지" style={{ width: "auto", height: "auto" }} />
             <p className=" text-[12px] text-#[484848]">작성자: {thumbnail.organizer.nickname}</p>
 
-            {!thumbnail.isPublic && <span className="bg-[#D9D9D9] text-[#FFF] text-[10px] p-1 rounded-md">비공개</span>}
+            {!thumbnail.isPublic && <span className="bg-secondary-200 text-[#FFF] text-[10px] p-1 rounded-md">비공개</span>}
             <div className="pointer-events-auto">
               <LikeContainer id={thumbnail.id} />{" "}
             </div>
