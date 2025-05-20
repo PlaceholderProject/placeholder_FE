@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Header from "@/components/common/Header";
+import NavigationBar from "@/components/common/NavigationBar";
 import ReduxProvider from "@/stores/ReduxProvider";
 import QueryProvider from "./(providers)/_providers/QueryProvider";
-import NavigationBar from "@/components/common/NavigationBar";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -33,7 +33,7 @@ export default function RootLayout({
         <ReduxProvider>
           <QueryProvider>
             <Header />
-            {children}
+            <main className="pb-24">{children}</main>
             <NavigationBar />
           </QueryProvider>
         </ReduxProvider>
