@@ -1,18 +1,28 @@
 "use client";
 
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 import AdDeleteModal from "./AdDeleteModal";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
-import { toggleAdNonModal } from "@/stores/nonModalSlice";
-import { toggleAdDeleteModal } from "@/stores/modalSlice";
+import { closeAdNonModal, toggleAdNonModal } from "@/stores/nonModalSlice";
+import { closeAdDeleteModal, toggleAdDeleteModal } from "@/stores/modalSlice";
+import { usePathname } from "next/navigation";
 
 const AdNonModal = ({ meetupId }: { meetupId: number }) => {
   const dispatch = useDispatch();
+  const pathname = usePathname();
   const isAdNonModalOpen = useSelector((state: RootState) => state.nonModal.isAdNonModalOpen);
   const isAdDeleteModalOpen = useSelector((state: RootState) => state.modal.isAdDeleteModalOpen);
+
+  // 페이지 이동 감지하고 모달 상태 초기회ㅏ
+  useEffect(() => {
+    return () => {
+      dispatch(closeAdNonModal());
+      dispatch(closeAdDeleteModal());
+    };
+  }, [dispatch, pathname]);
 
   // 논모달 토글 상태변화 감지용
   React.useEffect(() => {

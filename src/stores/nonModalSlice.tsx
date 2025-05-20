@@ -15,8 +15,11 @@ const nonModalSlice = createSlice({
     toggleAdNonModal: state => {
       state.isAdNonModalOpen = !state.isAdNonModalOpen;
     },
+    closeAdNonModal: state => {
+      state.isAdNonModalOpen = false;
+    },
   },
 });
 
-export const { toggleAdNonModal } = nonModalSlice.actions;
+export const { toggleAdNonModal, closeAdNonModal } = nonModalSlice.actions;
 export default nonModalSlice.reducer;

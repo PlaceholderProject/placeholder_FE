@@ -17,11 +17,14 @@ const modalSlice = createSlice({
     toggleAdDeleteModal: state => {
       state.isAdDeleteModalOpen = !state.isAdDeleteModalOpen;
     },
+    closeAdDeleteModal: state => {
+      state.isAdDeleteModalOpen = false;
+    },
     toggleMemberDeleteModal: state => {
       state.isMemberDeleteModalOpen = !state.isMemberDeleteModalOpen;
     },
   },
 });
 
-export const { toggleAdDeleteModal, toggleMemberDeleteModal } = modalSlice.actions;
+export const { toggleAdDeleteModal, closeAdDeleteModal, toggleMemberDeleteModal } = modalSlice.actions;
 export default modalSlice.reducer;

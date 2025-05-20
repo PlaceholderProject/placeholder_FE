@@ -13,12 +13,9 @@ const AdDetail = ({ meetupId, userNickname }: { meetupId: number; userNickname: 
   const organizerNickname = adData?.organizer.nickname;
 
   useEffect(() => {
-    if (organizerNickname === userNickname) {
-      setIsAuthorized(true);
-      console.log(`유즈 이펙트 안 트루냐? ${isAuthorized}`);
-    } else {
-      setIsAuthorized(false);
-    }
+    const isMatch = organizerNickname === userNickname;
+    setIsAuthorized(isMatch);
+    console.log(`유즈 이펙트 안 : 방장 닉넴=${organizerNickname}. 유저 닉넴=${userNickname}, 같니?: ${isMatch}`);
   }, [adData, userNickname]);
 
   if (error) return <div>에러 발생: {error.message}</div>;
@@ -29,9 +26,6 @@ const AdDetail = ({ meetupId, userNickname }: { meetupId: number; userNickname: 
   const endedAt = adData.endedAt;
 
   const imageUrl = `${BASE_URL}${adData.image}`;
-
-  console.log("애드데이터?", adData);
-  console.log(`유즈 이펙트 외부 트루냐? ${isAuthorized}`);
 
   return (
     <>
