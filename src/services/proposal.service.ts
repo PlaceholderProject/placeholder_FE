@@ -141,11 +141,12 @@ export const refuseProposal = async (proposalId: number) => {
 };
 
 // 보낸 신청서 페이지 : 보낸 신청서 가져오기
-export const getSentProposal = async () => {
+export const getSentProposal = async (page: number) => {
   const accessToken = Cookies.get("accessToken");
+  const size = 5;
 
   try {
-    const response = await fetch(`${BASE_URL}/api/v1/user/me/proposal`, {
+    const response = await fetch(`${BASE_URL}/api/v1/user/me/proposal?page=${page}&size=${size}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -158,38 +159,15 @@ export const getSentProposal = async () => {
       throw new Error(error.detail || "알 수 없는 오류");
     }
 
-    const { result } = await response.json();
-    console.log("보낸 신청서 목록들:", result);
-    return result;
+    const data = await response.json();
+
+    return {
+      proposals: data.result,
+      total: data.total,
+    };
   } catch (error) {
     console.error("모임 정보를 가져오는데 실패했습니다:", error);
-  }
-};
-
-// 광고페이지 : 나의 신청서 상태
-export const getMyProposalStatus = async (meetupId: number) => {
-  const accessToken = Cookies.get("accessToken");
-
-  try {
-    const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}/proposal/status`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        Accept: "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.detail || "알 수 없는 오류");
-    }
-
-    const result = await response.json();
-    console.log("500에러 확인", result);
-    return result;
-  } catch (error) {
-    // console.error("상태를 가져오는데 실패했습니다:", error);
-    return null;
+    throw error;
   }
 };
 
@@ -250,5 +228,31 @@ export const hideProposal = async (proposalId: number) => {
     return;
   } catch (error) {
     console.error("신청서 숨기기를 실패했습니다:", error);
+  }
+};
+
+// 광고페이지 : 나의 신청서 상태
+export const getMyProposalStatus = async (meetupId: number) => {
+  const accessToken = Cookies.get("accessToken");
+
+  try {
+    const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}/proposal/status`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Accept: "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || "알 수 없는 오류");
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    // console.error("상태를 가져오는데 실패했습니다:", error);
+    return null;
   }
 };

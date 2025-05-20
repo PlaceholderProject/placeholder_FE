@@ -3,22 +3,30 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { FaRegBell } from "react-icons/fa6";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
-import { setIsAuthenticated } from "@/stores/authSlice";
 import { persistor, RootState } from "@/stores/store";
-import { logout } from "@/stores/userSlice";
+import { setIsAuthenticated } from "@/stores/authSlice";
 import { setHasUnreadNotifications } from "@/stores/notificationSlice";
+import { logout } from "@/stores/userSlice";
 
 const Header = () => {
   const hasUnreadNotifications = useSelector((state: RootState) => state.notification.hasUnread);
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
-  const user = useSelector((state: RootState) => state.user.user);
-
   const dispatch = useDispatch();
   const router = useRouter();
+
+  const handleLogout = useCallback(async () => {
+    Cookies.remove("accessToken");
+    Cookies.remove("refreshToken");
+    dispatch(setIsAuthenticated(false));
+    dispatch(logout());
+    dispatch(setHasUnreadNotifications(false));
+
+    await persistor.purge();
+  }, []);
 
   useEffect(() => {
     const accessToken = Cookies.get("accessToken");
@@ -30,45 +38,32 @@ const Header = () => {
     }
   }, []);
 
-  console.log(user);
-
-  const handleLogout = async () => {
-    Cookies.remove("accessToken");
-    Cookies.remove("refreshToken");
-    dispatch(setIsAuthenticated(false));
-    dispatch(logout());
-    dispatch(setHasUnreadNotifications(false));
-
-    await persistor.purge();
-  };
-
   const handleNotificationPage = () => {
     router.replace("/notification");
   };
 
   return (
-    <header className="bg-[#006B8B] h-[60] flex justify-center items-center">
-      <div className="w-11/12 flex justify-between">
+    <header className="flex h-[60px] items-center bg-[#006B8B]">
+      <div className="flex w-full justify-between px-6">
         <Link href="/">
-          <Image src="/logo.png" alt="로고" width={113} height={20} />
+          <Image src="/logo.png" alt="로고" width={120} height={20} />
         </Link>
-        <div className="flex justify-center items-center gap-3">
+        <div className="flex items-center justify-center gap-3">
           {isAuthenticated ? (
-            <>
-              <div className="relative">
-                <button onClick={handleNotificationPage}>
-                  <FaRegBell color="#D9D9D9" size="20" />
+            <div className="flex flex-row items-center gap-3">
+              <div className="relative h-[17px]">
+                <button onClick={handleNotificationPage} className="">
+                  <FaRegBell color="#D9D9D9" size="17" />
+                  {hasUnreadNotifications && <div className="absolute right-0 top-0 h-2 w-2 rounded-full bg-[#F9617A]"></div>}
                 </button>
-                {hasUnreadNotifications &&
-                  <div className="bg-[#F9617A] w-2 h-2 rounded-full absolute right-0 top-0"></div>}
               </div>
-              <button onClick={handleLogout} className="w-20 h-8 bg-[#FEFFEC]">
+              <button onClick={handleLogout} className="h-[15px] w-[50px] rounded-sm bg-[#FEFFEC] text-[8px] font-semibold">
                 로그아웃
               </button>
-            </>
+            </div>
           ) : (
             <Link href="/login">
-              <button className="w-20 h-8 bg-[#FEFFEC]">로그인</button>
+              <button className="h-[15px] w-[50px] rounded-sm bg-[#FEFFEC] text-[8px] font-semibold">로그인</button>
             </Link>
           )}
         </div>

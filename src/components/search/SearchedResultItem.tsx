@@ -2,6 +2,7 @@ import { SearchedType } from "@/types/searchType";
 import { RootState } from "@/stores/store";
 import { useSelector } from "react-redux";
 import Link from "next/link";
+import calculateDays from "@/utils/calculateDays";
 
 const SearchedResultItem = ({ ad }: { ad: SearchedType }) => {
   const { searchField } = useSelector((state: RootState) => state.search);
@@ -28,7 +29,7 @@ const SearchedResultItem = ({ ad }: { ad: SearchedType }) => {
   };
 
   return (
-    <div className="border-b-[1px] border-[#CFCFCF] flex flex-row justify-between">
+    <div className="flex flex-row justify-between border-b-[1px] border-[#CFCFCF]">
       <div>
         <Link href={`/ad/${ad.id}`}>{renderTitle()}</Link>
         <div>{ad.organizer.nickname}</div>
@@ -36,8 +37,15 @@ const SearchedResultItem = ({ ad }: { ad: SearchedType }) => {
       <div className="flex flex-col items-end">
         <div>{ad.adEndedAt} 까지 모집</div>
         <div>
-          모임 날짜 : {ad.startedAt}~{ad.endedAt}
-          <span>1day</span>
+          모임 날짜 : {ad.startedAt}~{ad.endedAt}{" "}
+          <span>
+            {ad.startedAt && ad.endedAt
+              ? calculateDays({
+                  startedAt: ad.startedAt,
+                  endedAt: ad.endedAt,
+                })
+              : ""}
+          </span>
         </div>
       </div>
     </div>
