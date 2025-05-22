@@ -29,6 +29,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      {/* globals.css 로컬 폰트 대신 cdn 웹폰트 사용 */}
+      <head>
+        <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet" />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ReduxProvider>
           <QueryProvider>

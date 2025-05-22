@@ -2,7 +2,6 @@
 
 import React from "react";
 import SortArea from "@/components/sort/SortArea";
-import SortButtons from "@/components/sort/SortButtons";
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   return (
