@@ -8,7 +8,6 @@ const config: Config = {
         pretendard: ["var(--font-pretendard)"],
       },
       screens: {
-        sm: { max: "768px" }, // 모바일 (768px 이하)
         lg: { min: "769px" }, // PC (769px 이상)
       },
       colors: {
