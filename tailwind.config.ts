@@ -27,7 +27,6 @@ const config: Config = {
         yuna: ["JNE-Yuna-TTF-Regular"],
       },
       screens: {
-        sm: { max: "768px" }, // 모바일 (768px 이하)
         lg: { min: "769px" }, // PC (769px 이상)
       },
       colors: {
