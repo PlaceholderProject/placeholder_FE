@@ -29,7 +29,7 @@ const ReplyArea: React.FC = () => {
     <div className="flex flex-col justify-start">
       <ReplyForm />
       <div className="m-2 text-[10px] font-[700]">댓글 {replyCount}개</div>
-      {meetupId && scheduleId && <ReplyList meetupId={meetupId} scheduleId={scheduleId} />}
+      {meetupId && <ReplyList meetupId={meetupId} scheduleId={scheduleId} />}
     </div>
   );
 };
