@@ -282,47 +282,54 @@ const MeetupForm = () => {
             <LabeledSelect id="category" name="category" label="모임 성격" options={categoryOptions} ref={categoryRef} required />
             <div>
               <LabeledInput id="name" name="name" label="모임 이름" type="text" ref={nameRef} required onChange={handleNameLengthChange} maxLength={MAX_NAME_LENGTH} />
-              <span className="text-gray-400 text-sm">
+              <span className="text-sm text-gray-400">
                 {nameLength <= MAX_NAME_LENGTH ? nameLength : MAX_NAME_LENGTH} / {MAX_NAME_LENGTH} 자
               </span>
-              {nameLength >= MAX_NAME_LENGTH && <p className="text-red-500 text-sm">모임 이름은 최대 {MAX_NAME_LENGTH}자까지 입력할 수 있습니다.</p>}
+              {nameLength >= MAX_NAME_LENGTH && <p className="text-sm text-red-500">모임 이름은 최대 {MAX_NAME_LENGTH}자까지 입력할 수 있습니다.</p>}
+            </div>
+
+            <div>
+              <LabeledInput
+                id="startedAtUndecided"
+                name="startedAtUndecided"
+                label="미정"
+                type="checkbox"
+                // １. ref={isStartedAtNullRef}
+                //checked={isStartedAtNullRef.current}를 위처럼 수정하고
+                //onChage 지우니까 토글만 됨
+
+                // 2.　useRef를 통해 상태를 저장, 리액트의 chekced와 disabled 속성을
+                // useRef.current 기준으로 렌더링에 반영
+
+                // checked={isStartedAtNullRef.current}
+                // onChange={event => {
+                //   isStartedAtNullRef.current = event?.target.checked;
+                //   if (startedAtRef.current) {
+                //     startedAtRef.current.disabled = event.target.checked;
+                //   }
+                // }}
+
+                onChange={event => {
+                  setIsStartedAtNull(event.target.checked);
+                }}
+              />
+
+              <LabeledInput id="endedAt" name="endedAt" label="모임 종료 날짜" type="date" ref={endedAtRef} disabled={isEndedAtNull} required />
+              <LabeledInput
+                id="endedAtUndecided"
+                name="endedAtUndecided"
+                label="미정"
+                type="checkbox"
+                onChange={event => {
+                  setIsEndedAtNull(event.target.checked);
+                }}
+              />
+
+              <span className="text-sm text-gray-400">
+                {isStartedAtNull && isEndedAtNull && <p className="text-sm text-red-500">모임 시작일과 모임 종료일이 모두 미정일 경우, 내 공간 - 내 광고에서 광고글만 확인 가능합니다.</p>}
+              </span>
             </div>
             <LabeledInput id="startedAt" name="startedAt" label="모임 시작 날짜" type="date" ref={startedAtRef} disabled={isStartedAtNull} required />
-            <LabeledInput
-              id="startedAtUndecided"
-              name="startedAtUndecided"
-              label="미정"
-              type="checkbox"
-              // １. ref={isStartedAtNullRef}
-              //checked={isStartedAtNullRef.current}를 위처럼 수정하고
-              //onChage 지우니까 토글만 됨
-
-              // 2.　useRef를 통해 상태를 저장, 리액트의 chekced와 disabled 속성을
-              // useRef.current 기준으로 렌더링에 반영
-
-              // checked={isStartedAtNullRef.current}
-              // onChange={event => {
-              //   isStartedAtNullRef.current = event?.target.checked;
-              //   if (startedAtRef.current) {
-              //     startedAtRef.current.disabled = event.target.checked;
-              //   }
-              // }}
-
-              onChange={event => {
-                setIsStartedAtNull(event.target.checked);
-              }}
-            />
-
-            <LabeledInput id="endedAt" name="endedAt" label="모임 종료 날짜" type="date" ref={endedAtRef} disabled={isEndedAtNull} required />
-            <LabeledInput
-              id="endedAtUndecided"
-              name="endedAtUndecided"
-              label="미정"
-              type="checkbox"
-              onChange={event => {
-                setIsEndedAtNull(event.target.checked);
-              }}
-            />
 
             <LabeledSelect id="category" name="category" label="모임 지역" options={placeOptions} ref={placeRef} required />
 
@@ -338,19 +345,19 @@ const MeetupForm = () => {
                 onChange={handlePlaceLengthChange}
                 maxLength={MAX_PLACE_LENGTH}
               />
-              <span className="text-gray-400 text-sm">
+              <span className="text-sm text-gray-400">
                 {placeLength <= MAX_PLACE_LENGTH ? placeLength : MAX_PLACE_LENGTH} / {MAX_PLACE_LENGTH} 자
               </span>
-              {placeLength >= MAX_PLACE_LENGTH && <p className="text-red-500 text-sm">모임 장소 설명은 최대 {MAX_PLACE_LENGTH}자까지 입력할 수 있습니다.</p>}
+              {placeLength >= MAX_PLACE_LENGTH && <p className="text-sm text-red-500">모임 장소 설명은 최대 {MAX_PLACE_LENGTH}자까지 입력할 수 있습니다.</p>}
             </div>
 
             <div>
               <LabeledInput id="adTitle" name="adTitle" label="광고글 제목" type="text" ref={adTitleRef} required onChange={handleAdTitleLengthChange} maxLength={MAX_AD_TITLE_LENGTH} />
 
-              <span className="text-gray-400 text-sm">
+              <span className="text-sm text-gray-400">
                 {adTitleLength <= MAX_AD_TITLE_LENGTH ? adTitleLength : MAX_AD_TITLE_LENGTH} / {MAX_AD_TITLE_LENGTH} 자
               </span>
-              {adTitleLength >= MAX_AD_TITLE_LENGTH && <p className="text-red-500 tet-sm">광고글 제목은 최대 {MAX_AD_TITLE_LENGTH}자 까지 입력할 수 있습니다.</p>}
+              {adTitleLength >= MAX_AD_TITLE_LENGTH && <p className="tet-sm text-red-500">광고글 제목은 최대 {MAX_AD_TITLE_LENGTH}자 까지 입력할 수 있습니다.</p>}
             </div>
 
             <LabeledInput id="adEndedAt" name="adEndedAt" label="광고 종료 날짜" type="date" ref={adEndedAtRef} required />
@@ -366,11 +373,11 @@ const MeetupForm = () => {
               maxLength={MAX_DESCRIPTION_LENGTH}
               onChange={handleDescriptionLengthChange}
             />
-            <span className="text-gray-400 text-sm">
+            <span className="text-sm text-gray-400">
               {" "}
               {descriptionLength <= MAX_DESCRIPTION_LENGTH ? descriptionLength : MAX_DESCRIPTION_LENGTH} / {MAX_DESCRIPTION_LENGTH} 자
             </span>
-            {descriptionLength >= MAX_DESCRIPTION_LENGTH && <p className="text-red-500 text-sm">광고글 설명은 최대 {MAX_DESCRIPTION_LENGTH}자 까지 입력할 수 있습니다.</p>}
+            {descriptionLength >= MAX_DESCRIPTION_LENGTH && <p className="text-sm text-red-500">광고글 설명은 최대 {MAX_DESCRIPTION_LENGTH}자 까지 입력할 수 있습니다.</p>}
           </div>
 
           <div>

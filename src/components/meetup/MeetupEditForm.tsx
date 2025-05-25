@@ -187,7 +187,6 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
     const editMeetupValidateDate = (date: string | null, fieldName: string): boolean => {
       let previousStartDate: Date | null = null;
       let previousEndDate: Date | null = null;
-      // 문법 null = null; 모지
 
       if (previousMeetupData?.startedAt) {
         previousStartDate = new Date(previousMeetupData.startedAt);
@@ -208,10 +207,15 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
 
       // 오늘 기준으로 본 모임 시작일
       // 이미 시작 => 시작일 수정 X, 아직 시작 안함 => 오늘 이후 O
-      if (previousStartDate && previousStartDate < now && inputDate !== previousStartDate) {
+      if (previousStartDate && previousStartDate < now && +inputDate !== +previousStartDate) {
         alert("이미 시작된 모임의 모임 시작일은 수정할 수 없습니다.");
+        console.log("이전 시작일:", previousStartDate);
+        console.log("인풋데이트:", inputDate);
+        console.log("이전 시작일과 인풋 일치 여부", previousStartDate === inputDate);
+        console.log(typeof previousStartDate);
+        console.log(typeof inputDate);
         return false;
-      } else if (previousStartDate && inputDate < now) {
+      } else if (previousStartDate && +inputDate !== +previousStartDate && inputDate < now) {
         alert("모임 시작일은 오늘보다 이전으로 설정할 수 없습니다.");
         return false;
       }
@@ -219,8 +223,11 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
       // 이미 종료된 모임 : 그냥 영원히 매장
       // 오늘 기준으로 본 모임 종료일
       // 이미 종료 => 기존보다 더 빠르게 수정X, 오늘 이후O
-      if (previousEndDate && previousEndDate < now && previousEndDate === inputDate && inputDate < now) {
+      if (previousEndDate && previousEndDate < now && +previousEndDate === +inputDate && inputDate < now) {
         alert("이미 종료된 모임의 모임 종료일은 지난 날짜로 설정할 수 없습니다.");
+        console.log("지난 종료일", previousEndDate);
+        console.log("지금", now);
+
         return false;
       }
 
@@ -229,14 +236,18 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
       // 아직 종료 안 함 => 기존보다 이르게 O 오늘보다 이르게 X 오늘 이후 O
       if (previousEndDate && previousEndDate >= now && inputDate < now) {
         alert("모임 종료일은 지난 날짜로 설정할 수 없습니다.");
+        console.log("241qjsWownf");
         return false;
       }
 
       // 모임 시작일 기준으로 종료일을 검사하기
       // 이미 시작함, 이미 시작 안함 => 기존보다 더 이르게 수정 O, 오늘 이후 O
       // 근데 여기서 inputDate가 종료일인지 어케 알아❓❓❓❓❓❓❓❓❓
+      // ❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️이 조건문이 그냥 모든 날짜검증에서 실해오디고잇었다❗️
       if (previousStartDate && inputDate < now) {
         alert("모임 종료일은 지난 날짜로 설정할 수 없습니다.");
+        console.log("250번째줄");
+        console.log("인풋뭔데? 여기서 인풋이 엔드데이트여야돼", inputDate);
         return false;
       }
 
@@ -267,6 +278,10 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
 
     if (!editMeetupValidateDate(startDate, "startedAt") || !editMeetupValidateDate(endDate, "endedAt") || !editMeetupValidateDate(adEndDate, "adEndedAt")) {
       console.log("제출 전 유효성 검사 실행됐음");
+      console.log(getDateFieldName("startedAt"), "모임 시작일", startDate);
+      console.log(getDateFieldName("endedAt"), "모임 종료일", endDate);
+      console.log(getDateFieldName("adEndedAt"), "광고 종료일", adEndDate);
+
       return;
     }
 
@@ -346,10 +361,10 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
               onChange={handleNameLengthChange}
               maxLength={MAX_NAME_LENGTH}
             />
-            <span className="text-gray-400 text-sm">
+            <span className="text-sm text-gray-400">
               {nameLength <= MAX_NAME_LENGTH ? nameLength : MAX_NAME_LENGTH} / {MAX_NAME_LENGTH} 자
             </span>
-            {nameLength >= MAX_NAME_LENGTH && <p className="text-red-500 text-sm">모임 이름은 최대 {MAX_NAME_LENGTH}자까지 입력할 수 있습니다.</p>}
+            {nameLength >= MAX_NAME_LENGTH && <p className="text-sm text-red-500">모임 이름은 최대 {MAX_NAME_LENGTH}자까지 입력할 수 있습니다.</p>}
           </div>
           <LabeledInput
             id="startedAt"
@@ -407,10 +422,10 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
               maxLength={MAX_PLACE_LENGTH}
               onChange={handlePlaceLengthChange}
             />
-            <span className="text-gray-400 text-sm">
+            <span className="text-sm text-gray-400">
               {placeLength <= MAX_PLACE_LENGTH ? placeLength : MAX_PLACE_LENGTH} / {MAX_PLACE_LENGTH} 자
             </span>
-            {placeLength >= MAX_PLACE_LENGTH && <p className="text-red-500 text-sm">모임 장소 설명은 최대 {MAX_PLACE_LENGTH}자까지 입력할 수 있습니다.</p>}
+            {placeLength >= MAX_PLACE_LENGTH && <p className="text-sm text-red-500">모임 장소 설명은 최대 {MAX_PLACE_LENGTH}자까지 입력할 수 있습니다.</p>}
           </div>
 
           <div>
@@ -425,10 +440,10 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
               onChange={handleAdTitleLengthChange}
               maxLength={MAX_AD_TITLE_LENGTH}
             />
-            <span className="text-gray-400 text-sm">
+            <span className="text-sm text-gray-400">
               {adTitleLength <= MAX_AD_TITLE_LENGTH ? adTitleLength : MAX_AD_TITLE_LENGTH} / {MAX_AD_TITLE_LENGTH} 자
             </span>
-            {adTitleLength >= MAX_AD_TITLE_LENGTH && <p className="text-red-500 tet-sm">광고글 제목은 최대 {MAX_AD_TITLE_LENGTH}자 까지 입력할 수 있습니다.</p>}
+            {adTitleLength >= MAX_AD_TITLE_LENGTH && <p className="tet-sm text-red-500">광고글 제목은 최대 {MAX_AD_TITLE_LENGTH}자 까지 입력할 수 있습니다.</p>}
           </div>
 
           <LabeledInput id="adEndedAt" name="adEndedAt" label="광고 종료 날짜" type="date" ref={adEndedAtRef} defaultValue={previousMeetupData?.adEndedAt?.substring(0, 10)} required />
@@ -443,11 +458,11 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
               maxLength={MAX_DESCRIPTION_LENGTH}
               onChange={handleDescriptionLengthChange}
             />
-            <span className="text-gray-400 text-sm">
+            <span className="text-sm text-gray-400">
               {" "}
               {descriptionLength <= MAX_DESCRIPTION_LENGTH ? descriptionLength : MAX_DESCRIPTION_LENGTH} / {MAX_DESCRIPTION_LENGTH} 자
             </span>
-            {descriptionLength >= MAX_DESCRIPTION_LENGTH && <p className="text-red-500 text-sm">광고글 설명은 최대 {MAX_DESCRIPTION_LENGTH}자 까지 입력할 수 있습니다.</p>}
+            {descriptionLength >= MAX_DESCRIPTION_LENGTH && <p className="text-sm text-red-500">광고글 설명은 최대 {MAX_DESCRIPTION_LENGTH}자 까지 입력할 수 있습니다.</p>}
           </div>
           <LabeledInput id="isPublic" name="isPublic" label="공개 여부" type="checkbox" ref={isPublicRef} defaultChecked={previousMeetupData?.isPublic} />
 
