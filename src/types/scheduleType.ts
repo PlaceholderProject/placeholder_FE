@@ -25,4 +25,5 @@ export interface Schedule {
   memo: string;
   image: string;
   participant: Participant[];
+  commentCount: number;
 }
