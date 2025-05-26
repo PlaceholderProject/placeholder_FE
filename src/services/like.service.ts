@@ -1,5 +1,6 @@
 import { BASE_URL } from "@/constants/baseURL";
 import Cookies from "js-cookie";
+import { getUser } from "./user.service";
 
 // 개별 like 가져오는 api 임시
 export const getLikeByIdApi = async (thumbnailId: number) => {
@@ -19,6 +20,14 @@ export const getLikeByIdApi = async (thumbnailId: number) => {
 // like 토글 api
 export const toggleLikeApi = async (thumbnailId: number, isLike: boolean) => {
   const token = Cookies.get("accessToken");
+
+  // 로그인하지 않은 유저는 좋아요 눌러도 소용없게
+  const getUserResponse = await getUser();
+  if (!getUserResponse) {
+    alert("로그인한 유저만 좋아요를 누를 수 있습니다.");
+    return;
+  }
+  console.log("겟유저 리턴값은:", getUserResponse);
 
   const response = await fetch(`${BASE_URL}/api/v1/meetup/${thumbnailId}/like`, {
     method: "POST",

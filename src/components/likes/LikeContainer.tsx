@@ -187,16 +187,25 @@ const LikeContainer = ({ id }: { id: Meetup["id"] }) => {
 
       // 롤백 위해 이전 데이터 반환
       // 이게 뭐고 롤백이 먼데
-      // return { previousLikeData };
+      return { previousLikeData };
     },
 
-    // 에러 발생 시 롤백
-    // onError: (error, variables, context) => {
-    //   console.error("좋아요 토글 에러:", error);
-    //   if (context?.previousLikeData) {
-    //     queryClient.setQueryData(["like", id], context.previousLikeData);
-    //   }
-    // },
+    // 에러 발생 시 롤백추가햇는데..뭐여
+
+    onError: (error, variables, context) => {
+      console.error("좋아요 토글 에러:", error);
+
+      //롤백: 이전 데이터로 복구하는거
+
+      if (context?.previousLikeData) {
+        queryClient.setQueryData(["like", id], context.previousLikeData);
+      }
+
+      // 인증 에러 아닐 때만 에러 메시지 띄우기 (인증에러는 toggleLikeApi에서 alert으로 띄워주고잇음)
+      if (!error.message.includes("User not authenticated")) {
+        console.error("좋아요 처리 중 오류가 발생했습니다.");
+      }
+    },
 
     // 성공 시 쿼리 무효화
 

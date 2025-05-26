@@ -18,7 +18,7 @@ const MyMeetupMembers: React.FC<{ meetupId: MyMeetupItem["id"] }> = ({ meetupId 
   const [imageSource, setImageSource] = useState("/profile.png");
 
   useEffect(() => {
-    if (myMeetupMembersData && myMeetupMembersData.user.image) {
+    if (myMeetupMembersData && myMeetupMembersData.user && myMeetupMembersData.user.image) {
       const profileImageUrl = myMeetupMembersData.user?.image.startsWith("http") ? myMeetupMembersData.user.image : `${BASE_URL}${myMeetupMembersData.user?.image}`;
       const imgElement = document.createElement("img");
       imgElement.onload = () => {

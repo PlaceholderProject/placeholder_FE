@@ -32,15 +32,10 @@ import { IoMdHeart, IoMdHeartEmpty } from "react-icons/io";
 const LikeItem = ({ isLike, likeCount, onClick, disabled = false }: LikeItemProps) => {
   return (
     <div className="space-y-2">
-      <button
-        onClick={onClick}
-        disabled={disabled}
-        className="{`flex items-center space-x-1 ${disabled ? 'opacity-50 cursor-not-allowed' :
-      hoever:opacity-80}}"
-      >
-        {isLike ? <IoMdHeart className="text-red-500 bg-blue-200 text-md" /> : <IoMdHeartEmpty className="text-xl" />}
+      <button onClick={onClick} disabled={disabled} className="{`flex ${disabled ? 'opacity-50 cursor-not-allowed' : hoever:opacity-80}} items-center space-x-1">
+        {isLike ? <IoMdHeart className="text-md bg-yellow-200 text-primary" /> : <IoMdHeartEmpty className="text-xl" />}
       </button>
-      <div className="text-sm bg-slate-100"> {likeCount}</div>
+      <div className="bg-slate-100 text-sm"> {likeCount}</div>
     </div>
   );
 };
