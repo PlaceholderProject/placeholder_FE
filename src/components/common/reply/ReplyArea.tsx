@@ -5,6 +5,7 @@ import ReplyForm from "./ReplyForm";
 import ReplyList from "./ReplyList";
 import { getMeetupByIdApi } from "@/services/meetup.service";
 import { useParams } from "next/navigation";
+import { getSchedule } from "@/services/schedule.service";
 
 const ReplyArea: React.FC = () => {
   const { meetupId, scheduleId } = useParams();
@@ -19,11 +20,12 @@ const ReplyArea: React.FC = () => {
         setReplyCount(meetup.commentCount);
       }
       if (scheduleId) {
-        // setReplyCount()
+        const schedule = await getSchedule(Number(scheduleId));
+        setReplyCount(schedule.commentCount);
       }
     };
     fetchReplyCount();
-  }, [meetupId]);
+  }, [meetupId, scheduleId]);
 
   return (
     <div className="flex flex-col justify-start">
