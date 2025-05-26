@@ -5,9 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import ScheduleItem from "@/components/schedule/ScheduleItem";
 
-
 const ScheduleArea = ({ meetupId }: { meetupId: number }) => {
-
   const router = useRouter();
   const { data: schedules, isPending, error } = useSchedules(meetupId);
 
@@ -30,11 +28,7 @@ const ScheduleArea = ({ meetupId }: { meetupId: number }) => {
       ) : (
         <div className="flex flex-col gap-4">
           {schedules.map((schedule, index) => (
-            <ScheduleItem
-              key={schedule.id}
-              schedule={schedule}
-              number={index + 1}
-            />
+            <ScheduleItem key={schedule.id} schedule={schedule} number={index + 1} />
           ))}
           <button onClick={handleCreateClick} className="self-end">
             +
@@ -46,8 +40,8 @@ const ScheduleArea = ({ meetupId }: { meetupId: number }) => {
 };
 
 export default ScheduleArea;
-
 // Area에서 버튼 컴포넌트 구현하기
+
 // 버튼을 눌렀을 때 ScheduleItem이 생성, ScheduleItem이 버튼 컴포넌트 상단에 생성
 // 아이템 리스트는 날짜가 최신순으로 최상단 1번부터 시작,
 // 숫자는 ScheduleNumber 컴포넌트
