@@ -55,7 +55,7 @@ const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
           {thumbnail.image && (
             <Link href={`http://localhost:3000/ad/${thumbnail.id}`} className="b-4 relative h-48">
               {/* <Image src={thumbnailImageUrl} alt={`${thumbnail.id}번 광고 이미지 안뜸`} fill className="object-cover rounded" loading="lazy" /> */}
-              {/* 🐩🐩🐩 넥스트 Imageㅅ 써야될거같은데!!!!!🐩🐩🐩🐩 */}
+
               <Image
                 src={thumbnailImageUrl}
                 alt="thumbnailImage"
@@ -73,7 +73,7 @@ const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
 
             {!thumbnail.isPublic && <span className="bg-secondary-200 rounded-md p-1 text-[10px] text-[#FFF]">비공개</span>}
             <div className="pointer-events-auto">
-              <LikeContainer id={thumbnail.id} />{" "}
+              <LikeContainer id={thumbnail.id} initialIsLike={thumbnail.isLike} initialLikeCount={thumbnail.likeCount} />{" "}
             </div>
 
             <p>[{thumbnail.place}]</p>

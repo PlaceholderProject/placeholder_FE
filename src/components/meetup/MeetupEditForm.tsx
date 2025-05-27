@@ -9,10 +9,10 @@ import React, { useEffect, useRef, useState } from "react";
 import Cookies from "js-cookie";
 import Image from "next/image";
 
-// const token = process.env.NEXT_PUBLIC_MY_TOKEN;
 const token = Cookies.get("accessToken");
 
 // 뭔지도 모르고 그냥 써놧네
+// 이젠 앎..?
 const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
   ({ id, name, label, type, placeholder, value, defaultValue, defaultChecked, disabled, required, checked, onChange, maxLength }, ref) => (
     <div>
@@ -55,6 +55,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   const queryClient = useQueryClient();
 
   // 왜 ref 초기값이 null인지도 모르고 있죠?
+  //이젠 알죠!
   const nameRef = useRef<HTMLInputElement>(null);
   const startedAtRef = useRef<HTMLInputElement>(null);
   const endedAtRef = useRef<HTMLInputElement>(null);
@@ -163,7 +164,9 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
     // 오늘 날짜 겟
     const now = new Date();
     now.setHours(0, 0, 0, 0);
-    //set Hours 왜 하더라
+
+    // ref를 통해 사용자 입력값을 DOM에서? 가져오고 이걸 필드네임을 파라미터로 받는 editMeetupValidateDate에 넘기는거여
+    // 실행될 때마다 조건에 맞는 함수속 if문에 들어간다
 
     const startDate = isStartedAtNull ? null : startedAtRef?.current?.value || null;
     const endDate = isEndedAtNull ? null : endedAtRef?.current?.value || null;
@@ -183,7 +186,10 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
       }
     };
 
-    // 실질적 유효성 함수 시작
+    // 실질적 유효성 검사 함수
+    // 불리언값을 리턴
+    // 날짜와 필드네임을 받는데
+    // 그게 아래에서 282줄에서 실행될 때
     const editMeetupValidateDate = (date: string | null, fieldName: string): boolean => {
       let previousStartDate: Date | null = null;
       let previousEndDate: Date | null = null;
@@ -205,65 +211,73 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
       const inputDate = new Date(date);
       inputDate.setHours(0, 0, 0, 0);
 
+      // 1. 시작일만 검증
       // 오늘 기준으로 본 모임 시작일
-      // 이미 시작 => 시작일 수정 X, 아직 시작 안함 => 오늘 이후 O
-      if (previousStartDate && previousStartDate < now && +inputDate !== +previousStartDate) {
-        alert("이미 시작된 모임의 모임 시작일은 수정할 수 없습니다.");
-        console.log("이전 시작일:", previousStartDate);
-        console.log("인풋데이트:", inputDate);
-        console.log("이전 시작일과 인풋 일치 여부", previousStartDate === inputDate);
-        console.log(typeof previousStartDate);
-        console.log(typeof inputDate);
-        return false;
-      } else if (previousStartDate && +inputDate !== +previousStartDate && inputDate < now) {
-        alert("모임 시작일은 오늘보다 이전으로 설정할 수 없습니다.");
-        return false;
+      if (fieldName === "startedAt") {
+        // 이미 시작 => 시작일 수정 X,
+        if (previousStartDate && previousStartDate < now && +inputDate !== +previousStartDate) {
+          alert(`이미 시작된 모임의 ${getDateFieldName(fieldName)}은 수정할 수 없습니다.`);
+          // console.log("이전 시작일:", previousStartDate);
+          // console.log("인풋데이트:", inputDate);
+          // console.log("이전 시작일과 인풋 일치 여부", previousStartDate === inputDate);
+          // console.log(typeof previousStartDate);
+          // console.log(typeof inputDate);
+          return false;
+        }
+        // 아직 시작 안함 => 오늘 이후 O
+        if (previousStartDate && +inputDate !== +previousStartDate && inputDate < now) {
+          alert(`${getDateFieldName(fieldName)}은 오늘보다 이전으로 설정할 수 없습니다.`);
+          return false;
+        }
       }
+
+      // 2. 종료일만 검증
       // --TO DO--
       // 이미 종료된 모임 : 그냥 영원히 매장
-      // 오늘 기준으로 본 모임 종료일
-      // 이미 종료 => 기존보다 더 빠르게 수정X, 오늘 이후O
-      if (previousEndDate && previousEndDate < now && +previousEndDate === +inputDate && inputDate < now) {
-        alert("이미 종료된 모임의 모임 종료일은 지난 날짜로 설정할 수 없습니다.");
-        console.log("지난 종료일", previousEndDate);
-        console.log("지금", now);
 
-        return false;
+      if (fieldName === "endedAt") {
+        // 오늘 기준으로 본 모임 종료일
+        // 이미 종료 => 기존보다 더 이르게 수정X, 오늘 이후O, 즉 연장은 가능
+        if (previousEndDate && previousEndDate < now && inputDate < now) {
+          alert(`이미 종료된 모임의 ${getDateFieldName(fieldName)}은 지난 날짜로 설정할 수 없습니다.`);
+          console.log("지난 종료일", previousEndDate);
+          console.log("지금", now);
+
+          return false;
+        }
+        // 아직 종료 안 함 => 기존보다 이르게 O 오늘보다 이르게 X 오늘 이후 O
+        if (previousEndDate && previousEndDate >= now && inputDate < now) {
+          alert(`${getDateFieldName(fieldName)}은 지난 날짜로 설정할 수 없습니다.`);
+          return false;
+        }
+
+        // 모임 시작일 기준으로 종료일을 검사하기
+        // 이미 시작함, 이미 시작 안함 => 기존보다 더 이르게 수정 O, 오늘 이후 O
+        // 근데 여기서 inputDate가 종료일인지 어케 알아❓❓❓❓❓❓❓❓❓
+        // ❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️이 조건문이 그냥 모든 날짜검증에서 실해오디고잇었다❗️
+        if (previousStartDate && inputDate < now) {
+          alert(`${getDateFieldName(fieldName)}은 지난 날짜로 설정할 수 없습니다.`);
+          console.log("261번째줄");
+          console.log("인풋뭔데? 여기서 인풋이 엔드데이트여야돼", inputDate);
+          return false;
+        }
+
+        // 모임 시작일과 모임 종료일 비교
+        if (endDate !== null && startDate !== null && endDate < startDate) {
+          alert(`${getDateFieldName}은 시작일보다 빠르게 설정할 수 없습니다.`);
+          return false;
+        }
       }
 
-      //-------------------------------------
-
-      // 아직 종료 안 함 => 기존보다 이르게 O 오늘보다 이르게 X 오늘 이후 O
-      if (previousEndDate && previousEndDate >= now && inputDate < now) {
-        alert("모임 종료일은 지난 날짜로 설정할 수 없습니다.");
-        console.log("241qjsWownf");
-        return false;
-      }
-
-      // 모임 시작일 기준으로 종료일을 검사하기
-      // 이미 시작함, 이미 시작 안함 => 기존보다 더 이르게 수정 O, 오늘 이후 O
-      // 근데 여기서 inputDate가 종료일인지 어케 알아❓❓❓❓❓❓❓❓❓
-      // ❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️이 조건문이 그냥 모든 날짜검증에서 실해오디고잇었다❗️
-      if (previousStartDate && inputDate < now) {
-        alert("모임 종료일은 지난 날짜로 설정할 수 없습니다.");
-        console.log("250번째줄");
-        console.log("인풋뭔데? 여기서 인풋이 엔드데이트여야돼", inputDate);
-        return false;
-      }
-
-      // 모임 시작일과 모임 종료일 비교
-      if (endDate !== null && startDate !== null && endDate < startDate) {
-        const beforeAfter = endDate < startDate;
-        console.log("앞뒤틀리니?", beforeAfter);
-        alert("모임 종료일은 시작일보다 빠르게 설정할 수 없습니다.");
-        return false;
-      }
-
-      if (fieldName === "adEndedAt" && inputDate < now) {
-        // adEndDate < now 였는데 오류나서 위처럼 고친거야
-        console.log("광고종료 검사 실행됐니");
-        alert("광고 종료일은 지난 날짜로 설정할 수 없습니다.");
-        return false;
+      // 3. 광고종료일
+      if (fieldName === "adEndedAt") {
+        const previousAdEndDate = previousMeetupData.adEndedAt;
+        if (+inputDate !== +previousAdEndDate && inputDate < now) {
+          // adEndDate < now 였는데 오류나서 위처럼 고친거야
+          console.log("광고종료 검사 실행");
+          alert(`${getDateFieldName(fieldName)}은 지난 날짜로 설정할 수 없습니다.`);
+          return false;
+        }
       }
 
       // 사용자 입력 날짜값이 오늘보다 이전이면 false(걸림)
@@ -275,7 +289,9 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
 
       return true;
     };
-
+    // 유효성 검사 함수 실제 실행
+    // inputDate가 어떻게 필드 네임의 그 데이터인지 연결시키는가? 바로 여기서 if 절에 들어가서, 그게 일치를 해야 그 값을 갖고 적용시키려고 한다고!!!!
+    // 여기였다 연결점
     if (!editMeetupValidateDate(startDate, "startedAt") || !editMeetupValidateDate(endDate, "endedAt") || !editMeetupValidateDate(adEndDate, "adEndedAt")) {
       console.log("제출 전 유효성 검사 실행됐음");
       console.log(getDateFieldName("startedAt"), "모임 시작일", startDate);
@@ -298,7 +314,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
       // 수정전: isPublic: isPublicRef.current?.checked || false,
       //       isPublic: isPublicRef.current?.checked || false,
 
-      isPublic: isPublicRef.current?.checked || false, //이래도 안됨
+      isPublic: !isPublicRef.current?.checked || true, //이래도 안됨
       category: categoryRef.current?.value || "",
       image: imageRef.current?.value || "",
     };
@@ -366,47 +382,52 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
             </span>
             {nameLength >= MAX_NAME_LENGTH && <p className="text-sm text-red-500">모임 이름은 최대 {MAX_NAME_LENGTH}자까지 입력할 수 있습니다.</p>}
           </div>
-          <LabeledInput
-            id="startedAt"
-            name="startedAt"
-            label="모임 시작 날짜"
-            type="date"
-            ref={startedAtRef}
-            defaultValue={previousMeetupData?.startedAt ? previousMeetupData.startedAt.substring(0, 10) : undefined}
-            disabled={isStartedAtNull}
-            required
-          />
-          <LabeledInput
-            id="startedAtUndecided"
-            name="startedAtUndecided"
-            label="미정"
-            type="checkbox"
-            checked={isStartedAtNull}
-            onChange={event => {
-              setIsStartedAtNull(event?.target.checked);
-            }}
-          />
+          <div>
+            <LabeledInput
+              id="startedAt"
+              name="startedAt"
+              label="모임 시작 날짜"
+              type="date"
+              ref={startedAtRef}
+              defaultValue={previousMeetupData?.startedAt ? previousMeetupData.startedAt.substring(0, 10) : undefined}
+              disabled={isStartedAtNull}
+              required
+            />
+            <LabeledInput
+              id="startedAtUndecided"
+              name="startedAtUndecided"
+              label="미정"
+              type="checkbox"
+              checked={isStartedAtNull}
+              onChange={event => {
+                setIsStartedAtNull(event?.target.checked);
+              }}
+            />
 
-          <LabeledInput
-            id="endedAt"
-            name="endedAt"
-            label="모임 종료 날짜"
-            type="date"
-            ref={endedAtRef}
-            defaultValue={previousMeetupData?.endedAt?.substring(0, 10)}
-            disabled={isEndedAtNull}
-            required
-          />
-          <LabeledInput
-            id="endedAtUndecided"
-            name="endedAtUndecided"
-            label="미정"
-            type="checkbox"
-            checked={isEndedAtNull}
-            onChange={event => {
-              setIsEndedAtNull(event?.target.checked);
-            }}
-          />
+            <LabeledInput
+              id="endedAt"
+              name="endedAt"
+              label="모임 종료 날짜"
+              type="date"
+              ref={endedAtRef}
+              defaultValue={previousMeetupData?.endedAt?.substring(0, 10)}
+              disabled={isEndedAtNull}
+              required
+            />
+            <LabeledInput
+              id="endedAtUndecided"
+              name="endedAtUndecided"
+              label="미정"
+              type="checkbox"
+              checked={isEndedAtNull}
+              onChange={event => {
+                setIsEndedAtNull(event?.target.checked);
+              }}
+            />
+            <span className="text-sm text-gray-400">
+              {isStartedAtNull && isEndedAtNull && <p className="text-sm text-red-500">모임 시작일과 모임 종료일이 모두 미정일 경우, 내 공간 - 내 광고에서 광고글만 확인 가능합니다.</p>}
+            </span>
+          </div>
           <LabeledSelect id="place" name="place" label="모임 지역" options={placeOptions} ref={placeRef} defaultValue={previousMeetupData?.place} required />
 
           <div>

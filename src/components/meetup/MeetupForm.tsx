@@ -195,11 +195,17 @@ const MeetupForm = () => {
       }
 
       // 모임 시작날짜와 모임 종료 날짜 비교
-      if (endDate !== null && startDate !== null && endDate < startDate) {
-        const beforeAfter = endDate < startDate;
-        console.log("앞뒤틀리니?", beforeAfter);
-        alert("모임 종료일은 시작일보다 빠르게 설정할 수 없습니다.");
-        return false;
+      // 문자열대신 date 객체로 변환해서 ㅂ교하기로 수정
+      if (endDate !== null && startDate !== null) {
+        const endDateObject = new Date(endDate);
+        const startDateObject = new Date(startDate);
+        if (endDateObject < startDateObject) {
+          console.log("시작일 타입:", typeof startDate);
+          console.log("종료일 타입", typeof endDate);
+          console.log("시작일 오브젝트 타입", typeof startDateObject);
+          alert("모임 종료일은 시작일보다 빠르게 설정할 수 없습니다.");
+          return false;
+        }
       }
 
       return true;
@@ -229,7 +235,7 @@ const MeetupForm = () => {
       endedAt: endDate,
       adTitle: adTitleRef.current?.value || "",
       adEndedAt: adEndDate,
-      isPublic: isPublicRef.current?.checked || false,
+      isPublic: !isPublicRef.current?.checked || true,
       category: categoryRef.current?.value || "",
       image: imageRef.current?.value || "",
       isLike: false,
@@ -289,6 +295,8 @@ const MeetupForm = () => {
             </div>
 
             <div>
+              <LabeledInput id="startedAt" name="startedAt" label="모임 시작 날짜" type="date" ref={startedAtRef} disabled={isStartedAtNull} required />
+
               <LabeledInput
                 id="startedAtUndecided"
                 name="startedAtUndecided"
@@ -329,7 +337,6 @@ const MeetupForm = () => {
                 {isStartedAtNull && isEndedAtNull && <p className="text-sm text-red-500">모임 시작일과 모임 종료일이 모두 미정일 경우, 내 공간 - 내 광고에서 광고글만 확인 가능합니다.</p>}
               </span>
             </div>
-            <LabeledInput id="startedAt" name="startedAt" label="모임 시작 날짜" type="date" ref={startedAtRef} disabled={isStartedAtNull} required />
 
             <LabeledSelect id="category" name="category" label="모임 지역" options={placeOptions} ref={placeRef} required />
 
@@ -394,7 +401,7 @@ const MeetupForm = () => {
               required
             />
           </div>
-          <LabeledInput id="isPublic" name="isPublic" label="광고글 공개하기" type="checkbox" ref={isPublicRef} />
+          <LabeledInput id="isPublic" name="isPublic" label="모집글 비공개" type="checkbox" ref={isPublicRef} />
 
           <div>
             <button type="submit">모임 생성하기</button>

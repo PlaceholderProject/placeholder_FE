@@ -106,6 +106,7 @@ const ThumbnailArea = () => {
 
     queryClient.resetQueries({ queryKey: getQueryKey() });
   }, [sortType, place, category, isFilterActive, queryClient]);
+
   // 관찰 대상 요소ref
   const observerRef = useRef<HTMLDivElement>(null);
 
@@ -188,7 +189,7 @@ const ThumbnailArea = () => {
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
+      <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 lg:grid-cols-4">
         {allThumbnails.map((thumbnail: Meetup, index: number) => {
           return <ThumbnailItem key={`${thumbnail.id}-${index}`} thumbnail={thumbnail} />;
         })}
@@ -203,7 +204,7 @@ const ThumbnailArea = () => {
 
         {/* 관찰대상요소 */}
 
-        <div ref={observerRef} className="col-span-full h-10 flex items-center justify-center">
+        <div ref={observerRef} className="col-span-full flex h-10 items-center justify-center">
           {isFetchingNextPage && "데이터 불러오는 중..."}
         </div>
       </div>
