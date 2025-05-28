@@ -86,31 +86,47 @@ const PasswordEdit = () => {
           <PasswordRecheck />
         </div>
       )}
-      <div className="flex flex-col items-center">
-        <h2>비밀번호 수정</h2>
-        <div className="border-2 flex flex-col items-center rounded-xl">
-          <form onSubmit={handlePasswordEditFormSubmit}>
+      <div className="flex min-h-screen flex-col items-center justify-center">
+        <h2 className="mb-[2rem] text-3xl font-semibold">비밀번호 수정</h2>
+        <div className="border-gray-medium flex h-[40rem] w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] py-[3rem]">
+          <form onSubmit={handlePasswordEditFormSubmit} className="flex flex-col justify-center gap-[1.5rem] p-[2rem]">
             <div className="relative flex flex-col">
-              <label htmlFor="password">새 비밀번호</label>
-              <input type={isVisivlePassword ? "text" : "password"} value={password} onChange={handlePasswordChange} className="border-2 rounded-md" />
-              <button type="button" onClick={handleTogglePassword} className="absolute bottom-1 right-2">
-                {isVisivlePassword ? <FaEyeSlash /> : <FaEye />}
+              <label htmlFor="password" className="text-lg font-semibold">
+                새 비밀번호
+              </label>
+              <input
+                type={isVisivlePassword ? "text" : "password"}
+                value={password}
+                onChange={handlePasswordChange}
+                className="border-gray-medium h-[4rem] w-[24rem] rounded-[1rem] border-[0.1rem] px-[1rem]"
+              />
+              <button type="button" onClick={handleTogglePassword} className="absolute right-[1.3rem] top-[3.2rem]">
+                {isVisivlePassword ? <FaEyeSlash size={23} /> : <FaEye size={23} />}
               </button>
-              {passwordWarning && <p>{passwordWarning}</p>}
+              {passwordWarning && <p className="text-warning mt-[0.3rem] w-[24rem] text-sm">{passwordWarning}</p>}
             </div>
             <div className="relative flex flex-col">
-              <label htmlFor="passwordConfirm">새 비밀번호 확인</label>
-              <input type={isVisivlePassworConfirm ? "text" : "password"} value={passwordConfirm} onChange={handlePasswordConfirmChange} className="border-2 rounded-md" />
-              <button type="button" onClick={handleTogglePasswordConfirm} className="absolute bottom-1 right-2">
-                {isVisivlePassworConfirm ? <FaEyeSlash /> : <FaEye />}
+              <label htmlFor="passwordConfirm" className="text-lg font-semibold">
+                새 비밀번호 확인
+              </label>
+              <input
+                type={isVisivlePassworConfirm ? "text" : "password"}
+                value={passwordConfirm}
+                onChange={handlePasswordConfirmChange}
+                className="border-gray-medium h-[4rem] w-[24rem] rounded-[1rem] border-[0.1rem] px-[1rem]"
+              />
+              <button type="button" onClick={handleTogglePasswordConfirm} className="absolute right-[1.3rem] top-[3.2rem]">
+                {isVisivlePassworConfirm ? <FaEyeSlash size={23} /> : <FaEye size={23} />}
               </button>
-              {passwordConfirmWarning && <p>{passwordConfirmWarning}</p>}
+              {passwordConfirmWarning && <p className="text-warning mt-[0.3rem] w-[24rem] text-sm">{passwordConfirmWarning}</p>}
             </div>
-            <button className="bg-slate-200">변경하기</button>
+            <div className="flex flex-col gap-[0.8rem]">
+              <button className="bg-secondary-dark flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] text-lg">변경하기</button>
+              <Link href="/account">
+                <div className="bg-gray-light flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] text-lg">취소하기</div>
+              </Link>
+            </div>
           </form>
-          <Link href="/account">
-            <div className="bg-slate-100">취소하기</div>
-          </Link>
         </div>
       </div>
     </div>
