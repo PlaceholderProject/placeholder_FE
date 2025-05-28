@@ -33,7 +33,7 @@ export default function RootLayout({
         <ReduxProvider>
           <QueryProvider>
             <Header />
-            <main className="pb-24">{children}</main>
+            <main>{children}</main>
             <NavigationBar />
           </QueryProvider>
         </ReduxProvider>

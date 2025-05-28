@@ -152,57 +152,77 @@ const Signup = () => {
   };
 
   return (
-    <div className="w-[400px] h-[500px] flex flex-col items-center justify-center">
-      <h2>회원가입</h2>
-      <div className="border-[#CFCFCF] border-2 w-10/12 rounded-2xl flex flex-col items-center justify-center">
-        <form onSubmit={handleSignupFormSubmit} className="flex flex-col items-center justify-center">
-          <div className="flex flex-col">
-            <label htmlFor="email">이메일 주소</label>
+    <div className="flex min-h-screen flex-col items-center justify-center">
+      <h2 className="mb-8 text-3xl font-semibold">회원가입</h2>
+      <div className="border-gray-medium flex h-full w-[80%] min-w-[30rem] flex-col items-center justify-center rounded-[1.5rem] border-[0.1rem] py-10">
+        <form onSubmit={handleSignupFormSubmit} className="flex flex-col items-center justify-center gap-[1.2rem]">
+          <div className="relative flex flex-col">
+            <label htmlFor="email" className="text-lg font-semibold">
+              이메일 주소
+            </label>
             <div>
-              <input type="email" value={email} onChange={handleEmailChange} className="border-2 rounded-md" />
-              <button type="button" onClick={handleCheckEmail} className="bg-slate-200">
+              <input type="email" value={email} onChange={handleEmailChange} className="border-gray-medium h-[4rem] w-[18rem] rounded-l-[1rem] border-[0.1rem]" />
+              <button type="button" onClick={handleCheckEmail} className="border-gray-medium h-[4rem] w-[6rem] rounded-r-[1rem] border-y-[0.1rem] border-r-[0.1rem]">
                 중복확인
               </button>
             </div>
           </div>
           <div className="relative flex flex-col">
-            <label htmlFor="password">비밀번호</label>
-            <input type={isVisivlePassword ? "text" : "password"} value={password} onChange={handlePasswordChange} className="border-2 rounded-md" />
-            <button type="button" onClick={handleTogglePassword} className="absolute bottom-1 right-2">
-              {isVisivlePassword ? <FaEyeSlash /> : <FaEye />}
+            <label htmlFor="password" className="text-lg font-semibold">
+              비밀번호
+            </label>
+            <input type={isVisivlePassword ? "text" : "password"} value={password} onChange={handlePasswordChange} className="border-gray-medium h-[4rem] w-[24rem] rounded-[1rem] border-[0.1rem]" />
+            <button type="button" onClick={handleTogglePassword} className="absolute right-[1.3rem] top-[3.2rem]">
+              {isVisivlePassword ? <FaEyeSlash size={23} /> : <FaEye size={23} />}
             </button>
-            {passwordWarning && <p>{passwordWarning}</p>}
+            {passwordWarning && <p className="text-warning mt-[0.3rem] w-[24rem] text-sm">{passwordWarning}</p>}
           </div>
           <div className="relative flex flex-col">
-            <label htmlFor="passwordConfirm">비밀번호 확인</label>
-            <input type={isVisivlePassworConfirm ? "text" : "password"} value={passwordConfirm} onChange={handlePasswordConfirmChange} className="border-2 rounded-md" />
-            <button type="button" onClick={handleTogglePasswordConfirm} className="absolute bottom-1 right-2">
-              {isVisivlePassworConfirm ? <FaEyeSlash /> : <FaEye />}
+            <label htmlFor="passwordConfirm" className="text-lg font-semibold">
+              비밀번호 확인
+            </label>
+            <input
+              type={isVisivlePassworConfirm ? "text" : "password"}
+              value={passwordConfirm}
+              onChange={handlePasswordConfirmChange}
+              className="border-gray-medium h-[4rem] w-[24rem] rounded-[1rem] border-[0.1rem]"
+            />
+            <button type="button" onClick={handleTogglePasswordConfirm} className="absolute right-[1.3rem] top-[3.2rem]">
+              {isVisivlePassworConfirm ? <FaEyeSlash size={23} /> : <FaEye size={23} />}
             </button>
-            {passwordConfirmWarning && <p>{passwordConfirmWarning}</p>}
+            {passwordConfirmWarning && <p className="text-warning mt-[0.3rem] w-[24rem] text-sm">{passwordConfirmWarning}</p>}
           </div>
           <div className="flex flex-col">
-            <label htmlFor="nickname">닉네임</label>
+            <label htmlFor="nickname" className="text-lg font-semibold">
+              닉네임
+            </label>
             <div>
-              <input type="text" value={nickname} onChange={handleNicknameChange} className="border-2 rounded-md" />
-              <button type="button" onClick={handleCheckNickname} className="bg-slate-200">
+              <input type="text" value={nickname} onChange={handleNicknameChange} className="border-gray-medium h-[4rem] w-[18rem] rounded-l-[1rem] border-[0.1rem]" />
+              <button type="button" onClick={handleCheckNickname} className="border-gray-medium bg-gray-medium h-[4rem] w-[6rem] rounded-r-[1rem] border-y-[0.1rem] border-r-[0.1rem]">
                 중복확인
               </button>
             </div>
-            {nicknameWarning && <p>{nicknameWarning}</p>}
+            {nicknameWarning && <p className="text-warning mt-[0.3rem] w-[24rem] text-sm">{nicknameWarning}</p>}
           </div>
           <div className="flex flex-col">
-            <label htmlFor="bio">자기소개</label>
-            <textarea value={bio} onChange={handleBioChange} placeholder="함께할 모임원을 위해 간단한 자기소개를 작성해주세요." className="border-2 rounded-md" />
-            {bioWarning && <p>{bioWarning}</p>}
-            <p>{bioTextLength}/40</p>
+            <label htmlFor="bio" className="text-lg font-semibold">
+              자기소개
+            </label>
+            <textarea
+              value={bio}
+              onChange={handleBioChange}
+              placeholder="함께할 모임원을 위해 간단한 자기소개를 작성해주세요."
+              className="border-gray-medium h-[7rem] w-[24rem] rounded-[1rem] border-[0.1rem] p-4"
+            />
+            {bioWarning && <p className="text-warning mt-[0.3rem] w-[24rem] text-sm">{bioWarning}</p>}
+            <p className="">{bioTextLength}/40</p>
           </div>
-          <button type="submit" className="bg-gray-200">
+          <button type="submit" className="bg-secondary-dark flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] text-lg">
             회원가입
           </button>
         </form>
         <Link href="/login">
-          <div className="bg-slate-100">로그인하러 가기</div>
+          <div className="bg-gray-light flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] text-lg">로그인하러 가기</div>
         </Link>
       </div>
     </div>
