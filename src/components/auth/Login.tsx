@@ -68,7 +68,7 @@ const Login = () => {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
-      <h1 className="mb-8 text-3xl font-semibold">로그인</h1>
+      <h1 className="mb-[2rem] text-3xl font-semibold">로그인</h1>
       <div className="border-gray-medium flex h-[40rem] w-[80%] min-w-[30rem] flex-col items-center justify-center rounded-[1.5rem] border-[0.1rem]">
         <form onSubmit={handleLoginFormSubmit} className="flex flex-col items-center justify-center gap-[1.2rem]">
           <div className="relative flex flex-col">

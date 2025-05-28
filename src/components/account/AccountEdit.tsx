@@ -13,7 +13,7 @@ import { FaCog } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 
 const AccountEdit = () => {
-  const [profileImage, setProfileImage] = useState<string>("");
+  const [profileImage, setProfileImage] = useState<string | null>("");
   const [nickname, setNickname] = useState("");
   const [nicknameWarning, setNicknameWarning] = useState("");
   const [bio, setBio] = useState("");
@@ -154,16 +154,15 @@ const AccountEdit = () => {
 
   return (
     <div>
-      <div className="flex flex-col items-center">
-        <h2 className="">회원 정보 수정</h2>
-        <div className="border-2 flex flex-col items-center rounded-xl">
-          <form onSubmit={handleAccountEditFormSubmit}>
-            <div>
-              <div className="w-[200px] h-[200px] rounded-full relative bg-slate-300 overflow-hidden">
+      <div className="flex min-h-screen flex-col items-center justify-center py-[10rem]">
+        <h2 className="mb-[2rem] text-3xl font-semibold">회원 정보 수정</h2>
+        <div className="border-gray-medium flex h-full w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] py-[3rem]">
+          <form onSubmit={handleAccountEditFormSubmit} className="flex flex-col justify-center gap-[1.5rem] p-[2rem]">
+            <div className="relative flex items-center justify-center">
+              <div className="relative h-[15rem] w-[15rem] overflow-hidden rounded-full">
                 <Image src={profileImage ? profileImage : "/profile.png"} alt="프로필 이미지" fill className="object-cover" />
               </div>
-
-              <label htmlFor="profileImage" className="cursor-pointer rounded-full">
+              <label htmlFor="profileImage" className="bg-primary absolute bottom-0 right-20 flex h-[3rem] w-[3rem] cursor-pointer items-center justify-center rounded-full text-white">
                 <FaCog size={20} />
                 <input
                   type="file"
@@ -175,26 +174,50 @@ const AccountEdit = () => {
                 />
               </label>
             </div>
-
-            <div className="flex flex-col">
-              <label htmlFor="nickname">닉네임</label>
-              <input type="text" value={nickname} onChange={handleNicknameChange} className="border-2 rounded-md" />
-              <button type="button" onClick={handleCheckNickname}>
-                중복확인
+            <div>
+              <div className="flex flex-col">
+                <label htmlFor="nickname" className="text-lg font-semibold">
+                  닉네임
+                </label>
+                <div>
+                  <input type="text" value={nickname} onChange={handleNicknameChange} className="border-gray-medium h-[4rem] w-[18rem] rounded-l-[1rem] border-[0.1rem] px-[1rem]" />
+                  <button
+                    type="button"
+                    onClick={handleCheckNickname}
+                    className="border-gray-medium hover:bg-gray-medium bg-gray-light h-[4rem] w-[6rem] rounded-r-[1rem] border-y-[0.1rem] border-r-[0.1rem]"
+                  >
+                    중복확인
+                  </button>
+                  {nicknameWarning && <p className="text-warning mt-[0.3rem] w-[24rem] text-sm">{nicknameWarning}</p>}
+                </div>
+              </div>
+              <div className="flex flex-col">
+                <label htmlFor="bio" className="text-lg font-semibold">
+                  자기소개
+                </label>
+                <div>
+                  <textarea
+                    value={bio}
+                    onChange={handleBioChange}
+                    placeholder="함께할 모임원을 위해 간단한 자기소개를 작성해주세요."
+                    className="border-gray-medium h-[7rem] w-[24rem] rounded-[1rem] border-[0.1rem] p-[1rem]"
+                  />
+                  {bioWarning && <p className="text-warning mt-[0.3rem] w-[24rem] text-sm">{bioWarning}</p>}
+                  <div className="flex w-full justify-end">
+                    <p className="mt-[0.3rem] text-sm">{bioTextLength}/40</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col gap-[0.8rem]">
+              <button type="submit" className="bg-secondary-dark flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] text-lg">
+                변경하기
               </button>
-              {nicknameWarning && <p>{nicknameWarning}</p>}
+              <Link href="/account">
+                <div className="bg-gray-light flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] text-lg">취소하기</div>
+              </Link>
             </div>
-            <div className="flex flex-col">
-              <label htmlFor="bio">자기소개</label>
-              <textarea value={bio} onChange={handleBioChange} placeholder="함께할 모임원을 위해 간단한 자기소개를 작성해주세요." className="border-2 rounded-md" />
-              {bioWarning && <p>{bioWarning}</p>}
-              <p>{bioTextLength}/40</p>
-            </div>
-            <button type="submit">변경하기</button>
           </form>
-          <div>
-            <Link href="/account">취소하기</Link>
-          </div>
         </div>
       </div>
     </div>
