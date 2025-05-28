@@ -152,17 +152,17 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center">
-      <h2 className="mb-8 text-3xl font-semibold">회원가입</h2>
+    <div className="flex min-h-screen flex-col items-center justify-center py-[12rem]">
+      <h2 className="mb-[4rem] text-3xl font-semibold">회원가입</h2>
       <div className="border-gray-medium flex h-full w-[80%] min-w-[30rem] flex-col items-center justify-center rounded-[1.5rem] border-[0.1rem] py-10">
-        <form onSubmit={handleSignupFormSubmit} className="flex flex-col items-center justify-center gap-[1.2rem]">
+        <form onSubmit={handleSignupFormSubmit} className="flex flex-col items-center justify-center gap-[1.2rem] p-[2rem]">
           <div className="relative flex flex-col">
             <label htmlFor="email" className="text-lg font-semibold">
               이메일 주소
             </label>
             <div>
-              <input type="email" value={email} onChange={handleEmailChange} className="border-gray-medium h-[4rem] w-[18rem] rounded-l-[1rem] border-[0.1rem]" />
-              <button type="button" onClick={handleCheckEmail} className="border-gray-medium h-[4rem] w-[6rem] rounded-r-[1rem] border-y-[0.1rem] border-r-[0.1rem]">
+              <input type="email" value={email} onChange={handleEmailChange} className="border-gray-medium h-[4rem] w-[18rem] rounded-l-[1rem] border-[0.1rem] px-[1rem]" />
+              <button type="button" onClick={handleCheckEmail} className="border-gray-medium bg-gray-light hover:bg-gray-medium h-[4rem] w-[6rem] rounded-r-[1rem] border-y-[0.1rem] border-r-[0.1rem]">
                 중복확인
               </button>
             </div>
@@ -171,7 +171,12 @@ const Signup = () => {
             <label htmlFor="password" className="text-lg font-semibold">
               비밀번호
             </label>
-            <input type={isVisivlePassword ? "text" : "password"} value={password} onChange={handlePasswordChange} className="border-gray-medium h-[4rem] w-[24rem] rounded-[1rem] border-[0.1rem]" />
+            <input
+              type={isVisivlePassword ? "text" : "password"}
+              value={password}
+              onChange={handlePasswordChange}
+              className="border-gray-medium h-[4rem] w-[24rem] rounded-[1rem] border-[0.1rem] pl-[1rem] pr-[5rem]"
+            />
             <button type="button" onClick={handleTogglePassword} className="absolute right-[1.3rem] top-[3.2rem]">
               {isVisivlePassword ? <FaEyeSlash size={23} /> : <FaEye size={23} />}
             </button>
@@ -185,7 +190,7 @@ const Signup = () => {
               type={isVisivlePassworConfirm ? "text" : "password"}
               value={passwordConfirm}
               onChange={handlePasswordConfirmChange}
-              className="border-gray-medium h-[4rem] w-[24rem] rounded-[1rem] border-[0.1rem]"
+              className="border-gray-medium h-[4rem] w-[24rem] rounded-[1rem] border-[0.1rem] pl-[1rem] pr-[5rem]"
             />
             <button type="button" onClick={handleTogglePasswordConfirm} className="absolute right-[1.3rem] top-[3.2rem]">
               {isVisivlePassworConfirm ? <FaEyeSlash size={23} /> : <FaEye size={23} />}
@@ -197,8 +202,12 @@ const Signup = () => {
               닉네임
             </label>
             <div>
-              <input type="text" value={nickname} onChange={handleNicknameChange} className="border-gray-medium h-[4rem] w-[18rem] rounded-l-[1rem] border-[0.1rem]" />
-              <button type="button" onClick={handleCheckNickname} className="border-gray-medium bg-gray-medium h-[4rem] w-[6rem] rounded-r-[1rem] border-y-[0.1rem] border-r-[0.1rem]">
+              <input type="text" value={nickname} onChange={handleNicknameChange} className="border-gray-medium h-[4rem] w-[18rem] rounded-l-[1rem] border-[0.1rem] px-[1rem]" />
+              <button
+                type="button"
+                onClick={handleCheckNickname}
+                className="border-gray-medium hover:bg-gray-medium bg-gray-light h-[4rem] w-[6rem] rounded-r-[1rem] border-y-[0.1rem] border-r-[0.1rem]"
+              >
                 중복확인
               </button>
             </div>
@@ -212,18 +221,22 @@ const Signup = () => {
               value={bio}
               onChange={handleBioChange}
               placeholder="함께할 모임원을 위해 간단한 자기소개를 작성해주세요."
-              className="border-gray-medium h-[7rem] w-[24rem] rounded-[1rem] border-[0.1rem] p-4"
+              className="border-gray-medium h-[7rem] w-[24rem] rounded-[1rem] border-[0.1rem] p-[1rem]"
             />
             {bioWarning && <p className="text-warning mt-[0.3rem] w-[24rem] text-sm">{bioWarning}</p>}
-            <p className="">{bioTextLength}/40</p>
+            <div className="flex w-full justify-end">
+              <p className="mt-[0.3rem] text-sm">{bioTextLength}/40</p>
+            </div>
           </div>
-          <button type="submit" className="bg-secondary-dark flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] text-lg">
-            회원가입
-          </button>
+          <div className="flex flex-col gap-[0.8rem]">
+            <button type="submit" className="bg-secondary-dark flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] text-lg">
+              회원가입
+            </button>
+            <Link href="/login">
+              <div className="bg-gray-light flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] text-lg">로그인하러 가기</div>
+            </Link>
+          </div>
         </form>
-        <Link href="/login">
-          <div className="bg-gray-light flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] text-lg">로그인하러 가기</div>
-        </Link>
       </div>
     </div>
   );
