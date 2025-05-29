@@ -2,9 +2,9 @@
 
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { setIsAuthenticated } from "@/stores/authSlice";
 import NotificationItem from "@/components/notification/NotificationItem";
 import { useNotificationList } from "@/hooks/useNotification";
+import { setHasUnreadNotifications } from "@/stores/notificationSlice";
 
 const NotificationArea = () => {
   const dispatch = useDispatch();
@@ -14,7 +14,7 @@ const NotificationArea = () => {
   useEffect(() => {
     if (notifications) {
       const hasUnread = notifications.some(notification => !notification.is_read);
-      dispatch(setIsAuthenticated(hasUnread));
+      dispatch(setHasUnreadNotifications(hasUnread));
     }
   }, [notifications, dispatch]);
 
@@ -22,26 +22,17 @@ const NotificationArea = () => {
   if (error) return <div>Error</div>;
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <h1 className="text-xl font-bold p-4">알림</h1>
+    <div className="mx-auto max-w-3xl">
+      <h1 className="p-4 text-xl font-bold">알림</h1>
 
       {notifications && notifications.length > 0 ? (
         <div className="divide-y">
           {notifications.map(notification => (
-            <NotificationItem
-              key={notification.id}
-              id={notification.id}
-              message={notification.message}
-              url={notification.url}
-              is_read={notification.is_read}
-              created_at={notification.created_at}
-            />
+            <NotificationItem key={notification.id} id={notification.id} message={notification.message} url={notification.url} is_read={notification.is_read} created_at={notification.created_at} />
           ))}
         </div>
       ) : (
-        <div className="p-8 text-center text-gray-500">
-          알림이 없습니다
-        </div>
+        <div className="p-8 text-center text-gray-500">알림이 없습니다</div>
       )}
     </div>
   );

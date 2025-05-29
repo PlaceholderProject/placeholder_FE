@@ -43,27 +43,27 @@ const Header = () => {
   };
 
   return (
-    <header className="flex h-[60px] items-center bg-[#006B8B]">
+    <header className="bg-primary fixed left-0 right-0 top-0 z-50 flex h-[6rem] items-center">
       <div className="flex w-full justify-between px-6">
         <Link href="/">
-          <Image src="/logo.png" alt="로고" width={120} height={20} />
+          <Image src="/smallLogo.png" alt="로고" width={30} height={30} />
         </Link>
-        <div className="flex items-center justify-center gap-3">
+        <div className="flex items-center justify-center">
           {isAuthenticated ? (
             <div className="flex flex-row items-center gap-3">
-              <div className="relative h-[17px]">
-                <button onClick={handleNotificationPage} className="">
-                  <FaRegBell color="#D9D9D9" size="17" />
-                  {hasUnreadNotifications && <div className="absolute right-0 top-0 h-2 w-2 rounded-full bg-[#F9617A]"></div>}
+              <div className="relative flex items-center">
+                <button onClick={handleNotificationPage} className="text-gray-light">
+                  <FaRegBell size="23" />
+                  {hasUnreadNotifications && <div className="bg-error absolute right-0 top-0 h-2 w-2 rounded-full"></div>}
                 </button>
               </div>
-              <button onClick={handleLogout} className="h-[15px] w-[50px] rounded-sm bg-[#FEFFEC] text-[8px] font-semibold">
+              <button onClick={handleLogout} className="bg-secondary-light h-[2.3rem] w-[7rem] rounded-[0.3rem] font-semibold leading-none">
                 로그아웃
               </button>
             </div>
           ) : (
             <Link href="/login">
-              <button className="h-[15px] w-[50px] rounded-sm bg-[#FEFFEC] text-[8px] font-semibold">로그인</button>
+              <button className="bg-secondary-light h-[2.3rem] w-[7rem] rounded-[0.3rem] font-semibold">로그인</button>
             </Link>
           )}
         </div>

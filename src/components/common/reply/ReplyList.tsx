@@ -3,7 +3,7 @@ import ReplyItem from "./ReplyItem";
 import { Reply } from "@/types/replyType";
 import { useScheduleReply } from "@/hooks/useScheduleReply";
 
-const ReplyList = ({ meetupId, scheduleId }: { meetupId: string | string[]; scheduleId: string | string[] }) => {
+const ReplyList = ({ meetupId, scheduleId }: { meetupId: string | string[]; scheduleId?: string | string[] }) => {
   const { data: meetupReply, isLoading } = useReplyList(meetupId, {
     enabled: !scheduleId,
   });
