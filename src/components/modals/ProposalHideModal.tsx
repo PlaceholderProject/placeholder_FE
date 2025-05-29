@@ -11,21 +11,20 @@ const ProposalHideModal = ({ proposal, onClose }: ProposalHideModalProps) => {
   };
   return (
     <ModalLayout onClose={onClose}>
-      <div className="flex w-full flex-col items-center gap-4">
-        <h2 className="text-[20px]">{proposal.meetup_name}</h2>
-        <div className="text-[14px]">신청서를 숨길까요?</div>
-        <div className="flex w-full flex-col items-center text-[13px] text-[#949394]">
+      <div className="flex w-full flex-col items-center gap-[1.5rem]">
+        <h2 className="text-lg font-bold">{proposal.meetup_ad_title}</h2>
+        <div>신청서를 숨길까요?</div>
+        <div className="text-gray-dark flex w-full flex-col items-center">
           <div>신청은 유지됩니다.</div>
-          <div className="flex w-full items-center justify-center">
-            취소를 원하시면 &nbsp; <FaTimesCircle />를 눌러주세요.
+          <div className="flex items-center justify-center">
+            취소를 원하시면 &nbsp; <span className="bg-warning h-fil rounded-[0.5rem] px-[0.5rem] py-[0.2rem] text-sm font-bold text-white">취소</span>를 눌러주세요.
           </div>
         </div>
-
-        <div className="flex w-full flex-col gap-2">
-          <button onClick={onClose} className="rounded-lg bg-gray-300 px-4 py-2 text-[13px]">
+        <div className="flex w-full flex-col gap-[1rem]">
+          <button onClick={onClose} className="bg-gray-light h-[4rem] rounded-[1rem]">
             아니요
           </button>
-          <button onClick={handleProposalHide} className="rounded-lg bg-[#FBFFA9] px-4 py-2 text-[13px]">
+          <button onClick={handleProposalHide} className="bg-secondary-dark h-[4rem] rounded-[1rem]">
             숨기기
           </button>
         </div>
