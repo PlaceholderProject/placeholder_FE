@@ -48,17 +48,17 @@ const ReplyForm = () => {
   };
 
   return (
-    <div className="flex w-full items-center justify-center border-y-[1px] border-[#CFCFCF] p-[20px]">
-      <form className="flex flex-col gap-2" onSubmit={handleReplySubmit}>
-        <div className="flex h-[92px] w-[263px] flex-col items-center justify-center gap-2 rounded-lg border-[1px] border-[#CFCFCF] p-[10px]">
-          <div className="flex w-full flex-row items-center gap-1">
-            <div className="h-[15px] w-[15px] overflow-hidden rounded-full">
-              <Image src={profileImage || "/profile.png"} alt="프로필 이미지" width="15" height="15" unoptimized={true} />
+    <div className="border-gray-medium flex w-full items-center justify-center border-y-[1px] p-[2rem]">
+      <form className="flex w-[80%] flex-col gap-[0.5rem]" onSubmit={handleReplySubmit}>
+        <div className="border-gray-medium flex w-full flex-col items-center justify-center gap-[1rem] rounded-[1rem] border-[0.1rem] bg-white p-[1.5rem]">
+          <div className="flex w-full flex-row items-center gap-[0.5rem]">
+            <div className="h-[2rem] w-[2rem] overflow-hidden rounded-full">
+              <Image src={profileImage || "/profile.png"} alt="프로필 이미지" width="20" height="20" unoptimized={true} />
             </div>
-            <div className="text-[7px]">{user.nickname && `${user.nickname}✨`}</div>
+            <span>{user.nickname && `${user.nickname} ✨`}</span>
           </div>
           <textarea
-            className="h-[50px] w-full text-[8px]"
+            className="min-h-[10rem] w-full"
             placeholder={user.email ? "댓글을 남겨보세요" : "로그인한 이후에 댓글을 작성할 수 있습니다."}
             onChange={handleContentChange}
             value={content}
@@ -66,8 +66,8 @@ const ReplyForm = () => {
           />
         </div>
         <div className="flex justify-between">
-          <span className="text-[6px]">{content.length}/ 300</span>
-          <button className="h-[14px] w-[38px] rounded-md bg-[#FBFFA9] text-[6px]">등록</button>
+          <span className="text-sm">{content.length}/ 300</span>
+          <button className="bg-secondary-dark h-[2.5rem] w-[6rem] rounded-[0.5rem] text-sm">등록</button>
         </div>
       </form>
     </div>

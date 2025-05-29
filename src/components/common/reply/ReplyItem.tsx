@@ -14,9 +14,9 @@ import { useDeleteScheduleReply, useUpdateScheduleReply } from "@/hooks/useSched
 
 const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId, scheduleId }) => {
   const user = useSelector((state: RootState) => state.user.user);
-  const [isVisiableNestedReply, setIsVisiableNestedReply] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [text, setText] = useState(reply.text);
+  const [isVisiableNestedReply, setIsVisiableNestedReply] = useState(false);
   const [isVisiableNestedReplyForm, setIsVisiableNestedReplyForm] = useState(false);
 
   const editReplyMutation = useEditReply(meetupId);
@@ -63,75 +63,74 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId, sche
   };
 
   return (
-    <div className="m-2 text-[10px]">
-      <div className="flex justify-between">
-        <span className="flex flex-row items-center gap-1">
-          <div className="h-[15px] w-[15px] overflow-hidden rounded-full">
+    <div className="flex flex-col items-start gap-[1rem]">
+      {/* 1️⃣ 댓글 정보 */}
+      <div className="flex w-full justify-between">
+        <div className="flex flex-row items-center gap-[0.5rem]">
+          <div className="h-[2.5rem] w-[2.5rem] overflow-hidden rounded-full">
             <Image
               src={reply.user.image ? (reply.user.image.startsWith("http") ? reply.user.image : `${BASE_URL}${reply.user.image}`) : "/profile.png"}
               alt="프로필 이미지"
-              width="15"
-              height="15"
+              width="25"
+              height="25"
               unoptimized={true}
             />
           </div>
-          <span>
+          <span className="text-sm">
             {reply.isOrganizer && "👑 "}
-            {reply.user.nickname}✨
+            {reply.user.nickname} ✨
           </span>
-          <span className="text-[#B7B7B7]">{transformCreatedDate(reply.createdAt)}</span>
-        </span>
-        {reply.user.nickname === user.nickname && (
-          <span className="flex gap-2">
-            <button onClick={handleUpdateMode}>수정</button>
-            <button onClick={() => handleReplyDelete(reply.id)}>삭제</button>
-          </span>
-        )}
-      </div>
-      {isEditMode ? (
-        <div>
-          <textarea value={text} onChange={handleTextchange} />
-          <button onClick={handleUpdateMode}>취소</button>
-          <button onClick={() => handleReplyUpdate(reply.id)}>수정</button>
+          <span className="text-gray-dark text-sm">{transformCreatedDate(reply.createdAt)}</span>
         </div>
-      ) : (
-        <div className="py-2 pl-6">{reply.text}</div>
-      )}
-      {nestedReplies.length > 0 && (
-        <div>
-          {!isVisiableNestedReply && (
-            <button onClick={() => setIsVisiableNestedReply(true)} className="px-6 py-2 text-[#B7B7B7]">
-              ---- 답글 {nestedReplies.length}개 더 보기
-            </button>
-          )}
-          {isVisiableNestedReply && (
-            <div>
+        {reply.user.nickname === user.nickname ? (
+          !isEditMode ? (
+            <span className="text-gray-dark flex gap-[1rem]">
+              <button onClick={handleUpdateMode}>수정</button>
+              <button onClick={() => handleReplyDelete(reply.id)}>삭제</button>
+            </span>
+          ) : (
+            <span className="text-gray-dark flex gap-[1rem]">
+              <button onClick={handleUpdateMode}>취소</button>
+              <button onClick={() => handleReplyUpdate(reply.id)}>수정</button>
+            </span>
+          )
+        ) : null}
+      </div>
+      {/* 2️⃣ 댓글 내용 */}
+      {isEditMode ? <textarea value={text} onChange={handleTextchange} className="mx-[3rem] my-[1rem] w-[90%] rounded-[1rem] p-[1rem]" /> : <div className="w-full px-[3rem]">{reply.text}</div>}
+      {/* 3️⃣ 답글 영역 */}
+      <div className="flex w-full flex-col items-start gap-[0.5rem] pl-[3rem]">
+        {/* 3-1. 답글 더보기 & 접기 */}
+        {nestedReplies.length > 0 &&
+          (isVisiableNestedReply ? (
+            <div className="flex w-full flex-col items-start gap-[1rem]">
               {nestedReplies.map(nestedReply => (
                 <NestedReplyItem key={nestedReply.id} nestedReply={nestedReply} meetupId={meetupId} handleReplyUpdate={handleReplyUpdate} setIsVisiableNestedReplyForm={setIsVisiableNestedReplyForm} />
               ))}
-              {user.email &&
-                (isVisiableNestedReplyForm ? (
-                  <NestedReplyForm
-                    rootReply={reply}
-                    meetupId={meetupId}
-                    setIsVisiableNestedReplyForm={setIsVisiableNestedReplyForm}
-                    isVisiableNestedReplyForm={isVisiableNestedReplyForm}
-                    setIsVisiableNestedReply={setIsVisiableNestedReply}
-                  />
-                ) : (
-                  <div className="flex justify-between px-4">
-                    <button className="text-[#B7B7B7]" onClick={handleNestedReplyFormToggle}>
-                      답글달기
-                    </button>
-                    <button onClick={() => setIsVisiableNestedReply(false)} className="text-[#B7B7B7]">
-                      답글 접기
-                    </button>
-                  </div>
-                ))}
+              <button onClick={() => setIsVisiableNestedReply(false)} className="text-gray-dark text-sm">
+                ---- 답글 접기
+              </button>
             </div>
-          )}
-        </div>
-      )}
+          ) : (
+            <button onClick={() => setIsVisiableNestedReply(true)} className="text-gray-dark text-sm">
+              ---- 답글 {nestedReplies.length}개 더 보기
+            </button>
+          ))}
+        {/* 3-2. 답글 폼 */}
+        {isVisiableNestedReplyForm ? (
+          <NestedReplyForm
+            rootReply={reply}
+            meetupId={meetupId}
+            setIsVisiableNestedReplyForm={setIsVisiableNestedReplyForm}
+            isVisiableNestedReplyForm={isVisiableNestedReplyForm}
+            setIsVisiableNestedReply={setIsVisiableNestedReply}
+          />
+        ) : (
+          <button onClick={handleNestedReplyFormToggle} className="text-gray-dark text-sm">
+            답글달기
+          </button>
+        )}
+      </div>
     </div>
   );
 };

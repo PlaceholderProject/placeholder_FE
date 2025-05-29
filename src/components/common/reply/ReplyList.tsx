@@ -23,11 +23,15 @@ const ReplyList = ({ meetupId, scheduleId }: { meetupId: string | string[]; sche
   const topLevelReplies = replies.filter((reply: Reply) => reply.root === null);
 
   return (
-    <div className="w-full border-t-[1px] border-[#CFCFCF] p-[10px]">
+    <div className="border-gray-medium w-full border-t-[0.1rem] p-[1.5rem]">
       {topLevelReplies.length === 0 ? (
-        <p className="text-[10px]">댓글이 없습니다.</p>
+        <p>댓글이 없습니다.</p>
       ) : (
-        topLevelReplies.map((reply: Reply) => <ReplyItem key={reply.id} reply={reply} allReplies={replies} meetupId={meetupId} scheduleId={scheduleId} />)
+        <div className="flex flex-col gap-[2rem]">
+          {topLevelReplies.map((reply: Reply) => (
+            <ReplyItem key={reply.id} reply={reply} allReplies={replies} meetupId={meetupId} scheduleId={scheduleId} />
+          ))}
+        </div>
       )}
     </div>
   );
