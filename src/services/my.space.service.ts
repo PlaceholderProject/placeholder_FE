@@ -26,7 +26,7 @@ export const getMyMeetupsApi = async (status: string, page: number, size: number
     }
 
     const myMeetupsData = await response.json();
-    console.log("내공간 데이터:", myMeetupsData);
+    console.log("me 내공간 데이터:", myMeetupsData);
     return myMeetupsData;
   } catch (error) {
     console.error("API 호출 실패:", error);
@@ -95,7 +95,17 @@ export const getMyAdsApi = async (status: string, page: number, size: number): P
 // };
 
 // 모임 멤버 가져오기 Api
-export const getMyMeetupMembersApi = async (meetupId: number) => {
+export const getMyMeetupMembersApi = async (meetupId: number | undefined) => {
+  if (!meetupId) {
+    throw new Error("meetupId is required");
+  }
+
+  console.log("=== API 호출 시작 ===");
+  console.log("받은 meetupId:", meetupId);
+  console.log("meetupId 타입:", typeof meetupId);
+  console.log("meetupId 존재 여부:", !!meetupId);
+  console.log("===================");
+
   const token = Cookies.get("accessToken");
   const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}/member`, {
     method: "GET",
@@ -103,14 +113,27 @@ export const getMyMeetupMembersApi = async (meetupId: number) => {
       Authorization: `Bearer ${token}`,
     },
   });
+
   if (!response.ok) {
     const errorText = await response.text();
     console.log("멤버 조회 api 에러 응답", errorText);
-    throw new Error("멤버 조회에 실패.");
+    throw new Error("내 모임 멤버 조회에 실패.");
   }
 
+  // 👇 실제 API 응답 구조 확인
+
   const myMeetupMembersData = await response.json();
-  console.log("멤버 데이터:", myMeetupMembersData);
+  console.log("=== API 응답 데이터 ===");
+  console.log("전체 응답:", myMeetupMembersData);
+  console.log("result 배열:", myMeetupMembersData.result);
+  if (myMeetupMembersData.result && myMeetupMembersData.result[0]) {
+    console.log("첫 번째 멤버:", myMeetupMembersData.result[0]);
+  }
+  console.log("=====================");
+  console.log("내공간 멤버 데이터:", myMeetupMembersData);
+  console.log("내공간 멤버데이터 모임 아이디:", myMeetupMembersData.result[0].meetupId);
+  console.log("내공간 멤버데이터 모임 - 유저 아이디:", myMeetupMembersData.result[0].user?.id);
+  console.log("내공간 멤버데이터 모임 - 유저 닉네임:", myMeetupMembersData.result[0].user?.nickname);
   return myMeetupMembersData;
 };
 

@@ -240,26 +240,30 @@
 
 // export default LikeContainer;
 
-import React from "react";
-import { toggleLikeApi } from "@/services/like.service";
+import React, { useEffect } from "react";
+import { getLikeByIdApi, toggleLikeApi } from "@/services/like.service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Meetup } from "@/types/meetupType";
 import LikePart from "./LikePart";
 import { LikeContainerProps } from "@/types/likeType";
 
 const LikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerProps) => {
   const queryClient = useQueryClient();
 
+  useEffect(() => {
+    console.log("좋아요눌림??", id, initialIsLike);
+  });
   const likeMutation = useMutation({
-    mutationFn: () => toggleLikeApi(id, initialIsLike),
+    mutationFn: () => toggleLikeApi(id, initialIsLike ?? false),
 
     // 낙관적 업데이트
     onMutate: async () => {
       // 이전 쿼리요청 취소
       await queryClient.cancelQueries({ queryKey: ["headhuntings"] });
+      await queryClient.cancelQueries({ queryKey: ["like, id"] });
 
       // 이전 데이터 백업
       const previousHeadhuntingsData = queryClient.getQueryData(["headhuntings"]);
+      const previousLikeData = await getLikeByIdApi(id);
 
       // headhuntings 쿼리 데이터 업데이트
       queryClient.setQueryData(["headhuntings"], (oldData: any) => {
@@ -286,7 +290,6 @@ const LikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerPro
     },
 
     // 에러 발생 롤백
-
     onError: (error, variables, context) => {
       console.error("좋아요 토글 에러 ", error);
 
@@ -302,7 +305,7 @@ const LikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerPro
       }
     },
 
-    // 성공시 퀄 ㅣ무효화
+    // 성공시 쿼리 무효화
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["headhuntings"] });

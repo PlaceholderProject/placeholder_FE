@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { BASE_URL } from "@/constants/baseURL";
 import calculateDays from "@/utils/calculateDays";
-import { useQuery } from "@tanstack/react-query";
 import LikeContainer from "../likes/LikeContainer";
 import { Meetup } from "@/types/meetupType";
 import Link from "next/link";
@@ -54,8 +53,6 @@ const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
         <div className={thumbnail.isPublic ? "bg-primary" : "bg-gray-100"}>
           {thumbnail.image && (
             <Link href={`http://localhost:3000/ad/${thumbnail.id}`} className="b-4 relative h-48">
-              {/* <Image src={thumbnailImageUrl} alt={`${thumbnail.id}번 광고 이미지 안뜸`} fill className="object-cover rounded" loading="lazy" /> */}
-
               <Image
                 src={thumbnailImageUrl}
                 alt="thumbnailImage"
