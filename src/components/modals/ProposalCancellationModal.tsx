@@ -2,8 +2,8 @@ import ModalLayout from "./ModalLayout";
 import { ProposalCancellationModalProps } from "@/types/proposalType";
 import { useCancelProposal } from "@/hooks/useProposal";
 
-const ProposalCancellationModal = ({ proposal, onClose }: ProposalCancellationModalProps) => {
-  const cancelMutation = useCancelProposal();
+const ProposalCancellationModal = ({ meetupId, proposal, onClose }: ProposalCancellationModalProps) => {
+  const cancelMutation = useCancelProposal(meetupId);
 
   const handleProposalCancel = () => {
     cancelMutation.mutate(proposal.id);
@@ -12,14 +12,14 @@ const ProposalCancellationModal = ({ proposal, onClose }: ProposalCancellationMo
 
   return (
     <ModalLayout onClose={onClose}>
-      <div className="flex flex-col gap-4 w-full items-center">
+      <div className="flex w-full flex-col items-center gap-4">
         <h1 className="text-[20px]">{proposal.meetup_name}</h1>
         <p className="text-[14px]">신청을 취소할까요?</p>
-        <div className="flex flex-col gap-2 w-full">
-          <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded-lg text-[13px]">
+        <div className="flex w-full flex-col gap-2">
+          <button onClick={onClose} className="rounded-lg bg-gray-300 px-4 py-2">
             아니요
           </button>
-          <button onClick={handleProposalCancel} disabled={cancelMutation.isPending} className="px-4 py-2 bg-[#FBFFA9] rounded-lg text-[13px]">
+          <button onClick={handleProposalCancel} disabled={cancelMutation.isPending} className="rounded-lg bg-[#FBFFA9] px-4 py-2 text-[13px]">
             {cancelMutation.isPending ? "취소 중..." : "네"}
           </button>
         </div>

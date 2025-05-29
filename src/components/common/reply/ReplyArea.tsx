@@ -33,5 +33,4 @@ const ReplyArea: React.FC = () => {
     </div>
   );
 };
-
 export default ReplyArea;
