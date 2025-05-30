@@ -76,8 +76,8 @@ const Login = () => {
               이메일 주소
             </label>
             <input type="email" value={email} onChange={handleEmailChange} className="border-gray-medium h-[4rem] w-[24rem] rounded-[1rem] border-[0.1rem] px-[1rem]" />
-            <button type="button" onClick={() => setEmail("")} className="absolute right-[1.2rem] top-[3.1rem]">
-              <TiDelete size={25} />
+            <button type="button" onClick={() => setEmail("")} className="absolute right-[1.2rem] top-[3.1rem] text-[2.5rem]">
+              <TiDelete />
             </button>
           </div>
           <div className="relative flex flex-col">
@@ -90,8 +90,8 @@ const Login = () => {
               onChange={handlePasswordChange}
               className="border-gray-medium h-[4rem] w-[24rem] rounded-[1rem] border-[0.1rem] px-[1rem]"
             />
-            <button type="button" onClick={handleTogglePassword} className="absolute right-[1.3rem] top-[3.2rem]">
-              {isVisivlePassword ? <FaEyeSlash size={23} /> : <FaEye size={23} />}
+            <button type="button" onClick={handleTogglePassword} className="absolute right-[1.3rem] top-[3.2rem] text-[2.3rem]">
+              {isVisivlePassword ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
           <div className="flex flex-col gap-[0.8rem]">

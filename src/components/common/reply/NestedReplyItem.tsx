@@ -1,30 +1,16 @@
 "use client";
 import { BASE_URL } from "@/constants/baseURL";
 import { useDeleteReply } from "@/hooks/useReply";
-import { setReply } from "@/stores/replySlice";
 import { RootState } from "@/stores/store";
 import { Reply } from "@/types/replyType";
 import { transformCreatedDate } from "@/utils/ReplyDateFormat";
-import { Dispatch, SetStateAction } from "react";
 import Image from "next/image";
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
-const NestedReplyItem = ({
-  nestedReply,
-  meetupId,
-  handleReplyUpdate,
-  setIsVisiableNestedReplyForm,
-}: {
-  nestedReply: Reply;
-  meetupId: string | string[];
-  handleReplyUpdate: (replyId: number) => void;
-  setIsVisiableNestedReplyForm: Dispatch<SetStateAction<boolean>>;
-}) => {
+const NestedReplyItem = ({ nestedReply, meetupId, handleReplyUpdate }: { nestedReply: Reply; meetupId: string | string[]; handleReplyUpdate: (replyId: number) => void }) => {
   const user = useSelector((state: RootState) => state.user.user);
   const deleteReplyMutation = useDeleteReply(meetupId);
-
-  const dispatch = useDispatch();
 
   const [text, setText] = useState("");
   const [isEditMode, setIsEditMode] = useState(false);
@@ -44,11 +30,6 @@ const NestedReplyItem = ({
     setIsEditMode(!isEditMode);
     setText(nestedReply.text);
   };
-
-  // const selectNickname = () => {
-  //   setIsVisiableNestedReplyForm(true);
-  //   dispatch(setReply(nestedReply));
-  // };
 
   return (
     <div className="mt-[0.5rem] flex w-full flex-col items-start gap-[0.5rem]">

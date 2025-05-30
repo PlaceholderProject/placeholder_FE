@@ -105,7 +105,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId, sche
           (isVisiableNestedReply ? (
             <div className="flex w-full flex-col items-start gap-[1rem]">
               {nestedReplies.map(nestedReply => (
-                <NestedReplyItem key={nestedReply.id} nestedReply={nestedReply} meetupId={meetupId} handleReplyUpdate={handleReplyUpdate} setIsVisiableNestedReplyForm={setIsVisiableNestedReplyForm} />
+                <NestedReplyItem key={nestedReply.id} nestedReply={nestedReply} meetupId={meetupId} handleReplyUpdate={handleReplyUpdate} />
               ))}
               <button onClick={() => setIsVisiableNestedReply(false)} className="text-gray-dark text-sm">
                 ---- 답글 접기

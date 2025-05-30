@@ -154,16 +154,16 @@ const AccountEdit = () => {
 
   return (
     <div>
-      <div className="flex min-h-screen flex-col items-center justify-center py-[10rem]">
+      <div className="flex min-h-screen flex-col items-center justify-center py-[8rem]">
         <h2 className="mb-[2rem] text-3xl font-semibold">회원 정보 수정</h2>
-        <div className="border-gray-medium flex h-full w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] py-[3rem]">
+        <div className="border-gray-medium flex h-full w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] py-[2rem]">
           <form onSubmit={handleAccountEditFormSubmit} className="flex flex-col justify-center gap-[1.5rem] p-[2rem]">
             <div className="relative flex items-center justify-center">
               <div className="relative h-[15rem] w-[15rem] overflow-hidden rounded-full">
                 <Image src={profileImage ? profileImage : "/profile.png"} alt="프로필 이미지" fill className="object-cover" />
               </div>
-              <label htmlFor="profileImage" className="bg-primary absolute bottom-0 right-20 flex h-[3rem] w-[3rem] cursor-pointer items-center justify-center rounded-full text-white">
-                <FaCog size={20} />
+              <label htmlFor="profileImage" className="bg-primary absolute bottom-0 right-20 flex h-[3rem] w-[3rem] cursor-pointer items-center justify-center rounded-full text-2xl text-white">
+                <FaCog />
                 <input
                   type="file"
                   id="profileImage"

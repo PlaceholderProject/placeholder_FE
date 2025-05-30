@@ -1,4 +1,3 @@
-import { FaTimesCircle } from "react-icons/fa";
 import ModalLayout from "./ModalLayout";
 import { useHideProposal } from "@/hooks/useProposal";
 import { ProposalHideModalProps } from "@/types/proposalType";
@@ -11,9 +10,9 @@ const ProposalHideModal = ({ proposal, onClose }: ProposalHideModalProps) => {
   };
   return (
     <ModalLayout onClose={onClose}>
-      <div className="flex w-full flex-col items-center gap-[1.5rem]">
+      <div className="flex w-[90%] flex-col items-center gap-[1.5rem]">
         <h2 className="text-lg font-bold">{proposal.meetup_ad_title}</h2>
-        <div>신청서를 숨길까요?</div>
+        <p>신청서를 숨길까요?</p>
         <div className="text-gray-dark flex w-full flex-col items-center">
           <div>신청은 유지됩니다.</div>
           <div className="flex items-center justify-center">

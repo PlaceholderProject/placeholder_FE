@@ -23,9 +23,9 @@ const Account = () => {
   }, [user]);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-[10rem]">
+    <div className="flex min-h-screen flex-col items-center justify-center py-[8rem]">
       <h2 className="mb-[2rem] text-3xl font-semibold">계정 관리</h2>
-      <div className="border-gray-medium flex h-full w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] py-[3rem]">
+      <div className="border-gray-medium flex w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] py-[3rem]">
         <div className="flex w-full flex-col items-center justify-center gap-[1rem]">
           <div className="mb-[2rem] h-[15rem] w-[15rem] overflow-hidden rounded-full">
             <Image src={profileImage || "/profile.png"} alt="프로필 이미지" width="150" height="150" unoptimized={true} />

@@ -177,8 +177,8 @@ const Signup = () => {
               onChange={handlePasswordChange}
               className="border-gray-medium h-[4rem] w-[24rem] rounded-[1rem] border-[0.1rem] pl-[1rem] pr-[5rem]"
             />
-            <button type="button" onClick={handleTogglePassword} className="absolute right-[1.3rem] top-[3.2rem]">
-              {isVisivlePassword ? <FaEyeSlash size={23} /> : <FaEye size={23} />}
+            <button type="button" onClick={handleTogglePassword} className="absolute right-[1.3rem] top-[3.2rem] text-[2.3rem]">
+              {isVisivlePassword ? <FaEyeSlash /> : <FaEye />}
             </button>
             {passwordWarning && <p className="text-warning mt-[0.3rem] w-[24rem] text-sm">{passwordWarning}</p>}
           </div>
@@ -192,8 +192,8 @@ const Signup = () => {
               onChange={handlePasswordConfirmChange}
               className="border-gray-medium h-[4rem] w-[24rem] rounded-[1rem] border-[0.1rem] pl-[1rem] pr-[5rem]"
             />
-            <button type="button" onClick={handleTogglePasswordConfirm} className="absolute right-[1.3rem] top-[3.2rem]">
-              {isVisivlePassworConfirm ? <FaEyeSlash size={23} /> : <FaEye size={23} />}
+            <button type="button" onClick={handleTogglePasswordConfirm} className="absolute right-[1.3rem] top-[3.2rem] text-[2.3rem]">
+              {isVisivlePassworConfirm ? <FaEyeSlash /> : <FaEye />}
             </button>
             {passwordConfirmWarning && <p className="text-warning mt-[0.3rem] w-[24rem] text-sm">{passwordConfirmWarning}</p>}
           </div>
