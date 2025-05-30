@@ -80,15 +80,15 @@ const PasswordEdit = () => {
   };
 
   return (
-    <div className="relative z-10">
-      {!isPasswordRechecked && (
-        <div className="fixed inset-20 z-50">
-          <PasswordRecheck />
-        </div>
-      )}
+    <div>
       <div className="flex min-h-screen flex-col items-center justify-center">
         <h2 className="mb-[2rem] text-3xl font-semibold">비밀번호 수정</h2>
-        <div className="border-gray-medium flex h-[40rem] w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] py-[3rem]">
+        <div className="border-gray-medium relative z-10 flex min-h-[50rem] w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] py-[3rem]">
+          {!isPasswordRechecked && (
+            <div className="absolute inset-5 z-50 flex items-center justify-center bg-[#f9f9f9]">
+              <PasswordRecheck />
+            </div>
+          )}
           <form onSubmit={handlePasswordEditFormSubmit} className="flex flex-col justify-center gap-[1.5rem] p-[2rem]">
             <div className="relative flex flex-col">
               <label htmlFor="password" className="text-lg font-semibold">
@@ -100,8 +100,8 @@ const PasswordEdit = () => {
                 onChange={handlePasswordChange}
                 className="border-gray-medium h-[4rem] w-[24rem] rounded-[1rem] border-[0.1rem] px-[1rem]"
               />
-              <button type="button" onClick={handleTogglePassword} className="absolute right-[1.3rem] top-[3.2rem]">
-                {isVisivlePassword ? <FaEyeSlash size={23} /> : <FaEye size={23} />}
+              <button type="button" onClick={handleTogglePassword} className="absolute right-[1.3rem] top-[3.2rem] text-[2.3rem]">
+                {isVisivlePassword ? <FaEyeSlash /> : <FaEye />}
               </button>
               {passwordWarning && <p className="text-warning mt-[0.3rem] w-[24rem] text-sm">{passwordWarning}</p>}
             </div>
@@ -115,8 +115,8 @@ const PasswordEdit = () => {
                 onChange={handlePasswordConfirmChange}
                 className="border-gray-medium h-[4rem] w-[24rem] rounded-[1rem] border-[0.1rem] px-[1rem]"
               />
-              <button type="button" onClick={handleTogglePasswordConfirm} className="absolute right-[1.3rem] top-[3.2rem]">
-                {isVisivlePassworConfirm ? <FaEyeSlash size={23} /> : <FaEye size={23} />}
+              <button type="button" onClick={handleTogglePasswordConfirm} className="absolute right-[1.3rem] top-[3.2rem] text-[2.3rem]">
+                {isVisivlePassworConfirm ? <FaEyeSlash /> : <FaEye />}
               </button>
               {passwordConfirmWarning && <p className="text-warning mt-[0.3rem] w-[24rem] text-sm">{passwordConfirmWarning}</p>}
             </div>

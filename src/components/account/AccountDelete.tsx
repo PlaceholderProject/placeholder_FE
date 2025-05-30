@@ -19,16 +19,11 @@ const AccountDelete = () => {
 
   const handleDeleteUserButton = async () => {
     try {
-      const response = await deleteUserMutation.mutateAsync(); // ✅ 비동기 호출
-
-      console.log(response);
-
-      if (response) {
-        Cookies.remove("accessToken");
-        Cookies.remove("refreshToken");
-        dispatch(setIsAuthenticated(false));
-        setIsDeletedAccount(true);
-      }
+      await deleteUserMutation.mutateAsync(); // ✅ 비동기 호출
+      Cookies.remove("accessToken");
+      Cookies.remove("refreshToken");
+      dispatch(setIsAuthenticated(false));
+      setIsDeletedAccount(true);
     } catch (error) {
       alert("탈퇴에 실패했습니다. 다시 시도해주세요.");
     }
@@ -37,9 +32,9 @@ const AccountDelete = () => {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-[10rem]">
       <h2 className="mb-[2rem] text-3xl font-semibold">계정 관리</h2>
-      <div className="border-gray-medium flex h-[40rem] w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] py-[3rem]">
+      <div className="border-gray-medium relative z-10 flex min-h-[50rem] w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] py-[3rem]">
         {!isPasswordRechecked && (
-          <div className="fixed inset-20 z-50">
+          <div className="absolute inset-5 z-50 flex items-center justify-center bg-[#f9f9f9]">
             <PasswordRecheck />
           </div>
         )}
