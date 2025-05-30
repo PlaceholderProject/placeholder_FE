@@ -36,7 +36,7 @@ const SearchedResultArea = () => {
   }
 
   return (
-    <div>
+    <div className="border-gray-medium my-[5rem] border-t-[0.1rem]">
       <ul>
         {searchedAds.map((ad: SearchedType) => (
           <li key={ad.id}>
