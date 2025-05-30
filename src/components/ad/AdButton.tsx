@@ -69,7 +69,7 @@ const AdButton = ({ meetupId }: { meetupId: number }) => {
             {isProposalPostcardOpen && <ProposalPostcard meetupId={meetupId} onClose={() => setIsProposalPostcardOpen(false)} />}
           </div>
         )}
-        {isProposalCancellationOpen && <ProposalCancellationModal meetupId={meetupId} proposal={proposal} onClose={() => setIsProposalCancellationOpen(false)} />}
+        {isProposalCancellationOpen && <ProposalCancellationModal meetupId={meetupId} proposal={proposal} title={adData?.adTitle ?? ""} onClose={() => setIsProposalCancellationOpen(false)} />}
       </div>
     </div>
   );

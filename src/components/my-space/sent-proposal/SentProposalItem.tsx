@@ -60,7 +60,7 @@ const SentProposalItem = ({ proposal, isModalOpen, modalType, onModalOpen, onMod
           </button>
         </div>
       </div>
-      {isModalOpen && modalType === "cancellation" && <ProposalCancellationModal meetupId={meetupId} proposal={proposal} onClose={onModalClose} />}
+      {isModalOpen && modalType === "cancellation" && <ProposalCancellationModal meetupId={meetupId} title={proposal.meetup_ad_title} proposal={proposal} onClose={onModalClose} />}
       {isModalOpen && modalType === "hide" && <ProposalHideModal proposal={proposal} onClose={onModalClose} />}
     </div>
   );

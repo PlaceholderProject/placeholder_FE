@@ -35,6 +35,7 @@ export interface ProposalCancellationModalProps {
   meetupId: number;
   proposal: SentProposal;
   onClose: () => void;
+  title: string;
 }
 
 export interface ProposalHideModalProps {
