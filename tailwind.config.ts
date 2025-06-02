@@ -10,7 +10,7 @@ const config: Config = {
       lg: "1.6rem", // 16px
       xl: "1.8rem", // 18px
       "2xl": "2rem", // 20px
-      "3xl": "2.4rem", // 24px
+      "3xl": "2.6rem", // 24px
       "4xl": "3rem", // 30px
     },
     extend: {
@@ -27,11 +27,10 @@ const config: Config = {
           light: "#FEFFEC",
         },
         gray: {
-          dark: "#484848",
-          medium: "#858585",
-          light: "#C4C4C4",
+          dark: "#868282",
+          medium: "#D9D9D9",
+          light: "#E8E8E8",
         },
-
         error: "#F9617A",
         warning: "#F9617A",
 

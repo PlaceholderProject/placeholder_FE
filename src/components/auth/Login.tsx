@@ -3,9 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { FaEye } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { TiDelete } from "react-icons/ti";
-import { FaEyeSlash } from "react-icons/fa";
 import { login } from "@/services/auth.service";
 import { setIsAuthenticated } from "@/stores/authSlice";
 import { useDispatch } from "react-redux";
@@ -67,31 +66,35 @@ const Login = () => {
   };
 
   return (
-    <div className="w-[400px] h-[500px] flex flex-col items-center justify-center">
-      <h2>로그인</h2>
-      <div className="border-[#CFCFCF] border-2 w-10/12 rounded-2xl flex flex-col items-center justify-center">
-        <form onSubmit={handleLoginFormSubmit} className="flex flex-col items-center justify-center">
+    <div className="flex min-h-screen flex-col items-center justify-center">
+      <h1 className="mb-8 text-3xl font-semibold">로그인</h1>
+      <div className="flex h-[40rem] w-[80%] min-w-[30rem] flex-col items-center justify-center rounded-[1.5rem] border-[0.1rem] border-gray-light">
+        <form onSubmit={handleLoginFormSubmit} className="flex flex-col items-center justify-center gap-[1.2rem]">
           <div className="relative flex flex-col">
-            <label htmlFor="email">이메일 주소</label>
-            <input type="email" value={email} onChange={handleEmailChange} className="border-2 rounded-md" />
-            <button type="button" onClick={() => setEmail("")} className="absolute bottom-1 right-2">
-              <TiDelete size={20} />
+            <label htmlFor="email" className="text-lg font-semibold">
+              이메일 주소
+            </label>
+            <input type="email" value={email} onChange={handleEmailChange} className="h-[4rem] w-[24rem] rounded-[1rem] border-[0.1rem] border-gray-light" />
+            <button type="button" onClick={() => setEmail("")} className="absolute right-[1.2rem] top-[3.1rem]">
+              <TiDelete size={25} />
             </button>
           </div>
           <div className="relative flex flex-col">
-            <label htmlFor="password">비밀번호</label>
-            <input type={isVisivlePassword ? "text" : "password"} value={password} onChange={handlePasswordChange} className="border-2 rounded-md" />
-            <button type="button" onClick={handleTogglePassword} className="absolute bottom-1 right-2">
-              {isVisivlePassword ? <FaEyeSlash /> : <FaEye />}
+            <label htmlFor="password" className="text-lg font-semibold">
+              비밀번호
+            </label>
+            <input type={isVisivlePassword ? "text" : "password"} value={password} onChange={handlePasswordChange} className="h-[4rem] w-[24rem] rounded-[1rem] border-[0.1rem] border-gray-light" />
+            <button type="button" onClick={handleTogglePassword} className="absolute right-[1.3rem] top-[3.2rem]">
+              {isVisivlePassword ? <FaEyeSlash size={23} /> : <FaEye size={23} />}
             </button>
           </div>
-          <button type="submit" className="bg-gray-200">
+          <button type="submit" className="mt-[1rem] h-[4rem] w-[24rem] rounded-[1rem] bg-primary text-lg text-white">
             로그인
           </button>
+          <Link href="/signup">
+            <div className="flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] bg-secondary-dark text-lg">회원가입</div>
+          </Link>
         </form>
-        <Link href="/signup">
-          <div className="bg-slate-100">회원가입</div>
-        </Link>
       </div>
     </div>
   );
