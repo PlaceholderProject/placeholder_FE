@@ -1,40 +1,23 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import OutButton from "./OutButton";
 import { FaRegUserCircle } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
-import { toggleMemberDeleteModal } from "@/stores/modalSlice";
-import { RootState } from "@/stores/store";
-import MemberDeleteModal from "./MemberDeleteModal";
 import { MyMeetupItem } from "@/types/mySpaceType";
-import { useQuery } from "@tanstack/react-query";
+import { useModal } from "@/hooks/useModal";
 
-const MemberOutContainer: React.FC<{ meetupId: MyMeetupItem["id"]; isOrganizer: MyMeetupItem["is_organizer"] }> = ({ meetupId, isOrganizer }) => {
-  // const [isOrganizer, setIsOrganizer] = useState(false);
-  // 모임 정보에서 isOrganizer 가져오기
-  // const { data: myMeetupDetailsData } = useQuery({
-  //   queryKey: ["myMeetupDetailsData", meetupId],
-  //   queryFn: () => getMyMeetupMembersApi(meetupId),
-  //   enabled: !!meetupId,
-  // });
-  // const isOrganizer = myMeetupDetailsData?.is_organizer || false;
+const MemberOutContainer: React.FC<{
+  meetupId: MyMeetupItem["id"];
+  isOrganizer: MyMeetupItem["is_organizer"];
+}> = ({ meetupId, isOrganizer }) => {
+  const { openModal } = useModal();
 
-  const dispatch = useDispatch();
-  const isMemberDeleteModalOpen = useSelector((state: RootState) => state.modal.isMemberDeleteModalOpen);
+  const handleMemberButtonClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    event.preventDefault();
 
-  // 아이콘 클릭했는데 Link 이동까지 되는 이벤트 버블링 발생,
-  // 이벤트 버블링 방지용
-
-  const handleMemberButtonClick = (event: { stopPropagation: () => void; preventDefault: () => void }) => {
-    // 이벤트 버블링과 기본 동작 모두 방지
-    // event.stopPropagation();
-    // event.preventDefault();
-    // 근데 Link 안에서 밖으로 빼니까 전파 안 일어남
-
-    //모달 토글
-    dispatch(toggleMemberDeleteModal());
-    console.log("멤버모달 열렸니?", isMemberDeleteModalOpen);
+    // 멤버 삭제(강퇴) 모달 열기
+    openModal("MEMBER_DELETE", { meetupId });
   };
 
   const handleOutButtonClick = () => {
@@ -42,27 +25,22 @@ const MemberOutContainer: React.FC<{ meetupId: MyMeetupItem["id"]; isOrganizer: 
     if (!isOrganizer) {
       const confirmed = window.confirm("정말 이 모임에서 퇴장하시겠습니까?");
       if (confirmed) {
-        // -- TODO--
-        // 퇴장 API 로직 여기 구현
+        // TODO: 퇴장 API 로직 구현
         alert("내 발로 내가 퇴장한다");
       }
     }
   };
+
   return (
-    <>
-      {/* 스탑프로퍼게이션 왜 ㄷ르어감? */}
-      {/* <div onClick={e => e.stopPropagation()}> */}
-      <div>
-        {isOrganizer ? (
-          <button onClick={handleMemberButtonClick} className="p-2">
-            <FaRegUserCircle size={20} />
-          </button>
-        ) : (
-          <OutButton isOrganizer={isOrganizer} isInMemberDeleteModal={false} onClick={handleOutButtonClick} />
-        )}
-        <MemberDeleteModal meetupId={meetupId} />
-      </div>
-    </>
+    <div>
+      {isOrganizer ? (
+        <button onClick={handleMemberButtonClick} className="rounded-full p-2 transition-colors hover:bg-gray-100" aria-label="멤버 관리">
+          <FaRegUserCircle size={20} />
+        </button>
+      ) : (
+        <OutButton isOrganizer={isOrganizer} isInMemberDeleteModal={false} onClick={handleOutButtonClick} />
+      )}
+    </div>
   );
 };
 

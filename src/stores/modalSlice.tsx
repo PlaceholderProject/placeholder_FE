@@ -1,46 +1,28 @@
-import { createSlice } from "@reduxjs/toolkit";
-
-interface ModalState {
-  isAdDeleteModalOpen: boolean;
-  isMemberDeleteModalOpen: boolean;
-  isMeetupInfoModalOpen: boolean;
-  isMeetupMembersModalOpen: boolean;
-}
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { ModalData, ModalState, ModalType } from "@/types/modalType";
 
 const initialState: ModalState = {
-  isAdDeleteModalOpen: false,
-  isMemberDeleteModalOpen: false,
-  isMeetupInfoModalOpen: false,
-  isMeetupMembersModalOpen: false,
+  modalType: null,
+  modalData: {},
+  isOpen: false,
 };
 
 const modalSlice = createSlice({
   name: "modal",
   initialState,
   reducers: {
-    toggleAdDeleteModal: state => {
-      state.isAdDeleteModalOpen = !state.isAdDeleteModalOpen;
+    openModal: (state, action: PayloadAction<{ type: ModalType; data?: ModalData }>) => {
+      state.modalType = action.payload.type;
+      state.modalData = action.payload.data || {};
+      state.isOpen = true;
     },
-    closeAdDeleteModal: state => {
-      state.isAdDeleteModalOpen = false;
-    },
-    toggleMemberDeleteModal: state => {
-      state.isMemberDeleteModalOpen = !state.isMemberDeleteModalOpen;
-    },
-    toggleMeetupInfoModal: state => {
-      state.isMeetupInfoModalOpen = !state.isMeetupInfoModalOpen;
-    },
-    toggleMeetupMembersModal: state => {
-      state.isMeetupMembersModalOpen = !state.isMeetupMembersModalOpen;
+    closeModal: state => {
+      state.modalType = null;
+      state.modalData = {};
+      state.isOpen = false;
     },
   },
 });
 
-export const {
-  toggleAdDeleteModal,
-  closeAdDeleteModal, toggleMemberDeleteModal,
-  toggleMeetupInfoModal,
-  toggleMeetupMembersModal,
-} = modalSlice.actions;
-
+export const { openModal, closeModal } = modalSlice.actions;
 export default modalSlice.reducer;

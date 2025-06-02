@@ -1,43 +1,44 @@
 "use client";
 
-import ProposalCancellationModal from "@/components/modals/ProposalCancellationModal";
 import { transformCreatedDate } from "@/utils/ReplyDateFormat";
 import { FaUser, FaUserCheck, FaUserTimes } from "react-icons/fa";
-import ProposalDeletionModal from "@/components/modals/ProposalDeletionModal";
 import { SentProposalItemProps } from "@/types/proposalType";
+import { useModal } from "@/hooks/useModal";
 
-const SentProposalItem = ({ proposal, isModalOpen, modalType, onModalOpen, onModalClose }: SentProposalItemProps) => {
+const SentProposalItem = ({ proposal }: { proposal: SentProposalItemProps["proposal"] }) => {
+  const { openModal } = useModal();
+
   const handleCancellationModalOpen = () => {
-    onModalOpen(proposal.id, "cancellation");
+    openModal("PROPOSAL_CANCELLATION", { proposal });
   };
 
   const handleProposalDelete = () => {
-    onModalOpen(proposal.id, "deletion");
+    openModal("PROPOSAL_DELETION", { proposal });
   };
 
   return (
-    <div className="flex flex-row items-center gap-4 rounded-xl justify-between py-4 px-6 bg-[#FEFFEC] shadow-md ">
+    <div className="flex flex-row items-center justify-between gap-4 rounded-xl bg-[#FEFFEC] px-6 py-4 shadow-md">
       <div className="px-1">
         {proposal.status === "pending" ? (
           <div className="flex flex-col items-center text-[#C0C0C0]">
             <div className="text-[24px]">
               <FaUser />
             </div>
-            <div className="text-[10px] whitespace-nowrap">대기중</div>
+            <div className="whitespace-nowrap text-[10px]">대기중</div>
           </div>
         ) : proposal.status === "acceptance" ? (
           <div className="flex flex-col items-center text-[#028AB3]">
             <div className="text-[26px]">
               <FaUserCheck />
             </div>
-            <div className="text-[10px] whitespace-nowrap">수락됨</div>
+            <div className="whitespace-nowrap text-[10px]">수락됨</div>
           </div>
         ) : (
           <div className="flex flex-col items-center text-[#F9617A]">
             <div className="text-[26px]">
               <FaUserTimes />
             </div>
-            <div className="text-[10px] whitespace-nowrap">거절됨</div>
+            <div className="whitespace-nowrap text-[10px]">거절됨</div>
           </div>
         )}
       </div>
@@ -48,19 +49,14 @@ const SentProposalItem = ({ proposal, isModalOpen, modalType, onModalOpen, onMod
           <span className="text-[#B7B7B7]">{transformCreatedDate(proposal.created_at)}</span>
         </div>
       </div>
-      <div className="flex gap-6 text-[15px] text-white whitespace-nowrap">
-        <button onClick={handleCancellationModalOpen} className="bg-[#F9617A] p-2 rounded-lg">
+      <div className="flex gap-6 whitespace-nowrap text-[15px] text-white">
+        <button onClick={handleCancellationModalOpen} className="rounded-lg bg-[#F9617A] p-2 transition-colors hover:bg-[#e55470]">
           취소
-          {/* <FaTimesCircle /> */}
         </button>
-        <button onClick={handleProposalDelete} className="bg-[#868282] p-2 rounded-lg">
+        <button onClick={handleProposalDelete} className="rounded-lg bg-[#868282] p-2 transition-colors hover:bg-[#767070]">
           숨기기
-          {/* <FaTrashAlt /> */}
         </button>
       </div>
-      {isModalOpen && modalType === "cancellation" &&
-        <ProposalCancellationModal proposal={proposal} onClose={onModalClose} />}
-      {isModalOpen && modalType === "deletion" && <ProposalDeletionModal proposal={proposal} onClose={onModalClose} />}
     </div>
   );
 };
