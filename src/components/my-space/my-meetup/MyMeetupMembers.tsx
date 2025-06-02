@@ -78,11 +78,11 @@ const MyMeetupMembers: React.FC<{ meetupId?: number }> = ({ meetupId }) => {
   return (
     <>
       {myMeetupMembersData.result.map((myMeetupMember: MyMeetupMember) => {
-        const profileImageUrl = myMeetupMember.user?.image?.startsWith("http") ? myMeetupMember.user.image : `${BASE_URL}${myMeetupMember.user?.image}`;
+        // const profileImageUrl = myMeetupMember.user?.image?.startsWith("http") ? myMeetupMember.user.image : `${BASE_URL}${myMeetupMember.user?.image}`;
 
         return (
           <div key={myMeetupMember.id}>
-            이 아이디는 뭐야? : {myMeetupMember.id}
+            {myMeetupMember.role == "organizer" && <span>👑</span>}이 아이디는 뭐야? : {myMeetupMember.id}
             <Image src={imageSource} alt="내 모임 회원 이미지" width={50} height={50} className="size-8 rounded-full" />
             모임아이디 : {myMeetupMember.meetupId}
             <br />
@@ -92,9 +92,7 @@ const MyMeetupMembers: React.FC<{ meetupId?: number }> = ({ meetupId }) => {
             <br />
             유저닉넴 : {myMeetupMember.user?.nickname}
             <br />
-            {/* <OutButton onClick={() => handleDeleteClick(myMeetupMember.id)} /> */}
-            <OutButton isInMemberDeleteModal={true} memberId={myMeetupMember.id} />
-            {/* 이거 함수를 인터페이스 지정하고 프롭스로 전달할 게 아니라 OutButton에서 강퇴일 경우 버튼에 붙일까? */}
+            {myMeetupMember.role !== "organizer" && <OutButton isInMemberDeleteModal={true} memberId={myMeetupMember.id} />}
           </div>
         );
       })}

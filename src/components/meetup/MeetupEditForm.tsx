@@ -14,7 +14,7 @@ const token = Cookies.get("accessToken");
 // 뭔지도 모르고 그냥 써놧네
 // 이젠 앎..?
 const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
-  ({ id, name, label, type, placeholder, value, defaultValue, defaultChecked, disabled, required, checked, onChange, maxLength }, ref) => (
+  ({ id, name, label, type, placeholder, value, defaultValue, defaultChecked, disabled, required, checked, onChange, maxLength, className, labelClassName, containerClassName }, ref) => (
     <div>
       <label htmlFor={id}>{label}</label>
       <input
@@ -31,6 +31,7 @@ const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
         onChange={onChange}
         ref={ref}
         maxLength={maxLength}
+        className={className}
       />
     </div>
   ),
@@ -38,18 +39,22 @@ const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
 
 // 잘 모르겠고 태그랑 타입 다 공부해야돼
 
-const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({ id, name, label, options, defaultValue, multiple = true, required = true }, ref) => (
-  <div>
-    <label htmlFor={id}>{label}</label>
-    <select id={id} name={name} defaultValue={defaultValue} required={required} ref={ref}>
-      {options.map(option => (
-        <option key={option} value={option}>
-          {option}
-        </option>
-      ))}
-    </select>
-  </div>
-));
+const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(
+  ({ id, name, label, options, defaultValue, multiple = true, required = true, className, labelClassName, containerClassName }, ref) => (
+    <div className={containerClassName}>
+      <label htmlFor={id} className={labelClassName}>
+        {label}
+      </label>
+      <select id={id} name={name} defaultValue={defaultValue} required={required} ref={ref} className={className}>
+        {options.map(option => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+    </div>
+  ),
+);
 
 const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   const queryClient = useQueryClient();
@@ -364,7 +369,18 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
     <>
       <form onSubmit={handleEditFormSubmit}>
         <div>
-          <LabeledSelect id="category" name="category" label="모임 성격" options={categoryOptions} ref={categoryRef} defaultValue={previousMeetupData?.category} required />
+          <LabeledSelect
+            id="category"
+            name="category"
+            label="모임 성격"
+            options={categoryOptions}
+            ref={categoryRef}
+            defaultValue={previousMeetupData?.category}
+            required
+            className={""}
+            labelClassName={""}
+            containerClassName={""}
+          />
           <div>
             <LabeledInput
               id="name"
@@ -376,6 +392,9 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
               required
               onChange={handleNameLengthChange}
               maxLength={MAX_NAME_LENGTH}
+              className={""}
+              labelClassName={""}
+              containerClassName={""}
             />
             <span className="text-sm text-gray-400">
               {nameLength <= MAX_NAME_LENGTH ? nameLength : MAX_NAME_LENGTH} / {MAX_NAME_LENGTH} 자
@@ -386,12 +405,15 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
             <LabeledInput
               id="startedAt"
               name="startedAt"
-              label="모임 시작 날짜"
+              label="모임 시작일"
               type="date"
               ref={startedAtRef}
               defaultValue={previousMeetupData?.startedAt ? previousMeetupData.startedAt.substring(0, 10) : undefined}
               disabled={isStartedAtNull}
               required
+              className={""}
+              labelClassName={""}
+              containerClassName={""}
             />
             <LabeledInput
               id="startedAtUndecided"
@@ -402,17 +424,23 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
               onChange={event => {
                 setIsStartedAtNull(event?.target.checked);
               }}
+              className={""}
+              labelClassName={""}
+              containerClassName={""}
             />
 
             <LabeledInput
               id="endedAt"
               name="endedAt"
-              label="모임 종료 날짜"
+              label="모임 종료일"
               type="date"
               ref={endedAtRef}
               defaultValue={previousMeetupData?.endedAt?.substring(0, 10)}
               disabled={isEndedAtNull}
               required
+              className={""}
+              labelClassName={""}
+              containerClassName={""}
             />
             <LabeledInput
               id="endedAtUndecided"
@@ -423,12 +451,26 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
               onChange={event => {
                 setIsEndedAtNull(event?.target.checked);
               }}
+              className={""}
+              labelClassName={""}
+              containerClassName={""}
             />
             <span className="text-sm text-gray-400">
               {isStartedAtNull && isEndedAtNull && <p className="text-sm text-red-500">모임 시작일과 모임 종료일이 모두 미정일 경우, 내 공간 - 내 광고에서 광고글만 확인 가능합니다.</p>}
             </span>
           </div>
-          <LabeledSelect id="place" name="place" label="모임 지역" options={placeOptions} ref={placeRef} defaultValue={previousMeetupData?.place} required />
+          <LabeledSelect
+            id="place"
+            name="place"
+            label="모임 지역"
+            options={placeOptions}
+            ref={placeRef}
+            defaultValue={previousMeetupData?.place}
+            required
+            className={""}
+            labelClassName={""}
+            containerClassName={""}
+          />
 
           <div>
             {" "}
@@ -442,6 +484,9 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
               required
               maxLength={MAX_PLACE_LENGTH}
               onChange={handlePlaceLengthChange}
+              className={""}
+              labelClassName={""}
+              containerClassName={""}
             />
             <span className="text-sm text-gray-400">
               {placeLength <= MAX_PLACE_LENGTH ? placeLength : MAX_PLACE_LENGTH} / {MAX_PLACE_LENGTH} 자
@@ -460,6 +505,9 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
               required
               onChange={handleAdTitleLengthChange}
               maxLength={MAX_AD_TITLE_LENGTH}
+              className={""}
+              labelClassName={""}
+              containerClassName={""}
             />
             <span className="text-sm text-gray-400">
               {adTitleLength <= MAX_AD_TITLE_LENGTH ? adTitleLength : MAX_AD_TITLE_LENGTH} / {MAX_AD_TITLE_LENGTH} 자
@@ -467,7 +515,18 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
             {adTitleLength >= MAX_AD_TITLE_LENGTH && <p className="tet-sm text-red-500">광고글 제목은 최대 {MAX_AD_TITLE_LENGTH}자 까지 입력할 수 있습니다.</p>}
           </div>
 
-          <LabeledInput id="adEndedAt" name="adEndedAt" label="광고 종료 날짜" type="date" ref={adEndedAtRef} defaultValue={previousMeetupData?.adEndedAt?.substring(0, 10)} required />
+          <LabeledInput
+            id="adEndedAt"
+            name="adEndedAt"
+            label="광고 종료 날짜"
+            type="date"
+            ref={adEndedAtRef}
+            defaultValue={previousMeetupData?.adEndedAt?.substring(0, 10)}
+            required
+            className={""}
+            labelClassName={""}
+            containerClassName={""}
+          />
           <div>
             <label htmlFor="description">광고글 설명</label>
             <textarea
@@ -485,11 +544,31 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
             </span>
             {descriptionLength >= MAX_DESCRIPTION_LENGTH && <p className="text-sm text-red-500">광고글 설명은 최대 {MAX_DESCRIPTION_LENGTH}자 까지 입력할 수 있습니다.</p>}
           </div>
-          <LabeledInput id="isPublic" name="isPublic" label="공개 여부" type="checkbox" ref={isPublicRef} defaultChecked={previousMeetupData?.isPublic} />
+          <LabeledInput
+            id="isPublic"
+            name="isPublic"
+            label="공개 여부"
+            type="checkbox"
+            ref={isPublicRef}
+            defaultChecked={previousMeetupData?.isPublic}
+            className={""}
+            labelClassName={""}
+            containerClassName={""}
+          />
 
           <div>
             {previewImage ? <Image src={previewImage} alt="미리보기 이미지" width={100} height={80} /> : <p>미리보기 이미지가 없습니다.</p>}
-            <LabeledInput id="image" name="image" label="광고글 대표 이미지" type="file" accept="image/jpg, image/jpeg, image/png, image/webp, image/bmp" onChange={handlePreviewImageChange} />
+            <LabeledInput
+              id="image"
+              name="image"
+              label="광고글 대표 이미지"
+              type="file"
+              accept="image/jpg, image/jpeg, image/png, image/webp, image/bmp"
+              onChange={handlePreviewImageChange}
+              className={""}
+              labelClassName={""}
+              containerClassName={""}
+            />
           </div>
           <button type="submit">수정 완료</button>
         </div>

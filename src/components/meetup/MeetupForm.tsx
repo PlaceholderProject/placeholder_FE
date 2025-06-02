@@ -9,36 +9,43 @@ import { useRouter } from "next/navigation";
 import { createMeetupApi } from "@/services/meetup.service";
 import Image from "next/image";
 
-const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(({ id, name, label, type, placeholder, value, defaultValue, disabled, required, checked, onChange, maxLength }, ref) => {
-  return (
-    <>
-      <div>
-        <label htmlFor={id}>{label}</label>
-        <input
-          id={id}
-          name={name}
-          type={type}
-          placeholder={placeholder}
-          disabled={disabled}
-          value={value}
-          defaultValue={defaultValue}
-          required={required}
-          checked={checked}
-          onChange={onChange}
-          ref={ref}
-          maxLength={maxLength}
-        />
-      </div>
-    </>
-  );
-});
+const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
+  ({ id, name, label, type, placeholder, value, defaultValue, disabled, required, checked, onChange, maxLength, className, labelClassName, containerClassName }, ref) => {
+    return (
+      <>
+        <div className={containerClassName}>
+          <label htmlFor={id} className={labelClassName}>
+            {label}
+          </label>
+          <input
+            id={id}
+            name={name}
+            type={type}
+            placeholder={placeholder}
+            disabled={disabled}
+            value={value}
+            defaultValue={defaultValue}
+            required={required}
+            checked={checked}
+            onChange={onChange}
+            ref={ref}
+            maxLength={maxLength}
+            className={className}
+          />
+        </div>
+      </>
+    );
+  },
+);
 
-const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({ id, name, label, options, required = true }, ref) => {
+const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({ id, name, label, options, required = true, className, labelClassName, containerClassName }, ref) => {
   return (
     <>
-      <div>
-        <label htmlFor={id}>{label}</label>
-        <select id={id} name={name} required={required} ref={ref}>
+      <div className={containerClassName}>
+        <label htmlFor={id} className={labelClassName}>
+          {label}
+        </label>
+        <select id={id} name={name} required={required} ref={ref} className={className}>
           {options.map(option => {
             return (
               <option key={option} value={option}>
@@ -93,10 +100,10 @@ const MeetupForm = () => {
     setDescriptionLength(event.target.value.length);
   };
 
-  const MAX_NAME_LENGTH = 15;
-  const MAX_PLACE_LENGTH = 20;
-  const MAX_AD_TITLE_LENGTH = 15;
-  const MAX_DESCRIPTION_LENGTH = 60;
+  const MAX_NAME_LENGTH = 25;
+  const MAX_PLACE_LENGTH = 30;
+  const MAX_AD_TITLE_LENGTH = 25;
+  const MAX_DESCRIPTION_LENGTH = 70;
 
   // 체크 박스 상태 관리 위한 스테이트
   const [isStartedAtNull, setIsStartedAtNull] = useState(false);
@@ -282,131 +289,260 @@ const MeetupForm = () => {
 
   return (
     <>
-      <div>
-        <form onSubmit={handleMeetupFormSubmit}>
-          <div>
-            <LabeledSelect id="category" name="category" label="모임 성격" options={categoryOptions} ref={categoryRef} required />
+      <div className="mx-auto w-[29.2rem] border-[0.1rem] pb-[4rem]">
+        <div className="mb-[8rem] grid min-h-screen place-items-center">
+          <h1 className="mb-[4rem] mt-[10rem] text-center text-3xl font-semibold">모임 생성하기</h1>
+          <form onSubmit={handleMeetupFormSubmit}>
+            <div className="text-2xl font-semibold text-primary">모임에 대해 알려주세요.</div>
             <div>
-              <LabeledInput id="name" name="name" label="모임 이름" type="text" ref={nameRef} required onChange={handleNameLengthChange} maxLength={MAX_NAME_LENGTH} />
-              <span className="text-sm text-gray-400">
-                {nameLength <= MAX_NAME_LENGTH ? nameLength : MAX_NAME_LENGTH} / {MAX_NAME_LENGTH} 자
-              </span>
-              {nameLength >= MAX_NAME_LENGTH && <p className="text-sm text-red-500">모임 이름은 최대 {MAX_NAME_LENGTH}자까지 입력할 수 있습니다.</p>}
-            </div>
-
-            <div>
-              <LabeledInput id="startedAt" name="startedAt" label="모임 시작 날짜" type="date" ref={startedAtRef} disabled={isStartedAtNull} required />
-
-              <LabeledInput
-                id="startedAtUndecided"
-                name="startedAtUndecided"
-                label="미정"
-                type="checkbox"
-                // １. ref={isStartedAtNullRef}
-                //checked={isStartedAtNullRef.current}를 위처럼 수정하고
-                //onChage 지우니까 토글만 됨
-
-                // 2.　useRef를 통해 상태를 저장, 리액트의 chekced와 disabled 속성을
-                // useRef.current 기준으로 렌더링에 반영
-
-                // checked={isStartedAtNullRef.current}
-                // onChange={event => {
-                //   isStartedAtNullRef.current = event?.target.checked;
-                //   if (startedAtRef.current) {
-                //     startedAtRef.current.disabled = event.target.checked;
-                //   }
-                // }}
-
-                onChange={event => {
-                  setIsStartedAtNull(event.target.checked);
-                }}
-              />
-
-              <LabeledInput id="endedAt" name="endedAt" label="모임 종료 날짜" type="date" ref={endedAtRef} disabled={isEndedAtNull} required />
-              <LabeledInput
-                id="endedAtUndecided"
-                name="endedAtUndecided"
-                label="미정"
-                type="checkbox"
-                onChange={event => {
-                  setIsEndedAtNull(event.target.checked);
-                }}
-              />
-
-              <span className="text-sm text-gray-400">
-                {isStartedAtNull && isEndedAtNull && <p className="text-sm text-red-500">모임 시작일과 모임 종료일이 모두 미정일 경우, 내 공간 - 내 광고에서 광고글만 확인 가능합니다.</p>}
-              </span>
-            </div>
-
-            <LabeledSelect id="category" name="category" label="모임 지역" options={placeOptions} ref={placeRef} required />
-
-            <div>
-              <LabeledInput
-                id="placeDescription"
-                name="placeDescription"
-                label="모임 장소"
-                type="text"
-                placeholder="만날 곳의 대략적 위치를 적어주세요. 예) 강남역"
-                ref={placeDescriptionRef}
+              <LabeledSelect
+                id="category"
+                name="category"
+                label="모임 성격"
+                options={categoryOptions}
+                ref={categoryRef}
                 required
-                onChange={handlePlaceLengthChange}
-                maxLength={MAX_PLACE_LENGTH}
+                containerClassName={"my-[0.5rem] flex items-center"}
+                labelClassName={"font-semibold text-lg mr-7"}
+                className={"h-[4rem] w-[21.3rem] rounded-[1rem] border-[0.1rem] border-gray-light text-center text-base"}
               />
-              <span className="text-sm text-gray-400">
-                {placeLength <= MAX_PLACE_LENGTH ? placeLength : MAX_PLACE_LENGTH} / {MAX_PLACE_LENGTH} 자
+              <div>
+                <LabeledInput
+                  id="name"
+                  name="name"
+                  label="모임 이름"
+                  type="text"
+                  ref={nameRef}
+                  required
+                  onChange={handleNameLengthChange}
+                  maxLength={MAX_NAME_LENGTH}
+                  containerClassName={"my-[0.5rem] flex flex-col gap-2"}
+                  labelClassName={"font-semibold text-lg"}
+                  className={"h-[4rem] w-[29.2rem] items-center rounded-[1rem] border-[0.1rem] border-gray-light px-[0.5rem] text-start text-base"}
+                />
+                <span className="text-sm text-gray-dark">
+                  {nameLength <= MAX_NAME_LENGTH ? nameLength : MAX_NAME_LENGTH} / {MAX_NAME_LENGTH} 자
+                </span>
+                {nameLength >= MAX_NAME_LENGTH && <p className="text-sm text-warning">모임 이름은 최대 {MAX_NAME_LENGTH}자까지 입력할 수 있습니다.</p>}
+              </div>
+
+              <h2 className={"mt-4 text-lg font-semibold"}>모임 날짜</h2>
+
+              <div className="grid grid-cols-[1fr_auto] gap-4">
+                <LabeledInput
+                  id="startedAt"
+                  name="startedAt"
+                  label="시작일"
+                  type="date"
+                  ref={startedAtRef}
+                  disabled={isStartedAtNull}
+                  required
+                  containerClassName={"grid grid-cols-4 mt-[1rem]"}
+                  labelClassName={"text-base pt-[1rem] pr-[1rem]"}
+                  className={"h-[4rem] w-[18rem] rounded-[1rem] border-[0.1rem] border-gray-light px-[1rem]"}
+                />
+                <LabeledInput
+                  id="startedAtUndecided"
+                  name="startedAtUndecided"
+                  label="미정"
+                  type="checkbox"
+                  // １. ref={isStartedAtNullRef}
+                  //checked={isStartedAtNullRef.current}를 위처럼 수정하고
+                  //onChage 지우니까 토글만 됨
+                  // 2.　useRef를 통해 상태를 저장, 리액트의 chekced와 disabled 속성을
+                  // useRef.current 기준으로 렌더링에 반영
+                  // checked={isStartedAtNullRef.current}
+                  // onChange={event => {
+                  //   isStartedAtNullRef.current = event?.target.checked;
+                  //   if (startedAtRef.current) {
+                  //     startedAtRef.current.disabled = event.target.checked;
+                  //   }
+                  // }}
+                  onChange={event => {
+                    setIsStartedAtNull(event.target.checked);
+                  }}
+                  containerClassName={"flex items-center"}
+                  labelClassName={"text-base pl-[0.5rem] pr-[0.5rem] pt-[1rem]"}
+                  className={
+                    "mt-[1rem] h-[1.5rem] w-[1.5rem] appearance-none rounded-[0.2rem] border-[0.2rem] border-[#013A4B] checked:border-primary checked:bg-primary checked:after:flex checked:after:h-full checked:after:items-center checked:after:justify-center checked:after:text-xs checked:after:font-bold checked:after:text-white checked:after:content-['✓']"
+                  }
+                />
+              </div>
+              <div className="grid grid-cols-[1fr_auto] gap-4">
+                <LabeledInput
+                  id="endedAt"
+                  name="endedAt"
+                  label="종료일"
+                  type="date"
+                  ref={endedAtRef}
+                  disabled={isEndedAtNull}
+                  required
+                  containerClassName={"grid grid-cols-4 mt-[1rem]"}
+                  labelClassName={"text-base pt-[1rem] pr-[1rem]"}
+                  className={"h-[4rem] w-[18rem] rounded-[1rem] border-[0.1rem] border-gray-light px-[1rem] py-[1rem]"}
+                />
+                <LabeledInput
+                  id="endedAtUndecided"
+                  name="endedAtUndecided"
+                  label="미정"
+                  type="checkbox"
+                  onChange={event => {
+                    setIsEndedAtNull(event.target.checked);
+                  }}
+                  containerClassName={"flex items-center"}
+                  labelClassName={"text-base pl-[0.5rem] pr-[0.5rem] pt-[1rem]"}
+                  className={
+                    "mt-[1rem] h-[1.5rem] w-[1.5rem] appearance-none rounded-[0.2rem] border-[0.2rem] border-[#013A4B] checked:border-primary checked:bg-primary checked:after:flex checked:after:h-full checked:after:items-center checked:after:justify-center checked:after:text-xs checked:after:font-bold checked:after:text-white checked:after:content-['✓']"
+                  }
+                />
+
+                <span className="text-sm text-gray-400">
+                  {isStartedAtNull && isEndedAtNull && (
+                    <p className="text-sm text-red-500">
+                      모임의 시작일과 종료일이 모두 미정이면, <br />
+                      <span className="font-semibold">내 공간</span> - <span className="font-semibold">내 광고</span> 에서 광고글만 확인 가능합니다.
+                    </p>
+                  )}
+                </span>
+              </div>
+              <div className="my-[0.5rem] items-baseline justify-start text-2xl font-semibold text-primary">
+                멤버 모집 광고글의 내용을
+                <br /> 작성해주세요.
+              </div>
+              <div>
+                <LabeledInput
+                  id="adTitle"
+                  name="adTitle"
+                  label="광고글 제목"
+                  type="text"
+                  ref={adTitleRef}
+                  required
+                  onChange={handleAdTitleLengthChange}
+                  maxLength={MAX_AD_TITLE_LENGTH}
+                  containerClassName={"my-[0.5rem] flex flex-col items-start"}
+                  labelClassName={"font-semibold text-lg my-[0.5rem]"}
+                  className={"h-[4rem] w-[29.2rem] items-center rounded-[1rem] border-[0.1rem] border-gray-light px-[0.5rem] text-start text-base"}
+                />
+                <span className="text-sm text-gray-dark">
+                  {adTitleLength <= MAX_AD_TITLE_LENGTH ? adTitleLength : MAX_AD_TITLE_LENGTH} / {MAX_AD_TITLE_LENGTH} 자
+                </span>
+                {adTitleLength >= MAX_AD_TITLE_LENGTH && <p className="text-sm text-warning">광고글 제목은 최대 {MAX_AD_TITLE_LENGTH}자 까지 입력할 수 있습니다.</p>}
+              </div>
+              <div>
+                <h2 className={"mt-4 text-lg font-semibold"}>멤버 모집 기간</h2>
+                <LabeledInput
+                  id="adEndedAt"
+                  name="adEndedAt"
+                  label="광고 종료일"
+                  type="date"
+                  ref={adEndedAtRef}
+                  required
+                  containerClassName={"flex justify-between"}
+                  labelClassName={"text-base pt-[1rem] w-[8rem]"}
+                  className={"h-[4rem] w-[21rem] rounded-[1rem] border-[0.1rem] border-gray-light px-[1rem]"}
+                />
+              </div>
+              <div>
+                <LabeledInput
+                  id="placeDescription"
+                  name="placeDescription"
+                  label="모임 장소"
+                  type="text"
+                  placeholder="만날 곳의 대략적 위치를 작성해주세요. 예) 강남역"
+                  ref={placeDescriptionRef}
+                  required
+                  onChange={handlePlaceLengthChange}
+                  maxLength={MAX_PLACE_LENGTH}
+                  containerClassName={"flex flex-col my-[0.5rem]"}
+                  labelClassName={"mt-[1rem] my-[0.5rem] text-lg font-semibold"}
+                  className={"h-[4rem] w-[29.2rem] items-center rounded-[1rem] border-[0.1rem] border-gray-light px-[0.5rem] text-start text-base"}
+                />
+                <span className="text-sm text-gray-dark">
+                  {placeLength <= MAX_PLACE_LENGTH ? placeLength : MAX_PLACE_LENGTH} / {MAX_PLACE_LENGTH} 자
+                </span>
+                {placeLength >= MAX_PLACE_LENGTH && <p className="text-sm text-warning">모임 장소 설명은 최대 {MAX_PLACE_LENGTH}자까지 입력할 수 있습니다.</p>}
+              </div>
+              <LabeledSelect
+                id="category"
+                name="category"
+                label="모임 지역"
+                options={placeOptions}
+                ref={placeRef}
+                required
+                containerClassName={"flex items-center"}
+                labelClassName={"text-base mr-[0.5rem]"}
+                className={"h-[4rem] w-[23rem] rounded-[1rem] border-[0.1rem] border-gray-light px-[1rem] py-[1rem] text-center"}
+              />
+            </div>
+            <div className="my-[0.5rem] flex flex-col py-[0.5rem]">
+              <label className="my-[0.5rem] text-lg font-semibold" htmlFor="description">
+                광고글 설명
+              </label>
+
+              <textarea
+                id="description"
+                name="description"
+                defaultValue=""
+                placeholder="멤버 광고글에 보일 설명을 작성해주세요."
+                ref={descriptionRef}
+                maxLength={MAX_DESCRIPTION_LENGTH}
+                onChange={handleDescriptionLengthChange}
+                className="h-[17rem] w-[29.2rem] rounded-[1rem] border-[0.1rem] border-gray-light px-[0.5rem] text-start text-base"
+              />
+              <span className="pt-[1rem] text-sm text-gray-dark">
+                {" "}
+                {descriptionLength <= MAX_DESCRIPTION_LENGTH ? descriptionLength : MAX_DESCRIPTION_LENGTH} / {MAX_DESCRIPTION_LENGTH} 자
               </span>
-              {placeLength >= MAX_PLACE_LENGTH && <p className="text-sm text-red-500">모임 장소 설명은 최대 {MAX_PLACE_LENGTH}자까지 입력할 수 있습니다.</p>}
+              {descriptionLength >= MAX_DESCRIPTION_LENGTH && <p className="text-sm text-warning">광고글 설명은 최대 {MAX_DESCRIPTION_LENGTH}자 까지 입력할 수 있습니다.</p>}
             </div>
 
-            <div>
-              <LabeledInput id="adTitle" name="adTitle" label="광고글 제목" type="text" ref={adTitleRef} required onChange={handleAdTitleLengthChange} maxLength={MAX_AD_TITLE_LENGTH} />
+            <div className="my-[0.5rem]">
+              <LabeledInput
+                id="image"
+                name="image"
+                label="대표 이미지"
+                type="file"
+                accept="image/jpg, image/jpeg, image/png, image/webp, image/bmp"
+                ref={imageRef}
+                onChange={handlePreviewImageChange}
+                required
+                containerClassName="hidden"
+                labelClassName="hidden"
+                className="hidden"
+              />
 
-              <span className="text-sm text-gray-400">
-                {adTitleLength <= MAX_AD_TITLE_LENGTH ? adTitleLength : MAX_AD_TITLE_LENGTH} / {MAX_AD_TITLE_LENGTH} 자
-              </span>
-              {adTitleLength >= MAX_AD_TITLE_LENGTH && <p className="tet-sm text-red-500">광고글 제목은 최대 {MAX_AD_TITLE_LENGTH}자 까지 입력할 수 있습니다.</p>}
+              {/* 커스텀 버튼 */}
+              <div className="flex-cols-2 flex items-center justify-between text-center">
+                <label className="my-[0.5rem] text-lg font-semibold">대표 이미지</label>
+                <label htmlFor="image" className="h-[2.2rem] w-[8rem] items-center rounded-[1rem] bg-gray-medium py-[0.2rem] text-sm">
+                  파일 선택
+                </label>
+              </div>
+              <div className="flex h-[14.5rem] w-[29.2rem] flex-col items-center rounded-[1rem] border-[0.1rem] border-gray-light">
+                <Image src={previewImage} alt="preview image" width={100} height={100} />
+              </div>
             </div>
 
-            <LabeledInput id="adEndedAt" name="adEndedAt" label="광고 종료 날짜" type="date" ref={adEndedAtRef} required />
-          </div>
-          <div>
-            <label htmlFor="description">광고글 설명</label>
-            <textarea
-              id="description"
-              name="description"
-              defaultValue=""
-              placeholder="멤버 광고글에 보일 설명을 적어주세요."
-              ref={descriptionRef}
-              maxLength={MAX_DESCRIPTION_LENGTH}
-              onChange={handleDescriptionLengthChange}
-            />
-            <span className="text-sm text-gray-400">
-              {" "}
-              {descriptionLength <= MAX_DESCRIPTION_LENGTH ? descriptionLength : MAX_DESCRIPTION_LENGTH} / {MAX_DESCRIPTION_LENGTH} 자
-            </span>
-            {descriptionLength >= MAX_DESCRIPTION_LENGTH && <p className="text-sm text-red-500">광고글 설명은 최대 {MAX_DESCRIPTION_LENGTH}자 까지 입력할 수 있습니다.</p>}
-          </div>
-
-          <div>
-            <h4>선택된 이미지</h4>
-            <Image src={previewImage} alt="previewImage" width={100} height={100} />
             <LabeledInput
-              id="image"
-              name="image"
-              label="광고글 대표 이미지"
-              type="file"
-              accept="image/jpg, image/jpeg, image/png, image/webp, image/bmp"
-              ref={imageRef}
-              onChange={handlePreviewImageChange}
-              required
+              id="isPublic"
+              name="isPublic"
+              label="모집글 비공개"
+              type="checkbox"
+              ref={isPublicRef}
+              containerClassName={"flex items-center my-[3rem]"}
+              labelClassName={"text-2xl text-primary items-baseline font-semibold pl-[0.5rem] pr-[0.5rem]"}
+              className={
+                "h-[1.5rem] w-[1.5rem] appearance-none rounded-[0.2rem] border-[0.2rem] border-[#013A4B] checked:border-primary checked:bg-primary checked:after:flex checked:after:h-full checked:after:items-center checked:after:justify-center checked:after:text-xs checked:after:font-bold checked:after:text-white checked:after:content-['✓']"
+              }
             />
-          </div>
-          <LabeledInput id="isPublic" name="isPublic" label="모집글 비공개" type="checkbox" ref={isPublicRef} />
 
-          <div>
-            <button type="submit">모임 생성하기</button>
-          </div>
-        </form>
+            <div className="mt-[3rem] flex justify-center">
+              <button type="submit" className="text-bold h-[4rem] w-[14rem] items-center rounded-[1rem] bg-primary text-center text-lg text-white">
+                모임 등록
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </>
   );
