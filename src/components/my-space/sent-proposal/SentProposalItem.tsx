@@ -2,10 +2,10 @@
 
 import { transformCreatedDate } from "@/utils/ReplyDateFormat";
 import { FaUser, FaUserCheck, FaUserTimes } from "react-icons/fa";
-import { SentProposalItemProps } from "@/types/proposalType";
+import { SentProposal } from "@/types/proposalType";
 import { useModal } from "@/hooks/useModal";
 
-const SentProposalItem = ({ proposal }: { proposal: SentProposalItemProps["proposal"] }) => {
+const SentProposalItem = ({ proposal }: { proposal: SentProposal }) => {
   const { openModal } = useModal();
 
   const handleCancellationModalOpen = () => {
