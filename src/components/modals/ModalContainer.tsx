@@ -13,9 +13,7 @@ import MeetupMembersContent from "@/components/modals/Contents/MeetupMembersCont
 import MeetupInfoContent from "@/components/modals/Contents/MeetupInfoContent";
 import MemberDeleteContent from "@/components/modals/Contents/MemberDeleteContent";
 
-// 모달 컨텐츠 컴포넌트들 import
-
-// 모달 크기 설정 (반응형)
+// 모달 크기 설정
 const getModalSize = (modalType: ModalType): string => {
   switch (modalType) {
     case "MEETUP_MEMBERS":
