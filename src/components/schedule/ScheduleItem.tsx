@@ -15,10 +15,9 @@ const ScheduleItem = ({ schedule, number }: { schedule: Schedule; number: number
   }, [router, schedule.meetupId, schedule.id]);
 
   return (
-    <div className="mb-2 flex items-start rounded-lg border p-4">
+    <div className="mb-2 flex cursor-pointer items-start rounded-lg border p-4" onClick={handleItemClick}>
       <ScheduleNumber number={number} />
-
-      <div className="flex flex-1 flex-col gap-2" onClick={handleItemClick}>
+      <div className="flex flex-1 flex-col gap-2">
         <div className="text-lg font-semibold">{formatDateTime(schedule.scheduledAt)}</div>
         <div className="font-medium text-gray-800">{schedule.place}</div>
         <div className="text-sm text-gray-600">{schedule.address}</div>
