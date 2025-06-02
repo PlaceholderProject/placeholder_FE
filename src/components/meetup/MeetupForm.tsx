@@ -293,7 +293,7 @@ const MeetupForm = () => {
         <div className="mb-[8rem] grid min-h-screen place-items-center">
           <h1 className="mb-[4rem] mt-[10rem] text-center text-3xl font-semibold">모임 생성하기</h1>
           <form onSubmit={handleMeetupFormSubmit}>
-            <div className="text-2xl font-semibold text-primary">모임에 대해 알려주세요.</div>
+            <h2 className="text-2xl font-semibold text-primary">모임에 대해 알려주세요.</h2>
             <div>
               <LabeledSelect
                 id="category"
@@ -326,7 +326,7 @@ const MeetupForm = () => {
                 {nameLength >= MAX_NAME_LENGTH && <p className="text-sm text-warning">모임 이름은 최대 {MAX_NAME_LENGTH}자까지 입력할 수 있습니다.</p>}
               </div>
 
-              <h2 className={"mt-4 text-lg font-semibold"}>모임 날짜</h2>
+              <h3 className={"mt-4 text-lg font-semibold"}>모임 날짜</h3>
 
               <div className="grid grid-cols-[1fr_auto] gap-4">
                 <LabeledInput
@@ -396,19 +396,19 @@ const MeetupForm = () => {
                   }
                 />
 
-                <span className="text-sm text-gray-400">
+                <span className="text-sm text-warning">
                   {isStartedAtNull && isEndedAtNull && (
-                    <p className="text-sm text-red-500">
+                    <p className="text-sm text-warning">
                       모임의 시작일과 종료일이 모두 미정이면, <br />
                       <span className="font-semibold">내 공간</span> - <span className="font-semibold">내 광고</span> 에서 광고글만 확인 가능합니다.
                     </p>
                   )}
                 </span>
               </div>
-              <div className="my-[0.5rem] items-baseline justify-start text-2xl font-semibold text-primary">
+              <h2 className="my-[0.5rem] items-baseline justify-start text-2xl font-semibold text-primary">
                 멤버 모집 광고글의 내용을
                 <br /> 작성해주세요.
-              </div>
+              </h2>
               <div>
                 <LabeledInput
                   id="adTitle"
