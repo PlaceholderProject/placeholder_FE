@@ -2,7 +2,6 @@ import { SearchedType } from "@/types/searchType";
 import { RootState } from "@/stores/store";
 import { useSelector } from "react-redux";
 import Link from "next/link";
-import calculateDays from "@/utils/calculateDays";
 import { FaRegCalendarAlt } from "react-icons/fa";
 
 const SearchedResultItem = ({ ad }: { ad: SearchedType }) => {
@@ -40,7 +39,7 @@ const SearchedResultItem = ({ ad }: { ad: SearchedType }) => {
           <div>{ad.adEndedAt} 까지 모집</div>
           <div className="flex flex-row items-center gap-[0.5rem]">
             <FaRegCalendarAlt />
-            {ad.startedAt}~{ad.endedAt}
+            {ad.startedAt} ~ {ad.endedAt}
           </div>
         </div>
       </div>

@@ -32,7 +32,7 @@ const SearchedResultArea = () => {
   }, [page]);
 
   if (!searchedAds || searchedAds.length === 0) {
-    return <div>검색결과가 없습니다.</div>;
+    return <div className="flex h-[30rem] items-center justify-center text-lg">검색결과가 없습니다.</div>;
   }
 
   return (

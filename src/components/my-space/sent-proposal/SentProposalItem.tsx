@@ -45,12 +45,12 @@ const SentProposalItem = ({ proposal, isModalOpen, modalType, onModalOpen, onMod
               </div>
             )}
           </div>
-          <div className="font-semibold">{proposal.meetup_ad_title}</div>
+          <div className="break-all font-semibold">{proposal.meetup_ad_title}</div>
         </div>
         <span className="text-gray-dark text-sm">{transformCreatedDate(proposal.created_at)}</span>
       </div>
       <div className="flex w-full flex-row items-center justify-between gap-[1rem]">
-        <div>{proposal.text}&nbsp;&nbsp;</div>
+        <div className="break-all">{proposal.text}&nbsp;&nbsp;</div>
         <div className="flex gap-[1rem] whitespace-nowrap text-white">
           <button onClick={handleCancellationModalOpen} className="bg-warning h-fil rounded-[0.5rem] p-[0.5rem] text-sm font-bold">
             취소
