@@ -32,11 +32,11 @@ const SearchedResultArea = () => {
   }, [page]);
 
   if (!searchedAds || searchedAds.length === 0) {
-    return <div>검색결과가 없습니다.</div>;
+    return <div className="flex h-[30rem] items-center justify-center text-lg">검색결과가 없습니다.</div>;
   }
 
   return (
-    <div>
+    <div className="border-gray-medium my-[5rem] border-t-[0.1rem]">
       <ul>
         {searchedAds.map((ad: SearchedType) => (
           <li key={ad.id}>

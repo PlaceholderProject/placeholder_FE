@@ -28,10 +28,9 @@ const ReplyArea: React.FC = () => {
   return (
     <div className="flex flex-col justify-start">
       <ReplyForm />
-      <div className="m-2 text-[10px] font-[700]">댓글 {replyCount}개</div>
+      <div className="mx-[1.5rem] my-[1rem] font-semibold">댓글 {replyCount}개</div>
       {meetupId && <ReplyList meetupId={meetupId} scheduleId={scheduleId} />}
     </div>
   );
 };
-
 export default ReplyArea;

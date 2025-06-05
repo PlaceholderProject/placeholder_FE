@@ -21,6 +21,10 @@ const AdButton = ({ meetupId }: { meetupId: number }) => {
   if (isLoading) return <p>로딩 중...</p>;
 
   const handleProposalModal = () => {
+    if (!user.email) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
     setIsProposalPostcardOpen(prev => !prev);
   };
 
@@ -29,42 +33,44 @@ const AdButton = ({ meetupId }: { meetupId: number }) => {
   };
 
   return (
-    <div className="flex flex-col gap-2 items-center py-6 px-12">
-      {user.nickname === adData?.organizer.nickname ? (
-        <Link href={`/meetup/${meetupId}`} className="bg-[#006B8B] w-full text-center p-1 rounded-md text-white">
-          입장하기
-        </Link>
-      ) : proposal ? (
-        proposal.status === "pending" ? (
-          <div className="flex flex-row gap-2 w-full">
-            <button onClick={handleCancellationModal} className="bg-[#F9617A] w-full text-center p-1 rounded-md text-white">
-              취소하기
-            </button>
-            <div className="bg-[#E8E8E8] w-full text-center p-1 rounded-md">수락 대기 중</div>
-          </div>
-        ) : proposal.status === "acceptance" ? (
-          <div className="flex flex-row gap-2 w-full">
-            <div className="bg-[#E8E8E8] w-full text-center p-1 rounded-md">수락 완료</div>
-            <Link href={`/meetup/${meetupId}`} className="bg-[#006B8B] w-full text-center p-1 rounded-md text-white">
-              입장하기
-            </Link>
-          </div>
+    <div className="flex w-full justify-center">
+      <div className="my-[2rem] w-[90%]">
+        {user.nickname === adData?.organizer.nickname ? (
+          <Link href={`/meetup/${meetupId}`}>
+            <div className="bg-primary flex h-[3.5rem] w-full items-center justify-center rounded-[0.5rem] text-white">입장하기</div>
+          </Link>
+        ) : proposal ? (
+          proposal.status === "pending" ? (
+            <div className="flex w-full flex-row gap-[1rem]">
+              <button onClick={handleCancellationModal} className="bg-warning flex h-[3.5rem] w-full items-center justify-center rounded-[0.5rem] text-white">
+                취소하기
+              </button>
+              <div className="bg-gray-light flex h-[3.5rem] w-full items-center justify-center rounded-[0.5rem]">수락 대기 중</div>
+            </div>
+          ) : proposal.status === "acceptance" ? (
+            <div className="flex w-full flex-row gap-[1rem]">
+              <div className="bg-gray-light flex h-[3.5rem] w-full items-center justify-center rounded-[0.5rem]">수락 완료</div>
+              <Link href={`/meetup/${meetupId}`}>
+                <div className="bg-primary flex h-[3.5rem] w-full items-center justify-center rounded-[0.5rem] text-white">입장하기</div>
+              </Link>
+            </div>
+          ) : (
+            <div className="flex w-full flex-row gap-[1rem]">
+              <div className="bg-gray-light flex h-[3.5rem] w-full items-center justify-center rounded-[0.5rem]">거절됨</div>
+              <div className="bg-gray-light flex h-[3.5rem] w-full items-center justify-center rounded-[0.5rem]">입장하기</div>
+            </div>
+          )
         ) : (
-          <div className="flex flex-row gap-2 w-full">
-            <div className="bg-[#E8E8E8] w-full text-center p-1 rounded-md">거절됨</div>
-            <div className="bg-[#E8E8E8] w-full text-center p-1 rounded-md">입장하기</div>
+          <div className="flex w-full flex-row gap-[1rem]">
+            <button onClick={handleProposalModal} className="bg-secondary-dark h-[3.5rem] w-full rounded-[0.5rem]">
+              신청하기
+            </button>
+            <div className="bg-gray-light flex h-[3.5rem] w-full items-center justify-center rounded-[0.5rem]">입장하기</div>
+            {isProposalPostcardOpen && <ProposalPostcard meetupId={meetupId} onClose={() => setIsProposalPostcardOpen(false)} />}
           </div>
-        )
-      ) : (
-        <div className="flex flex-row gap-2 w-full">
-          <button onClick={handleProposalModal} className="bg-[#FBFFA9] w-full text-center p-1 rounded-md">
-            신청하기
-          </button>
-          <div className="bg-[#E8E8E8] w-full text-center p-1 rounded-md">입장하기</div>
-          {isProposalPostcardOpen && <ProposalPostcard meetupId={meetupId} onClose={() => setIsProposalPostcardOpen(false)} />}
-        </div>
-      )}
-      {isProposalCancellationOpen && <ProposalCancellationModal proposal={proposal} onClose={() => setIsProposalCancellationOpen(false)} />}
+        )}
+        {isProposalCancellationOpen && <ProposalCancellationModal meetupId={meetupId} proposal={proposal} title={adData?.adTitle ?? ""} onClose={() => setIsProposalCancellationOpen(false)} />}
+      </div>
     </div>
   );
 };

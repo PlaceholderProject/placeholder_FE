@@ -7,7 +7,7 @@ import { SentProposal } from "@/types/proposalType";
 
 const SentProposals = () => {
   const [selectedProposalId, setSelectedProposalId] = useState<number | null>(null);
-  const [modalType, setModalType] = useState<"cancellation" | "deletion" | null>(null);
+  const [modalType, setModalType] = useState<"cancellation" | "hide" | null>(null);
   const [page, setPage] = useState(1);
 
   const { data, isLoading } = useSentProposal(page);
@@ -24,7 +24,7 @@ const SentProposals = () => {
 
   if (isLoading) return <div>로딩중</div>;
 
-  const handleModalOpen = (proposalId: number, type: "cancellation" | "deletion") => {
+  const handleModalOpen = (proposalId: number, type: "cancellation" | "hide") => {
     setSelectedProposalId(proposalId);
     setModalType(type);
   };
@@ -40,7 +40,7 @@ const SentProposals = () => {
 
   return (
     <div>
-      <ul className="mt-6 flex flex-col gap-5 p-5">
+      <ul className="flex flex-col gap-[1.5rem] px-[2rem] py-[3rem]">
         {sentProposals.map((proposal: SentProposal) => (
           <li key={proposal.id}>
             <SentProposalItem proposal={proposal} isModalOpen={selectedProposalId === proposal.id} modalType={modalType} onModalOpen={handleModalOpen} onModalClose={handleModalClose} />
@@ -55,14 +55,12 @@ const SentProposals = () => {
             이전
           </button>
         )}
-
         {/* 페이지 번호 버튼들 */}
         {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map(p => (
           <button key={p} onClick={() => setPage(p)} className={`rounded border px-3 py-1 text-sm font-medium ${page === p ? "bg-blue-500 text-white" : "bg-gray-200"}`}>
             {p}
           </button>
         ))}
-
         {/* 다음 그룹 버튼 */}
         {endPage < totalPages && (
           <button onClick={() => setPage(endPage + 1)} className="rounded border bg-gray-200 px-2 py-1">

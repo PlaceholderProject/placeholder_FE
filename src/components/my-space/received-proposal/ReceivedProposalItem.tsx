@@ -1,6 +1,7 @@
 import { BASE_URL } from "@/constants/baseURL";
 import { useAcceptProposal, useRefuseProposal } from "@/hooks/useProposal";
 import { ReceivedProposal } from "@/types/proposalType";
+import { transformCreatedDate } from "@/utils/ReplyDateFormat";
 import Image from "next/image";
 import React from "react";
 import { FaUserCheck, FaUserTimes } from "react-icons/fa";
@@ -19,11 +20,13 @@ const ReceivedProposalItem = ({ proposal }: { proposal: ReceivedProposal }) => {
     alert(`${proposal.user.nickname}님을 거절했습니다.`);
   };
 
+  console.log(proposal);
+
   return (
-    <div className="flex flex-row justify-between bg-[#FEFFEC] rounded-xl p-4 shadow-lg">
-      <div>
-        <div className="flex flex-row gap-2 items-center">
-          <div className="w-[20px] h-[20px] rounded-full overflow-hidden">
+    <div className="bg-secondary-light flex flex-row justify-between gap-[1rem] rounded-[1rem] p-[1.5rem] shadow-md">
+      <div className="w-full">
+        <div className="flex flex-row items-center gap-[1rem]">
+          <div className="h-[2rem] w-[2rem] overflow-hidden rounded-full">
             <Image
               src={proposal.user.image ? (proposal.user.image.startsWith("http") ? proposal.user.image : `${BASE_URL}${proposal.user.image}`) : "/profile.png"}
               alt="프로필 이미지"
@@ -32,16 +35,16 @@ const ReceivedProposalItem = ({ proposal }: { proposal: ReceivedProposal }) => {
               unoptimized={true}
             />
           </div>
-          <span className="text-[13px]">{proposal.user.nickname}</span>
-          <span className="text-[#B7B7B7] text-[13px]">날짜</span>
+          <span>{proposal.user.nickname}</span>
+          <span className="text-gray-dark text-sm">{transformCreatedDate(proposal.createdAt)}</span>
         </div>
-        <p className="pt-2 text-[13px]">{proposal.text}</p>
+        <p className="pt-[0.5rem]">{proposal.text}</p>
       </div>
       <div className="flex flex-row items-center gap-3">
-        <button onClick={handleProposalAccept} className="text-[#028AB3] text-[26px]">
+        <button onClick={handleProposalAccept} className="text-[2.5rem] text-[#028AB3]">
           <FaUserCheck />
         </button>
-        <button onClick={handleProposalRefuse} className="text-[#F9617A] text-[26px]">
+        <button onClick={handleProposalRefuse} className="text-warning text-[2.5rem]">
           <FaUserTimes />
         </button>
       </div>

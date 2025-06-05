@@ -1,5 +1,30 @@
-import { acceptProposal, cancelProposal, getMyProposalStatus, getOrganizedMeetups, getReceivedProposals, getSentProposal, hideProposal, refuseProposal } from "@/services/proposal.service";
+import {
+  acceptProposal,
+  cancelProposal,
+  createProposal,
+  getMyProposalStatus,
+  getOrganizedMeetups,
+  getReceivedProposals,
+  getSentProposal,
+  hideProposal,
+  refuseProposal,
+} from "@/services/proposal.service";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
+// 신청서 등록
+export const useCreateProposal = (meetupId: number, onClose: () => void) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (proposalText: string) => createProposal(proposalText, meetupId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["status", meetupId] }); // 신청 상태 갱신
+    },
+    onError: error => {
+      alert(error.message || "신청서 제출 중 오류가 발생했습니다.");
+    },
+  });
+};
 
 // 신청서 수락
 export const useAcceptProposal = () => {
@@ -67,7 +92,7 @@ export const useSentProposal = (page: number) => {
 };
 
 // 신청서 취소
-export const useCancelProposal = () => {
+export const useCancelProposal = (meetupId: number) => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -75,6 +100,7 @@ export const useCancelProposal = () => {
     onSuccess: () => {
       alert("신청서가 성공적으로 취소되었습니다.");
       // 필요하면 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ["status", meetupId] });
       queryClient.invalidateQueries({ queryKey: ["myMeetups", "organizer", "ongoing"] });
       queryClient.invalidateQueries({ queryKey: ["sentProposals"] });
     },

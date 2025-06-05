@@ -23,7 +23,7 @@ const AdPage = ({ params }: { params: PageParams }) => {
   console.log("광고페이지 유저 메일정보는?", userNickname);
 
   return (
-    <div>
+    <div className="py-[10rem]">
       <AdSignboard meetupId={parsedMeetupId} />
       <AdOrganizer meetupId={parsedMeetupId} />
       <AdDetail meetupId={parsedMeetupId} userNickname={userNickname} />

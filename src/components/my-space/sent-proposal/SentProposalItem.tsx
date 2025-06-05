@@ -3,64 +3,65 @@
 import ProposalCancellationModal from "@/components/modals/ProposalCancellationModal";
 import { transformCreatedDate } from "@/utils/ReplyDateFormat";
 import { FaUser, FaUserCheck, FaUserTimes } from "react-icons/fa";
-import ProposalDeletionModal from "@/components/modals/ProposalDeletionModal";
 import { SentProposalItemProps } from "@/types/proposalType";
+import ProposalHideModal from "@/components/modals/ProposalHideModal";
 
 const SentProposalItem = ({ proposal, isModalOpen, modalType, onModalOpen, onModalClose }: SentProposalItemProps) => {
   const handleCancellationModalOpen = () => {
     onModalOpen(proposal.id, "cancellation");
   };
 
-  const handleProposalDelete = () => {
-    onModalOpen(proposal.id, "deletion");
+  const handleProposalHide = () => {
+    onModalOpen(proposal.id, "hide");
   };
 
+  console.log(proposal); // meetupId 확인 필요
+
   return (
-    <div className="flex flex-row items-center gap-4 rounded-xl justify-between py-4 px-6 bg-[#FEFFEC] shadow-md ">
-      <div className="px-1">
-        {proposal.status === "pending" ? (
-          <div className="flex flex-col items-center text-[#C0C0C0]">
-            <div className="text-[24px]">
-              <FaUser />
-            </div>
-            <div className="text-[10px] whitespace-nowrap">대기중</div>
+    <div className="bg-secondary-light flex flex-col items-center justify-between gap-[0.5rem] rounded-[1rem] p-[1.5rem] shadow-md">
+      <div className="flex w-full flex-row items-center justify-between">
+        <div className="flex flex-row items-center gap-[1rem]">
+          <div className="px-1">
+            {proposal.status === "pending" ? (
+              <div className="text-gray-dark flex flex-col items-center">
+                <div className="text-2xl">
+                  <FaUser />
+                </div>
+                <div className="whitespace-nowrap text-xs">대기중</div>
+              </div>
+            ) : proposal.status === "acceptance" ? (
+              <div className="flex flex-col items-center text-[#028AB3]">
+                <div className="text-[2.2rem]">
+                  <FaUserCheck />
+                </div>
+                <div className="h-fil whitespace-nowrap text-xs leading-5">수락됨</div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center text-[#F9617A]">
+                <div className="text-[2.2rem]">
+                  <FaUserTimes />
+                </div>
+                <div className="whitespace-nowrap text-xs leading-5">거절됨</div>
+              </div>
+            )}
           </div>
-        ) : proposal.status === "acceptance" ? (
-          <div className="flex flex-col items-center text-[#028AB3]">
-            <div className="text-[26px]">
-              <FaUserCheck />
-            </div>
-            <div className="text-[10px] whitespace-nowrap">수락됨</div>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center text-[#F9617A]">
-            <div className="text-[26px]">
-              <FaUserTimes />
-            </div>
-            <div className="text-[10px] whitespace-nowrap">거절됨</div>
-          </div>
-        )}
+          <div className="break-all font-semibold">{proposal.meetup_ad_title}</div>
+        </div>
+        <span className="text-gray-dark text-sm">{transformCreatedDate(proposal.created_at)}</span>
       </div>
-      <div className="w-[400px]">
-        <div className="text-[20px] font-semibold">{proposal.meetup_ad_title}</div>
-        <div className="text-[13px]">
-          {proposal.text}&nbsp;&nbsp;
-          <span className="text-[#B7B7B7]">{transformCreatedDate(proposal.created_at)}</span>
+      <div className="flex w-full flex-row items-center justify-between gap-[1rem]">
+        <div className="break-all">{proposal.text}&nbsp;&nbsp;</div>
+        <div className="flex gap-[1rem] whitespace-nowrap text-white">
+          <button onClick={handleCancellationModalOpen} className="bg-warning h-fil rounded-[0.5rem] p-[0.5rem] text-sm font-bold">
+            취소
+          </button>
+          <button onClick={handleProposalHide} className="bg-gray-dark rounded-[0.5rem] p-[0.5rem] text-sm font-bold">
+            숨기기
+          </button>
         </div>
       </div>
-      <div className="flex gap-6 text-[15px] text-white whitespace-nowrap">
-        <button onClick={handleCancellationModalOpen} className="bg-[#F9617A] p-2 rounded-lg">
-          취소
-          {/* <FaTimesCircle /> */}
-        </button>
-        <button onClick={handleProposalDelete} className="bg-[#868282] p-2 rounded-lg">
-          숨기기
-          {/* <FaTrashAlt /> */}
-        </button>
-      </div>
-      {isModalOpen && modalType === "cancellation" &&
-        <ProposalCancellationModal proposal={proposal} onClose={onModalClose} />}
-      {isModalOpen && modalType === "deletion" && <ProposalDeletionModal proposal={proposal} onClose={onModalClose} />}
+      {isModalOpen && modalType === "cancellation" && <ProposalCancellationModal meetupId={meetupId} title={proposal.meetup_ad_title} proposal={proposal} onClose={onModalClose} />}
+      {isModalOpen && modalType === "hide" && <ProposalHideModal proposal={proposal} onClose={onModalClose} />}
     </div>
   );
 };
