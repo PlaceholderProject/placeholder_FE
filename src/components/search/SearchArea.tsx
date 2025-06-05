@@ -39,7 +39,7 @@ const SearchArea = () => {
   };
 
   return (
-    <div className="bg-secondary-dark relative pt-[12.5rem]">
+    <div className="relative bg-secondary-dark pt-[12.5rem]">
       <form onSubmit={handleKeywordSubmit} className="absolute bottom-[1.5rem] flex w-full justify-center gap-[1.5rem]">
         <div className="flex h-[3.5rem] cursor-pointer justify-center rounded-full bg-white px-[1rem] py-[0.5rem] shadow-sm">
           <select onChange={handleRange} className="cursor-pointer border-none outline-none">
@@ -55,7 +55,7 @@ const SearchArea = () => {
             value={keyword}
             className="h-[3.5rem] w-[24rem] rounded-full pl-[1.5rem] pr-[4rem] shadow-sm [appearance:textfield] focus:outline-none [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-cancel-button]:appearance-none"
           />
-          <button type="submit" className="text-gray-dark absolute right-[1.5rem] top-[0.8rem] text-[1.8rem]">
+          <button type="submit" className="absolute right-[1.5rem] top-[0.8rem] text-[1.8rem] text-gray-dark">
             <FaSearch />
           </button>
         </div>

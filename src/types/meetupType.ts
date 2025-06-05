@@ -41,6 +41,9 @@ export interface LabeledInputProps {
   accept?: string;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   maxLength?: number;
+  className?: string;
+  labelClassName?: string;
+  containerClassName?: string;
 }
 
 export interface LabeledSelectProps {
@@ -51,6 +54,9 @@ export interface LabeledSelectProps {
   defaultValue?: string | undefined;
   required: boolean;
   multiple?: boolean;
+  className?: string;
+  labelClassName?: string;
+  containerClassName?: string;
 }
 
 export type SortType = "like" | "latest" | "deadline";

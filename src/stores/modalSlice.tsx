@@ -5,6 +5,7 @@ interface ModalState {
   isMemberDeleteModalOpen: boolean;
   isMeetupInfoModalOpen: boolean;
   isMeetupMembersModalOpen: boolean;
+  selectedMeetupId?: number;
 }
 
 const initialState: ModalState = {
@@ -12,6 +13,7 @@ const initialState: ModalState = {
   isMemberDeleteModalOpen: false,
   isMeetupInfoModalOpen: false,
   isMeetupMembersModalOpen: false,
+  selectedMeetupId: undefined,
 };
 
 const modalSlice = createSlice({
@@ -26,6 +28,10 @@ const modalSlice = createSlice({
     },
     toggleMemberDeleteModal: state => {
       state.isMemberDeleteModalOpen = !state.isMemberDeleteModalOpen;
+      // 모달 닫을 때 선택된 아이디도 초기화해야지
+      if (!state.isMemberDeleteModalOpen) {
+        state.selectedMeetupId = undefined;
+      }
     },
     toggleMeetupInfoModal: state => {
       state.isMeetupInfoModalOpen = !state.isMeetupInfoModalOpen;
@@ -33,14 +39,12 @@ const modalSlice = createSlice({
     toggleMeetupMembersModal: state => {
       state.isMeetupMembersModalOpen = !state.isMeetupMembersModalOpen;
     },
+    setSelectedMeetupId: (state, action) => {
+      state.selectedMeetupId = action.payload;
+    },
   },
 });
 
-export const {
-  toggleAdDeleteModal,
-  closeAdDeleteModal, toggleMemberDeleteModal,
-  toggleMeetupInfoModal,
-  toggleMeetupMembersModal,
-} = modalSlice.actions;
+export const { toggleAdDeleteModal, closeAdDeleteModal, setSelectedMeetupId, toggleMemberDeleteModal, toggleMeetupInfoModal, toggleMeetupMembersModal } = modalSlice.actions;
 
 export default modalSlice.reducer;

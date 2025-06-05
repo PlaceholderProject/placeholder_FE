@@ -49,6 +49,7 @@ export const getMeetupByIdApi = async (meetupId: number) => {
   }
 
   const meetupByIdData = await response.json();
+  console.log("해당 id 모임 가져오기 성공", meetupByIdData);
   // console.log("json()하지 않은 해당 id 모임: ", response);
   // console.log("가져온 해당 id 모임:", meetupByIdData.json());
   // 아니 왜 콘솔에 .json() 넣으면 브라우저 에러 나는 것?

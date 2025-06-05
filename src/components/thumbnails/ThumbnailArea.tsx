@@ -32,26 +32,6 @@ const ThumbnailArea = () => {
     return baseQueryKey;
   };
 
-  //headhuntings 기본 탠스택쿼리
-  // const {
-  //   data: headhuntingsData,
-  //   isPending,
-  //   isError,
-  // } = useQuery({
-  //   queryKey: getQueryKey(),
-  //   queryFn: () =>
-  //     getHeadhuntingsApi({
-  //       sortType,
-  //       ...(isFilterActive && place ? { place: place } : {}),
-  //       ...(isFilterActive && category ? { category: category } : {}),
-  //     }),
-  //   retry: 0,
-  //   staleTime: 0, // 데이터를 항상 stale로 취급
-  //   gcTime: 0, // 캐싱하지 않음
-  //   //-- TO DO--
-  //   // retry 수정?? staleTime, gcTime 수정?
-  // });
-
   // 무한스크롤 탠스택쿼리
   const {
     data: headhuntingsData,
@@ -88,15 +68,15 @@ const ThumbnailArea = () => {
   // useEffect 추가 - 데이터 변경 감지
   useEffect(() => {
     if (headhuntingsData) {
-      console.log("ThumbnailArea 데이터 변경:", headhuntingsData);
+      console.log("ThumbnailArea 데이터 변경 감지:", headhuntingsData);
       const allItems = headhuntingsData.pages.flatMap(page => page.result);
       console.log("모든 아이템 목록:", allItems);
     }
   }, [headhuntingsData]);
 
-  useEffect(() => {
-    console.log(`정렬 타입 변경 감지: ${sortType}`);
-  }, [sortType]);
+  // useEffect(() => {
+  //   console.log(`정렬 타입 변경 감지: ${sortType}`);
+  // }, [sortType]);
 
   const queryClient = useQueryClient();
 
@@ -106,6 +86,7 @@ const ThumbnailArea = () => {
 
     queryClient.resetQueries({ queryKey: getQueryKey() });
   }, [sortType, place, category, isFilterActive, queryClient]);
+
   // 관찰 대상 요소ref
   const observerRef = useRef<HTMLDivElement>(null);
 
@@ -143,7 +124,7 @@ const ThumbnailArea = () => {
 
   // 가져올 때 이미 소트한 뒤로 서버에서 보내주니까 sortedThumbnails로 네이밍
   // 여기서 result로 광고글 데이터에 접근
-  //const sortedThumbnails = headhuntingsData.result;
+  // const sortedThumbnails = headhuntingsData.result;
 
   // 모든 페이지 데이터를 하나의 배열로 합침
   const allThumbnails = headhuntingsData?.pages.flatMap(page => page.result) || [];
@@ -188,7 +169,7 @@ const ThumbnailArea = () => {
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
+      <div className="my-[5rem] grid grid-cols-1 gap-4 p-4 md:grid-cols-2 lg:grid-cols-4">
         {allThumbnails.map((thumbnail: Meetup, index: number) => {
           return <ThumbnailItem key={`${thumbnail.id}-${index}`} thumbnail={thumbnail} />;
         })}
@@ -203,7 +184,7 @@ const ThumbnailArea = () => {
 
         {/* 관찰대상요소 */}
 
-        <div ref={observerRef} className="col-span-full h-10 flex items-center justify-center">
+        <div ref={observerRef} className="col-span-full flex h-10 items-center justify-center">
           {isFetchingNextPage && "데이터 불러오는 중..."}
         </div>
       </div>
