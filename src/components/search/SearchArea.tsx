@@ -39,7 +39,7 @@ const SearchArea = () => {
   };
 
   return (
-    <div className="bg-[#FBFFA9] p-4">
+    <div className="mt-[10rem] bg-[#FBFFA9]">
       <form onSubmit={handleKeywordSubmit}>
         <select onChange={handleRange}>
           <option value="ad_title">제목</option>

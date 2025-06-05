@@ -34,25 +34,28 @@ const MyMeetupMembers: React.FC<{ meetupId?: number }> = ({ meetupId }) => {
 
   useEffect(() => {
     if (myMeetupMembersData?.result?.[0]?.user?.image) {
-      const profileImageUrl = myMeetupMembersData.user?.image.startsWith("http") ? myMeetupMembersData.user.image : `${BASE_URL}${myMeetupMembersData.user?.image}`;
-      const imgElement = document.createElement("img");
-      imgElement.onload = () => {
-        setImageSource(profileImageUrl);
-      };
-      imgElement.onerror = () => {
-        setImageSource("/profile.png");
-      };
-      imgElement.src = profileImageUrl; // 이 부분이 누락되어 있었음
-
-      // 클린업함수
-      return () => {
-        if (imgElement) {
-          imgElement.onload = null;
-          imgElement.onerror = null;
-        }
-      };
+      const userImage = myMeetupMembersData.result[0].user.image;
+      const profileImageUrl = userImage.startsWith("http") ? userImage : `${BASE_URL}${userImage}`;
+      setImageSource(profileImageUrl);
+      // const imgElement = document.createElement("img");
+      // imgElement.onload = () => {
+      //   setImageSource(profileImageUrl);
+      // };
+      // imgElement.onerror = () => {
+      //   setImageSource("/profile.png");
+      // };
+      // imgElement.src = profileImageUrl; // 이 부분이 누락되어 있었음
+      // // 클린업함수
+      // return () => {
+      //   if (imgElement) {
+      //     imgElement.onload = null;
+      //     imgElement.onerror = null;
+      //   }
+      // };
     }
   }, [myMeetupMembersData]);
+  console.log(`프로필이미지url:, ${imageSource}`);
+
   //myMeetupmembersData를 넣으려고 했더니 선언 전에 쓰려고 했대..
   // use 커스텀훅으로 빼야한다 AdOrganizer 처럼..
 
