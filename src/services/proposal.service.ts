@@ -70,7 +70,7 @@ export const getOrganizedMeetups = async () => {
 // 받은 신청서 페이지 : 받은 신청서 가져오기
 export const getReceivedProposals = async (meetupId: number, page: number) => {
   const accessToken = Cookies.get("accessToken");
-  const size = 2;
+  const size = 5;
 
   try {
     const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}/proposal?page=${page}&size=${size}`, {

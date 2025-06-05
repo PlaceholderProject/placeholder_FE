@@ -17,8 +17,8 @@ const MeetupNames = () => {
 
   const total = organizedMeetups?.total ?? 0;
 
-  const size = 2;
-  const groupSize = 2;
+  const size = 5;
+  const groupSize = 5;
   const totalPages = Math.ceil(total / size);
   const currentGroup = Math.floor((page - 1) / groupSize);
   const startPage = currentGroup * groupSize + 1;
