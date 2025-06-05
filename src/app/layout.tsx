@@ -20,6 +20,9 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "Placeholder",
   description: "지도를 이용한 모임 웹 사이트",
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({
