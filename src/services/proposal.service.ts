@@ -68,11 +68,12 @@ export const getOrganizedMeetups = async () => {
 };
 
 // 받은 신청서 페이지 : 받은 신청서 가져오기
-export const getReceivedProposals = async (meetupId: number) => {
+export const getReceivedProposals = async (meetupId: number, page: number) => {
   const accessToken = Cookies.get("accessToken");
+  const size = 2;
 
   try {
-    const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}/proposal`, {
+    const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}/proposal?page=${page}&size=${size}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -85,12 +86,12 @@ export const getReceivedProposals = async (meetupId: number) => {
       throw new Error(error.detail || "알 수 없는 오류");
     }
 
-    const { result } = await response.json();
-    console.log(`${meetupId}신청서 목록:`, result);
-    return result;
+    const data = await response.json();
+    console.log(`${meetupId}신청서 목록:`, data.result);
+    return { proposals: data.result, total: data.total };
   } catch (error) {
     console.error("모임 정보를 가져오는데 실패했습니다:", error);
-    return [];
+    return { proposals: [], total: 0 };
   }
 };
 

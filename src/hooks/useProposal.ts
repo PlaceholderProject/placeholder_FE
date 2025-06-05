@@ -64,10 +64,10 @@ export const useOrganizedMeetups = () => {
 };
 
 // 모임Id로 검색한 내가 방장인 신청서 목록 가져오기
-export const useProposalsByMeetupId = (meetupId: number) => {
+export const useProposalsByMeetupId = (meetupId: number, page: number) => {
   return useQuery({
-    queryKey: ["receivedProposals", meetupId],
-    queryFn: () => getReceivedProposals(meetupId!),
+    queryKey: ["receivedProposals", meetupId, page],
+    queryFn: () => getReceivedProposals(meetupId!, page),
     staleTime: 1000 * 60 * 5,
     retry: 1,
     enabled: !!meetupId,
