@@ -15,7 +15,7 @@ import Cookies from "js-cookie";
 const accessToken = Cookies.get("accessToken");
 
 // 신청서 등록
-export const useCreateProposal = (meetupId: number, onClose: () => void) => {
+export const useCreateProposal = (meetupId: number) => {
   const queryClient = useQueryClient();
 
   return useMutation({
