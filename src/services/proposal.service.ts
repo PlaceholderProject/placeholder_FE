@@ -40,6 +40,10 @@ export const createProposal = async (proposalText: string, meetupId: number) => 
 export const getOrganizedMeetups = async () => {
   const accessToken = Cookies.get("accessToken");
 
+  if (!accessToken) {
+    throw new Error("로그인이 필요합니다.");
+  }
+
   try {
     const response = await fetch(`${BASE_URL}/api/v1/user/me/meetup?organizer=true&status=ongoing`, {
       method: "GET",
@@ -59,6 +63,7 @@ export const getOrganizedMeetups = async () => {
     return result;
   } catch (error) {
     console.error("모임 정보를 가져오는데 실패했습니다:", error);
+    return [];
   }
 };
 
@@ -85,6 +90,7 @@ export const getReceivedProposals = async (meetupId: number) => {
     return result;
   } catch (error) {
     console.error("모임 정보를 가져오는데 실패했습니다:", error);
+    return [];
   }
 };
 

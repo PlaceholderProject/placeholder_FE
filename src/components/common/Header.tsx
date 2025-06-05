@@ -11,21 +11,32 @@ import { persistor, RootState } from "@/stores/store";
 import { setIsAuthenticated } from "@/stores/authSlice";
 import { setHasUnreadNotifications } from "@/stores/notificationSlice";
 import { logout } from "@/stores/userSlice";
+import { resetSelectedMeetupId } from "@/stores/proposalSlice";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Header = () => {
   const hasUnreadNotifications = useSelector((state: RootState) => state.notification.hasUnread);
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const dispatch = useDispatch();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const handleLogout = useCallback(async () => {
     Cookies.remove("accessToken");
     Cookies.remove("refreshToken");
+
     dispatch(setIsAuthenticated(false));
     dispatch(logout());
     dispatch(setHasUnreadNotifications(false));
+    dispatch(resetSelectedMeetupId());
 
+    queryClient.invalidateQueries({ queryKey: ["myMeetups", "organizer"] });
+
+    await persistor.flush();
+    await persistor.pause();
     await persistor.purge();
+
+    await queryClient.clear();
   }, []);
 
   useEffect(() => {

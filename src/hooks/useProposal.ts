@@ -10,6 +10,9 @@ import {
   refuseProposal,
 } from "@/services/proposal.service";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import Cookies from "js-cookie";
+
+const accessToken = Cookies.get("accessToken");
 
 // 신청서 등록
 export const useCreateProposal = (meetupId: number, onClose: () => void) => {
@@ -54,6 +57,7 @@ export const useOrganizedMeetups = () => {
   return useQuery({
     queryKey: ["myMeetups", "organizer"],
     queryFn: getOrganizedMeetups,
+    enabled: !!accessToken,
     staleTime: 1000 * 60 * 5, // 5분 캐싱
     retry: 1,
   });

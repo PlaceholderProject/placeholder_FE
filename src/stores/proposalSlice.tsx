@@ -15,8 +15,11 @@ const proposalSlice = createSlice({
     setSelectedMeetupId: (state, action: PayloadAction<ProposalState["selectedMeeupId"]>) => {
       state.selectedMeeupId = action.payload;
     },
+    resetSelectedMeetupId(state) {
+      state.selectedMeeupId = null;
+    },
   },
 });
 
-export const { setSelectedMeetupId } = proposalSlice.actions;
+export const { setSelectedMeetupId, resetSelectedMeetupId } = proposalSlice.actions;
 export default proposalSlice.reducer;
