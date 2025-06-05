@@ -6,17 +6,6 @@ import NavigationBar from "@/components/common/NavigationBar";
 import ReduxProvider from "@/stores/ReduxProvider";
 import QueryProvider from "./(providers)/_providers/QueryProvider";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
-
 export const metadata: Metadata = {
   title: "Placeholder",
   description: "지도를 이용한 모임 웹 사이트",
@@ -25,14 +14,21 @@ export const metadata: Metadata = {
   },
 };
 
+const pretendard = localFont({
+  src: "../fonts/PretendardVariable.woff2",
+  display: "swap",
+  weight: "100 900",
+  variable: "--font-pretendard",
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+    <html lang="ko" className={`${pretendard.variable}`}>
+      <body className={pretendard.className}>
         <ReduxProvider>
           <QueryProvider>
             <Header />
