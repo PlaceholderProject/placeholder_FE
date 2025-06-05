@@ -3,12 +3,11 @@ import MeetupSignboard from "@/components/meetup/MeetupSignboard";
 import ScheduleArea from "@/components/schedule/ScheduleArea";
 import React from "react";
 
-
 const MeetupPage = ({ params }: { params: { meetupId: string } }) => {
   const meetupId = Number(params.meetupId);
 
   return (
-    <>
+    <div className="my-[10rem]">
       <MeetupSignboard meetupId={meetupId} />
       <div>
         <KakaoMaps meetupId={meetupId} />
@@ -16,7 +15,7 @@ const MeetupPage = ({ params }: { params: { meetupId: string } }) => {
       <div>
         <ScheduleArea meetupId={meetupId} />
       </div>
-    </>
+    </div>
   );
 };
 
