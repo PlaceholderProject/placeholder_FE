@@ -469,7 +469,7 @@ const MeetupForm = () => {
                 options={placeOptions}
                 ref={placeRef}
                 required
-                containerClassName={"flex items-center"}
+                containerClassName={"flex my-[1rem] items-center"}
                 labelClassName={"text-base mr-[0.5rem]"}
                 className={"h-[4rem] w-[23rem] rounded-[1rem] border-[0.1rem] border-gray-light px-[1rem] py-[1rem] text-center"}
               />
@@ -514,12 +514,13 @@ const MeetupForm = () => {
               {/* 커스텀 버튼 */}
               <div className="flex-cols-2 flex items-center justify-between text-center">
                 <label className="my-[0.5rem] text-lg font-semibold">대표 이미지</label>
-                <label htmlFor="image" className="h-[2.2rem] w-[8rem] items-center rounded-[1rem] bg-gray-medium py-[0.2rem] text-sm">
+                <label htmlFor="image" className="h-[2.2rem] w-[8rem] cursor-pointer items-center rounded-[1rem] bg-gray-medium py-[0.2rem] text-sm">
                   파일 선택
                 </label>
               </div>
-              <div className="flex h-[14.5rem] w-[29.2rem] flex-col items-center rounded-[1rem] border-[0.1rem] border-gray-light">
-                <Image src={previewImage} alt="preview image" width={100} height={100} />
+
+              <div className="relative flex h-[14.5rem] w-[29.2rem] items-center justify-center overflow-hidden rounded-[1rem] border-[0.1rem] border-gray-light">
+                <Image src={previewImage} alt="preview image" fill style={{ objectFit: "cover" }} className="rounded-[1rem]" />
               </div>
             </div>
 

@@ -554,56 +554,76 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
                   ref={placeRef}
                   defaultValue={previousMeetupData?.place}
                   required
-                  className={""}
-                  labelClassName={""}
-                  containerClassName={""}
+                  containerClassName={"flex items-center my-[1rem]"}
+                  labelClassName={"text-base mr-[0.5rem]"}
+                  className={"h-[4rem] w-[23rem] rounded-[1rem] border-[0.1rem] border-gray-light px-[1rem] py-[1rem] text-center"}
                 />
               </div>
 
-              <div>
-                <label htmlFor="description">광고글 설명</label>
+              <div className="my-[0.5rem] flex flex-col py-[0.5rem]">
+                <label className="my-[0.5rem] text-lg font-semibold" htmlFor="description">
+                  광고글 설명
+                </label>
                 <textarea
                   id="description"
                   name="description"
                   ref={descriptionRef}
                   defaultValue={previousMeetupData?.description || ""}
-                  placeholder="멤버 광고글에 보일 설명을 적어주세요"
+                  placeholder="멤버 광고글에 보일 설명을 작성해주세요"
                   maxLength={MAX_DESCRIPTION_LENGTH}
                   onChange={handleDescriptionLengthChange}
+                  className="h-[17rem] w-[29.2rem] rounded-[1rem] border-[0.1rem] border-gray-light px-[0.5rem] text-start text-base"
                 />
-                <span className="text-sm text-gray-400">
+                <span className="pt-[1rem] text-sm text-gray-dark">
                   {" "}
                   {descriptionLength <= MAX_DESCRIPTION_LENGTH ? descriptionLength : MAX_DESCRIPTION_LENGTH} / {MAX_DESCRIPTION_LENGTH} 자
                 </span>
-                {descriptionLength >= MAX_DESCRIPTION_LENGTH && <p className="text-sm text-red-500">광고글 설명은 최대 {MAX_DESCRIPTION_LENGTH}자 까지 입력할 수 있습니다.</p>}
+                {descriptionLength >= MAX_DESCRIPTION_LENGTH && <p className="text-sm text-warning">광고글 설명은 최대 {MAX_DESCRIPTION_LENGTH}자 까지 입력할 수 있습니다.</p>}
+              </div>
+
+              <div className="my-[0.5rem]">
+                <LabeledInput
+                  id="image"
+                  name="image"
+                  label="대표 이미지"
+                  type="file"
+                  accept="image/jpg, image/jpeg, image/png, image/webp, image/bmp"
+                  onChange={handlePreviewImageChange}
+                  containerClassName="hidden"
+                  labelClassName="hidden"
+                  className="hidden"
+                />
+                {/* 커스텀 버튼 */}
+                <div className="flex-cols-2 flex items-center justify-between text-center">
+                  <label className="my-[0.5rem] text-lg font-semibold">대표 이미지</label>
+                  <label htmlFor="image" className="h-[2.2rem] w-[8rem] cursor-pointer items-center rounded-[1rem] bg-gray-medium py-[0.2rem] text-sm">
+                    파일 선택
+                  </label>
+                </div>
+                <div className="relative flex h-[14.5rem] w-[29.2rem] items-center justify-center overflow-hidden rounded-[1rem] border-[0.1rem] border-gray-light">
+                  {/* style={{ objectFit: 'cover' }} 이미지 비율을 유지하면서 컨테이너를 채움 필요시 이미지의 일부가 잘릴 수 잇음
+                  결과: 이미지 비율 유지, 왜곡 없음 */}
+                  {previewImage ? <Image src={previewImage} alt="미리보기 이미지" fill style={{ objectFit: "cover" }} className="rounded-[1rem]" /> : <p>미리보기 이미지가 없습니다.</p>}
+                </div>
               </div>
               <LabeledInput
                 id="isPublic"
                 name="isPublic"
-                label="공개 여부"
+                label="모집글 비공개"
                 type="checkbox"
                 ref={isPublicRef}
                 defaultChecked={previousMeetupData?.isPublic}
-                className={""}
-                labelClassName={""}
-                containerClassName={""}
+                containerClassName={"flex items-center my-[3rem]"}
+                labelClassName={"text-2xl text-primary items-baseline font-semibold pl-[0.5rem] pr-[0.5rem]"}
+                className={
+                  "h-[1.5rem] w-[1.5rem] appearance-none rounded-[0.2rem] border-[0.2rem] border-[#013A4B] checked:border-primary checked:bg-primary checked:after:flex checked:after:h-full checked:after:items-center checked:after:justify-center checked:after:text-xs checked:after:font-bold checked:after:text-white checked:after:content-['✓']"
+                }
               />
-
-              <div>
-                {previewImage ? <Image src={previewImage} alt="미리보기 이미지" width={100} height={80} /> : <p>미리보기 이미지가 없습니다.</p>}
-                <LabeledInput
-                  id="image"
-                  name="image"
-                  label="광고글 대표 이미지"
-                  type="file"
-                  accept="image/jpg, image/jpeg, image/png, image/webp, image/bmp"
-                  onChange={handlePreviewImageChange}
-                  className={""}
-                  labelClassName={""}
-                  containerClassName={""}
-                />
+              <div className="mt-[3rem] flex justify-center">
+                <button type="submit" className="text-bold h-[4rem] w-[14rem] items-center rounded-[1rem] bg-primary text-center text-lg text-white">
+                  모임 수정
+                </button>
               </div>
-              <button type="submit">수정 완료</button>
             </div>
           </form>
         </div>
