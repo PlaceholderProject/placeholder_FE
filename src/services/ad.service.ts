@@ -8,12 +8,19 @@ import Cookies from "js-cookie";
 
 export const getAdByIdApi = async (meetupId: number) => {
   const token = Cookies.get("accessToken");
+  // 헤더 객체를 조건부로 구성
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+  };
+
+  // 토큰이 있을 때만 Authorization 헤더 추가
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
 
   const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}`, {
     method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers,
   });
 
   if (!response.ok) {

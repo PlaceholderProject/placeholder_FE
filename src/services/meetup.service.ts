@@ -36,11 +36,19 @@ export const createMeetupApi = async (meetupFormData: FormData): Promise<void> =
 // id 해당 모임 get api
 export const getMeetupByIdApi = async (meetupId: number) => {
   const token = Cookies.get("accessToken");
+
+  //헤더 객체 조건부로
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+  };
+
+  //토큰 있어야 헤더 추가
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
   const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}`, {
     method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers,
   });
 
   if (!response.ok) {
