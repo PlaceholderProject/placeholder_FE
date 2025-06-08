@@ -22,6 +22,7 @@ export const getAdByIdApi = async (meetupId: number) => {
   }
 
   const AdByIdData = await response.json();
+  console.log("광고에서 해당 id 모임 가져오기 성공 :", AdByIdData);
   // console.log("가져온 데이터:", AdByIdData);
   // console.log("Ad 타입 뭐야?", typeof AdByIdData.id);
 

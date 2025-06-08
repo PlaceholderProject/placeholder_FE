@@ -15,7 +15,7 @@ const MySpaceLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <div className="py-[10rem]">
-        <nav className="border-gray-medium border-b-[0.1rem]">
+        <nav className="border-b-[0.1rem] border-gray-medium">
           <h1 className="m-2 text-xl font-bold">내 공간</h1>
           <Link
             className={`m-4 rounded-md p-2 font-semibold ${activeMainTab === "myMeetup" ? "active bg-[#FBFFA9]" : "bg-white"}`}

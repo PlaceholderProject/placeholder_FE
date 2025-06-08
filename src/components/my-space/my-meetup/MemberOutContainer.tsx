@@ -1,46 +1,74 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import OutButton from "./OutButton";
 import { FaRegUserCircle } from "react-icons/fa";
 import { MyMeetupItem } from "@/types/mySpaceType";
 import { useModal } from "@/hooks/useModal";
 
-const MemberOutContainer: React.FC<{
-  meetupId: MyMeetupItem["id"];
-  isOrganizer: MyMeetupItem["is_organizer"];
-}> = ({ meetupId, isOrganizer }) => {
+const MemberOutContainer: React.FC<{ meetupId: MyMeetupItem["id"]; isOrganizer: MyMeetupItem["is_organizer"] }> = ({ meetupId, isOrganizer }) => {
   const { openModal } = useModal();
 
+  // const [isOrganizer, setIsOrganizer] = useState(false);
+  // 모임 정보에서 isOrganizer 가져오기
+  // const { data: myMeetupDetailsData } = useQuery({
+  //   queryKey: ["myMeetupDetailsData", meetupId],
+  //   queryFn: () => getMyMeetupMembersApi(meetupId),
+  //   enabled: !!meetupId,
+  // });
+  // const isOrganizer = myMeetupDetailsData?.is_organizer || false;
+
   const handleMemberButtonClick = (event: React.MouseEvent) => {
+    // 아이콘 클릭했는데 Link 이동까지 되는 이벤트 버블링 발생,
+    // 이벤트 버블링과 기본 동작 모두 방지
     event.stopPropagation();
     event.preventDefault();
+    // 근데 Link 안에서 밖으로 빼니까 전파 안 일어남
 
-    // 멤버 삭제(강퇴) 모달 열기
+    // console.log("====1. 버튼 클릭 시작====");
+    // console.log("클릭된 meetupId:", meetupId);
+
+    //모달 토글
+    // dispatch(setSelectedMeetupId(meetupId));
+    // console.log("==2. setSelectedMeetupId 디스패치 했어==");
+    // dispatch(toggleMemberDeleteModal());
+    // console.log("===3. toggleMemberDeleteModal 디스패치 햇어==");
+    // console.log("===4. 버튼 클릭 우선 끝===");
+    // console.log("멤버모달 열렸니?", isMemberDeleteModalOpen);
+
+    // 새로운 모달 시스템의 openModal 함수를 사용하여 모달을 엽니다.
+    // 이전 코드의 dispatch 로직을 이 한 줄로 대체합니다.
     openModal("MEMBER_DELETE", { meetupId });
   };
+
+  useEffect(() => {
+    console.log("받은 meetupId:", meetupId);
+  }, [meetupId]);
 
   const handleOutButtonClick = () => {
     // 모임 퇴장 (isOrganizer = false)
     if (!isOrganizer) {
       const confirmed = window.confirm("정말 이 모임에서 퇴장하시겠습니까?");
       if (confirmed) {
-        // TODO: 퇴장 API 로직 구현
+        // -- TODO--
+        // 퇴장 API 로직 여기 구현
         alert("내 발로 내가 퇴장한다");
       }
     }
   };
-
   return (
-    <div>
-      {isOrganizer ? (
-        <button onClick={handleMemberButtonClick} className="rounded-full p-2 transition-colors hover:bg-gray-100" aria-label="멤버 관리">
-          <FaRegUserCircle size={20} />
-        </button>
-      ) : (
-        <OutButton isOrganizer={isOrganizer} isInMemberDeleteModal={false} onClick={handleOutButtonClick} />
-      )}
-    </div>
+    <>
+      <div>
+        {isOrganizer ? (
+          // 기존 코드의 CSS(className)를 그대로 유지합니다.
+          <button onClick={handleMemberButtonClick} className="p-2">
+            <FaRegUserCircle size={20} />
+          </button>
+        ) : (
+          <OutButton isOrganizer={isOrganizer} isInMemberDeleteModal={false} onClick={handleOutButtonClick} />
+        )}
+      </div>
+    </>
   );
 };
 
