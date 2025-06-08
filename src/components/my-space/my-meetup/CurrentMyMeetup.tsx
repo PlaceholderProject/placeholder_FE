@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import RoleIcon from "./RoleIcon";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import MemberOutContainer from "./MemberOutContainer";
-import { getMyMeetupsApi } from "@/services/my.space.service";
+import { deleteMeetupMemberApi, getMyMeetupMembersApi, getMyMeetupsApi } from "@/services/my.space.service";
 import Link from "next/link";
 import { SIZE_LIMIT, BUTTONS_PER_GROUP } from "@/constants/pagination";
 import PaginationButtons from "../PaginationButtons";
@@ -12,6 +12,27 @@ import MemberDeleteModal from "./MemberDeleteModal";
 
 const CurrentMyMeetup = () => {
   const [page, setPage] = useState(1);
+  const queryClient = useQueryClient();
+
+  // 내가 나가건 쫓겨나건 통합 out 뮤테이션 여기서 일괄 관리!!
+  const deleteMutation = useMutation({
+    mutationFn: (member_id: number) => deleteMeetupMemberApi(member_id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["myMeetups"] });
+      queryClient.invalidateQueries({ queryKey: ["myMeetupMembers"] });
+    },
+    onError: error => {
+      console.error("멤버 삭제 실패:", error);
+      alert("멤버 삭제 중 오류 ㅂ라생함");
+    },
+  });
+
+  // 현 사용자의 member_id가져오는 함수
+  const getCurrentUserMemberId = async (meetupId: number) => {
+    try {
+      const membersData = await getMyMeetupMembersApi(meetupId);
+    } catch (error) {}
+  };
 
   const handlePageButtonClick = (newPage: number) => {
     setPage(newPage);

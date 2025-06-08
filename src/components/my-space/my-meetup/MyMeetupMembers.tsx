@@ -81,11 +81,9 @@ const MyMeetupMembers: React.FC<{ meetupId?: number }> = ({ meetupId }) => {
   return (
     <>
       {myMeetupMembersData.result.map((myMeetupMember: MyMeetupMember) => {
-        // const profileImageUrl = myMeetupMember.user?.image?.startsWith("http") ? myMeetupMember.user.image : `${BASE_URL}${myMeetupMember.user?.image}`;
-
         return (
           <div key={myMeetupMember.id}>
-            {myMeetupMember.role == "organizer" && <span>👑</span>}이 아이디는 뭐야? : {myMeetupMember.id}
+            {myMeetupMember.role == "organizer" && <span>👑</span>}이 아이디는 뭘까, 내 공간 모임에서 따로 부여된건가 : {myMeetupMember.id}
             <Image src={imageSource} alt="내 모임 회원 이미지" width={50} height={50} className="size-8 rounded-full" />
             모임아이디 : {myMeetupMember.meetupId}
             <br />

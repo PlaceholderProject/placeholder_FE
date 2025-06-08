@@ -7,9 +7,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { setSelectedMeetupId, toggleMemberDeleteModal } from "@/stores/modalSlice";
 import { RootState } from "@/stores/store";
 import { MyMeetupItem } from "@/types/mySpaceType";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { deleteMeetupMemberApi } from "@/services/my.space.service";
 
 const MemberOutContainer: React.FC<{ meetupId: MyMeetupItem["id"]; isOrganizer: MyMeetupItem["is_organizer"] }> = ({ meetupId, isOrganizer }) => {
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
   const isMemberDeleteModalOpen = useSelector((state: RootState) => state.modal.isMemberDeleteModalOpen);
   // const [isOrganizer, setIsOrganizer] = useState(false);
   // 모임 정보에서 isOrganizer 가져오기
@@ -20,7 +23,7 @@ const MemberOutContainer: React.FC<{ meetupId: MyMeetupItem["id"]; isOrganizer: 
   // });
   // const isOrganizer = myMeetupDetailsData?.is_organizer || false;
 
-  const handleMemberButtonClick = (event: { stopPropagation: () => void; preventDefault: () => void }) => {
+  const handleMemberListButtonClick = (event: { stopPropagation: () => void; preventDefault: () => void }) => {
     // 아이콘 클릭했는데 Link 이동까지 되는 이벤트 버블링 발생,
     // 이벤트 버블링과 기본 동작 모두 방지
     // event.stopPropagation();
@@ -43,14 +46,21 @@ const MemberOutContainer: React.FC<{ meetupId: MyMeetupItem["id"]; isOrganizer: 
     console.log("받은 meetupId:", meetupId);
   }, [meetupId]);
 
-  const handleOutButtonClick = () => {
+  // 삭제 뮤테이션
+  const deleteMutation = useMutation({
+    mutationFn: (member_id: number) => deleteMeetupMemberApi(member_id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["myMeetups"] });
+    },
+  });
+
+  const handleSelfOutButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     // 모임 퇴장 (isOrganizer = false)
     if (!isOrganizer) {
       const confirmed = window.confirm("정말 이 모임에서 퇴장하시겠습니까?");
       if (confirmed) {
-        // -- TODO--
-        // 퇴장 API 로직 여기 구현
         alert("내 발로 내가 퇴장한다");
+        deleteMutation.mutate(meetupId);
       }
     }
   };
@@ -58,11 +68,11 @@ const MemberOutContainer: React.FC<{ meetupId: MyMeetupItem["id"]; isOrganizer: 
     <>
       <div>
         {isOrganizer ? (
-          <button onClick={handleMemberButtonClick} className="p-2">
+          <button onClick={handleMemberListButtonClick} className="p-2">
             <FaRegUserCircle size={20} />
           </button>
         ) : (
-          <OutButton isOrganizer={isOrganizer} isInMemberDeleteModal={false} onClick={handleOutButtonClick} />
+          <OutButton isOrganizer={isOrganizer} isInMemberDeleteModal={false} onClick={handleSelfOutButtonClick} />
         )}
       </div>
     </>

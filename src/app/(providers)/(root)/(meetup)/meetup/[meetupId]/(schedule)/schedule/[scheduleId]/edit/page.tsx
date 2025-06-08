@@ -13,12 +13,8 @@ const EditSchedulePage = ({ params }: EditSchedulePageProps) => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">스케줄 수정</h1>
-      <ScheduleForm
-        meetupId={meetupId}
-        mode="edit"
-        scheduleId={scheduleId}
-      />
+      <h1 className="mb-4 text-2xl font-bold">스케줄 수정</h1>
+      <ScheduleForm meetupId={meetupId} mode="edit" scheduleId={scheduleId} />
     </div>
   );
 };
