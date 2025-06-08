@@ -5,6 +5,7 @@ export type SentProposal = {
   meetup_ad_title: string;
   status: string;
   text: string;
+  meetupId: number;
 };
 
 export type ReceivedProposal = {
@@ -12,6 +13,7 @@ export type ReceivedProposal = {
   status: string;
   text: string;
   user: { id: number; nickname: string; image: string };
+  createdAt: string;
 };
 
 export type OrganizedMeetup = {

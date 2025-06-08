@@ -19,40 +19,46 @@ const AccountDelete = () => {
 
   const handleDeleteUserButton = async () => {
     try {
-      const response = await deleteUserMutation.mutateAsync(); // ✅ 비동기 호출
-
-      if (response) {
-        Cookies.remove("accessToken");
-        Cookies.remove("refreshToken");
-        dispatch(setIsAuthenticated(false));
-        setIsDeletedAccount(true);
-      }
+      await deleteUserMutation.mutateAsync(); // ✅ 비동기 호출
+      Cookies.remove("accessToken");
+      Cookies.remove("refreshToken");
+      dispatch(setIsAuthenticated(false));
+      setIsDeletedAccount(true);
     } catch (error) {
       alert("탈퇴에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
   return (
-    <div>
-      {!isPasswordRechecked && (
-        <div className="fixed inset-20 z-50">
-          <PasswordRecheck />
-        </div>
-      )}
-      {isDeletedAccount ? (
-        <div>
-          <p>탈퇴되었습니다.</p>
-          <Link href="/">메인페이지로 이동하기</Link>
-        </div>
-      ) : (
-        <div>
-          <p>정말로 탈퇴 하시겠습니까?</p>
-          <Link href="/account">아니요</Link>
-          <button onClick={handleDeleteUserButton} className="bg-slate-400">
-            네
-          </button>
-        </div>
-      )}
+    <div className="flex min-h-screen flex-col items-center justify-center py-[10rem]">
+      <h2 className="mb-[2rem] text-3xl font-semibold">계정 관리</h2>
+      <div className="border-gray-medium relative z-10 flex min-h-[50rem] w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] py-[3rem]">
+        {!isPasswordRechecked && (
+          <div className="absolute inset-5 z-50 flex items-center justify-center bg-[#f9f9f9]">
+            <PasswordRecheck />
+          </div>
+        )}
+        {isDeletedAccount ? (
+          <div className="flex flex-col items-center">
+            <p className="my-[5rem] text-lg font-semibold">탈퇴되었습니다.</p>
+            <Link href="/" className="bg-secondary-dark flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] text-lg">
+              메인페이지로 이동하기
+            </Link>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center">
+            <p className="my-[5rem] text-lg font-semibold">정말로 탈퇴 하시겠습니까?</p>
+            <div className="flex flex-col gap-[0.8rem]">
+              <Link href="/account" className="bg-secondary-dark flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] text-lg">
+                아니요
+              </Link>
+              <button onClick={handleDeleteUserButton} className="bg-gray-light flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] text-lg">
+                네
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -14,23 +14,23 @@ const MySpaceLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <>
-      <div>
-        <nav>
-          <h1 className="text-xl font-bold m-2">내 공간</h1>
+      <div className="py-[10rem]">
+        <nav className="border-gray-medium border-b-[0.1rem]">
+          <h1 className="m-2 text-xl font-bold">내 공간</h1>
           <Link
-            className={`rounded-md p-2 m-4 font-semibold ${activeMainTab === "myMeetup" ? "active bg-[#FBFFA9]" : "bg-white"}`}
+            className={`m-4 rounded-md p-2 font-semibold ${activeMainTab === "myMeetup" ? "active bg-[#FBFFA9]" : "bg-white"}`}
             onClick={() => setActiveMainTab("myMeetup")}
             href="/my-space/my-meetup"
           >
             내 모임
           </Link>
-          <Link className={`rounded-md p-2 m-4 font-semibold ${activeMainTab === "myAd" ? "active bg-[#FBFFA9]" : "bg-white"}`} onClick={() => setActiveMainTab("myAd")} href="/my-space/my-ad">
+          <Link className={`m-4 rounded-md p-2 font-semibold ${activeMainTab === "myAd" ? "active bg-[#FBFFA9]" : "bg-white"}`} onClick={() => setActiveMainTab("myAd")} href="/my-space/my-ad">
             내 광고
           </Link>
-          <Link className="rounded-md p-2 m-4 font-semibold" href="/my-space/received-proposal">
+          <Link className="m-4 rounded-md p-2 font-semibold" href="/my-space/received-proposal">
             받은 신청서
           </Link>
-          <Link className="rounded-md p-2 m-4 font-semibold" href="/my-space/sent-proposal">
+          <Link className="m-4 rounded-md p-2 font-semibold" href="/my-space/sent-proposal">
             보낸 신청서
           </Link>
         </nav>

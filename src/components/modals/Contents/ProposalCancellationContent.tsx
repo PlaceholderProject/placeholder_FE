@@ -4,7 +4,7 @@ import { SentProposal } from "@/types/proposalType";
 
 const ProposalCancellationContent = ({ proposal }: { proposal: SentProposal }) => {
   const { closeModal } = useModal();
-  const cancelMutation = useCancelProposal();
+  const cancelMutation = useCancelProposal(proposal.meetupId);
 
   const handleProposalCancel = () => {
     cancelMutation.mutate(proposal.id);
@@ -12,14 +12,14 @@ const ProposalCancellationContent = ({ proposal }: { proposal: SentProposal }) =
   };
 
   return (
-    <div className="flex w-full flex-col items-center gap-4">
-      <h1 className="text-[20px]">{proposal.meetup_name}</h1>
-      <p className="text-[14px]">신청을 취소할까요?</p>
-      <div className="flex w-full flex-col gap-2">
-        <button onClick={closeModal} className="rounded-lg bg-gray-300 px-4 py-2 text-[13px]">
+    <div className="flex w-[90%] flex-col items-center gap-[1.5rem]">
+      <h1 className="text-lg font-bold">{proposal.meetup_ad_title}</h1>
+      <p>신청을 취소할까요?</p>
+      <div className="flex w-full flex-col gap-[1rem]">
+        <button onClick={closeModal} className="h-[4rem] rounded-[1rem] bg-gray-light">
           아니요
         </button>
-        <button onClick={handleProposalCancel} disabled={cancelMutation.isPending} className="rounded-lg bg-[#FBFFA9] px-4 py-2 text-[13px]">
+        <button onClick={handleProposalCancel} disabled={cancelMutation.isPending} className="h-[4rem] rounded-[1rem] bg-secondary-dark">
           {cancelMutation.isPending ? "취소 중..." : "네"}
         </button>
       </div>

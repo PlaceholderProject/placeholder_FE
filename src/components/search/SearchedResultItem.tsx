@@ -2,7 +2,7 @@ import { SearchedType } from "@/types/searchType";
 import { RootState } from "@/stores/store";
 import { useSelector } from "react-redux";
 import Link from "next/link";
-import calculateDays from "@/utils/calculateDays";
+import { FaRegCalendarAlt } from "react-icons/fa";
 
 const SearchedResultItem = ({ ad }: { ad: SearchedType }) => {
   const { searchField } = useSelector((state: RootState) => state.search);
@@ -29,23 +29,18 @@ const SearchedResultItem = ({ ad }: { ad: SearchedType }) => {
   };
 
   return (
-    <div className="flex flex-row justify-between border-b-[1px] border-[#CFCFCF]">
-      <div>
+    <div className="border-gray-medium flex flex-col justify-between border-b-[0.1rem] px-[2rem] py-[1rem]">
+      <div className="text-lg">
         <Link href={`/ad/${ad.id}`}>{renderTitle()}</Link>
-        <div>{ad.organizer.nickname}</div>
       </div>
-      <div className="flex flex-col items-end">
-        <div>{ad.adEndedAt} 까지 모집</div>
-        <div>
-          모임 날짜 : {ad.startedAt}~{ad.endedAt}{" "}
-          <span>
-            {ad.startedAt && ad.endedAt
-              ? calculateDays({
-                  startedAt: ad.startedAt,
-                  endedAt: ad.endedAt,
-                })
-              : ""}
-          </span>
+      <div className="flex flex-row justify-between">
+        <div className="flex items-end">{ad.organizer.nickname}</div>
+        <div className="flex flex-col items-end text-[#006B8B]">
+          <div>{ad.adEndedAt} 까지 모집</div>
+          <div className="flex flex-row items-center gap-[0.5rem]">
+            <FaRegCalendarAlt />
+            {ad.startedAt} ~ {ad.endedAt}
+          </div>
         </div>
       </div>
     </div>
