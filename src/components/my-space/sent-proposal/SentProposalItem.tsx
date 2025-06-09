@@ -13,7 +13,7 @@ const SentProposalItem = ({ proposal }: { proposal: SentProposal }) => {
   };
 
   const handleProposalHide = () => {
-    openModal("PROPOSAL_DELETION", { proposal });
+    openModal("PROPOSAL_HIDE", { proposal });
   };
 
   return (
