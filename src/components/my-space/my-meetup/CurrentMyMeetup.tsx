@@ -6,9 +6,8 @@ import { useQuery } from "@tanstack/react-query";
 import MemberOutContainer from "./MemberOutContainer";
 import { getMyMeetupsApi } from "@/services/my.space.service";
 import Link from "next/link";
-import { SIZE_LIMIT, BUTTONS_PER_GROUP } from "@/constants/pagination";
+import { BUTTONS_PER_GROUP, SIZE_LIMIT } from "@/constants/pagination";
 import PaginationButtons from "../PaginationButtons";
-import MemberDeleteModal from "./MemberDeleteModal";
 
 const CurrentMyMeetup = () => {
   const [page, setPage] = useState(1);
@@ -89,7 +88,6 @@ const CurrentMyMeetup = () => {
         onPreviousGroupButtonClick={handlePreviousGroupButtonClick}
         onNextGroupButtonClick={handleNextGroupButtonClick}
       />
-      <MemberDeleteModal />
     </>
   );
 };

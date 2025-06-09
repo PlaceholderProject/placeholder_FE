@@ -1,14 +1,11 @@
 "use client";
 
-import { deleteMeetupMemberApi, getMyMeetupMembersApi } from "@/services/my.space.service";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getMyMeetupMembersApi } from "@/services/my.space.service";
+import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
-import { MyMeetupItem } from "@/types/mySpaceType";
 import { BASE_URL } from "@/constants/baseURL";
 import OutButton from "./OutButton";
-import { MeetupMemberProps } from "@/types/myMeetupMemberType";
 import { MyMeetupMember } from "@/types/myMeetupMemberType";
-import { MyMeetupUser } from "@/types/myMeetupMemberType";
 import Image from "next/image";
 
 // const MyMeetupMembers = (meetupId: number) => {

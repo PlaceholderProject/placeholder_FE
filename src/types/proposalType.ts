@@ -5,6 +5,7 @@ export type SentProposal = {
   meetup_ad_title: string;
   status: string;
   text: string;
+  meetupId: number;
 };
 
 export type ReceivedProposal = {
@@ -22,28 +23,3 @@ export type OrganizedMeetup = {
   is_organizer: boolean;
   name: string;
 };
-
-export interface SentProposalItemProps {
-  proposal: SentProposal;
-  isModalOpen: boolean;
-  modalType: "cancellation" | "hide" | null;
-  onModalOpen: (proposalId: number, type: "cancellation" | "hide") => void;
-  onModalClose: () => void;
-}
-
-export interface ProposalCancellationModalProps {
-  meetupId: number;
-  proposal: SentProposal;
-  onClose: () => void;
-  title: string;
-}
-
-export interface ProposalHideModalProps {
-  proposal: SentProposal;
-  onClose: () => void;
-}
-
-export interface ProposalPostcardProps {
-  meetupId: number;
-  onClose: () => void;
-}

@@ -7,7 +7,7 @@ const MeetupPage = ({ params }: { params: { meetupId: string } }) => {
   const meetupId = Number(params.meetupId);
 
   return (
-    <div className="my-[10rem]">
+    <div>
       <MeetupSignboard meetupId={meetupId} />
       <div>
         <KakaoMaps meetupId={meetupId} />
