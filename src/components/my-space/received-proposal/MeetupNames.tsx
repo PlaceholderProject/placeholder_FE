@@ -9,13 +9,12 @@ import { useDispatch, useSelector } from "react-redux";
 
 const MeetupNames = () => {
   const selectedMeetupId = useSelector((state: RootState) => state.proposal.selectedMeeupId);
-
   const dispatch = useDispatch();
 
   const { data: organizedMeetups, isLoading, isError, error } = useOrganizedMeetups();
 
   useEffect(() => {
-    if (organizedMeetups && organizedMeetups.length > 0 && !selectedMeetupId) {
+    if (organizedMeetups && organizedMeetups.length > 0 && !organizedMeetups.some((m: OrganizedMeetup) => m.id === selectedMeetupId)) {
       dispatch(setSelectedMeetupId(organizedMeetups[0].id));
     }
   }, [organizedMeetups, dispatch, selectedMeetupId]);
