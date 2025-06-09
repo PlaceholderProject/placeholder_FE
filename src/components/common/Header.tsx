@@ -32,7 +32,8 @@ const Header = () => {
       dispatch(setHasUnreadNotifications(false));
 
       queryClient.invalidateQueries({ queryKey: ["myMeetups", "organizer"] });
-      queryClient.invalidateQueries({ queryKey: ["receivedApplications"] });
+      queryClient.invalidateQueries({ queryKey: ["receivedProposals"] });
+      queryClient.invalidateQueries({ queryKey: ["sentProposals"] });
 
       await queryClient.clear();
 
