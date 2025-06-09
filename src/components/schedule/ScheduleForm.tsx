@@ -14,23 +14,16 @@ interface ScheduleFormProps {
   initialData?: Schedule;
 }
 
-const ScheduleForm = ({
-                        meetupId,
-                        mode = "create",
-                        scheduleId,
-                      }: ScheduleFormProps) => {
+const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormProps) => {
   const router = useRouter();
   //카카오 우편 API 팝업
   const openPostcode = useDaumPostcodePopup();
 
   const createMutation = useCreateSchedule(meetupId);
   const updateMutation = useUpdateSchedule(scheduleId || 0);
-  const { data: scheduleData, isPending: isLoadingSchedule } = useScheduleDetail(
-    mode === "edit" && scheduleId ? scheduleId : undefined,
-    {
-      enabled: mode === "edit" && !!scheduleId,
-    },
-  );
+  const { data: scheduleData, isPending: isLoadingSchedule } = useScheduleDetail(mode === "edit" && scheduleId ? scheduleId : undefined, {
+    enabled: mode === "edit" && !!scheduleId,
+  });
 
   // 폼 Ref들
   const scheduledAtRef = useRef<HTMLInputElement>(null);
@@ -74,11 +67,7 @@ const ScheduleForm = ({
 
   // 멤버 선택 처리
   const handleMemberSelect = (memberId: number) => {
-    setSelectedMember(prev =>
-      prev.includes(memberId)
-        ? prev.filter(id => id !== memberId)
-        : [...prev, memberId],
-    );
+    setSelectedMember(prev => (prev.includes(memberId) ? prev.filter(id => id !== memberId) : [...prev, memberId]));
   };
 
   // 주소 검색 처리
@@ -100,8 +89,8 @@ const ScheduleForm = ({
   };
 
   // 폼 제출 처리
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
 
     const formData = new FormData();
     const payload = {
@@ -138,11 +127,7 @@ const ScheduleForm = ({
 
   // 에러 상태 처리
   if (createMutation.isError || (updateMutation && updateMutation.isError)) {
-    return (
-      <div className="p-4 text-center text-red-500">
-        {`스케줄 ${mode === "create" ? "생성" : "수정"}에 실패했습니다.`}
-      </div>
-    );
+    return <div className="p-4 text-center text-red-500">{`스케줄 ${mode === "create" ? "생성" : "수정"}에 실패했습니다.`}</div>;
   }
 
   return (
@@ -179,13 +164,9 @@ const ScheduleForm = ({
         <input type="file" id="image" ref={imageRef} accept="image/*" />
       </div>
 
-      <MemberSelector
-        meetupId={meetupId}
-        selectedMember={selectedMember}
-        onMemberSelect={handleMemberSelect}
-      />
+      <MemberSelector meetupId={meetupId} selectedMember={selectedMember} onMemberSelect={handleMemberSelect} />
 
-      <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+      <button type="submit" className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
         {mode === "create" ? "스케줄 생성" : "스케줄 수정"}
       </button>
     </form>

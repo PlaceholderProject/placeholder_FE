@@ -1,6 +1,6 @@
 import { deleteMeetupMemberApi } from "@/services/my.space.service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React from "react";
 
 // 이거 isOrganizer냐에 따라서 강퇴, 퇴장으로 빨간 버튼 재사용하게 분리?
 
@@ -45,7 +45,7 @@ const OutButton: React.FC<OutButtonProps> = ({ isOrganizer = false, isInMemberDe
 
   return (
     <div>
-      <button onClick={handleDeleteClick} className="bg-red-500 rounded-md text-whitem px-2 py-1">
+      <button onClick={handleDeleteClick} className="text-whitem rounded-md bg-red-500 px-2 py-1">
         {" "}
         {buttonText}
       </button>
