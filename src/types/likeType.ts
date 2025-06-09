@@ -1,3 +1,5 @@
+import { Meetup } from "./meetupType";
+
 export interface LikePartProps {
   isLike: boolean;
   likeCount: number;
@@ -10,6 +12,12 @@ export interface LikeItemProps {
   likeCount: number;
   onClick: () => void;
   disabled?: boolean;
+}
+
+export interface LikeContainerProps {
+  id: Meetup["id"];
+  initialIsLike: boolean;
+  initialLikeCount: number;
 }
 
 // export interface LikeContainerProps {

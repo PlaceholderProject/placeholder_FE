@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { BASE_URL } from "@/constants/baseURL";
 import calculateDays from "@/utils/calculateDays";
-import { useQuery } from "@tanstack/react-query";
 import LikeContainer from "../likes/LikeContainer";
 import { Meetup } from "@/types/meetupType";
 import Link from "next/link";
@@ -50,30 +49,28 @@ const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
 
   return (
     <>
-      <div className={`border rounded-lg p-4 ${!thumbnail.isPublic ? " pointer-events-none text-[#D9D9D9]" : ""}`}>
+      <div className={`rounded-lg border p-4 ${!thumbnail.isPublic ? "pointer-events-none text-[#D9D9D9]" : ""}`}>
         <div className={thumbnail.isPublic ? "bg-primary" : "bg-gray-100"}>
           {thumbnail.image && (
-            <Link href={`http://localhost:3000/ad/${thumbnail.id}`} className="relative h-48 b-4">
-              {/* <Image src={thumbnailImageUrl} alt={`${thumbnail.id}번 광고 이미지 안뜸`} fill className="object-cover rounded" loading="lazy" /> */}
-              {/* 🐩🐩🐩 넥스트 Imageㅅ 써야될거같은데!!!!!🐩🐩🐩🐩 */}
+            <Link href={`http://localhost:3000/ad/${thumbnail.id}`} className="b-4 relative h-48">
               <Image
                 src={thumbnailImageUrl}
                 alt="thumbnailImage"
                 width={100}
                 height={70}
                 style={{ height: "auto" }}
-                className={`object-cover rounded ${!thumbnail.isPublic ? "opacity-60" : ""}`}
+                className={`rounded object-cover ${!thumbnail.isPublic ? "opacity-60" : ""}`}
                 loading="lazy"
               />
             </Link>
           )}
           <div className="space-y-2">
             <Image src={profileImageSource} width="20" height="20" alt="작성자 프로필 이미지" style={{ width: "auto", height: "auto" }} />
-            <p className=" text-[12px] text-#[484848]">작성자: {thumbnail.organizer.nickname}</p>
+            <p className="text-#[484848] text-[1rem] lg:text-[2rem]">작성자: {thumbnail.organizer.nickname}</p>
 
-            {!thumbnail.isPublic && <span className="bg-secondary-200 text-[#FFF] text-[10px] p-1 rounded-md">비공개</span>}
+            {!thumbnail.isPublic && <span className="bg-secondary-200 rounded-md p-1 text-[10px] text-[#FFF]">비공개</span>}
             <div className="pointer-events-auto">
-              <LikeContainer id={thumbnail.id} />{" "}
+              <LikeContainer id={thumbnail.id} initialIsLike={thumbnail.isLike} initialLikeCount={thumbnail.likeCount} />{" "}
             </div>
 
             <p>[{thumbnail.place}]</p>

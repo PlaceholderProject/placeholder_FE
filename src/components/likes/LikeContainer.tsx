@@ -123,109 +123,201 @@
 
 // export default LikeContainer;
 
-import React from "react";
-import { toggleLikeApi } from "@/services/like.service";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Meetup } from "@/types/meetupType";
-import LikePart from "./LikePart";
-import { getLikeByIdApi } from "@/services/like.service";
+// 25.05.26 이전 버전
+// import React from "react";
+// import { toggleLikeApi } from "@/services/like.service";
+// import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+// import { Meetup } from "@/types/meetupType";
+// import LikePart from "./LikePart";
+// import { getLikeByIdApi } from "@/services/like.service";
 
-const LikeContainer = ({ id }: { id: Meetup["id"] }) => {
+// const LikeContainer = ({ id }: { id: Meetup["id"] }) => {
+//   const queryClient = useQueryClient();
+
+//   const {
+//     data: likeData,
+//     isPending,
+//     isError,
+//   } = useQuery({
+//     queryKey: ["like", id],
+//     queryFn: () => getLikeByIdApi(id),
+//   });
+
+//   const likeMutation = useMutation({
+//     mutationFn: () => toggleLikeApi(id, likeData?.isLike ?? false),
+
+//     //낙관적 업데이트
+//     onMutate: async () => {
+//       //이전 데이터 백업인데 직접 api통신으로 가져오기보다는 쿼리에서 가져와라
+//       // const previousLikeData = await getLikeByIdApi(id);
+
+//       // 이전 쿼리 요청 취소
+//       await queryClient.cancelQueries({ queryKey: ["like", id] });
+
+//       //이전 데이터  쿼리에서 가져와 백업
+//       const previousLikeData = queryClient.getQueryData(["like", id]);
+
+//       const currentIsLike = likeData?.isLike ?? false;
+//       const currentLikeCount = likeData?.likeCount ?? 0;
+//       console.log("likeData:", likeData);
+//       console.log("currentLikeCount:", currentLikeCount);
+//       // 이건 잘못된 참조여서 undefined찍히는ㄱ ㅔ 맞다
+//       console.log("likeData?.currentLikeCount:", likeData?.currentLikeCount);
+
+//       //headhuntings 쿼리 캐시 백업
+//       // const previousHeadhuntingData = await getHeadhuntingsApi();
+
+//       // like 쿼리 낙관적 업데이트
+//       // 새 좋아요 상태 계산
+
+//       // const newLikeData = {
+//       //   isLike: !currentIsLike,
+//       //   // likeCount: currentIsLike ? (likeData?.currentLikeCount ?? 1) - 1 : (likeData?.currentLikeCount ?? 0) + 1,
+//       //   likeCount: currentLikeCount ? currentLikeCount - 1 : currentLikeCount + 1,
+//       // };
+
+//       const newLikeData = {
+//         isLike: !currentIsLike,
+//         likeCount: currentIsLike
+//           ? Math.max(0, currentLikeCount - 1) // 0이하로 내려가지 못하게
+//           : currentLikeCount + 1,
+//       };
+
+//       // 낙관적 업데이트 적용
+//       queryClient.setQueryData(["like", id], newLikeData);
+
+//       // 롤백 위해 이전 데이터 반환
+//       // 이게 뭐고 롤백이 먼데
+//       return { previousLikeData };
+//     },
+
+//     // 에러 발생 시 롤백추가햇는데..뭐여
+
+//     onError: (error, variables, context) => {
+//       console.error("좋아요 토글 에러:", error);
+
+//       //롤백: 이전 데이터로 복구하는거
+
+//       if (context?.previousLikeData) {
+//         queryClient.setQueryData(["like", id], context.previousLikeData);
+//       }
+
+//       // 인증 에러 아닐 때만 에러 메시지 띄우기 (인증에러는 toggleLikeApi에서 alert으로 띄워주고잇음)
+//       if (!error.message.includes("User not authenticated")) {
+//         console.error("좋아요 처리 중 오류가 발생했습니다.");
+//       }
+//     },
+
+//     // 성공 시 쿼리 무효화
+
+//     // onSuccess: data => {
+//     //   queryClient.invalidateQueries({ queryKey: ["like", id] });
+//     // },
+
+//     onSuccess: () => {
+//       queryClient.invalidateQueries({ queryKey: ["like", id] });
+//       queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
+//     },
+//   });
+
+//   if (isPending) return <div> 라잌 데이터 가져오기 로딩중</div>;
+//   if (isError) return <div>라잌 데이터 가져오기 오류</div>;
+
+//   const handleToggleLike = () => {
+//     console.log("🔮🔮🔮🔮🔮🔮🔮좋아요 토글 시랳ㅇ됨");
+
+//     likeMutation.mutate();
+//   };
+
+//   return (
+//     <>
+//       <div>
+//         <LikePart isLike={likeData?.isLike ?? false} likeCount={likeData?.likeCount ?? 0} onToggle={handleToggleLike} isPending={likeMutation.isPending} />
+//       </div>
+//     </>
+//   );
+// };
+
+// export default LikeContainer;
+
+import React, { useEffect } from "react";
+import { getLikeByIdApi, toggleLikeApi } from "@/services/like.service";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import LikePart from "./LikePart";
+import { LikeContainerProps } from "@/types/likeType";
+
+const LikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerProps) => {
   const queryClient = useQueryClient();
 
-  const {
-    data: likeData,
-    isPending,
-    isError,
-  } = useQuery({
-    queryKey: ["like", id],
-    queryFn: () => getLikeByIdApi(id),
+  useEffect(() => {
+    console.log("좋아요눌림??", id, initialIsLike);
   });
-
   const likeMutation = useMutation({
-    mutationFn: () => toggleLikeApi(id, likeData?.isLike ?? false),
+    mutationFn: () => toggleLikeApi(id, initialIsLike ?? false),
 
-    //낙관적 업데이트
+    // 낙관적 업데이트
     onMutate: async () => {
-      //이전 데이터 백업인데 직접 api통신으로 가져오기보다는 쿼리에서 가져와라
-      // const previousLikeData = await getLikeByIdApi(id);
+      // 이전 쿼리요청 취소
+      await queryClient.cancelQueries({ queryKey: ["headhuntings"] });
+      await queryClient.cancelQueries({ queryKey: ["like, id"] });
 
-      // 이전 쿼리 요청 취소
-      await queryClient.cancelQueries({ queryKey: ["like", id] });
+      // 이전 데이터 백업
+      const previousHeadhuntingsData = queryClient.getQueryData(["headhuntings"]);
+      const previousLikeData = await getLikeByIdApi(id);
 
-      //이전 데이터  쿼리에서 가져와 백업
-      const previousLikeData = queryClient.getQueryData(["like", id]);
+      // headhuntings 쿼리 데이터 업데이트
+      queryClient.setQueryData(["headhuntings"], (oldData: any) => {
+        if (!oldData) return oldData;
 
-      const currentIsLike = likeData?.isLike ?? false;
-      const currentLikeCount = likeData?.likeCount ?? 0;
-      console.log("likeData:", likeData);
-      console.log("currentLikeCount:", currentLikeCount);
-      // 이건 잘못된 참조여서 undefined찍히는ㄱ ㅔ 맞다
-      console.log("likeData?.currentLikeCount:", likeData?.currentLikeCount);
+        return {
+          ...oldData,
+          pages: oldData.pages.map((page: any) => ({
+            ...page,
+            result: page.result.map((item: any) =>
+              item.id === id
+                ? {
+                    ...item,
+                    isLike: !initialIsLike,
+                    likeCount: initialIsLike ? Math.max(0, initialLikeCount - 1) : initialLikeCount + 1,
+                  }
+                : item,
+            ),
+          })),
+        };
+      });
 
-      //headhuntings 쿼리 캐시 백업
-      // const previousHeadhuntingData = await getHeadhuntingsApi();
-
-      // like 쿼리 낙관적 업데이트
-      // 새 좋아요 상태 계산
-
-      // const newLikeData = {
-      //   isLike: !currentIsLike,
-      //   // likeCount: currentIsLike ? (likeData?.currentLikeCount ?? 1) - 1 : (likeData?.currentLikeCount ?? 0) + 1,
-      //   likeCount: currentLikeCount ? currentLikeCount - 1 : currentLikeCount + 1,
-      // };
-
-      const newLikeData = {
-        isLike: !currentIsLike,
-        likeCount: currentIsLike
-          ? Math.max(0, currentLikeCount - 1) // 0이하로 내려가지 못하게
-          : currentLikeCount + 1,
-      };
-
-      // 낙관적 업데이트 적용
-      queryClient.setQueryData(["like", id], newLikeData);
-
-      // 롤백 위해 이전 데이터 반환
-      // 이게 뭐고 롤백이 먼데
-      // return { previousLikeData };
+      return { previousHeadhuntingsData };
     },
 
-    // 에러 발생 시 롤백
-    // onError: (error, variables, context) => {
-    //   console.error("좋아요 토글 에러:", error);
-    //   if (context?.previousLikeData) {
-    //     queryClient.setQueryData(["like", id], context.previousLikeData);
-    //   }
-    // },
+    // 에러 발생 롤백
+    onError: (error, variables, context) => {
+      console.error("좋아요 토글 에러 ", error);
 
-    // 성공 시 쿼리 무효화
+      if (context?.previousHeadhuntingsData) {
+        queryClient.setQueryData(["headhuntings"], context.previousHeadhuntingsData);
+      }
 
-    // onSuccess: data => {
-    //   queryClient.invalidateQueries({ queryKey: ["like", id] });
-    // },
+      // 인증 에러 아닐 때만 에러메세지 표시
+      // 인증 에러는 toggleLiked getUser에서 alert으로
+
+      if (!error.message.includes("User not authenticated")) {
+        console.error("좋아요 처리 중 오류가 발생했습니다.");
+      }
+    },
+
+    // 성공시 쿼리 무효화
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["like", id] });
       queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
     },
   });
 
-  if (isPending) return <div> 라잌 데이터 가져오기 로딩중</div>;
-  if (isError) return <div>라잌 데이터 가져오기 오류</div>;
-
   const handleToggleLike = () => {
-    console.log("🔮🔮🔮🔮🔮🔮🔮좋아요 토글 시랳ㅇ됨");
-
+    console.log("좋아요 토글 시작");
     likeMutation.mutate();
   };
 
-  return (
-    <>
-      <div>
-        <LikePart isLike={likeData?.isLike ?? false} likeCount={likeData?.likeCount ?? 0} onToggle={handleToggleLike} isPending={likeMutation.isPending} />
-      </div>
-    </>
-  );
+  return <LikePart isLike={initialIsLike} likeCount={initialLikeCount} onToggle={handleToggleLike} isPending={likeMutation.isPending} />;
 };
 
 export default LikeContainer;

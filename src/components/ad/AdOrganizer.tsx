@@ -21,8 +21,21 @@ const AdOrganizer = ({ meetupId }: { meetupId: number }) => {
         setImageSource("/profile.png");
       };
       imgElement.src = profileImageUrl; // 이 부분이 누락되어 있었음
-    } else {
     }
+
+    // --TO DO--
+    // 클린업 함수 및 let imgElement상단 선언 필요
+    // return () => {
+    //   if (imgElement) {
+    //     imgElement.onload = null;
+    //     imgElement.onerror = null;
+    //     imgElement.src = "";
+    //     imgElement = null;
+    //   }
+    // };
+
+    // --TO DO--
+    // 이미지 경로 validate 함수 따로 만들어서 빼기!!!!
   }, [adData]);
 
   if (error) return <div>에러 발생: {error.message}</div>;
@@ -36,7 +49,7 @@ const AdOrganizer = ({ meetupId }: { meetupId: number }) => {
       <div>
         <h4>작성자: </h4>
         <div>{adData.organizer.nickname}</div>
-        <div className="relative w-[50px] h-[50px] rounded-full overflow-hidden">
+        <div className="relative h-[50px] w-[50px] overflow-hidden rounded-full">
           <Image src={imageSource} alt="방장 프사" width={20} height={20} style={{ width: "auto", height: "auto" }} unoptimized={true} />
         </div>
       </div>

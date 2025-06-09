@@ -8,6 +8,7 @@ import { getMyMeetupsApi } from "@/services/my.space.service";
 import Link from "next/link";
 import { SIZE_LIMIT, BUTTONS_PER_GROUP } from "@/constants/pagination";
 import PaginationButtons from "../PaginationButtons";
+import MemberDeleteModal from "./MemberDeleteModal";
 
 const CurrentMyMeetup = () => {
   const [page, setPage] = useState(1);
@@ -66,8 +67,8 @@ const CurrentMyMeetup = () => {
     <>
       <div className="grid grid-cols-1">
         {myMeetupsData.result.map(myMeetup => (
-          <div key={myMeetup.id} className="flex justify-between items-center">
-            <Link href={`http://localhost:3000/meetup/${myMeetup.id}`} className="flex items-center grow">
+          <div key={myMeetup.id} className="flex items-center justify-between">
+            <Link href={`http://localhost:3000/meetup/${myMeetup.id}`} className="flex grow items-center">
               <RoleIcon isOrganizer={myMeetup.is_organizer} />
               {/* <span>방장이니?: {`${myMeetup.is_organizer}`}</span> */}
               <span>{myMeetup.name}</span>
@@ -88,6 +89,7 @@ const CurrentMyMeetup = () => {
         onPreviousGroupButtonClick={handlePreviousGroupButtonClick}
         onNextGroupButtonClick={handleNextGroupButtonClick}
       />
+      <MemberDeleteModal />
     </>
   );
 };
