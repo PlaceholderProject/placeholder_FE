@@ -50,7 +50,7 @@ const SortArea = () => {
 
   return (
     <>
-      <div className="flex justify-items-center justify-center">
+      <div className="flex justify-center justify-items-center">
         <SortButtons currentSort={sortType} handleSortChange={handleSortChange} />
       </div>
     </>
