@@ -11,7 +11,6 @@ import { persistor, RootState } from "@/stores/store";
 import { setIsAuthenticated } from "@/stores/authSlice";
 import { setHasUnreadNotifications } from "@/stores/notificationSlice";
 import { logout } from "@/stores/userSlice";
-import { resetSelectedMeetupId } from "@/stores/proposalSlice";
 import { useQueryClient } from "@tanstack/react-query";
 
 const Header = () => {
@@ -22,22 +21,26 @@ const Header = () => {
   const queryClient = useQueryClient();
 
   const handleLogout = useCallback(async () => {
-    Cookies.remove("accessToken");
-    Cookies.remove("refreshToken");
+    try {
+      localStorage.removeItem("persist:user");
 
-    dispatch(setIsAuthenticated(false));
-    dispatch(logout());
-    dispatch(setHasUnreadNotifications(false));
-    dispatch(resetSelectedMeetupId());
+      Cookies.remove("accessToken");
+      Cookies.remove("refreshToken");
 
-    queryClient.invalidateQueries({ queryKey: ["myMeetups", "organizer"] });
+      dispatch(logout());
+      dispatch(setIsAuthenticated(false));
+      dispatch(setHasUnreadNotifications(false));
 
-    await persistor.flush();
-    await persistor.pause();
-    localStorage.removeItem("persist:user");
+      queryClient.invalidateQueries({ queryKey: ["myMeetups", "organizer"] });
+      queryClient.invalidateQueries({ queryKey: ["receivedApplications"] });
 
-    await queryClient.clear();
-  }, []);
+      await queryClient.clear();
+
+      router.replace("/");
+    } catch (error) {
+      console.error("로그아웃 중 오류:", error);
+    }
+  }, [dispatch, queryClient, router]);
 
   useEffect(() => {
     const accessToken = Cookies.get("accessToken");
@@ -45,9 +48,7 @@ const Header = () => {
     if (accessToken) {
       dispatch(setIsAuthenticated(true));
     } else {
-      (async () => {
-        await handleLogout();
-      })();
+      handleLogout();
     }
   }, []);
 
