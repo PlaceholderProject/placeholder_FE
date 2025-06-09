@@ -34,7 +34,7 @@ const Header = () => {
 
     await persistor.flush();
     await persistor.pause();
-    await persistor.purge();
+    localStorage.removeItem("persist:user");
 
     await queryClient.clear();
   }, []);
@@ -45,7 +45,9 @@ const Header = () => {
     if (accessToken) {
       dispatch(setIsAuthenticated(true));
     } else {
-      handleLogout();
+      (async () => {
+        await handleLogout();
+      })();
     }
   }, []);
 
@@ -54,7 +56,7 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-50 flex h-[6rem] items-center bg-primary">
+    <header className="bg-primary fixed left-0 right-0 top-0 z-50 flex h-[6rem] items-center">
       <div className="flex w-full justify-between px-6">
         <Link href="/">
           <Image src="/smallLogo.png" alt="로고" width={30} height={30} />
@@ -65,16 +67,16 @@ const Header = () => {
               <div className="relative flex items-center">
                 <button onClick={handleNotificationPage} className="text-gray-light">
                   <FaRegBell size="23" />
-                  {hasUnreadNotifications && <div className="absolute right-0 top-0 h-2 w-2 rounded-full bg-error"></div>}
+                  {hasUnreadNotifications && <div className="bg-error absolute right-0 top-0 h-2 w-2 rounded-full"></div>}
                 </button>
               </div>
-              <button onClick={handleLogout} className="h-[2.3rem] w-[7rem] rounded-[0.3rem] bg-secondary-light font-semibold leading-none">
+              <button onClick={handleLogout} className="bg-secondary-light h-[2.3rem] w-[7rem] rounded-[0.3rem] font-semibold leading-none">
                 로그아웃
               </button>
             </div>
           ) : (
             <Link href="/login">
-              <button className="h-[2.3rem] w-[7rem] rounded-[0.3rem] bg-secondary-light font-semibold">로그인</button>
+              <button className="bg-secondary-light h-[2.3rem] w-[7rem] rounded-[0.3rem] font-semibold">로그인</button>
             </Link>
           )}
         </div>

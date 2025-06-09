@@ -24,6 +24,7 @@ const transform = createTransform(
 const persistConfig = {
   key: "user",
   storage,
+  transforms: [transform],
 };
 
 // user reducer에 persistReducer적용
