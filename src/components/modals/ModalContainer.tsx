@@ -7,11 +7,11 @@ import { closeModal } from "@/stores/modalSlice";
 import { ModalData, ModalType } from "@/types/modalType";
 import AdDeleteContent from "@/components/modals/Contents/AdDeleteContent";
 import ProposalCancellationContent from "@/components/modals/Contents/ProposalCancellationContent";
-import ProposalDeletionContent from "@/components/modals/Contents/ProposalDeletionContent";
 import ProposalPostcardContent from "@/components/modals/Contents/ProposalPostcardContent";
 import MeetupMembersContent from "@/components/modals/Contents/MeetupMembersContent";
 import MeetupInfoContent from "@/components/modals/Contents/MeetupInfoContent";
 import MemberDeleteContent from "@/components/modals/Contents/MemberDeleteContent";
+import ProposalHideContent from "@/components/modals/Contents/ProposalHideContent";
 
 // 모달 크기 설정
 const getModalSize = (modalType: ModalType): string => {
@@ -33,8 +33,8 @@ const renderModalContent = (modalType: ModalType, modalData: ModalData): JSX.Ele
       return <AdDeleteContent meetupId={modalData.meetupId!} />;
     case "PROPOSAL_CANCELLATION":
       return <ProposalCancellationContent proposal={modalData.proposal!} />;
-    case "PROPOSAL_DELETION":
-      return <ProposalDeletionContent proposal={modalData.proposal!} />;
+    case "PROPOSAL_HIDE":
+      return <ProposalHideContent proposal={modalData.proposal!} />;
     case "PROPOSAL_POSTCARD":
       return <ProposalPostcardContent meetupId={modalData.meetupId!} />;
     case "MEETUP_MEMBERS":
