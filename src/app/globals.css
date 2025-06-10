@@ -88,8 +88,8 @@ body {
     display: block;
   }
 
-  body {
-    font-size: 1.6rem;
+  html {
+    font-size: 68.75%; /* 1rem = 11px → body 1.4rem = 15.4px */
   }
 }
 
