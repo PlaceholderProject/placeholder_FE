@@ -84,10 +84,10 @@ const Header = () => {
           ) : (
             <div className="flex gap-[2rem]">
               <Link href="/login">
-                <button className="bg-secondary-light h-[2.3rem] w-[7rem] rounded-[0.3rem] font-semibold md:h-[3rem] md:w-[10rem] md:rounded-[0.8rem]">로그인</button>
+                <button className="bg-secondary-light h-[2.3rem] w-[7rem] rounded-[0.3rem] font-semibold md:h-[3rem] md:w-[12rem] md:rounded-[0.8rem]">로그인</button>
               </Link>
               <Link href="/signup">
-                <button className="bg-secondary-light h-[2.3rem] w-[7rem] rounded-[0.3rem] font-semibold md:h-[3rem] md:w-[10rem] md:rounded-[0.8rem]">회원가입</button>
+                <button className="bg-secondary-light h-[2.3rem] w-[7rem] rounded-[0.3rem] font-semibold md:h-[3rem] md:w-[12rem] md:rounded-[0.8rem]">회원가입</button>
               </Link>
             </div>
           )}
