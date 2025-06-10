@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import RoleIcon from "./RoleIcon";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import MemberOutContainer from "./MemberOutContainer";
@@ -9,12 +9,19 @@ import Link from "next/link";
 import { SIZE_LIMIT, BUTTONS_PER_GROUP } from "@/constants/pagination";
 import PaginationButtons from "../PaginationButtons";
 import MemberDeleteModal from "./MemberDeleteModal";
+import { getUser } from "@/services/user.service";
 
 const CurrentMyMeetup = () => {
   const [page, setPage] = useState(1);
   const queryClient = useQueryClient();
 
-  // 내가 나가건 쫓겨나건 통합 out 뮤테이션 여기서 일괄 관리!!
+  // 현재 사용자 정보 가져오기 (닉넴으로 식별하려고)
+  const { data: currentUserData } = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: () => getUser(),
+  });
+
+  // 통합 삭제 뮤테 : 내가 나가건 쫓겨나건 통합 out 여기서 일괄 관리!!
   const deleteMutation = useMutation({
     mutationFn: (member_id: number) => deleteMeetupMemberApi(member_id),
     onSuccess: () => {
@@ -27,13 +34,56 @@ const CurrentMyMeetup = () => {
     },
   });
 
-  // 현 사용자의 member_id가져오는 함수
-  const getCurrentUserMemberId = async (meetupId: number) => {
+  // 내 memberId 찾기
+  const getMyMemberId = async (meetupId: number) => {
     try {
       const membersData = await getMyMeetupMembersApi(meetupId);
-    } catch (error) {}
+
+      // 현 유저 닉넴으로 멤버 찾기
+      const myMember = membersData?.result?.find((member: any) => member.user.nickname === currentUserData?.nickname);
+
+      if (!myMember) {
+        console.error("내 멤버 정보 찾을 수 없읍ㄴ다");
+        console.log("==에러속 찾고 있는 닉네임:", currentUserData?.nickname);
+        console.log("==에러속 전체 멤버 데이터:", membersData);
+        return null;
+      }
+
+      console.log("찾고 있는 닉네임:", currentUserData?.nickname);
+      console.log("전체 멤버 데이터:", membersData);
+      return myMember.id;
+    } catch (error) {
+      console.error("멤버 조회 실패:", error);
+      return null;
+    }
   };
 
+  // 스스로 퇴장 핸들러
+  const handleSelfLeave = async (meetupId: number) => {
+    if (!currentUserData?.nickname) {
+      alert("사용자 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
+      return;
+    }
+
+    const confirmed = window.confirm("정말 이 모임에서 퇴장하시겠습니까?");
+    if (!confirmed) return;
+
+    const myMemberId = await getMyMemberId(meetupId);
+    if (myMemberId) {
+      deleteMutation.mutate(myMemberId);
+    } else {
+      alert("모임 퇴장 중 오류가 발생했습니다.");
+    }
+  };
+  // 강퇴 핸들러 모달에서 씀
+  const handleKickMember = (memberId: number) => {
+    const confirmed = window.confirm("정말 이 멤버를 강퇴하시겠습니까?");
+    if (confirmed) {
+      deleteMutation.mutate(memberId);
+    }
+  };
+
+  // 페이지네이션 헤ㅐㄴ들러들
   const handlePageButtonClick = (newPage: number) => {
     setPage(newPage);
   };
@@ -91,11 +141,9 @@ const CurrentMyMeetup = () => {
           <div key={myMeetup.id} className="flex items-center justify-between">
             <Link href={`http://localhost:3000/meetup/${myMeetup.id}`} className="flex grow items-center">
               <RoleIcon isOrganizer={myMeetup.is_organizer} />
-              {/* <span>방장이니?: {`${myMeetup.is_organizer}`}</span> */}
               <span>{myMeetup.name}</span>
-              {/* <span>모임종료일: {myMeetup.ended_at}</span> */}
             </Link>
-            <MemberOutContainer meetupId={myMeetup.id} isOrganizer={myMeetup.is_organizer} />
+            <MemberOutContainer meetupId={myMeetup.id} isOrganizer={myMeetup.is_organizer} onSelfLeave={handleSelfLeave} isPending={deleteMutation.isPending} />
           </div>
         ))}
       </div>
@@ -110,7 +158,7 @@ const CurrentMyMeetup = () => {
         onPreviousGroupButtonClick={handlePreviousGroupButtonClick}
         onNextGroupButtonClick={handleNextGroupButtonClick}
       />
-      <MemberDeleteModal />
+      <MemberDeleteModal onKickMember={handleKickMember} isPending={deleteMutation.isPending} />
     </>
   );
 };

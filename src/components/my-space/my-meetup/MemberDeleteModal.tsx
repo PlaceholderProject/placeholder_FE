@@ -8,11 +8,16 @@ import MyMeetupMembers from "./MyMeetupMembers";
 
 const token = Cookies.get("accessToken");
 
+interface MemberDeleteModalProps {
+  onKickMember: (meetupId: number) => void;
+  isPending: boolean;
+}
+
 // const MemberDeleteModal: React.FC<{ meetupId: MyMeetupItem["id"] }> = ({ meetupId }) => {
 // props 제거
 // 아 아래에서 바로 구독?해서 선택된 아이디 값 알 수 있게?
 
-const MemberDeleteModal: React.FC = () => {
+const MemberDeleteModal: React.FC<MemberDeleteModalProps> = ({ onKickMember, isPending }) => {
   const dispatch = useDispatch();
   const isMemberDeleteModalOpen = useSelector((state: RootState) => state.modal.isMemberDeleteModalOpen);
   const selectedMeetupId = useSelector((state: RootState) => state.modal.selectedMeetupId);
@@ -42,20 +47,16 @@ const MemberDeleteModal: React.FC = () => {
   return (
     <>
       <div className="w-50 h-50 fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-5" onClick={handleOverlayClick}>
-        <div onClick={handleOverlayClick}>
-          <div className="rounded-md bg-white p-6 shadow-sm" onClick={handleModalLayerClick}>
-            {/* <MemberDeleteModal meetupId={meetupId} /> */}
-            {/* 무한재귀 제거 */}
+        <div className="rounded-md bg-white p-6 shadow-sm" onClick={handleModalLayerClick}>
+          {/* <MemberDeleteModal meetupId={meetupId} /> */}
+          {/* 무한재귀 제거 */}
 
-            {selectedMeetupId && <MyMeetupMembers meetupId={selectedMeetupId} />}
+          {selectedMeetupId && <MyMeetupMembers meetupId={selectedMeetupId} onKickMember={onKickMember} isPending={isPending} />}
 
-            <div className="flex justify-end space-x-2">
-              <button className="rounded bg-gray-200 px-4 py-2 hover:bg-gray-300" onClick={() => dispatch(toggleMemberDeleteModal())}>
-                취소
-              </button>
-              {/* <OutButton /> */}
-              {/* 이거 퇴장으로 뜸 */}
-            </div>
+          <div className="flex justify-end space-x-2">
+            <button className="rounded bg-gray-200 px-4 py-2 hover:bg-gray-300" onClick={() => dispatch(toggleMemberDeleteModal())}>
+              닫기
+            </button>
           </div>
         </div>
       </div>
