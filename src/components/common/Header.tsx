@@ -7,7 +7,7 @@ import { useCallback, useEffect } from "react";
 import { FaRegBell } from "react-icons/fa6";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
-import { persistor, RootState } from "@/stores/store";
+import { RootState } from "@/stores/store";
 import { setIsAuthenticated } from "@/stores/authSlice";
 import { setHasUnreadNotifications } from "@/stores/notificationSlice";
 import { logout } from "@/stores/userSlice";
@@ -16,6 +16,7 @@ import { useQueryClient } from "@tanstack/react-query";
 const Header = () => {
   const hasUnreadNotifications = useSelector((state: RootState) => state.notification.hasUnread);
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const user = useSelector((state: RootState) => state.user.user);
   const dispatch = useDispatch();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -58,28 +59,37 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-primary fixed left-0 right-0 top-0 z-50 flex h-[6rem] items-center">
-      <div className="flex w-full justify-between px-6">
+    <header className="bg-primary fixed left-0 right-0 top-0 z-50 flex h-[6rem] items-center justify-center md:h-[7.5rem]">
+      <div className="flex w-[95%] justify-between md:w-[111rem] md:px-[1.5rem]">
         <Link href="/">
-          <Image src="/smallLogo.png" alt="로고" width={30} height={30} />
+          <Image src="/smallLogo.png" alt="작은 로고" width={30} height={30} className="block transition-all duration-300 md:hidden" />
+          <Image src="/logo.png" alt="큰 로고" width={175} height={60} className="hidden transition-all duration-300 md:block" />
         </Link>
         <div className="flex items-center justify-center">
           {isAuthenticated ? (
-            <div className="flex flex-row items-center gap-3">
+            <div className="flex flex-row items-center gap-[1rem]">
+              <p className="hidden text-base text-white md:block">
+                🍋 <span className="font-bold">{user.nickname}</span> 님 안녕하세요!
+              </p>
               <div className="relative flex items-center">
-                <button onClick={handleNotificationPage} className="text-gray-light">
-                  <FaRegBell size="23" />
-                  {hasUnreadNotifications && <div className="bg-error absolute right-0 top-0 h-2 w-2 rounded-full"></div>}
+                <button onClick={handleNotificationPage} className="text-gray-light text-[2.3rem]">
+                  <FaRegBell />
+                  {hasUnreadNotifications && <div className="bg-error absolute right-0 top-0 h-[0.8rem] w-[0.8rem] rounded-full md:h-[1rem] md:w-[1rem]"></div>}
                 </button>
               </div>
-              <button onClick={handleLogout} className="bg-secondary-light h-[2.3rem] w-[7rem] rounded-[0.3rem] font-semibold leading-none">
+              <button onClick={handleLogout} className="bg-secondary-light h-[2.3rem] w-[7rem] rounded-[0.3rem] font-semibold leading-none md:h-[2.6rem] md:w-[11rem] md:rounded-[0.6rem]">
                 로그아웃
               </button>
             </div>
           ) : (
-            <Link href="/login">
-              <button className="bg-secondary-light h-[2.3rem] w-[7rem] rounded-[0.3rem] font-semibold">로그인</button>
-            </Link>
+            <div className="flex gap-[2rem]">
+              <Link href="/login">
+                <button className="bg-secondary-light h-[2.3rem] w-[7rem] rounded-[0.3rem] font-semibold md:h-[2.6rem] md:w-[11rem] md:rounded-[0.6rem]">로그인</button>
+              </Link>
+              <Link href="/signup">
+                <button className="bg-secondary-light h-[2.3rem] w-[7rem] rounded-[0.3rem] font-semibold md:h-[2.6rem] md:w-[11rem] md:rounded-[0.6rem]">회원가입</button>
+              </Link>
+            </div>
           )}
         </div>
       </div>
