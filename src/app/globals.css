@@ -12,10 +12,6 @@ body {
   font-size: 1.4rem;
 }
 
-body {
-  font-size: 1.4rem;
-}
-
 /* 기본 스크롤 컨테이너 스타일 - 반응형 UX에 유용함 */
 .scroll-container {
   display: flex;
@@ -90,6 +86,10 @@ body {
 
   .pc-only {
     display: block;
+  }
+
+  body {
+    font-size: 1.6rem;
   }
 }
 
