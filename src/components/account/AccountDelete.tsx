@@ -30,9 +30,9 @@ const AccountDelete = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-[10rem]">
+    <div className="my-[4rem] flex min-h-[calc(100vh-12rem)] flex-col items-center justify-center md:min-h-[calc(100vh-13.5rem)]">
       <h2 className="mb-[2rem] text-3xl font-semibold">계정 관리</h2>
-      <div className="border-gray-medium relative z-10 flex min-h-[50rem] w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] py-[3rem]">
+      <div className="border-gray-medium relative z-10 flex min-h-[54rem] w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] py-[3rem]">
         {!isPasswordRechecked && (
           <div className="absolute inset-5 z-50 flex items-center justify-center bg-[#f9f9f9]">
             <PasswordRecheck />

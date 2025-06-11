@@ -152,7 +152,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-13rem)] flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center">
       <h2 className="mb-[2rem] text-3xl font-semibold">회원가입</h2>
       <div className="border-gray-medium flex h-full w-[80%] min-w-[30rem] flex-col items-center justify-center rounded-[1.5rem] border-[0.1rem] py-10">
         <form onSubmit={handleSignupFormSubmit} className="flex flex-col items-center justify-center gap-[1.2rem] p-[2rem]">
