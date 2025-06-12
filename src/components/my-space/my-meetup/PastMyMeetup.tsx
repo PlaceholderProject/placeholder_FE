@@ -70,7 +70,7 @@ const PastMyMeetup = () => {
             <RoleIcon isOrganizer={myMeetup.is_organizer} />
             모임이름: {myMeetup.name}
             모임종료일: {myMeetup.ended_at}
-            <MemberOutContainer meetupId={myMeetup.id} isOrganizer={myMeetup.is_organizer} />
+            {/* <MemberOutContainer meetupId={myMeetup.id} isOrganizer={myMeetup.is_organizer} onSelfLeave={handleSelfLeave} isPending={deleteMutation.isPending} /> */}
           </div>
         ))}
       </div>
