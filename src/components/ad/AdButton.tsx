@@ -2,17 +2,13 @@
 
 import { RootState } from "@/stores/store";
 import { useSelector } from "react-redux";
-import ProposalPostcard from "../modals/ProposalPostcard";
 import { useMyProposalStatus } from "@/hooks/useProposal";
 import { useAdItem } from "@/hooks/useAdItem";
+import { useModal } from "@/hooks/useModal";
 import Link from "next/link";
-import ProposalCancellationModal from "../modals/ProposalCancellationModal";
-import { useState } from "react";
 
 const AdButton = ({ meetupId }: { meetupId: number }) => {
-  const [isProposalPostcardOpen, setIsProposalPostcardOpen] = useState(false);
-  const [isProposalCancellationOpen, setIsProposalCancellationOpen] = useState(false);
-
+  const { openModal } = useModal();
   const user = useSelector((state: RootState) => state.user.user);
 
   const { data: proposal, isLoading } = useMyProposalStatus(meetupId);
@@ -25,11 +21,13 @@ const AdButton = ({ meetupId }: { meetupId: number }) => {
       alert("로그인이 필요합니다.");
       return;
     }
-    setIsProposalPostcardOpen(prev => !prev);
+    openModal("PROPOSAL_POSTCARD", { meetupId });
   };
 
   const handleCancellationModal = () => {
-    setIsProposalCancellationOpen(prev => !prev);
+    if (proposal) {
+      openModal("PROPOSAL_CANCELLATION", { proposal });
+    }
   };
 
   return (
@@ -66,10 +64,8 @@ const AdButton = ({ meetupId }: { meetupId: number }) => {
               신청하기
             </button>
             <div className="bg-gray-light flex h-[3.5rem] w-full items-center justify-center rounded-[0.5rem]">입장하기</div>
-            {isProposalPostcardOpen && <ProposalPostcard meetupId={meetupId} onClose={() => setIsProposalPostcardOpen(false)} />}
           </div>
         )}
-        {isProposalCancellationOpen && <ProposalCancellationModal meetupId={meetupId} proposal={proposal} title={adData?.adTitle ?? ""} onClose={() => setIsProposalCancellationOpen(false)} />}
       </div>
     </div>
   );

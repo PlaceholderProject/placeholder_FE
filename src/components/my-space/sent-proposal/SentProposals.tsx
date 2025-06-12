@@ -6,8 +6,6 @@ import SentProposalItem from "./SentProposalItem";
 import { SentProposal } from "@/types/proposalType";
 
 const SentProposals = () => {
-  const [selectedProposalId, setSelectedProposalId] = useState<number | null>(null);
-  const [modalType, setModalType] = useState<"cancellation" | "hide" | null>(null);
   const [page, setPage] = useState(1);
 
   const { data, isLoading } = useSentProposal(page);
@@ -24,16 +22,6 @@ const SentProposals = () => {
 
   if (isLoading) return <div>로딩중</div>;
 
-  const handleModalOpen = (proposalId: number, type: "cancellation" | "hide") => {
-    setSelectedProposalId(proposalId);
-    setModalType(type);
-  };
-
-  const handleModalClose = () => {
-    setSelectedProposalId(null);
-    setModalType(null);
-  };
-
   if (!sentProposals || sentProposals.length === 0) {
     return <p className="mt-24 flex justify-center">보낸 신청서가 없습니다.</p>;
   }
@@ -43,7 +31,7 @@ const SentProposals = () => {
       <ul className="flex flex-col gap-[1.5rem] px-[2rem] py-[3rem]">
         {sentProposals.map((proposal: SentProposal) => (
           <li key={proposal.id}>
-            <SentProposalItem proposal={proposal} isModalOpen={selectedProposalId === proposal.id} modalType={modalType} onModalOpen={handleModalOpen} onModalClose={handleModalClose} />
+            <SentProposalItem proposal={proposal} />
           </li>
         ))}
       </ul>

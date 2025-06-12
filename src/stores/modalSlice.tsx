@@ -1,50 +1,28 @@
-import { createSlice } from "@reduxjs/toolkit";
-
-interface ModalState {
-  isAdDeleteModalOpen: boolean;
-  isMemberDeleteModalOpen: boolean;
-  isMeetupInfoModalOpen: boolean;
-  isMeetupMembersModalOpen: boolean;
-  selectedMeetupId?: number;
-}
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { ModalData, ModalState, ModalType } from "@/types/modalType";
 
 const initialState: ModalState = {
-  isAdDeleteModalOpen: false,
-  isMemberDeleteModalOpen: false,
-  isMeetupInfoModalOpen: false,
-  isMeetupMembersModalOpen: false,
-  selectedMeetupId: undefined,
+  modalType: null,
+  modalData: {},
+  isOpen: false,
 };
 
 const modalSlice = createSlice({
   name: "modal",
   initialState,
   reducers: {
-    toggleAdDeleteModal: state => {
-      state.isAdDeleteModalOpen = !state.isAdDeleteModalOpen;
+    openModal: (state, action: PayloadAction<{ type: ModalType; data?: ModalData }>) => {
+      state.modalType = action.payload.type;
+      state.modalData = action.payload.data || {};
+      state.isOpen = true;
     },
-    closeAdDeleteModal: state => {
-      state.isAdDeleteModalOpen = false;
-    },
-    toggleMemberDeleteModal: state => {
-      state.isMemberDeleteModalOpen = !state.isMemberDeleteModalOpen;
-      // 모달 닫을 때 선택된 아이디도 초기화해야지
-      if (!state.isMemberDeleteModalOpen) {
-        state.selectedMeetupId = undefined;
-      }
-    },
-    toggleMeetupInfoModal: state => {
-      state.isMeetupInfoModalOpen = !state.isMeetupInfoModalOpen;
-    },
-    toggleMeetupMembersModal: state => {
-      state.isMeetupMembersModalOpen = !state.isMeetupMembersModalOpen;
-    },
-    setSelectedMeetupId: (state, action) => {
-      state.selectedMeetupId = action.payload;
+    closeModal: state => {
+      state.modalType = null;
+      state.modalData = {};
+      state.isOpen = false;
     },
   },
 });
 
-export const { toggleAdDeleteModal, closeAdDeleteModal, setSelectedMeetupId, toggleMemberDeleteModal, toggleMeetupInfoModal, toggleMeetupMembersModal } = modalSlice.actions;
-
+export const { openModal, closeModal } = modalSlice.actions;
 export default modalSlice.reducer;

@@ -5,6 +5,7 @@ import Header from "@/components/common/Header";
 import NavigationBar from "@/components/common/NavigationBar";
 import ReduxProvider from "@/stores/ReduxProvider";
 import QueryProvider from "./(providers)/_providers/QueryProvider";
+import ModalContainer from "@/components/modals/ModalContainer";
 
 export const metadata: Metadata = {
   title: "Placeholder",
@@ -32,7 +33,8 @@ export default function RootLayout({
         <ReduxProvider>
           <QueryProvider>
             <Header />
-            <main>{children}</main>
+            <main className="pt-[6rem] md:pt-[7.5rem]">{children}</main>
+            <ModalContainer />
             <NavigationBar />
           </QueryProvider>
         </ReduxProvider>

@@ -9,16 +9,28 @@ import { MyMeetupMember } from "@/types/myMeetupMemberType";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
+import { useMemberDelete } from "@/hooks/useMemberDelete";
 
 interface MyMeetupMembersProps {
   meetupId: number;
-  onKickMember: (memberId: number) => void;
-  isPending: boolean;
+  // onKickMember: (memberId: number) => void;
+  // isPending: boolean;
 }
-const MyMeetupMembers: React.FC<MyMeetupMembersProps> = ({ meetupId, onKickMember, isPending }) => {
+const MyMeetupMembers: React.FC<MyMeetupMembersProps> = ({ meetupId }) => {
   // 개별 유저 이미 관리 스테이트
   const [userImages, setUserImages] = useState<{ [userId: number]: string }>({});
-  const selectedMeetupId = useSelector((state: RootState) => state.modal.selectedMeetupId);
+
+  const deleteMutation = useMemberDelete();
+
+  //강퇴 핸들러를 내부에서 구현
+  const handleKickMember = (memberId: number) => {
+    const confirmed = window.confirm("정말 이 멤버를 강퇴하시겠습니까?");
+    if (confirmed) {
+      deleteMutation.mutate(memberId);
+    }
+  };
+
+  // const selectedMeetupId = useSelector((state: RootState) => state.modal.selectedMeetupId);
 
   const {
     data: myMeetupMembersData,
@@ -27,15 +39,11 @@ const MyMeetupMembers: React.FC<MyMeetupMembersProps> = ({ meetupId, onKickMembe
     error,
   } = useQuery({
     queryKey: ["myMeetupMembers", meetupId],
-    queryFn: () => {
-      if (!selectedMeetupId) {
-        throw new Error("meetupId가 필요하다고");
-      }
-      return getMyMeetupMembersApi(meetupId);
-    },
+    queryFn: () => getMyMeetupMembersApi(meetupId),
     enabled: !!meetupId,
   });
 
+  // 이미지 처리 로직
   useEffect(() => {
     if (myMeetupMembersData?.result) {
       // 개별 멤버 이미지 처리
@@ -55,7 +63,7 @@ const MyMeetupMembers: React.FC<MyMeetupMembersProps> = ({ meetupId, onKickMembe
       setUserImages(imageMap);
     }
   }, [myMeetupMembersData]);
-  console.log(`프로필이미지url:, ${userImages}`);
+  // console.log(`프로필이미지url:, ${userImages}`);
 
   //myMeetupmembersData를 넣으려고 했더니 선언 전에 쓰려고 했대..
   // use 커스텀훅으로 빼야한다 AdOrganizer 처럼..
@@ -75,7 +83,7 @@ const MyMeetupMembers: React.FC<MyMeetupMembersProps> = ({ meetupId, onKickMembe
   // };
 
   if (!meetupId) return <div>모임 아이디 필요핣니다.</div>;
-  if (isPending) return <div>로딩중...</div>;
+  // if (isPending) return <div>로딩중...</div>;
   if (isError) return <div>에러 : {error.message}</div>;
   if (!myMeetupMembersData || !myMeetupMembersData.result || myMeetupMembersData.result.length === 0) return <div>멤버가 없습니다.</div>;
 
@@ -95,7 +103,7 @@ const MyMeetupMembers: React.FC<MyMeetupMembersProps> = ({ meetupId, onKickMembe
             <br />
             유저닉넴 : {member.user?.nickname}
             <br />
-            {member.role !== "organizer" && <OutButton text="강퇴" onClick={() => onKickMember(member.id)} isPending={isPending} />}
+            {member.role !== "organizer" && <OutButton text="강퇴" onClick={() => handleKickMember(member.id)} />}
           </div>
         );
       })}

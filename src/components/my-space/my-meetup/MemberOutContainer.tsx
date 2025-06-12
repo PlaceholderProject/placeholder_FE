@@ -4,8 +4,9 @@ import React, { useEffect } from "react";
 import OutButton from "./OutButton";
 import { FaRegUserCircle } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { setSelectedMeetupId, toggleMemberDeleteModal } from "@/stores/modalSlice";
 import { MyMeetupItem } from "@/types/mySpaceType";
+import { useModal } from "@/hooks/useModal";
+import { setChosenMeetupId } from "@/stores/memberOutSlice";
 
 interface MemberOutContainerProps {
   meetupId: MyMeetupItem["id"];
@@ -16,14 +17,14 @@ interface MemberOutContainerProps {
 
 const MemberOutContainer: React.FC<MemberOutContainerProps> = ({ meetupId, isOrganizer, onSelfLeave, isPending }) => {
   const dispatch = useDispatch();
-
+  const { openModal } = useModal();
   const handleMemberListButtonClick = () => {
-    dispatch(setSelectedMeetupId(meetupId));
-    dispatch(toggleMemberDeleteModal());
+    dispatch(setChosenMeetupId(meetupId));
+    openModal("MEMBER_DELETE");
   };
 
   const handleSelfLeaveClick = () => {
-    alert("내발로 내가 퇴장한다");
+    // alert("내발로 내가 퇴장한다");
     onSelfLeave(meetupId);
   };
 
@@ -54,29 +55,17 @@ const MemberOutContainer: React.FC<MemberOutContainerProps> = ({ meetupId, isOrg
   //   console.log("===4. 버튼 클릭 우선 끝===");
   //   console.log("멤버모달 열렸니?", isMemberDeleteModalOpen);
   // };
+  //모달 토글
+  // dispatch(setSelectedMeetupId(meetupId));
+  // console.log("==2. setSelectedMeetupId 디스패치 했어==");
+  // dispatch(toggleMemberDeleteModal());
+  // console.log("===3. toggleMemberDeleteModal 디스패치 햇어==");
+  // console.log("===4. 버튼 클릭 우선 끝===");
+  // console.log("멤버모달 열렸니?", isMemberDeleteModalOpen);
 
-  useEffect(() => {
-    console.log("받은 meetupId:", meetupId);
-  }, [meetupId]);
-
-  // // 삭제 뮤테이션
-  // const deleteMutation = useMutation({
-  //   mutationFn: (member_id: number) => deleteMeetupMemberApi(member_id),
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({ queryKey: ["myMeetups"] });
-  //   },
-  // });
-
-  // const handleSelfOutButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-  //   // 모임 퇴장 (isOrganizer = false)
-  //   if (!isOrganizer) {
-  //     const confirmed = window.confirm("정말 이 모임에서 퇴장하시겠습니까?");
-  //     if (confirmed) {
-  //       alert("내 발로 내가 퇴장한다");
-  //       deleteMutation.mutate(meetupId);
-  //     }
-  //   }
-  // };
+  // 새로운 모달 시스템의 openModal 함수를 사용하여 모달을 엽니다.
+  // 이전 코드의 dispatch 로직을 이 한 줄로 대체합니다.
+  // openModal("MEMBER_DELETE", { meetupId });
   return (
     <>
       <div>
@@ -86,7 +75,7 @@ const MemberOutContainer: React.FC<MemberOutContainerProps> = ({ meetupId, isOrg
           </button>
         ) : (
           // <OutButton isOrganizer={isOrganizer} isInMemberDeleteModal={false} onClick={handleSelfLeaveClick} />
-          <OutButton text="강퇴" onClick={handleSelfLeaveClick} isPending={isPending} />
+          <OutButton text="퇴장" onClick={handleSelfLeaveClick} isPending={isPending} />
         )}
       </div>
     </>

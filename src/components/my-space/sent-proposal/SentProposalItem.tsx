@@ -1,21 +1,20 @@
 "use client";
 
-import ProposalCancellationModal from "@/components/modals/ProposalCancellationModal";
 import { transformCreatedDate } from "@/utils/ReplyDateFormat";
 import { FaUser, FaUserCheck, FaUserTimes } from "react-icons/fa";
-import { SentProposalItemProps } from "@/types/proposalType";
-import ProposalHideModal from "@/components/modals/ProposalHideModal";
+import { SentProposal } from "@/types/proposalType";
+import { useModal } from "@/hooks/useModal";
 
-const SentProposalItem = ({ proposal, isModalOpen, modalType, onModalOpen, onModalClose }: SentProposalItemProps) => {
+const SentProposalItem = ({ proposal }: { proposal: SentProposal }) => {
+  const { openModal } = useModal();
+
   const handleCancellationModalOpen = () => {
-    onModalOpen(proposal.id, "cancellation");
+    openModal("PROPOSAL_CANCELLATION", { proposal });
   };
 
   const handleProposalHide = () => {
-    onModalOpen(proposal.id, "hide");
+    openModal("PROPOSAL_HIDE", { proposal });
   };
-
-  console.log(proposal); // meetupId 확인 필요
 
   return (
     <div className="bg-secondary-light flex flex-col items-center justify-between gap-[0.5rem] rounded-[1rem] p-[1.5rem] shadow-md">
@@ -52,7 +51,7 @@ const SentProposalItem = ({ proposal, isModalOpen, modalType, onModalOpen, onMod
       <div className="flex w-full flex-row items-center justify-between gap-[1rem]">
         <div className="break-all">{proposal.text}&nbsp;&nbsp;</div>
         <div className="flex gap-[1rem] whitespace-nowrap text-white">
-          <button onClick={handleCancellationModalOpen} className="bg-warning h-fil rounded-[0.5rem] p-[0.5rem] text-sm font-bold">
+          <button onClick={handleCancellationModalOpen} className="h-fil bg-warning rounded-[0.5rem] p-[0.5rem] text-sm font-bold">
             취소
           </button>
           <button onClick={handleProposalHide} className="bg-gray-dark rounded-[0.5rem] p-[0.5rem] text-sm font-bold">
@@ -60,8 +59,6 @@ const SentProposalItem = ({ proposal, isModalOpen, modalType, onModalOpen, onMod
           </button>
         </div>
       </div>
-      {isModalOpen && modalType === "cancellation" && <ProposalCancellationModal meetupId={meetupId} title={proposal.meetup_ad_title} proposal={proposal} onClose={onModalClose} />}
-      {isModalOpen && modalType === "hide" && <ProposalHideModal proposal={proposal} onClose={onModalClose} />}
     </div>
   );
 };

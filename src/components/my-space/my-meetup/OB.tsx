@@ -38,7 +38,7 @@ const OB: React.FC<OutButtonProps> = ({ isOrganizer = false, isInMemberDeleteMod
   };
   return (
     <div>
-      <button onClick={handleDeleteClick}> {buttonText}</button>
+      <button onClick={handleDeleteClick}>{buttonText}</button>
     </div>
   );
 };

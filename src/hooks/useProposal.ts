@@ -10,9 +10,12 @@ import {
   refuseProposal,
 } from "@/services/proposal.service";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import Cookies from "js-cookie";
+
+const accessToken = Cookies.get("accessToken");
 
 // 신청서 등록
-export const useCreateProposal = (meetupId: number, onClose: () => void) => {
+export const useCreateProposal = (meetupId: number) => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -54,16 +57,17 @@ export const useOrganizedMeetups = () => {
   return useQuery({
     queryKey: ["myMeetups", "organizer"],
     queryFn: getOrganizedMeetups,
+    enabled: !!accessToken,
     staleTime: 1000 * 60 * 5, // 5분 캐싱
     retry: 1,
   });
 };
 
 // 모임Id로 검색한 내가 방장인 신청서 목록 가져오기
-export const useProposalsByMeetupId = (meetupId: number) => {
+export const useProposalsByMeetupId = (meetupId: number, page: number) => {
   return useQuery({
-    queryKey: ["receivedProposals", meetupId],
-    queryFn: () => getReceivedProposals(meetupId!),
+    queryKey: ["receivedProposals", meetupId, page],
+    queryFn: () => getReceivedProposals(meetupId!, page),
     staleTime: 1000 * 60 * 5,
     retry: 1,
     enabled: !!meetupId,

@@ -6,32 +6,22 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import MemberOutContainer from "./MemberOutContainer";
 import { deleteMeetupMemberApi, getMyMeetupMembersApi, getMyMeetupsApi } from "@/services/my.space.service";
 import Link from "next/link";
-import { SIZE_LIMIT, BUTTONS_PER_GROUP } from "@/constants/pagination";
+import { BUTTONS_PER_GROUP, SIZE_LIMIT } from "@/constants/pagination";
 import PaginationButtons from "../PaginationButtons";
 import MemberDeleteModal from "./MemberDeleteModal";
 import { getUser } from "@/services/user.service";
+import { useMemberDelete } from "@/hooks/useMemberDelete";
 
 const CurrentMyMeetup = () => {
-  const [page, setPage] = useState(1);
   const queryClient = useQueryClient();
+
+  // 삭제 로직을 조부모가 통합적으로 관리하는데 그걸 커스텀훅으로 뻈습니다
+  const deleteMutation = useMemberDelete();
 
   // 현재 사용자 정보 가져오기 (닉넴으로 식별하려고)
   const { data: currentUserData } = useQuery({
     queryKey: ["currentUser"],
     queryFn: () => getUser(),
-  });
-
-  // 통합 삭제 뮤테 : 내가 나가건 쫓겨나건 통합 out 여기서 일괄 관리!!
-  const deleteMutation = useMutation({
-    mutationFn: (member_id: number) => deleteMeetupMemberApi(member_id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["myMeetups"] });
-      queryClient.invalidateQueries({ queryKey: ["myMeetupMembers"] });
-    },
-    onError: error => {
-      console.error("멤버 삭제 실패:", error);
-      alert("멤버 삭제 중 오류 ㅂ라생함");
-    },
   });
 
   // 내 memberId 찾기
@@ -84,6 +74,7 @@ const CurrentMyMeetup = () => {
   };
 
   // 페이지네이션 헤ㅐㄴ들러들
+  const [page, setPage] = useState(1);
   const handlePageButtonClick = (newPage: number) => {
     setPage(newPage);
   };
@@ -158,7 +149,7 @@ const CurrentMyMeetup = () => {
         onPreviousGroupButtonClick={handlePreviousGroupButtonClick}
         onNextGroupButtonClick={handleNextGroupButtonClick}
       />
-      <MemberDeleteModal onKickMember={handleKickMember} isPending={deleteMutation.isPending} />
+      {/* <MemberDeleteModal onKickMember={handleKickMember} isPending={deleteMutation.isPending} /> */}
     </>
   );
 };

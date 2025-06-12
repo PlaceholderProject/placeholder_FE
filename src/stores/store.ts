@@ -11,6 +11,7 @@ import filterReducer from "./filterSlice";
 import replyReducer from "./replySlice";
 import proposalReducer from "./proposalSlice";
 import searchReducer from "./searchSlice";
+import memberOutReducer from "./memberOutSlice";
 
 // 데이터 직렬화/비직렬화 변환 설정
 const transform = createTransform(
@@ -41,6 +42,7 @@ export const store = configureStore({
     sort: sortReducer,
     filter: filterReducer,
     search: searchReducer,
+    memberOut: memberOutReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
