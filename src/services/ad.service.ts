@@ -35,3 +35,22 @@ export const getAdByIdApi = async (meetupId: number) => {
 
   return AdByIdData;
 };
+
+// 광고글 삭제 함수
+// --TO DO--
+// 이거 ad.servie.ts 로 빼야됨
+export const deleteAd = async ({ meetupId }: { meetupId: number }) => {
+  const token = Cookies.get("accessToken");
+
+  const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    console.error("광고글 삭제 실패: ", response.status, response.statusText);
+    throw new Error("광고글 삭제에 실패했습니다.");
+  }
+};
