@@ -71,8 +71,8 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId, sche
             <Image
               src={reply.user.image ? (reply.user.image.startsWith("http") ? reply.user.image : `${BASE_URL}${reply.user.image}`) : "/profile.png"}
               alt="프로필 이미지"
-              width="25"
-              height="25"
+              width="30"
+              height="30"
               unoptimized={true}
             />
           </div>

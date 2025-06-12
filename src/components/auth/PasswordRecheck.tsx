@@ -43,10 +43,10 @@ const PasswordRecheck = () => {
     <div>
       <form onSubmit={handlePasswordRecheckFormSubmit} className="flex w-full flex-col items-center gap-[3rem]">
         <h1 className="text-lg font-bold">비밀번호 재확인</h1>
-        <p className="flex flex-col items-center">
+        <div className="flex flex-col items-center">
           <div>회원정보 보호를 위해 </div>
           <div>비밀번호를 다시 한 번 확인합니다.</div>
-        </p>
+        </div>
         <div className="relative flex flex-col">
           <input
             type={isVisivlePassword ? "text" : "password"}

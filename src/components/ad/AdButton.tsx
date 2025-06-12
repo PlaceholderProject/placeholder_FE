@@ -32,7 +32,7 @@ const AdButton = ({ meetupId }: { meetupId: number }) => {
 
   return (
     <div className="flex w-full justify-center">
-      <div className="my-[2rem] w-[90%]">
+      <div className="my-[2rem] w-[90%] max-w-[80rem]">
         {user.nickname === adData?.organizer.nickname ? (
           <Link href={`/meetup/${meetupId}`}>
             <div className="bg-primary flex h-[3.5rem] w-full items-center justify-center rounded-[0.5rem] text-white">입장하기</div>

@@ -49,11 +49,11 @@ const ReplyForm = () => {
 
   return (
     <div className="border-gray-medium flex w-full items-center justify-center border-y-[1px] p-[2rem]">
-      <form className="flex w-[80%] flex-col gap-[0.5rem]" onSubmit={handleReplySubmit}>
+      <form onSubmit={handleReplySubmit} className="flex w-[80%] flex-col gap-[0.5rem] md:max-w-[80rem]">
         <div className="border-gray-medium flex w-full flex-col items-center justify-center gap-[1rem] rounded-[1rem] border-[0.1rem] bg-white p-[1.5rem]">
           <div className="flex w-full flex-row items-center gap-[0.5rem]">
             <div className="h-[2rem] w-[2rem] overflow-hidden rounded-full">
-              <Image src={profileImage || "/profile.png"} alt="프로필 이미지" width="20" height="20" unoptimized={true} />
+              <Image src={profileImage || "/profile.png"} alt="프로필 이미지" width="25" height="25" unoptimized={true} />
             </div>
             <span>{user.nickname && `${user.nickname} ✨`}</span>
           </div>

@@ -28,9 +28,9 @@ const ReplyArea: React.FC = () => {
   }, [meetupId, scheduleId]);
 
   return (
-    <div className="flex flex-col justify-start">
+    <div className="flex flex-col items-center justify-center">
       <ReplyForm />
-      <div className="mx-[1.5rem] my-[1rem] font-semibold">댓글 {replyCount}개</div>
+      <div className="mx-[1.5rem] my-[1rem] flex w-[95%] font-semibold md:max-w-[90rem]">댓글 {replyCount}개</div>
       {meetupId && <ReplyList meetupId={meetupId} scheduleId={scheduleId} />}
     </div>
   );
