@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import RoleIcon from "../my-meetup/RoleIcon";
 import { useQuery } from "@tanstack/react-query";
 import { getMyAdsApi } from "@/services/my.space.service";
-import { SIZE_LIMIT, BUTTONS_PER_GROUP } from "@/constants/pagination";
+import { BUTTONS_PER_GROUP, SIZE_LIMIT } from "@/constants/pagination";
 import PaginationButtons from "../PaginationButtons";
 
 const PastMyAd = () => {

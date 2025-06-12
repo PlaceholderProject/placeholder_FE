@@ -80,16 +80,16 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId, sche
             {reply.isOrganizer && "👑 "}
             {reply.user.nickname} ✨
           </span>
-          <span className="text-gray-dark text-sm">{transformCreatedDate(reply.createdAt)}</span>
+          <span className="text-sm text-gray-dark">{transformCreatedDate(reply.createdAt)}</span>
         </div>
         {reply.user.nickname === user.nickname ? (
           !isEditMode ? (
-            <span className="text-gray-dark flex gap-[1rem]">
+            <span className="flex gap-[1rem] text-gray-dark">
               <button onClick={handleUpdateMode}>수정</button>
               <button onClick={() => handleReplyDelete(reply.id)}>삭제</button>
             </span>
           ) : (
-            <span className="text-gray-dark flex gap-[1rem]">
+            <span className="flex gap-[1rem] text-gray-dark">
               <button onClick={handleUpdateMode}>취소</button>
               <button onClick={() => handleReplyUpdate(reply.id)}>수정</button>
             </span>
@@ -107,12 +107,12 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId, sche
               {nestedReplies.map(nestedReply => (
                 <NestedReplyItem key={nestedReply.id} nestedReply={nestedReply} meetupId={meetupId} handleReplyUpdate={handleReplyUpdate} />
               ))}
-              <button onClick={() => setIsVisiableNestedReply(false)} className="text-gray-dark text-sm">
+              <button onClick={() => setIsVisiableNestedReply(false)} className="text-sm text-gray-dark">
                 ---- 답글 접기
               </button>
             </div>
           ) : (
-            <button onClick={() => setIsVisiableNestedReply(true)} className="text-gray-dark text-sm">
+            <button onClick={() => setIsVisiableNestedReply(true)} className="text-sm text-gray-dark">
               ---- 답글 {nestedReplies.length}개 더 보기
             </button>
           ))}
@@ -126,7 +126,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId, sche
             setIsVisiableNestedReply={setIsVisiableNestedReply}
           />
         ) : (
-          <button onClick={handleNestedReplyFormToggle} className="text-gray-dark text-sm">
+          <button onClick={handleNestedReplyFormToggle} className="text-sm text-gray-dark">
             답글달기
           </button>
         )}

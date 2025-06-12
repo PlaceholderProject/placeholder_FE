@@ -1,14 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import RoleIcon from "./RoleIcon";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import MemberOutContainer from "./MemberOutContainer";
-import { deleteMeetupMemberApi, getMyMeetupMembersApi, getMyMeetupsApi } from "@/services/my.space.service";
+import { getMyMeetupMembersApi, getMyMeetupsApi } from "@/services/my.space.service";
 import Link from "next/link";
 import { BUTTONS_PER_GROUP, SIZE_LIMIT } from "@/constants/pagination";
 import PaginationButtons from "../PaginationButtons";
-import MemberDeleteModal from "./MemberDeleteModal";
 import { getUser } from "@/services/user.service";
 import { useMemberDelete } from "@/hooks/useMemberDelete";
 

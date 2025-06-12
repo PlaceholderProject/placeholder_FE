@@ -23,7 +23,7 @@ const ReceivedProposalItem = ({ proposal }: { proposal: ReceivedProposal }) => {
   console.log(proposal);
 
   return (
-    <div className="bg-secondary-light flex flex-row justify-between gap-[1rem] rounded-[1rem] p-[1.5rem] shadow-md">
+    <div className="flex flex-row justify-between gap-[1rem] rounded-[1rem] bg-secondary-light p-[1.5rem] shadow-md">
       <div className="w-full">
         <div className="flex flex-row items-center gap-[1rem]">
           <div className="h-[2rem] w-[2rem] overflow-hidden rounded-full">
@@ -36,7 +36,7 @@ const ReceivedProposalItem = ({ proposal }: { proposal: ReceivedProposal }) => {
             />
           </div>
           <span>{proposal.user.nickname}</span>
-          <span className="text-gray-dark text-sm">{transformCreatedDate(proposal.createdAt)}</span>
+          <span className="text-sm text-gray-dark">{transformCreatedDate(proposal.createdAt)}</span>
         </div>
         <p className="pt-[0.5rem]">{proposal.text}</p>
       </div>
@@ -44,7 +44,7 @@ const ReceivedProposalItem = ({ proposal }: { proposal: ReceivedProposal }) => {
         <button onClick={handleProposalAccept} className="text-[2.5rem] text-[#028AB3]">
           <FaUserCheck />
         </button>
-        <button onClick={handleProposalRefuse} className="text-warning text-[2.5rem]">
+        <button onClick={handleProposalRefuse} className="text-[2.5rem] text-warning">
           <FaUserTimes />
         </button>
       </div>

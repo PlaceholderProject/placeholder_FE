@@ -9,6 +9,7 @@ interface ValidateImagePropsType {
   setImageSource: (source: string) => void;
   fallbackImage: string;
 }
+
 export const validateImage = ({ data, personKey, imageKey, setImageSource, fallbackImage = "profile.png" }: ValidateImagePropsType): (() => void) => {
   const imagePath = data?.[personKey]?.[imageKey];
 

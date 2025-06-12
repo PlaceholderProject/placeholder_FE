@@ -35,10 +35,7 @@ export const useCreateSchedule = (meetupId: number) => {
 };
 
 // 단일 스케줄 가져오기 훅
-export const useScheduleDetail = (
-  scheduleId: number | undefined,
-  options?: { enabled?: boolean },
-) => {
+export const useScheduleDetail = (scheduleId: number | undefined, options?: { enabled?: boolean }) => {
   return useQuery<Schedule, Error>({
     queryKey: ["schedule", scheduleId],
     queryFn: () => getSchedule(scheduleId as number),
@@ -51,10 +48,7 @@ export const useUpdateSchedule = (scheduleId: number) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ scheduleId, formData }: {
-      scheduleId: number,
-      formData: FormData
-    }) => updateSchedule(scheduleId, formData),
+    mutationFn: ({ scheduleId, formData }: { scheduleId: number; formData: FormData }) => updateSchedule(scheduleId, formData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["schedules", scheduleId] });
     },

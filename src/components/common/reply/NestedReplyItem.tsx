@@ -48,16 +48,16 @@ const NestedReplyItem = ({ nestedReply, meetupId, handleReplyUpdate }: { nestedR
             {nestedReply.isOrganizer && "👑 "}
             {nestedReply.user.nickname} ✨
           </span>
-          <span className="text-gray-dark text-sm">{transformCreatedDate(nestedReply.createdAt)}</span>
+          <span className="text-sm text-gray-dark">{transformCreatedDate(nestedReply.createdAt)}</span>
         </span>
         {nestedReply.user.nickname === user.nickname ? (
           !isEditMode ? (
-            <span className="text-gray-dark flex gap-[1rem]">
+            <span className="flex gap-[1rem] text-gray-dark">
               <button onClick={handleUpdateMode}>수정</button>
               <button onClick={() => handleReplyDelete(nestedReply.id)}>삭제</button>
             </span>
           ) : (
-            <span className="text-gray-dark flex gap-[1rem]">
+            <span className="flex gap-[1rem] text-gray-dark">
               <button onClick={handleUpdateMode}>취소</button>
               <button onClick={() => handleReplyUpdate(nestedReply.id)}>수정</button>
             </span>
