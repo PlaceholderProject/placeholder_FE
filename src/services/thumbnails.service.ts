@@ -25,11 +25,25 @@ export const getHeadhuntingsApi = async ({ sortType, place, category }: { sortTy
     url = url + `&category=${category}`;
   }
 
+  // 헤더 객체를 조건부로 구성하기
+  // 새삼 헤더도 객체지..
+  // headers: {}임. 당연함.
+
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+  };
+
+  //토큰 있을 때만 헤더 추가
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
   const response = await fetch(url, {
     method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers,
+    // headers: {
+    //   Authorization: `Bearer ${token}`,
+    // },
   });
 
   if (!response.ok) {
@@ -46,11 +60,19 @@ export const getHeadhuntingsApi = async ({ sortType, place, category }: { sortTy
 // (headhuntingItem) 광고글 하나 데이터 가져오기 api
 export const getHeadhuntingItemApi = async (thumbnailId: number) => {
   const token = Cookies.get("accessToken");
+  // 헤더 객체를 조건부로 구성
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+  };
+
+  // 토큰이 있을 때만 Authorization 헤더 추가
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
   const response = await fetch(`${BASE_URL}/api/v1/meetup/${thumbnailId}`, {
     method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers,
   });
 
   if (!response.ok) {
