@@ -57,7 +57,7 @@ const AccountEdit = () => {
       setNickname(user.nickname || "");
       setBio(user.bio || "");
     }
-  }, []);
+  }, ["data", "dispatch", "user.bio", "user.email", "user.nickname", "user.profileImage"]);
 
   if (!data) return;
 

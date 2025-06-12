@@ -6,10 +6,7 @@ import { LabeledInputProps, LabeledSelectProps, Meetup } from "@/types/meetupTyp
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
-import Cookies from "js-cookie";
 import Image from "next/image";
-
-const token = Cookies.get("accessToken");
 
 // 뭔지도 모르고 그냥 써놧네
 // 이젠 앎..?
@@ -45,26 +42,24 @@ const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
 
 // 잘 모르겠고 태그랑 타입 다 공부해야돼
 
-const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(
-  ({ id, name, label, options, defaultValue, multiple = true, required = true, className, labelClassName, containerClassName }, ref) => {
-    return (
-      <>
-        <div className={containerClassName}>
-          <label htmlFor={id} className={labelClassName}>
-            {label}
-          </label>
-          <select id={id} name={name} defaultValue={defaultValue} required={required} ref={ref} className={className}>
-            {options.map(option => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-        </div>
-      </>
-    );
-  },
-);
+const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({ id, name, label, options, defaultValue, required = true, className, labelClassName, containerClassName }, ref) => {
+  return (
+    <>
+      <div className={containerClassName}>
+        <label htmlFor={id} className={labelClassName}>
+          {label}
+        </label>
+        <select id={id} name={name} defaultValue={defaultValue} required={required} ref={ref} className={className}>
+          {options.map(option => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+      </div>
+    </>
+  );
+});
 
 const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   const queryClient = useQueryClient();

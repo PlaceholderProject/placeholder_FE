@@ -72,7 +72,7 @@ const ThumbnailArea = () => {
       const allItems = headhuntingsData.pages.flatMap(page => page.result);
       console.log("모든 아이템 목록:", allItems);
     }
-  }, [headhuntingsData]);
+  }, [headhuntingsData, getQueryKey]);
 
   // useEffect(() => {
   //   console.log(`정렬 타입 변경 감지: ${sortType}`);

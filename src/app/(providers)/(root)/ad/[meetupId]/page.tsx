@@ -1,7 +1,6 @@
 "use client";
 
 import AdButton from "@/components/ad/AdButton";
-import AdClientSideWrapper from "@/components/ad/AdClientSideWrapper";
 import AdDetail from "@/components/ad/AdDetail";
 import AdSignboard from "@/components/ad/AdSignboard";
 import AdOrganizer from "@/components/ad/AdOrganizer";
@@ -26,7 +25,6 @@ const AdPage = () => {
       <AdDetail meetupId={meetupIdNum} userNickname={userNickname} />
       <AdButton meetupId={meetupIdNum} />
       <ReplyArea />
-      <AdClientSideWrapper meetupId={meetupIdNum} />
     </div>
   );
 };

@@ -34,8 +34,6 @@ const PastMyAd = () => {
     setPage(nextGroupFirstPage);
   };
 
-  const [isOrganizer, setIsOrganizer] = useState(true);
-
   const {
     data: myAdsData,
     isPending,
@@ -69,7 +67,7 @@ const PastMyAd = () => {
       <div className="grid grid-cols-1">
         {myAdsData.result.map(myAd => (
           <div key={myAd.id} className="flex justify-between">
-            <RoleIcon isOrganizer={isOrganizer} />
+            <RoleIcon isOrganizer={true} />
             광고글 이름: {myAd.ad_title} 광고종료일: {myAd.ad_ended_at}
           </div>
         ))}

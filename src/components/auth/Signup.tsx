@@ -147,7 +147,9 @@ const Signup = () => {
         alert(`${newUser.nickname}님 회원가입을 축하드립니다.`);
         router.replace("/login");
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

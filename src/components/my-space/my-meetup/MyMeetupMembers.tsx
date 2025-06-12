@@ -33,7 +33,7 @@ const MyMeetupMembers: React.FC<MyMeetupMembersProps> = ({ meetupId }) => {
 
   const {
     data: myMeetupMembersData,
-    isPending: isDataPending,
+    // isPending,
     isError,
     error,
   } = useQuery({
