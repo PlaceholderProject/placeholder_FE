@@ -1,20 +1,22 @@
 import ScheduleForm from "@/components/schedule/ScheduleForm";
 
 interface EditSchedulePageProps {
-  params: {
+  params: Promise<{
     meetupId: string;
     scheduleId: string;
-  };
+  }>;
 }
 
-const EditSchedulePage = ({ params }: EditSchedulePageProps) => {
-  const meetupId = Number(params.meetupId);
-  const scheduleId = Number(params.scheduleId);
+const EditSchedulePage = async ({ params }: EditSchedulePageProps) => {
+  const { meetupId, scheduleId } = await params;
+
+  const meetupIdNum = Number(meetupId);
+  const scheduleIdNum = Number(scheduleId);
 
   return (
     <div className="p-4">
       <h1 className="mb-4 text-2xl font-bold">스케줄 수정</h1>
-      <ScheduleForm meetupId={meetupId} mode="edit" scheduleId={scheduleId} />
+      <ScheduleForm meetupId={meetupIdNum} mode="edit" scheduleId={scheduleIdNum} />
     </div>
   );
 };
