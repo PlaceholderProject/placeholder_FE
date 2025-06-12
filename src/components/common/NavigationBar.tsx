@@ -43,7 +43,7 @@ const NavigationBar = () => {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-[#FEFFEC]">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-[#FEFFEC] lg:hidden">
       <div className="flex items-center justify-around py-2">
         {navItems.map(item => {
           const IconComponent = item.icon;
