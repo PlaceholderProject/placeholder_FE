@@ -23,7 +23,7 @@ const ReplyList = ({ meetupId, scheduleId }: { meetupId: string | string[]; sche
   const topLevelReplies = replies.filter((reply: Reply) => reply.root === null);
 
   return (
-    <div className="border-gray-medium flex w-full justify-center border-t-[0.1rem] py-[1.5rem]">
+    <div className="flex w-full justify-center border-t-[0.1rem] border-gray-medium py-[1.5rem]">
       {topLevelReplies.length === 0 ? (
         <p>댓글이 없습니다.</p>
       ) : (

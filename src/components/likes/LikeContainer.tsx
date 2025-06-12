@@ -241,7 +241,7 @@
 // export default LikeContainer;
 
 import React, { useEffect } from "react";
-import { getLikeByIdApi, toggleLikeApi } from "@/services/like.service";
+import { toggleLikeApi } from "@/services/like.service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import LikePart from "./LikePart";
 import { LikeContainerProps } from "@/types/likeType";
@@ -263,7 +263,7 @@ const LikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerPro
 
       // 이전 데이터 백업
       const previousHeadhuntingsData = queryClient.getQueryData(["headhuntings"]);
-      const previousLikeData = await getLikeByIdApi(id);
+      // const previousLikeData = await getLikeByIdApi(id);
 
       // headhuntings 쿼리 데이터 업데이트
       queryClient.setQueryData(["headhuntings"], (oldData: any) => {

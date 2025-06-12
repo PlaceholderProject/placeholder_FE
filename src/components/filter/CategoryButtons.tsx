@@ -25,7 +25,7 @@ const CategoryButtons = () => {
           <button
             key={categoryItem}
             onClick={() => handlePurposeSelect(categoryItem)}
-            className={`px-3 py-1 text-sm rounded-lg border ${category === categoryItem ? "bg-blue-200 border-blue-300 text-blue-900" : "bg-gray-200 border-gray-400 text-gray-800"}`}
+            className={`rounded-lg border px-3 py-1 text-sm ${category === categoryItem ? "border-blue-300 bg-blue-200 text-blue-900" : "border-gray-400 bg-gray-200 text-gray-800"}`}
           >
             {categoryItem}
           </button>

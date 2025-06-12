@@ -29,7 +29,7 @@ const MeetupNames = () => {
         <li
           key={meetup.id}
           onClick={() => dispatch(setSelectedMeetupId(meetup.id))}
-          className={`border-primary w-fit cursor-pointer whitespace-nowrap rounded-full border-[0.1rem] px-4 py-1 ${selectedMeetupId === meetup.id ? "bg-primary text-white" : ""}`}
+          className={`w-fit cursor-pointer whitespace-nowrap rounded-full border-[0.1rem] border-primary px-4 py-1 ${selectedMeetupId === meetup.id ? "bg-primary text-white" : ""}`}
         >
           {meetup.name}
         </li>

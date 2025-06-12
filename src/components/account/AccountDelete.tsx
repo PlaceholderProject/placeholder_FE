@@ -25,14 +25,14 @@ const AccountDelete = () => {
       dispatch(setIsAuthenticated(false));
       setIsDeletedAccount(true);
     } catch (error) {
-      alert("탈퇴에 실패했습니다. 다시 시도해주세요.");
+      alert(error);
     }
   };
 
   return (
     <div className="my-[4rem] flex min-h-[calc(100vh-12rem)] flex-col items-center justify-center md:min-h-[calc(100vh-13.5rem)]">
       <h2 className="mb-[2rem] text-3xl font-semibold">계정 관리</h2>
-      <div className="border-gray-medium relative z-10 flex min-h-[54rem] w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] py-[3rem]">
+      <div className="relative z-10 flex min-h-[54rem] w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] border-gray-medium py-[3rem]">
         {!isPasswordRechecked && (
           <div className="absolute inset-5 z-50 flex items-center justify-center bg-[#f9f9f9]">
             <PasswordRecheck />
@@ -41,7 +41,7 @@ const AccountDelete = () => {
         {isDeletedAccount ? (
           <div className="flex flex-col items-center">
             <p className="my-[5rem] text-lg font-semibold">탈퇴되었습니다.</p>
-            <Link href="/" className="bg-secondary-dark flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] text-lg">
+            <Link href="/" className="flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] bg-secondary-dark text-lg">
               메인페이지로 이동하기
             </Link>
           </div>
@@ -49,10 +49,10 @@ const AccountDelete = () => {
           <div className="flex flex-col items-center justify-center">
             <p className="my-[5rem] text-lg font-semibold">정말로 탈퇴 하시겠습니까?</p>
             <div className="flex flex-col gap-[0.8rem]">
-              <Link href="/account" className="bg-secondary-dark flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] text-lg">
+              <Link href="/account" className="flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] bg-secondary-dark text-lg">
                 아니요
               </Link>
-              <button onClick={handleDeleteUserButton} className="bg-gray-light flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] text-lg">
+              <button onClick={handleDeleteUserButton} className="flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] bg-gray-light text-lg">
                 네
               </button>
             </div>

@@ -122,8 +122,3 @@ export const deleteSchedule = async (scheduleId: number): Promise<void> => {
     throw err;
   }
 };
-
-
-
-
-
