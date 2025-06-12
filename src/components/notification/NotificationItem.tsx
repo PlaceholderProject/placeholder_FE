@@ -7,15 +7,21 @@ import { useNotificationRead } from "@/hooks/useNotification";
 
 const NotificationItem = ({ id, message, url, is_read, created_at }: Notification) => {
   const router = useRouter();
-  const { markAsRead } = useNotificationRead(id);
 
+  const { markAsRead } = useNotificationRead(id);
   const formattedDate = created_at ? formatNotificationDate(created_at) : "";
+
+  if (!id) {
+    return null;
+  }
 
   const handleNotificationClick = () => {
     if (!is_read) {
       markAsRead();
     }
-    router.push(url);
+    if (url) {
+      router.push(url);
+    }
   };
 
   return (
