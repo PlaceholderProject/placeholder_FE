@@ -259,7 +259,7 @@ export const getMyProposalStatus = async (meetupId: number) => {
     const result = await response.json();
     return result;
   } catch (error) {
-    // console.error("상태를 가져오는데 실패했습니다:", error);
+    console.error("상태를 가져오는데 실패했습니다:", error);
     return null;
   }
 };

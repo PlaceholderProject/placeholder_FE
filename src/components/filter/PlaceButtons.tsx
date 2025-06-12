@@ -45,7 +45,7 @@ const PlaceButtons = () => {
 
                 // event.target.value는 주로 input 필드나 select 요소처럼 HTML 자체적으로 value 속성을 가진 요소에서 사용하는 방식입니다. 버튼에 value 속성을 추가할 수도 있지만, 이 경우 클로저 방식이 더 간결하고 React 스타일에 맞습니다.
               }
-              className={`px-3 py-1 text-sm rounded-lg border ${place === placeItem ? "bg-blue-200 border-blue-400 text-blue-950" : "bg-gray-100 border-gray-400 text-gray-800"}`}
+              className={`rounded-lg border px-3 py-1 text-sm ${place === placeItem ? "border-blue-400 bg-blue-200 text-blue-950" : "border-gray-400 bg-gray-100 text-gray-800"}`}
             >
               {placeItem}
             </button>

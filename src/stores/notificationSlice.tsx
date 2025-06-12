@@ -9,7 +9,9 @@ const initialState: NotificationState = {
 };
 
 const notificationSlice = createSlice({
-  name: "notification", initialState, reducers: {
+  name: "notification",
+  initialState,
+  reducers: {
     setHasUnreadNotifications(state, action: PayloadAction<boolean>) {
       state.hasUnread = action.payload;
     },

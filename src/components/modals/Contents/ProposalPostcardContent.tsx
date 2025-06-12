@@ -10,7 +10,7 @@ const ProposalPostcardContent = ({ meetupId }: { meetupId: number }) => {
   const [bioTextLength, setBioTextLength] = useState(0);
   const [messageWarning, setMessageWarning] = useState("");
 
-  const { mutate } = useCreateProposal(meetupId, closeModal);
+  const { mutate } = useCreateProposal(meetupId);
 
   const handleProposalText = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value.length > 40) {

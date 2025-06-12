@@ -1,10 +1,8 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { NewMeetup } from "@/types/meetupType";
-import { LabeledInputProps } from "@/types/meetupType";
-import { LabeledSelectProps } from "@/types/meetupType";
+import { LabeledInputProps, LabeledSelectProps, NewMeetup } from "@/types/meetupType";
 import { useRouter } from "next/navigation";
 import { createMeetupApi } from "@/services/meetup.service";
 import Image from "next/image";

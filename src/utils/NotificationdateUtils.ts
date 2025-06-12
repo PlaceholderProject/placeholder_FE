@@ -3,10 +3,7 @@ export const formatNotificationDate = (dateString: string): string => {
   const today = new Date();
 
   // 같은 날짜인지 확인
-  const isSameDay =
-    date.getDate() === today.getDate() &&
-    date.getMonth() === today.getMonth() &&
-    date.getFullYear() === today.getFullYear();
+  const isSameDay = date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
 
   if (isSameDay) {
     // 같은 날짜면 시간만 표시 (HH:MM)

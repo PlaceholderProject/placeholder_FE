@@ -17,12 +17,12 @@ const SentProposalItem = ({ proposal }: { proposal: SentProposal }) => {
   };
 
   return (
-    <div className="bg-secondary-light flex flex-col items-center justify-between gap-[0.5rem] rounded-[1rem] p-[1.5rem] shadow-md">
+    <div className="flex flex-col items-center justify-between gap-[0.5rem] rounded-[1rem] bg-secondary-light p-[1.5rem] shadow-md">
       <div className="flex w-full flex-row items-center justify-between">
         <div className="flex flex-row items-center gap-[1rem]">
           <div className="px-1">
             {proposal.status === "pending" ? (
-              <div className="text-gray-dark flex flex-col items-center">
+              <div className="flex flex-col items-center text-gray-dark">
                 <div className="text-2xl">
                   <FaUser />
                 </div>
@@ -46,15 +46,15 @@ const SentProposalItem = ({ proposal }: { proposal: SentProposal }) => {
           </div>
           <div className="break-all font-semibold">{proposal.meetup_ad_title}</div>
         </div>
-        <span className="text-gray-dark text-sm">{transformCreatedDate(proposal.created_at)}</span>
+        <span className="text-sm text-gray-dark">{transformCreatedDate(proposal.created_at)}</span>
       </div>
       <div className="flex w-full flex-row items-center justify-between gap-[1rem]">
         <div className="break-all">{proposal.text}&nbsp;&nbsp;</div>
         <div className="flex gap-[1rem] whitespace-nowrap text-white">
-          <button onClick={handleCancellationModalOpen} className="h-fil bg-warning rounded-[0.5rem] p-[0.5rem] text-sm font-bold">
+          <button onClick={handleCancellationModalOpen} className="h-fil rounded-[0.5rem] bg-warning p-[0.5rem] text-sm font-bold">
             취소
           </button>
-          <button onClick={handleProposalHide} className="bg-gray-dark rounded-[0.5rem] p-[0.5rem] text-sm font-bold">
+          <button onClick={handleProposalHide} className="rounded-[0.5rem] bg-gray-dark p-[0.5rem] text-sm font-bold">
             숨기기
           </button>
         </div>

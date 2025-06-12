@@ -33,6 +33,6 @@ export const markNotificationAsRead = async (notificationId: number): Promise<vo
   if (!response.ok) {
     throw new Error("알림 읽음 처리 실패");
   }
-  
+
   return;
 };
