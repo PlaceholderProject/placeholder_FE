@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { BASE_URL } from "@/constants/baseURL";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
