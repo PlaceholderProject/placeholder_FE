@@ -1,12 +1,13 @@
 import ScheduleDetail from "@/components/schedule/ScheduleDetail";
 import ReplyArea from "@/components/common/reply/ReplyArea";
 
-const ScheduleDetailPage = ({ params }: { params: { scheduleId: number } }) => {
-  const { scheduleId } = params;
-  
+const ScheduleDetailPage = async ({ params }: { params: Promise<{ scheduleId: string }> }) => {
+  const { scheduleId } = await params;
+  const scheduleIdNum = Number(scheduleId);
+
   return (
     <>
-      <ScheduleDetail scheduleId={scheduleId} />
+      <ScheduleDetail scheduleId={scheduleIdNum} />
       <ReplyArea />
     </>
   );

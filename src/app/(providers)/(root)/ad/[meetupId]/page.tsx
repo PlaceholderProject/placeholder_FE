@@ -1,6 +1,5 @@
 "use client";
 
-import { use, useEffect } from "react";
 import AdButton from "@/components/ad/AdButton";
 import AdClientSideWrapper from "@/components/ad/AdClientSideWrapper";
 import AdDetail from "@/components/ad/AdDetail";
@@ -9,14 +8,12 @@ import AdOrganizer from "@/components/ad/AdOrganizer";
 import ReplyArea from "@/components/common/reply/ReplyArea";
 import { useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
+import { useParams } from "next/navigation";
 
-type PageParams = {
-  meetupId: string;
-};
+const AdPage = () => {
+  const { meetupId } = useParams();
+  const meetupIdNum = Number(meetupId);
 
-const AdPage = ({ params }: { params: PageParams }) => {
-  const resolvedParams = use(params as any) as PageParams;
-  const parsedMeetupId = parseInt(resolvedParams.meetupId, 10);
   const user = useSelector((state: RootState) => state.user.user);
   const userNickname = user?.nickname || "";
 
@@ -24,12 +21,12 @@ const AdPage = ({ params }: { params: PageParams }) => {
 
   return (
     <div className="py-[10rem]">
-      <AdSignboard meetupId={parsedMeetupId} />
-      <AdOrganizer meetupId={parsedMeetupId} />
-      <AdDetail meetupId={parsedMeetupId} userNickname={userNickname} />
-      <AdButton meetupId={parsedMeetupId} />
+      <AdSignboard meetupId={meetupIdNum} />
+      <AdOrganizer meetupId={meetupIdNum} />
+      <AdDetail meetupId={meetupIdNum} userNickname={userNickname} />
+      <AdButton meetupId={meetupIdNum} />
       <ReplyArea />
-      <AdClientSideWrapper meetupId={parsedMeetupId} />
+      <AdClientSideWrapper meetupId={meetupIdNum} />
     </div>
   );
 };
