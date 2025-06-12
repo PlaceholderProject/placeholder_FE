@@ -37,7 +37,7 @@ const CurrentMyAd = () => {
 
   //
 
-  const [isOrganizer, setIsOrganizer] = useState(true);
+  const isOrganizer = true;
   const {
     data: myAdsData,
     isPending,

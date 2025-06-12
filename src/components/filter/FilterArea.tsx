@@ -9,7 +9,7 @@ import PlaceButtons from "./PlaceButtons";
 const FilterArea = () => {
   const dispatch = useDispatch();
 
-  const { isPlaceMenuOpen, isCategoryMenuOpen, place, category, isFilterActive } = useSelector((state: RootState) => state.filter);
+  const { isPlaceMenuOpen, isCategoryMenuOpen, isFilterActive } = useSelector((state: RootState) => state.filter);
 
   const handlePlaceButtonClick = () => {
     dispatch(togglePlaceMenu());

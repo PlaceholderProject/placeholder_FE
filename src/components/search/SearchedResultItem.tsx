@@ -15,7 +15,7 @@ const SearchedResultItem = ({ ad }: { ad: SearchedType }) => {
       return <>{ad.adTitle}</>;
     }
 
-    const escaped = keyword.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
+    const escaped = keyword.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
     const regex = new RegExp(`(${escaped})`, "gi");
     return ad.adTitle.split(regex).map((part, idx) => {
       return regex.test(part) ? (

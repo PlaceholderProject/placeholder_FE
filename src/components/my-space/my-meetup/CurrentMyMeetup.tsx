@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import RoleIcon from "./RoleIcon";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import MemberOutContainer from "./MemberOutContainer";
 import { getMyMeetupMembersApi, getMyMeetupsApi } from "@/services/my.space.service";
 import Link from "next/link";
@@ -12,8 +12,6 @@ import { getUser } from "@/services/user.service";
 import { useMemberDelete } from "@/hooks/useMemberDelete";
 
 const CurrentMyMeetup = () => {
-  const queryClient = useQueryClient();
-
   // 삭제 로직을 조부모가 통합적으로 관리하는데 그걸 커스텀훅으로 뻈습니다
   const deleteMutation = useMemberDelete();
 

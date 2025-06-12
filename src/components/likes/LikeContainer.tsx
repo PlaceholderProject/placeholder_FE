@@ -245,6 +245,7 @@ import { toggleLikeApi } from "@/services/like.service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import LikePart from "./LikePart";
 import { LikeContainerProps } from "@/types/likeType";
+import { Meetup } from "@/types/meetupType";
 
 const LikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerProps) => {
   const queryClient = useQueryClient();
@@ -266,12 +267,13 @@ const LikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerPro
       // const previousLikeData = await getLikeByIdApi(id);
 
       // headhuntings 쿼리 데이터 업데이트
-      queryClient.setQueryData(["headhuntings"], (oldData: any) => {
+      queryClient.setQueryData(["headhuntings"], (oldData: Meetup) => {
         if (!oldData) return oldData;
+        console.log("ㅇㄷㄷㅇㅌ", oldData);
 
         return {
           ...oldData,
-          pages: oldData.pages.map((page: any) => ({
+          pages: oldData.pages.map((page: number) => ({
             ...page,
             result: page.result.map((item: any) =>
               item.id === id

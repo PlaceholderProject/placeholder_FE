@@ -107,9 +107,6 @@ const MeetupForm = () => {
   const [isStartedAtNull, setIsStartedAtNull] = useState(false);
   const [isEndedAtNull, setIsEndedAtNull] = useState(false);
 
-  // 제출 로딩상태 관리 스테이트 추가
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   // 미리보기 스테이트
   const [previewImage, setPreviewImage] = useState("/meetup_default_image.jpg");
 
@@ -223,7 +220,7 @@ const MeetupForm = () => {
       console.log("설정된 모임 시작일, 모임 종료일, 광고 종료일:", startDate, endDate, adEndDate);
 
       // 제출 상태 다시 초기화 추가
-      setIsSubmitting(false);
+      //   setIsSubmitting(false);
       return;
     }
 
@@ -267,11 +264,8 @@ const MeetupForm = () => {
       queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
       alert("모임 생성에 성공했습니다!");
       router.push("/");
-    } catch (error: any) {
-      console.error("모임 생성 오류 발생:", error?.message || "알 수 없는 오류");
-      alert(`모임 생성 중 오류가 발생했습니다: ${error?.message || "알 수 없는 오류"}`);
-    } finally {
-      setIsSubmitting(false);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -347,7 +341,7 @@ const MeetupForm = () => {
                   // １. ref={isStartedAtNullRef}
                   //checked={isStartedAtNullRef.current}를 위처럼 수정하고
                   //onChage 지우니까 토글만 됨
-                  // 2.　useRef를 통해 상태를 저장, 리액트의 chekced와 disabled 속성을
+                  // 2.useRef를 통해 상태를 저장, 리액트의 chekced와 disabled 속성을
                   // useRef.current 기준으로 렌더링에 반영
                   // checked={isStartedAtNullRef.current}
                   // onChange={event => {
