@@ -1,57 +1,69 @@
 "use client";
 
 import { getMyMeetupMembersApi } from "@/services/my.space.service";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { BASE_URL } from "@/constants/baseURL";
 import OutButton from "./OutButton";
 import { MyMeetupMember } from "@/types/myMeetupMemberType";
 import Image from "next/image";
+import { useSelector } from "react-redux";
+import { RootState } from "@/stores/store";
+import { useMemberDelete } from "@/hooks/useMemberDelete";
 
-// const MyMeetupMembers = (meetupId: number) => {
+interface MyMeetupMembersProps {
+  meetupId: number;
+  // onKickMember: (memberId: number) => void;
+  // isPending: boolean;
+}
+const MyMeetupMembers: React.FC<MyMeetupMembersProps> = ({ meetupId }) => {
+  // 개별 유저 이미 관리 스테이트
+  const [userImages, setUserImages] = useState<{ [userId: number]: string }>({});
 
-const MyMeetupMembers: React.FC<{ meetupId?: number }> = ({ meetupId }) => {
-  const [imageSource, setImageSource] = useState("/profile.png");
+  const deleteMutation = useMemberDelete();
+
+  //강퇴 핸들러를 내부에서 구현
+  const handleKickMember = (memberId: number) => {
+    const confirmed = window.confirm("정말 이 멤버를 강퇴하시겠습니까?");
+    if (confirmed) {
+      deleteMutation.mutate(memberId);
+    }
+  };
+
+  // const selectedMeetupId = useSelector((state: RootState) => state.modal.selectedMeetupId);
 
   const {
     data: myMeetupMembersData,
-    isPending,
+    isPending: isDataPending,
     isError,
     error,
   } = useQuery({
     queryKey: ["myMeetupMembers", meetupId],
-    queryFn: () => {
-      if (!meetupId) {
-        throw new Error("meetupId가 필요하다고");
-      }
-      return getMyMeetupMembersApi(meetupId);
-    },
+    queryFn: () => getMyMeetupMembersApi(meetupId),
     enabled: !!meetupId,
   });
 
+  // 이미지 처리 로직
   useEffect(() => {
-    if (myMeetupMembersData?.result?.[0]?.user?.image) {
-      const userImage = myMeetupMembersData.result[0].user.image;
-      const profileImageUrl = userImage.startsWith("http") ? userImage : `${BASE_URL}${userImage}`;
-      setImageSource(profileImageUrl);
-      // const imgElement = document.createElement("img");
-      // imgElement.onload = () => {
-      //   setImageSource(profileImageUrl);
-      // };
-      // imgElement.onerror = () => {
-      //   setImageSource("/profile.png");
-      // };
-      // imgElement.src = profileImageUrl; // 이 부분이 누락되어 있었음
-      // // 클린업함수
-      // return () => {
-      //   if (imgElement) {
-      //     imgElement.onload = null;
-      //     imgElement.onerror = null;
-      //   }
-      // };
+    if (myMeetupMembersData?.result) {
+      // 개별 멤버 이미지 처리
+      const imageMap: { [userId: number]: string } = {};
+
+      myMeetupMembersData.result.forEach((member: MyMeetupMember) => {
+        if (member.user?.id) {
+          if (member.user.image) {
+            const userImage = member.user.image;
+            const profileImageUrl = userImage.startsWith("http") ? userImage : `${BASE_URL}${userImage}`;
+            imageMap[member.user.id] = profileImageUrl;
+          } else {
+            imageMap[member.user.id] = "/profile.png";
+          }
+        }
+      });
+      setUserImages(imageMap);
     }
   }, [myMeetupMembersData]);
-  console.log(`프로필이미지url:, ${imageSource}`);
+  // console.log(`프로필이미지url:, ${userImages}`);
 
   //myMeetupmembersData를 넣으려고 했더니 선언 전에 쓰려고 했대..
   // use 커스텀훅으로 빼야한다 AdOrganizer 처럼..
@@ -71,28 +83,27 @@ const MyMeetupMembers: React.FC<{ meetupId?: number }> = ({ meetupId }) => {
   // };
 
   if (!meetupId) return <div>모임 아이디 필요핣니다.</div>;
-  if (isPending) return <div>로딩중...</div>;
+  // if (isPending) return <div>로딩중...</div>;
   if (isError) return <div>에러 : {error.message}</div>;
   if (!myMeetupMembersData || !myMeetupMembersData.result || myMeetupMembersData.result.length === 0) return <div>멤버가 없습니다.</div>;
 
   return (
     <>
-      {myMeetupMembersData.result.map((myMeetupMember: MyMeetupMember) => {
-        // const profileImageUrl = myMeetupMember.user?.image?.startsWith("http") ? myMeetupMember.user.image : `${BASE_URL}${myMeetupMember.user?.image}`;
-
+      {myMeetupMembersData.result.map((member: MyMeetupMember) => {
+        const userImageSource = userImages[member.user?.id || 0] || "/profile.png";
         return (
-          <div key={myMeetupMember.id}>
-            {myMeetupMember.role == "organizer" && <span>👑</span>}이 아이디는 뭐야? : {myMeetupMember.id}
-            <Image src={imageSource} alt="내 모임 회원 이미지" width={50} height={50} className="size-8 rounded-full" />
-            모임아이디 : {myMeetupMember.meetupId}
+          <div key={member.id}>
+            {member.role == "organizer" && <span>👑</span>}mebmer.id래요 언제 생성되심? : {member.id}
+            <Image src={userImageSource} alt="내 모임 회원 프로필 이미지" width={32} height={32} className="rounded-full" />
+            모임아이디 : {member.meetupId}
             <br />
-            모임에서 역할 : {myMeetupMember.role}
+            모임에서 역할 : {member.role}
             <br />
-            유저아이디 : {myMeetupMember.user?.id}
+            이게 유저아이디 member.user.id 이게 맞는거같은데: {member.user?.id}
             <br />
-            유저닉넴 : {myMeetupMember.user?.nickname}
+            유저닉넴 : {member.user?.nickname}
             <br />
-            {myMeetupMember.role !== "organizer" && <OutButton isInMemberDeleteModal={true} memberId={myMeetupMember.id} />}
+            {member.role !== "organizer" && <OutButton text="강퇴" onClick={() => handleKickMember(member.id)} />}
           </div>
         );
       })}

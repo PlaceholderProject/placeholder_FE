@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAdByIdApi } from "@/services/ad.service";
 import { Meetup } from "@/types/meetupType";
+import { getMeetupByIdApi } from "@/services/meetup.service";
 
 export const useAdItem = (meetupId: number) => {
   const {
@@ -9,7 +9,7 @@ export const useAdItem = (meetupId: number) => {
     isPending,
   } = useQuery<Meetup, Error>({
     queryKey: ["ad", meetupId],
-    queryFn: () => getAdByIdApi(meetupId),
+    queryFn: () => getMeetupByIdApi(meetupId),
   });
 
   return {

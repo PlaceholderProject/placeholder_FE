@@ -2,7 +2,7 @@ import { BASE_URL } from "@/constants/baseURL";
 import { MyAdsResponse, MyMeetupsResponse } from "@/types/mySpaceType";
 import Cookies from "js-cookie";
 
-// 모임 공통 로직 재사용
+// 내모임 조회 공통 로직 재사용
 export const getMyMeetupsApi = async (status: string, page: number, size: number): Promise<MyMeetupsResponse> => {
   const token = Cookies.get("accessToken");
   try {
@@ -54,7 +54,7 @@ export const getMyMeetupsApi = async (status: string, page: number, size: number
 //   return getMyMeetupsApi("ended", "1", "10");
 // };
 
-// 광고 공통로직
+// 내광고 공통로직
 export const getMyAdsApi = async (status: string, page: number, size: number): Promise<MyAdsResponse> => {
   const token = Cookies.get("accessToken");
 
@@ -127,13 +127,14 @@ export const getMyMeetupMembersApi = async (meetupId: number | undefined) => {
   console.log("전체 응답:", myMeetupMembersData);
   console.log("result 배열:", myMeetupMembersData.result);
   if (myMeetupMembersData.result && myMeetupMembersData.result[0]) {
-    console.log("첫 번째 멤버:", myMeetupMembersData.result[0]);
+    console.log("첫 번째 멤버 보여주세요:", myMeetupMembersData.result[0]);
+  }
+  if (myMeetupMembersData.result && myMeetupMembersData.result[1]) {
+    console.log("두 번째 멤버 보여주세요:", myMeetupMembersData.result[1]);
   }
   console.log("=====================");
   console.log("내공간 멤버 데이터:", myMeetupMembersData);
-  console.log("내공간 멤버데이터 모임 아이디:", myMeetupMembersData.result[0].meetupId);
-  console.log("내공간 멤버데이터 모임 - 유저 아이디:", myMeetupMembersData.result[0].user?.id);
-  console.log("내공간 멤버데이터 모임 - 유저 닉네임:", myMeetupMembersData.result[0].user?.nickname);
+
   return myMeetupMembersData;
 };
 

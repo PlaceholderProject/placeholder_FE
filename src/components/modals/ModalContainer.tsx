@@ -21,6 +21,9 @@ const getModalSize = (modalType: ModalType): string => {
       return "w-full max-w-md max-h-[90vh] overflow-y-auto";
     case "PROPOSAL_POSTCARD":
       return "w-[280px] max-w-[90vw]";
+    // getModalSize 함수에 추가
+    case "MEMBER_DELETE":
+      return "w-full max-w-md max-h-[90vh] overflow-y-auto";
     default:
       return "w-[280px] h-[287px] max-w-[90vw] max-h-[90vh]";
   }
@@ -41,8 +44,11 @@ const renderModalContent = (modalType: ModalType, modalData: ModalData): JSX.Ele
       return <MeetupMembersContent meetupId={modalData.meetupId!} meetupName={modalData.meetupName!} />;
     case "MEETUP_INFO":
       return <MeetupInfoContent meetupData={modalData.meetupData!} isOrganizer={modalData.isOrganizer!} meetupId={modalData.meetupId!} />;
+    // case "MEMBER_DELETE":
+    //   return <MemberDeleteContent memberId={modalData.memberId!} />;
+    // renderModalContent 함수에 추가 수정
     case "MEMBER_DELETE":
-      return <MemberDeleteContent memberId={modalData.memberId!} />;
+      return <MemberDeleteContent />;
     default:
       return null;
   }
