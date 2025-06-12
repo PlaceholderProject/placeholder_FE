@@ -4,7 +4,7 @@ import RoleIcon from "./RoleIcon";
 import { useQuery } from "@tanstack/react-query";
 import MemberOutContainer from "./MemberOutContainer";
 import { getMyMeetupsApi } from "@/services/my.space.service";
-import { SIZE_LIMIT, BUTTONS_PER_GROUP } from "@/constants/pagination";
+import { BUTTONS_PER_GROUP, SIZE_LIMIT } from "@/constants/pagination";
 import PaginationButtons from "../PaginationButtons";
 
 const PastMyMeetup = () => {
