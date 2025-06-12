@@ -3,21 +3,47 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { FaRegBell } from "react-icons/fa6";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/stores/store";
 import { setIsAuthenticated } from "@/stores/authSlice";
-import { persistor, RootState } from "@/stores/store";
+import { setHasUnreadNotifications } from "@/stores/notificationSlice";
 import { logout } from "@/stores/userSlice";
+import { useQueryClient } from "@tanstack/react-query";
+import HamburgerMenu from "@/components/common/HamburgerMenu";
 
 const Header = () => {
-  const [isRead, setIsRead] = useState(true);
-  const router = useRouter();
-
+  const hasUnreadNotifications = useSelector((state: RootState) => state.notification.hasUnread);
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
-
+  const user = useSelector((state: RootState) => state.user.user);
   const dispatch = useDispatch();
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const handleLogout = useCallback(async () => {
+    try {
+      localStorage.removeItem("persist:user");
+
+      Cookies.remove("accessToken");
+      Cookies.remove("refreshToken");
+
+      dispatch(logout());
+      dispatch(setIsAuthenticated(false));
+      dispatch(setHasUnreadNotifications(false));
+
+      queryClient.invalidateQueries({ queryKey: ["myMeetups", "organizer"] });
+      queryClient.invalidateQueries({ queryKey: ["receivedProposals"] });
+      queryClient.invalidateQueries({ queryKey: ["sentProposals"] });
+
+      await queryClient.clear();
+
+      router.replace("/");
+    } catch (error) {
+      console.error("로그아웃 중 오류:", error);
+    }
+  }, [dispatch, queryClient, router]);
 
   useEffect(() => {
     const accessToken = Cookies.get("accessToken");
@@ -29,46 +55,47 @@ const Header = () => {
     }
   }, []);
 
-  const handleLogout = async () => {
-    router.replace("/");
-    Cookies.remove("accessToken");
-    Cookies.remove("refreshToken");
-    dispatch(setIsAuthenticated(false));
-    dispatch(logout());
-
-    await persistor.purge();
-    console.log("User data cleared from persist storage.");
-  };
-
   const handleNotificationPage = () => {
     router.replace("/notification");
-    setIsRead(false);
   };
 
   return (
-    <header className="bg-[#006B8B] h-[60] flex justify-center items-center">
-      <div className="w-11/12 flex justify-between">
+    <header className="fixed left-0 right-0 top-0 z-50 flex h-[6rem] items-center justify-center bg-primary md:h-[7.5rem]">
+      <div className="flex w-[95%] justify-between md:w-[111rem] md:px-[1.5rem]">
         <Link href="/">
-          <Image src="/logo.png" alt="로고" width={113} height={20} />
+          <Image src="/smallLogo.png" alt="작은 로고" width={30} height={30} className="block transition-all duration-300 md:hidden" />
+          <Image src="/logo.png" alt="큰 로고" width={175} height={60} className="hidden transition-all duration-300 md:block" />
         </Link>
-        <div className="flex justify-center items-center gap-3">
+
+        <div className="flex items-center justify-center gap-[1rem]">
           {isAuthenticated ? (
-            <>
-              <div className="relative">
-                <button onClick={handleNotificationPage}>
-                  <FaRegBell color="#D9D9D9" size="20" />
+            <div className="flex flex-row items-center gap-[1rem]">
+              <p className="hidden text-base text-white md:block">
+                🍋 <span className="font-bold">{user.nickname}</span> 님 안녕하세요!
+              </p>
+              <div className="relative flex items-center">
+                <button onClick={handleNotificationPage} className="text-[2.3rem] text-gray-light">
+                  <FaRegBell />
+                  {hasUnreadNotifications && <div className="absolute right-0 top-0 h-[0.8rem] w-[0.8rem] rounded-full bg-error md:h-[1rem] md:w-[1rem]"></div>}
                 </button>
-                {isRead && <div className="bg-[#F9617A] w-2 h-2 rounded-full absolute right-0 top-0"></div>}
               </div>
-              <button onClick={handleLogout} className="w-20 h-8 bg-[#FEFFEC]">
+              <button onClick={handleLogout} className="h-[2.3rem] w-[7rem] rounded-[0.3rem] bg-secondary-light font-semibold leading-none md:h-[2.6rem] md:w-[11rem] md:rounded-[0.6rem]">
                 로그아웃
               </button>
-            </>
+            </div>
           ) : (
-            <Link href="/login">
-              <button className="w-20 h-8 bg-[#FEFFEC]">로그인</button>
-            </Link>
+            <div className="flex gap-[2rem]">
+              <Link href="/login">
+                <button className="h-[2.3rem] w-[7rem] rounded-[0.3rem] bg-secondary-light font-semibold md:h-[2.6rem] md:w-[11rem] md:rounded-[0.6rem]">로그인</button>
+              </Link>
+              <Link href="/signup">
+                <button className="h-[2.3rem] w-[7rem] rounded-[0.3rem] bg-secondary-light font-semibold md:h-[2.6rem] md:w-[11rem] md:rounded-[0.6rem]">회원가입</button>
+              </Link>
+            </div>
           )}
+          <div className="hidden lg:block">
+            <HamburgerMenu />
+          </div>
         </div>
       </div>
     </header>

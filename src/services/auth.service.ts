@@ -2,7 +2,59 @@ import { BASE_URL } from "@/constants/baseURL";
 import { LoginProps } from "@/types/authType";
 import Cookies from "js-cookie";
 
-// sign-in
+// 회원가입페이지 : 이메일 중복확인
+export const checkEmail = async (email: string) => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/v1/auth/email`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+      }),
+    });
+
+    if (!response.ok) {
+      alert("이미 사용중인 이메일입니다.");
+      return;
+    } else {
+      alert("사용 가능한 이메일입니다.");
+      return true;
+    }
+  } catch (error) {
+    console.error("네트워크 오류:", error);
+    return null;
+  }
+};
+
+// 회원가입페이지, 회원정보수정페이지 : 닉네임 중복확인
+export const checkNickname = async (nickname: string) => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/v1/auth/nickname`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nickname,
+      }),
+    });
+
+    if (!response.ok) {
+      alert("이미 사용중인 닉네임입니다.");
+      return;
+    } else {
+      alert("사용 가능한 닉네임입니다.");
+      return true;
+    }
+  } catch (error) {
+    console.error("네트워크 오류:", error);
+    return null;
+  }
+};
+
+// login
 export const login = async ({ email, password }: LoginProps) => {
   try {
     const response = await fetch(`${BASE_URL}/api/v1/auth/login`, {
@@ -79,7 +131,7 @@ export const recheckPassword = async (password: string) => {
       body: JSON.stringify({ password: password }),
     });
 
-    console.log("HTTP 상태 코드:", response.status);
+    // console.log("HTTP 상태 코드:", response.status);
 
     if (!response.ok) {
       throw new Error("비밀번호가 잘못되었습니다. 다시 시도해주세요.");

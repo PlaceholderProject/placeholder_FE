@@ -9,6 +9,8 @@ import { FaEyeSlash } from "react-icons/fa";
 import { login } from "@/services/auth.service";
 import { setIsAuthenticated } from "@/stores/authSlice";
 import { useDispatch } from "react-redux";
+import { getUser } from "@/services/user.service";
+import { setUser } from "@/stores/userSlice";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -46,36 +48,61 @@ const Login = () => {
     const response = await login({ email, password });
     if (response) {
       dispatch(setIsAuthenticated(true));
+      const fetchUser = async () => {
+        const data = await getUser();
+        if (data) {
+          dispatch(
+            setUser({
+              email: data.email,
+              nickname: data.nickname,
+              bio: data.bio,
+              profileImage: data.image,
+            }),
+          );
+        }
+      };
+      fetchUser();
       router.replace("/");
     }
   };
 
   return (
-    <div className="w-[400px] h-[500px] flex flex-col items-center justify-center">
-      <h2>로그인</h2>
-      <div className="border-[#CFCFCF] border-2 w-10/12 rounded-2xl flex flex-col items-center justify-center">
-        <form onSubmit={handleLoginFormSubmit} className="flex flex-col items-center justify-center">
+    <div className="flex h-full flex-col items-center justify-center">
+      <h1 className="mb-[2rem] text-3xl font-semibold">로그인</h1>
+      <div className="border-gray-medium flex h-[40rem] w-[80%] min-w-[30rem] flex-col items-center justify-center rounded-[1.5rem] border-[0.1rem]">
+        <form onSubmit={handleLoginFormSubmit} className="flex flex-col items-center justify-center gap-[1.2rem]">
           <div className="relative flex flex-col">
-            <label htmlFor="email">이메일 주소</label>
-            <input type="email" value={email} onChange={handleEmailChange} className="border-2 rounded-md" />
-            <button type="button" onClick={() => setEmail("")} className="absolute bottom-1 right-2">
-              <TiDelete size={20} />
+            <label htmlFor="email" className="text-lg font-semibold">
+              이메일 주소
+            </label>
+            <input type="email" value={email} onChange={handleEmailChange} className="border-gray-medium h-[4rem] w-[24rem] rounded-[1rem] border-[0.1rem] px-[1rem]" />
+            <button type="button" onClick={() => setEmail("")} className="absolute right-[1.2rem] top-[3.1rem] text-[2.5rem]">
+              <TiDelete />
             </button>
           </div>
           <div className="relative flex flex-col">
-            <label htmlFor="password">비밀번호</label>
-            <input type={isVisivlePassword ? "text" : "password"} value={password} onChange={handlePasswordChange} className="border-2 rounded-md" />
-            <button type="button" onClick={handleTogglePassword} className="absolute bottom-1 right-2">
+            <label htmlFor="password" className="text-lg font-semibold">
+              비밀번호
+            </label>
+            <input
+              type={isVisivlePassword ? "text" : "password"}
+              value={password}
+              onChange={handlePasswordChange}
+              className="border-gray-medium h-[4rem] w-[24rem] rounded-[1rem] border-[0.1rem] px-[1rem]"
+            />
+            <button type="button" onClick={handleTogglePassword} className="absolute right-[1.3rem] top-[3.2rem] text-[2.3rem]">
               {isVisivlePassword ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
-          <button type="submit" className="bg-gray-200">
-            로그인
-          </button>
+          <div className="flex flex-col gap-[0.8rem]">
+            <button type="submit" className="bg-primary mt-[1rem] h-[4rem] w-[24rem] rounded-[1rem] text-lg text-white">
+              로그인
+            </button>
+            <Link href="/signup">
+              <div className="bg-secondary-dark flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] text-lg">회원가입</div>
+            </Link>
+          </div>
         </form>
-        <Link href="/signup">
-          <div className="bg-slate-100">회원가입</div>
-        </Link>
       </div>
     </div>
   );

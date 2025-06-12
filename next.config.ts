@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ["localhost"], // 또는 서버 도메인
+    domains: ["localhost"],
 
     remotePatterns: [
       {

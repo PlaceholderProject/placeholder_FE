@@ -1,7 +1,72 @@
-import React from "react";
+"use client";
+import { BASE_URL } from "@/constants/baseURL";
+import { useDeleteReply } from "@/hooks/useReply";
+import { RootState } from "@/stores/store";
+import { Reply } from "@/types/replyType";
+import { transformCreatedDate } from "@/utils/ReplyDateFormat";
+import Image from "next/image";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
-const NestedReplyItem = () => {
-  return <div>NestedReplyItem</div>;
+const NestedReplyItem = ({ nestedReply, meetupId, handleReplyUpdate }: { nestedReply: Reply; meetupId: string | string[]; handleReplyUpdate: (replyId: number) => void }) => {
+  const user = useSelector((state: RootState) => state.user.user);
+  const deleteReplyMutation = useDeleteReply(meetupId);
+
+  const [text, setText] = useState("");
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  const handleReplyDelete = async (replyId: number) => {
+    if (confirm("정말로 답글을 삭제하시겠습니까?")) {
+      await deleteReplyMutation.mutate(replyId);
+      alert("정상적으로 삭제되었습니다.");
+    }
+  };
+
+  const handleTextchange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setText(event.target.value);
+  };
+
+  const handleUpdateMode = () => {
+    setIsEditMode(!isEditMode);
+    setText(nestedReply.text);
+  };
+
+  return (
+    <div className="mt-[0.5rem] flex w-full flex-col items-start gap-[0.5rem]">
+      <div className="flex w-full justify-between">
+        <span className="flex flex-row items-center gap-[0.5rem]">
+          <div className="h-[2.5rem] w-[2.5rem] overflow-hidden rounded-full">
+            <Image
+              src={nestedReply.user.image ? (nestedReply.user.image.startsWith("http") ? nestedReply.user.image : `${BASE_URL}${nestedReply.user.image}`) : "/profile.png"}
+              alt="프로필 이미지"
+              width="25"
+              height="25"
+              unoptimized={true}
+            />
+          </div>
+          <span className="text-sm">
+            {nestedReply.isOrganizer && "👑 "}
+            {nestedReply.user.nickname} ✨
+          </span>
+          <span className="text-gray-dark text-sm">{transformCreatedDate(nestedReply.createdAt)}</span>
+        </span>
+        {nestedReply.user.nickname === user.nickname ? (
+          !isEditMode ? (
+            <span className="text-gray-dark flex gap-[1rem]">
+              <button onClick={handleUpdateMode}>수정</button>
+              <button onClick={() => handleReplyDelete(nestedReply.id)}>삭제</button>
+            </span>
+          ) : (
+            <span className="text-gray-dark flex gap-[1rem]">
+              <button onClick={handleUpdateMode}>취소</button>
+              <button onClick={() => handleReplyUpdate(nestedReply.id)}>수정</button>
+            </span>
+          )
+        ) : null}
+      </div>
+      {isEditMode ? <textarea value={text} onChange={handleTextchange} className="mx-[3rem] my-[1rem] w-[90%] rounded-[1rem] p-[1rem]" /> : <div className="w-full px-[3rem]">{nestedReply.text}</div>}
+    </div>
+  );
 };
 
 export default NestedReplyItem;

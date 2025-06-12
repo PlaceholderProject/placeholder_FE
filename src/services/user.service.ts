@@ -5,7 +5,7 @@ import { EditedUserProps, User } from "@/types/userType";
 import { NewUserProps } from "@/types/authType";
 
 // create user
-export const createUser = async (newUser: NewUserProps) => {
+export const createUser = async (newUser: NewUserProps): Promise<number | undefined> => {
   try {
     const response = await fetch(`${BASE_URL}/api/v1/user`, {
       method: "POST",
@@ -52,7 +52,7 @@ export const getUser = async (retryCount: number = 0): Promise<User | null> => {
       return null;
     }
     const result = await response.json();
-    console.log(result);
+    // console.log(result);
     return result;
   } catch (error) {
     console.error("데이터 가져오기 오류:", error);

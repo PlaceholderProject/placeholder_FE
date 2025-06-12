@@ -1,7 +1,8 @@
 "use client";
 
 import { BASE_URL } from "@/constants/baseURL";
-import { editUser, getUser } from "@/services/user.service";
+import { useEditUser, useUser } from "@/hooks/useUser";
+import { checkNickname } from "@/services/auth.service";
 import { RootState } from "@/stores/store";
 import { setUser } from "@/stores/userSlice";
 import Image from "next/image";
@@ -12,7 +13,7 @@ import { FaCog } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 
 const AccountEdit = () => {
-  const [profileImage, setProfileImage] = useState<string>("");
+  const [profileImage, setProfileImage] = useState<string | null>("");
   const [nickname, setNickname] = useState("");
   const [nicknameWarning, setNicknameWarning] = useState("");
   const [bio, setBio] = useState("");
@@ -20,6 +21,10 @@ const AccountEdit = () => {
   const [bioWarning, setBioWarning] = useState("");
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const { data, isLoading } = useUser();
+
+  const editUserMutation = useEditUser();
 
   const user = useSelector((state: RootState) => state.user.user);
   const dispatch = useDispatch();
@@ -29,7 +34,6 @@ const AccountEdit = () => {
   useEffect(() => {
     if (!user.email) {
       const fetchUser = async () => {
-        const data = await getUser();
         if (data) {
           dispatch(
             setUser({
@@ -41,7 +45,6 @@ const AccountEdit = () => {
           );
           setProfileImage(data.image || "/profile.png");
         }
-        console.log(data);
       };
       fetchUser();
     } else {
@@ -54,18 +57,17 @@ const AccountEdit = () => {
       setNickname(user.nickname || "");
       setBio(user.bio || "");
     }
-  }, [user]);
+  }, []);
+
+  if (!data) return;
 
   const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const objectUrl = URL.createObjectURL(file);
       setProfileImage(objectUrl); // Blob URL을 React 상태에 설정
-      console.log("Blob URL 생성:", objectUrl);
     }
   };
-
-  console.log("파일 등록시", profileImage);
 
   const handleNicknameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value.length > 8) {
@@ -87,13 +89,35 @@ const AccountEdit = () => {
     setBioTextLength(event.target.value.length);
   };
 
+  const handleCheckNickname = async () => {
+    if (nickname === user.nickname) {
+      alert("사용 가능한 닉네임입니다.");
+      return;
+    }
+    if (!nickname.trim()) {
+      alert("닉네임을 입력해주세요.");
+      return;
+    }
+    if (nickname.length < 2 || nickname.length > 8) {
+      alert("닉네임은 최소 2자 최대 8자까지 가능합니다.");
+      return;
+    }
+    await checkNickname(nickname);
+  };
+
   const handleAccountEditFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const file = fileInputRef.current?.files?.[0];
+    if (!nickname.trim()) {
+      alert("닉네임을 입력해주세요.");
+      return;
+    }
+    if (nickname.length < 2 || nickname.length > 8) {
+      alert("닉네임은 최소 2자 최대 8자까지 가능합니다.");
+      return;
+    }
 
-    console.log(file?.name);
-    console.log(profileImage);
+    const file = fileInputRef.current?.files?.[0];
 
     const editedUser = {
       nickname,
@@ -101,46 +125,45 @@ const AccountEdit = () => {
       profileImage: file || null,
     };
 
-    const response = await editUser(editedUser);
+    try {
+      const response = await editUserMutation.mutateAsync(editedUser);
 
-    if (response) {
-      console.log("Update successful:", response);
+      if (response) {
+        const imageUrl = response.image ? (response.image.startsWith("http") ? response.image : `${BASE_URL}${response.image}`) : null;
 
-      const imageUrl = response.image ? (response.image.startsWith("http") ? response.image : `${BASE_URL}${response.image}`) : "/profile.png"; // 기본 이미지 경로
+        dispatch(
+          setUser({
+            email: response.email,
+            nickname: response.nickname,
+            bio: response.bio,
+            profileImage: imageUrl,
+          }),
+        );
 
-      console.log(imageUrl);
-
-      dispatch(
-        setUser({
-          email: response.email,
-          nickname: response.nickname,
-          bio: response.bio,
-          profileImage: imageUrl,
-        }),
-      );
-      setProfileImage(imageUrl);
-
-      alert("회원 정보가가 변경되었습니다.");
-      router.replace("/account");
-    } else {
-      console.error("Update failed");
-      return;
+        setProfileImage(imageUrl);
+        alert("회원 정보가 변경되었습니다.");
+        router.replace("/account");
+      }
+    } catch (error) {
+      alert("이미 사용 중인 닉네임입니다. 닉네임 중복을 확인해주세요.");
+      console.error("Update failed:", error);
     }
   };
 
+  if (isLoading) return <div>로딩중</div>;
+
   return (
     <div>
-      <div className="flex flex-col items-center">
-        <h2 className="">회원 정보 수정</h2>
-        <div className="border-2 flex flex-col items-center rounded-xl">
-          <form onSubmit={handleAccountEditFormSubmit}>
-            <div>
-              <div className="w-[200px] h-[200px] rounded-full relative bg-slate-300 overflow-hidden">
-                <Image src={profileImage || "/profile.png"} alt="프로필 이미지" fill className="object-cover" />
+      <div className="my-[4rem] flex min-h-[calc(100vh-12rem)] flex-col items-center justify-center md:min-h-[calc(100vh-13.5rem)]">
+        <h2 className="mb-[2rem] text-3xl font-semibold">회원 정보 수정</h2>
+        <div className="border-gray-medium flex h-full min-h-[54rem] w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] py-[2rem]">
+          <form onSubmit={handleAccountEditFormSubmit} className="flex flex-col justify-center gap-[1.5rem] p-[2rem]">
+            <div className="relative flex items-center justify-center">
+              <div className="relative h-[15rem] w-[15rem] overflow-hidden rounded-full">
+                <Image src={profileImage ? profileImage : "/profile.png"} alt="프로필 이미지" fill className="object-cover" />
               </div>
-
-              <label htmlFor="profileImage" className="cursor-pointer rounded-full">
-                <FaCog size={20} />
+              <label htmlFor="profileImage" className="bg-primary absolute bottom-0 right-20 flex h-[3rem] w-[3rem] cursor-pointer items-center justify-center rounded-full text-2xl text-white">
+                <FaCog />
                 <input
                   type="file"
                   id="profileImage"
@@ -151,23 +174,50 @@ const AccountEdit = () => {
                 />
               </label>
             </div>
-
-            <div className="flex flex-col">
-              <label htmlFor="nickname">닉네임</label>
-              <input type="text" value={nickname} onChange={handleNicknameChange} className="border-2 rounded-md" />
-              {nicknameWarning && <p>{nicknameWarning}</p>}
+            <div>
+              <div className="flex flex-col">
+                <label htmlFor="nickname" className="text-lg font-semibold">
+                  닉네임
+                </label>
+                <div>
+                  <input type="text" value={nickname} onChange={handleNicknameChange} className="border-gray-medium h-[4rem] w-[18rem] rounded-l-[1rem] border-[0.1rem] px-[1rem]" />
+                  <button
+                    type="button"
+                    onClick={handleCheckNickname}
+                    className="border-gray-medium hover:bg-gray-medium bg-gray-light h-[4rem] w-[6rem] rounded-r-[1rem] border-y-[0.1rem] border-r-[0.1rem]"
+                  >
+                    중복확인
+                  </button>
+                  {nicknameWarning && <p className="text-warning mt-[0.3rem] w-[24rem] text-sm">{nicknameWarning}</p>}
+                </div>
+              </div>
+              <div className="flex flex-col">
+                <label htmlFor="bio" className="text-lg font-semibold">
+                  자기소개
+                </label>
+                <div>
+                  <textarea
+                    value={bio}
+                    onChange={handleBioChange}
+                    placeholder="함께할 모임원을 위해 간단한 자기소개를 작성해주세요."
+                    className="border-gray-medium h-[7rem] w-[24rem] rounded-[1rem] border-[0.1rem] p-[1rem]"
+                  />
+                  {bioWarning && <p className="text-warning mt-[0.3rem] w-[24rem] text-sm">{bioWarning}</p>}
+                  <div className="flex w-full justify-end">
+                    <p className="mt-[0.3rem] text-sm">{bioTextLength}/40</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <label htmlFor="bio">자기소개</label>
-              <textarea value={bio} onChange={handleBioChange} placeholder="함께할 모임원을 위해 간단한 자기소개를 작성해주세요." className="border-2 rounded-md" />
-              {bioWarning && <p>{bioWarning}</p>}
-              <p>{bioTextLength}/40</p>
+            <div className="flex flex-col gap-[0.8rem]">
+              <button type="submit" className="bg-secondary-dark flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] text-lg">
+                변경하기
+              </button>
+              <Link href="/account">
+                <div className="bg-gray-light flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] text-lg">취소하기</div>
+              </Link>
             </div>
-            <button type="submit">변경하기</button>
           </form>
-          <div>
-            <Link href="/account">취소하기</Link>
-          </div>
         </div>
       </div>
     </div>

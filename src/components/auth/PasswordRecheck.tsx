@@ -40,20 +40,34 @@ const PasswordRecheck = () => {
   };
 
   return (
-    <div className="bg-red-200 w-[500px] h-[500px]">
-      <form onSubmit={handlePasswordRecheckFormSubmit}>
-        <h3>비밀번호 재확인</h3>
-        <p>회원정보 보호를 위해 비밀번호를 다시 한 번 확인합니다.</p>
+    <div>
+      <form onSubmit={handlePasswordRecheckFormSubmit} className="flex w-full flex-col items-center gap-[3rem]">
+        <h1 className="text-lg font-bold">비밀번호 재확인</h1>
+        <div className="flex flex-col items-center">
+          <div>회원정보 보호를 위해 </div>
+          <div>비밀번호를 다시 한 번 확인합니다.</div>
+        </div>
         <div className="relative flex flex-col">
-          <label htmlFor="password">비밀번호</label>
-          <input type={isVisivlePassword ? "text" : "password"} value={password} onChange={handlePasswordChange} className="border-2 rounded-md" />
-          <button type="button" onClick={handleTogglePassword} className="absolute bottom-1 right-2">
+          <input
+            type={isVisivlePassword ? "text" : "password"}
+            value={password}
+            onChange={handlePasswordChange}
+            placeholder="비밀번호를 입력해주세요."
+            className="border-gray-medium h-[4rem] w-[24rem] rounded-[1rem] border-[0.1rem] pl-[1rem] pr-[5rem]"
+          />
+          <button type="button" onClick={handleTogglePassword} className="absolute right-[1.3rem] top-[0.8rem] text-[2.3rem]">
             {isVisivlePassword ? <FaEyeSlash /> : <FaEye />}
           </button>
         </div>
-        <button type="submit">입력완료</button>
+        <div className="flex flex-col gap-[0.8rem]">
+          <button type="submit" className="bg-secondary-dark text-l h-[4rem] w-[24rem] rounded-[1rem]">
+            입력완료
+          </button>
+          <Link href="/account">
+            <div className="bg-gray-light flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] text-lg">돌아가기</div>
+          </Link>
+        </div>
       </form>
-      <Link href="/account">돌아가기</Link>
     </div>
   );
 };

@@ -1,21 +1,32 @@
 "use client";
 
 import { Schedule } from "@/types/scheduleType";
+import { useRouter } from "next/navigation";
+import { useCallback } from "react";
+import { formatDateTime } from "@/utils/scheduleDateUtils";
+import ScheduleNumber from "@/components/schedule/ScheduleNumber";
+import ScheduleThreeDotsMenu from "@/components/schedule/ScheduleThreeDotsMenu";
 
-interface ScheduleItemProps {
-  schedule: Schedule;
-  number: number;
-}
+const ScheduleItem = ({ schedule, number }: { schedule: Schedule; number: number }) => {
+  const router = useRouter();
 
-const ScheduleItem = ({ schedule, number }: ScheduleItemProps) => {
+  const handleItemClick = useCallback(() => {
+    router.push(`/meetup/${schedule.meetupId}/schedule/${schedule.id}`);
+  }, [router, schedule.meetupId, schedule.id]);
+
   return (
-    <div className="border rounded-lg p-4 mb-2 flex items-start shadow-sm hover:shadow-md transition-shadow">
-      <div className="mr-4 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center">{number}</div>
-      <div className="flex flex-col gap-2 flex-1">
-        <div className="font-semibold text-lg">{schedule.scheduled_at}</div>
+    <div className="mb-2 flex items-start rounded-lg border p-4">
+      <ScheduleNumber number={number} />
+
+      <div className="flex flex-1 flex-col gap-2" onClick={handleItemClick}>
+        <div className="text-lg font-semibold">{formatDateTime(schedule.scheduledAt)}</div>
         <div className="font-medium text-gray-800">{schedule.place}</div>
-        <div className="text-gray-600 text-sm">{schedule.address}</div>
-        {schedule.memo && <div className="text-gray-500 text-sm mt-2 bg-gray-50 p-2 rounded">{schedule.memo}</div>}
+        <div className="text-sm text-gray-600">{schedule.address}</div>
+        {schedule.memo && <div className="mt-2 rounded p-2 text-sm text-gray-500">{schedule.memo}</div>}
+      </div>
+
+      <div onClick={e => e.stopPropagation()} className="ml-auto">
+        <ScheduleThreeDotsMenu scheduleId={schedule.id} meetupId={schedule.meetupId} />
       </div>
     </div>
   );

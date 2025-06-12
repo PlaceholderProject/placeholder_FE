@@ -1,6 +1,22 @@
 {
-  "rules": {
-    "quotes": ["error", "double"] // 큰따옴표 강제
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "project": "./tsconfig.json"
   },
-  "extends": ["next/core-web-vitals", "next/typescript"]
+  "plugins": ["@typescript-eslint", "prettier", "react"],
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "plugin:react/recommended", "plugin:prettier/recommended", "next/core-web-vitals"],
+  "rules": {
+    "prettier/prettier": "error"
+    // 필요하면 여기에 custom ESLint 규칙을 추가하세요
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  }
 }
