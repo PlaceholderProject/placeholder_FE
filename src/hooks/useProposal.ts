@@ -12,8 +12,6 @@ import {
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Cookies from "js-cookie";
 
-const accessToken = Cookies.get("accessToken");
-
 // 신청서 등록
 export const useCreateProposal = (meetupId: number) => {
   const queryClient = useQueryClient();
@@ -54,10 +52,12 @@ export const useRefuseProposal = () => {
 
 // 내가 방장인 모임 목록 가져오기
 export const useOrganizedMeetups = () => {
+  const isClient = typeof window !== "undefined";
+  const accessToken = isClient ? Cookies.get("accessToken") : null;
   return useQuery({
     queryKey: ["myMeetups", "organizer"],
     queryFn: getOrganizedMeetups,
-    enabled: !!accessToken,
+    enabled: isClient && !!accessToken,
     staleTime: 1000 * 60 * 5, // 5분 캐싱
     retry: 1,
   });
@@ -71,7 +71,7 @@ export const useProposalsByMeetupId = (meetupId: number, page: number) => {
     staleTime: 1000 * 60 * 5,
     retry: 1,
     enabled: !!meetupId,
-    select: data => data ?? [],
+    select: data => data ?? { proposals: [], total: 0 },
   });
 };
 
@@ -107,6 +107,7 @@ export const useCancelProposal = (meetupId: number) => {
       queryClient.invalidateQueries({ queryKey: ["status", meetupId] });
       queryClient.invalidateQueries({ queryKey: ["myMeetups", "organizer", "ongoing"] });
       queryClient.invalidateQueries({ queryKey: ["sentProposals"] });
+      queryClient.invalidateQueries({ queryKey: ["receivedProposals", meetupId] });
     },
     onError: error => {
       alert(error.message || "신청서 취소 중 오류가 발생했습니다.");

@@ -10,8 +10,10 @@ const SentProposals = () => {
 
   const { data, isLoading } = useSentProposal(page);
 
-  const sentProposals = data?.proposals ?? [];
-  const total = data?.total ?? 0;
+  console.log(data);
+
+  const sentProposals = data ? data.proposals : [];
+  const total = data ? data.total : 0;
 
   const size = 5;
   const groupSize = 5;
@@ -27,8 +29,8 @@ const SentProposals = () => {
   }
 
   return (
-    <div>
-      <ul className="flex flex-col gap-[1.5rem] px-[2rem] py-[3rem]">
+    <div className="flex flex-col items-center">
+      <ul className="flex w-[90%] flex-col gap-[1.5rem] py-[3rem] md:max-w-[80rem]">
         {sentProposals.map((proposal: SentProposal) => (
           <li key={proposal.id}>
             <SentProposalItem proposal={proposal} />

@@ -70,6 +70,7 @@ export const getOrganizedMeetups = async () => {
 // 받은 신청서 페이지 : 받은 신청서 가져오기
 export const getReceivedProposals = async (meetupId: number, page: number) => {
   const accessToken = Cookies.get("accessToken");
+  if (!accessToken) return { proposals: [], total: 0 };
   const size = 5;
 
   try {
@@ -150,6 +151,7 @@ export const refuseProposal = async (proposalId: number) => {
 // 보낸 신청서 페이지 : 보낸 신청서 가져오기
 export const getSentProposal = async (page: number) => {
   const accessToken = Cookies.get("accessToken");
+  if (!accessToken) return { proposals: [], total: 0 };
   const size = 5;
 
   try {
@@ -174,7 +176,7 @@ export const getSentProposal = async (page: number) => {
     };
   } catch (error) {
     console.error("모임 정보를 가져오는데 실패했습니다:", error);
-    throw error;
+    return { proposals: [], total: 0 };
   }
 };
 
@@ -241,6 +243,7 @@ export const hideProposal = async (proposalId: number) => {
 // 광고페이지 : 나의 신청서 상태
 export const getMyProposalStatus = async (meetupId: number) => {
   const accessToken = Cookies.get("accessToken");
+  if (!accessToken) return null;
 
   try {
     const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}/proposal/status`, {
@@ -251,12 +254,18 @@ export const getMyProposalStatus = async (meetupId: number) => {
       },
     });
 
+    if (response.status === 204) {
+      console.log("응답이 204 No Content입니다.");
+      return null;
+    }
+
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.detail || "알 수 없는 오류");
     }
 
     const result = await response.json();
+
     return result;
   } catch (error) {
     console.error("상태를 가져오는데 실패했습니다:", error);
