@@ -70,6 +70,7 @@ export const getOrganizedMeetups = async () => {
 // 받은 신청서 페이지 : 받은 신청서 가져오기
 export const getReceivedProposals = async (meetupId: number, page: number) => {
   const accessToken = Cookies.get("accessToken");
+  if (!accessToken) return { proposals: [], total: 0 };
   const size = 5;
 
   try {
@@ -150,6 +151,7 @@ export const refuseProposal = async (proposalId: number) => {
 // 보낸 신청서 페이지 : 보낸 신청서 가져오기
 export const getSentProposal = async (page: number) => {
   const accessToken = Cookies.get("accessToken");
+  if (!accessToken) return { proposals: [], total: 0 };
   const size = 5;
 
   try {
@@ -174,7 +176,7 @@ export const getSentProposal = async (page: number) => {
     };
   } catch (error) {
     console.error("모임 정보를 가져오는데 실패했습니다:", error);
-    throw error;
+    return { proposals: [], total: 0 };
   }
 };
 
