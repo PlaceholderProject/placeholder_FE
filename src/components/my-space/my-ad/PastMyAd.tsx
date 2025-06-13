@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import RoleIcon from "../my-meetup/RoleIcon";
 import { useQuery } from "@tanstack/react-query";
 import { getMyAdsApi } from "@/services/my.space.service";
-import { SIZE_LIMIT, BUTTONS_PER_GROUP } from "@/constants/pagination";
+import { BUTTONS_PER_GROUP, SIZE_LIMIT } from "@/constants/pagination";
 import PaginationButtons from "../PaginationButtons";
 
 const PastMyAd = () => {
@@ -33,8 +33,6 @@ const PastMyAd = () => {
     const nextGroupFirstPage = currentGroup * BUTTONS_PER_GROUP + 1;
     setPage(nextGroupFirstPage);
   };
-
-  const [isOrganizer, setIsOrganizer] = useState(true);
 
   const {
     data: myAdsData,
@@ -69,7 +67,7 @@ const PastMyAd = () => {
       <div className="grid grid-cols-1">
         {myAdsData.result.map(myAd => (
           <div key={myAd.id} className="flex justify-between">
-            <RoleIcon isOrganizer={isOrganizer} />
+            <RoleIcon isOrganizer={true} />
             광고글 이름: {myAd.ad_title} 광고종료일: {myAd.ad_ended_at}
           </div>
         ))}

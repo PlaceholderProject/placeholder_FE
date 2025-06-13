@@ -1,18 +1,20 @@
 import ScheduleForm from "@/components/schedule/ScheduleForm";
 
 interface MeetupCreatePageProps {
-  params: {
+  params: Promise<{
     meetupId: string;
-  };
+  }>;
 }
 
-const MeetupCreatePage = ({ params }: MeetupCreatePageProps) => {
-  const meetupId = parseInt(params.meetupId);
+const MeetupCreatePage = async ({ params }: MeetupCreatePageProps) => {
+  const { meetupId } = await params;
+
+  const meetupIdNum = Number(meetupId);
 
   return (
     <div>
       <h1>스케줄 생성</h1>
-      <ScheduleForm meetupId={meetupId} />
+      <ScheduleForm meetupId={meetupIdNum} />
     </div>
   );
 };

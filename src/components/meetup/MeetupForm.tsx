@@ -1,14 +1,13 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { NewMeetup } from "@/types/meetupType";
-import { LabeledInputProps } from "@/types/meetupType";
-import { LabeledSelectProps } from "@/types/meetupType";
+import { LabeledInputProps, LabeledSelectProps, NewMeetup } from "@/types/meetupType";
 import { useRouter } from "next/navigation";
 import { createMeetupApi } from "@/services/meetup.service";
 import Image from "next/image";
 
+// displayName 추가
 const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
   ({ id, name, label, type, placeholder, value, defaultValue, disabled, required, checked, onChange, maxLength, className, labelClassName, containerClassName }, ref) => {
     return (
@@ -37,7 +36,9 @@ const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
     );
   },
 );
+LabeledInput.displayName = "LabeledInput";
 
+// displayName 추가
 const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({ id, name, label, options, required = true, className, labelClassName, containerClassName }, ref) => {
   return (
     <>
@@ -58,6 +59,7 @@ const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({
     </>
   );
 });
+LabeledSelect.displayName = "LabeledSelect";
 
 const MeetupForm = () => {
   const router = useRouter();
@@ -74,7 +76,7 @@ const MeetupForm = () => {
   const adTitleRef = useRef<HTMLInputElement>(null);
   const adEndedAtRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
-  const isPublicRef = useRef<HTMLInputElement>(null); //초기값 왜 null
+  const isPublicRef = useRef<HTMLInputElement>(null);
   const categoryRef = useRef<HTMLSelectElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
 
@@ -109,9 +111,6 @@ const MeetupForm = () => {
   const [isStartedAtNull, setIsStartedAtNull] = useState(false);
   const [isEndedAtNull, setIsEndedAtNull] = useState(false);
 
-  // 제출 로딩상태 관리 스테이트 추가
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   // 미리보기 스테이트
   const [previewImage, setPreviewImage] = useState("/meetup_default_image.jpg");
 
@@ -122,45 +121,17 @@ const MeetupForm = () => {
   // useMutation은 최상단에 위치시키라고 함
   const createMutation = useMutation({
     mutationFn: (meetupFormData: FormData) => createMeetupApi(meetupFormData),
-    // onSuccess: data => {
-    //   console.log("모임 새성 성공:", data);
-    //   console.log("쿼리 무효화 시작");
-    //   console.log(
-    //     "현재 쿼리 키 목록을 직접 뽑아내 보도록 하겠읍낟",
-    //     queryClient
-    //       .getQueryCache()
-    //       .getAll()
-    //       .map(query => query.queryKey),
-    //   );
-    //   queryClient.invalidateQueries({ queryKey: ["meetups"] });
-    //   console.log("meetups 쿼리 무효화 햇어");
-    //   queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
-    //   console.log("headhuntings 쿼리 무효화함");
-    //   // 메인 가기
-    //   router.push("/");
-
-    //   //지연 후 새로고침
-    //   // setTimeout(() => {
-    //   //   window.location.reload();
-    //   // }, 200);
-    // },
-
-    // onError: error => {
-    //   console.error("모임 생성 오류 발생:", error.message);
-    // },
   });
 
   // async 함수로 변경함
-
   const handleMeetupFormSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    // ❗️❗️❗️ 이 모든 과정을 제출 전에 실행하고 있고, 하나로 묶어야겠는데?
-    // 1. 모든 날짜가 오늘보다 과거인지 유효성 검사
+    // 모든 날짜가 오늘보다 과거인지 유효성 검사
     const now = new Date();
     now.setHours(0, 0, 0, 0);
 
-    // 2. 필드 이름 케이스별로 가져오기
+    // 필드 이름 케이스별로 가져오기
     const getDateFieldName = (fieldName: string): string => {
       switch (fieldName) {
         case "startedAt":
@@ -174,24 +145,18 @@ const MeetupForm = () => {
       }
     };
 
-    // 3. 인풋 필드에서 날짜값 가져옴
-    // 근데 이거 155번째줄 (현재인지 실행해보고 판단 위)에 있었음
-    // 이거 그러면 null로 들어가는건 알겠는데 광고종료날짜가 ""로들어가기도 한다는 것임?
-    // 어떤 시점에 어떤 값이지?
+    // 인풋 필드에서 날짜값 가져옴
     const startDate = isStartedAtNull ? null : startedAtRef.current?.value || null;
     const endDate = isEndedAtNull ? null : endedAtRef.current?.value || null;
     const adEndDate = adEndedAtRef.current?.value || "";
 
-    // 4. 통과(true)인지 걸리는지(false) 불리언 값 리턴하는 유효성 검사 함수
-
+    // 통과(true)인지 걸리는지(false) 불리언 값 리턴하는 유효성 검사 함수
     const createMeetUpValidateDate = (date: string | null, fieldName: string): boolean => {
       // 사용자 입력값 미정이면 true (통과)
       if (!date) {
         return true;
       }
 
-      // 🐡 사용자 입력 날짜값을 위한 파라미터다. 즉 입력값 그자체가 아니라 ref에 연결된 애들을, 함수 실행할 때 (date) 위치에 넣어 실행하게 되고
-      // 이렇게 쓴 이유는 started랑 ended랑 adEnded 세 종류에 대해 재사용 대응 가능하게 하려고!
       const inputDate = new Date(date);
       inputDate.setHours(0, 0, 0, 0);
 
@@ -202,7 +167,6 @@ const MeetupForm = () => {
       }
 
       // 모임 시작날짜와 모임 종료 날짜 비교
-      // 문자열대신 date 객체로 변환해서 ㅂ교하기로 수정
       if (endDate !== null && startDate !== null) {
         const endDateObject = new Date(endDate);
         const startDateObject = new Date(startDate);
@@ -219,13 +183,9 @@ const MeetupForm = () => {
     };
 
     // 폼 제출전, 유효성 검사 에 함수 실행해보고 통과 못하면 제출 전에 리턴으로 탈출
-    // 모임 시작일이 false(걸림)거나, 모임 종료일이 false(걸림)거나 광고 종료일이 false(걸림)이면 멈추고 나와버림
     if (!createMeetUpValidateDate(startDate, "startedAt") || !createMeetUpValidateDate(endDate, "endedAt") || !createMeetUpValidateDate(adEndDate, "adEndedAt")) {
       console.log("유효성 함수 실행은 됨");
       console.log("설정된 모임 시작일, 모임 종료일, 광고 종료일:", startDate, endDate, adEndDate);
-
-      // 제출 상태 다시 초기화 추가
-      setIsSubmitting(false);
       return;
     }
 
@@ -260,20 +220,14 @@ const MeetupForm = () => {
       meetupFormData.append("image", imageRef.current.files[0]);
     }
 
-    // createMutation.mutate(meetupFormData);
-    // 그냥 뮤테이션 이었는데 이거를 아래처럼 try catch 블록으로 mutateAsync 사용하게 리팩토링
-
     try {
       await createMutation.mutateAsync(meetupFormData);
       queryClient.invalidateQueries({ queryKey: ["meetups"] });
       queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
       alert("모임 생성에 성공했습니다!");
       router.push("/");
-    } catch (error: any) {
-      console.error("모임 생성 오류 발생:", error?.message || "알 수 없는 오류");
-      alert(`모임 생성 중 오류가 발생했습니다: ${error?.message || "알 수 없는 오류"}`);
-    } finally {
-      setIsSubmitting(false);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -284,7 +238,6 @@ const MeetupForm = () => {
       const previewFileUrl = URL.createObjectURL(previewFile);
       setPreviewImage(previewFileUrl);
     }
-    // console.log("미리보기 이미지:", previewImage);
   };
 
   return (
@@ -346,18 +299,6 @@ const MeetupForm = () => {
                   name="startedAtUndecided"
                   label="미정"
                   type="checkbox"
-                  // １. ref={isStartedAtNullRef}
-                  //checked={isStartedAtNullRef.current}를 위처럼 수정하고
-                  //onChage 지우니까 토글만 됨
-                  // 2.　useRef를 통해 상태를 저장, 리액트의 chekced와 disabled 속성을
-                  // useRef.current 기준으로 렌더링에 반영
-                  // checked={isStartedAtNullRef.current}
-                  // onChange={event => {
-                  //   isStartedAtNullRef.current = event?.target.checked;
-                  //   if (startedAtRef.current) {
-                  //     startedAtRef.current.disabled = event.target.checked;
-                  //   }
-                  // }}
                   onChange={event => {
                     setIsStartedAtNull(event.target.checked);
                   }}
@@ -550,15 +491,3 @@ const MeetupForm = () => {
 };
 
 export default MeetupForm;
-
-// 1. const newMeetup: Meetup 안에 image가 필요해?
-// 필요 여부:
-
-// 필요한 경우:
-// 만약 서버가 image 필드(이미지의 파일 경로 또는 URL 등)를 기대하고 있다면, newMeetup 객체에 포함되어야 합니다. 예를 들어, 서버가 JSON 데이터를 처리하고 이미지를 별도로 저장하는 경우입니다. 이때 image는 파일의 경로(또는 이름)를 나타낼 수 있습니다.
-// 필요하지 않은 경우:
-// 서버가 이미지 파일을 multipart/form-data로 처리하고 JSON 데이터에는 이미지 관련 정보가 없거나 필요 없는 경우입니다. 이 경우 image는 newMeetup에 포함될 필요가 없습니다.
-// 결론:
-
-// 이미지 파일 자체를 FormData로 전송하고 JSON 데이터에 이미지 관련 정보가 필요 없다면, newMeetup에 image 필드는 필요 없습니다.
-// 서버가 이미지를 JSON 데이터로도 받기를 기대한다면 포함해야 합니다.

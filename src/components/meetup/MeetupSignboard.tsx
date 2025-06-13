@@ -40,7 +40,7 @@ const MeetupSignboard = ({ meetupId }: MeetupSignboardProps) => {
       }
     };
     fetchMeetupData();
-  }, [meetupId]);
+  }, [meetupId, userFromRedux?.nickname]);
 
   // 모달 토글 핸들러 함수들
   const handleMembersModalToggle = () => {

@@ -20,9 +20,30 @@ export interface Meetup {
   category: string;
   createdAt: string;
   commentCount: number;
+  pages: number[];
 }
 
-export interface NewMeetup extends Omit<Meetup, "id"> {}
+export interface NewMeetup {
+  organizer: {
+    nickname: string;
+    profileImage: string;
+  };
+  isLike: boolean;
+  likeCount: number;
+  name: string;
+  description: string;
+  place: string;
+  placeDescription: string;
+  startedAt: string | null;
+  endedAt: string | null;
+  adTitle: string;
+  adEndedAt: string;
+  isPublic: boolean;
+  image?: string;
+  category: string;
+  createdAt: string;
+  commentCount: number;
+}
 
 export interface LabeledInputProps {
   id: string;

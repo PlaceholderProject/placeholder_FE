@@ -15,7 +15,7 @@ const SearchedResultItem = ({ ad }: { ad: SearchedType }) => {
       return <>{ad.adTitle}</>;
     }
 
-    const escaped = keyword.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
+    const escaped = keyword.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
     const regex = new RegExp(`(${escaped})`, "gi");
     return ad.adTitle.split(regex).map((part, idx) => {
       return regex.test(part) ? (
@@ -29,7 +29,7 @@ const SearchedResultItem = ({ ad }: { ad: SearchedType }) => {
   };
 
   return (
-    <div className="border-gray-medium flex flex-col justify-between border-b-[0.1rem] px-[2rem] py-[1rem]">
+    <div className="flex flex-col justify-between border-b-[0.1rem] border-gray-medium px-[2rem] py-[1rem]">
       <div className="text-lg">
         <Link href={`/ad/${ad.id}`}>{renderTitle()}</Link>
       </div>

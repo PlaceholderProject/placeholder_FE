@@ -3,11 +3,8 @@
 import React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
 import { useModal } from "@/hooks/useModal";
 import { deleteAd } from "@/services/ad.service";
-
-const token = Cookies.get("accessToken");
 
 const AdDeleteContent = ({ meetupId }: { meetupId: number }) => {
   const { closeModal } = useModal();
@@ -29,7 +26,7 @@ const AdDeleteContent = ({ meetupId }: { meetupId: number }) => {
 
   return (
     <div className="w-full">
-      '삭제하기' 버튼을 클릭하면 광고글이 영구적으로 사라집니다.
+      삭제하기 버튼을 클릭하면 광고글이 영구적으로 사라집니다.
       <button type="button" onClick={closeModal}>
         닫기
       </button>

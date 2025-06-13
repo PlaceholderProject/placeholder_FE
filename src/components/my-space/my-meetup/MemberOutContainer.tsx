@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import OutButton from "./OutButton";
 import { FaRegUserCircle } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { MyMeetupItem } from "@/types/mySpaceType";
 import { useModal } from "@/hooks/useModal";
 import { setChosenMeetupId } from "@/stores/memberOutSlice";

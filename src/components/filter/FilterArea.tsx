@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { togglePlaceMenu, toggleCategoryMenu, setPlace, setCatregory, resetFilter } from "@/stores/filterSlice";
+import { resetFilter, toggleCategoryMenu, togglePlaceMenu } from "@/stores/filterSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
 import CategoryButtons from "./CategoryButtons";
@@ -9,7 +9,7 @@ import PlaceButtons from "./PlaceButtons";
 const FilterArea = () => {
   const dispatch = useDispatch();
 
-  const { isPlaceMenuOpen, isCategoryMenuOpen, place, category, isFilterActive } = useSelector((state: RootState) => state.filter);
+  const { isPlaceMenuOpen, isCategoryMenuOpen, isFilterActive } = useSelector((state: RootState) => state.filter);
 
   const handlePlaceButtonClick = () => {
     dispatch(togglePlaceMenu());
@@ -26,11 +26,11 @@ const FilterArea = () => {
   return (
     <div>
       <div>
-        <button className={`px-4 py-2 rounded-lg border ${isPlaceMenuOpen ? "bg-blue-100 border-blue-300" : "border-gray-300"}`} onClick={handlePlaceButtonClick}>
+        <button className={`rounded-lg border px-4 py-2 ${isPlaceMenuOpen ? "border-blue-300 bg-blue-100" : "border-gray-300"}`} onClick={handlePlaceButtonClick}>
           지역별
         </button>
 
-        <button className={`px-4 py-2 rounded-lg border ${isCategoryMenuOpen ? "bg-blue-100 border-blue-300" : "border-gray-300"}`} onClick={handleCategoryButtonClick}>
+        <button className={`rounded-lg border px-4 py-2 ${isCategoryMenuOpen ? "border-blue-300 bg-blue-100" : "border-gray-300"}`} onClick={handleCategoryButtonClick}>
           모임 성격별
         </button>
 

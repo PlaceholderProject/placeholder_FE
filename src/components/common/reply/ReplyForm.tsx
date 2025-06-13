@@ -48,9 +48,9 @@ const ReplyForm = () => {
   };
 
   return (
-    <div className="border-gray-medium flex w-full items-center justify-center border-y-[1px] p-[2rem]">
+    <div className="flex w-full items-center justify-center border-y-[1px] border-gray-medium p-[2rem]">
       <form onSubmit={handleReplySubmit} className="flex w-[80%] flex-col gap-[0.5rem] md:max-w-[80rem]">
-        <div className="border-gray-medium flex w-full flex-col items-center justify-center gap-[1rem] rounded-[1rem] border-[0.1rem] bg-white p-[1.5rem]">
+        <div className="flex w-full flex-col items-center justify-center gap-[1rem] rounded-[1rem] border-[0.1rem] border-gray-medium bg-white p-[1.5rem]">
           <div className="flex w-full flex-row items-center gap-[0.5rem]">
             <div className="h-[2rem] w-[2rem] overflow-hidden rounded-full">
               <Image src={profileImage || "/profile.png"} alt="프로필 이미지" width="25" height="25" unoptimized={true} />
@@ -67,7 +67,7 @@ const ReplyForm = () => {
         </div>
         <div className="flex justify-between">
           <span className="text-sm">{content.length}/ 300</span>
-          <button className="bg-secondary-dark h-[2.5rem] w-[6rem] rounded-[0.5rem] text-sm">등록</button>
+          <button className="h-[2.5rem] w-[6rem] rounded-[0.5rem] bg-secondary-dark text-sm">등록</button>
         </div>
       </form>
     </div>

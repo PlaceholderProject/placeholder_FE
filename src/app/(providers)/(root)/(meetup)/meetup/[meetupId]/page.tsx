@@ -3,17 +3,19 @@ import MeetupSignboard from "@/components/meetup/MeetupSignboard";
 import ScheduleArea from "@/components/schedule/ScheduleArea";
 import React from "react";
 
-const MeetupPage = ({ params }: { params: { meetupId: string } }) => {
-  const meetupId = Number(params.meetupId);
+const MeetupPage = async ({ params }: { params: Promise<{ meetupId: string }> }) => {
+  const { meetupId } = await params;
+
+  const meetupIdNum = Number(meetupId);
 
   return (
     <div>
-      <MeetupSignboard meetupId={meetupId} />
+      <MeetupSignboard meetupId={meetupIdNum} />
       <div>
-        <KakaoMaps meetupId={meetupId} />
+        <KakaoMaps meetupId={meetupIdNum} />
       </div>
       <div>
-        <ScheduleArea meetupId={meetupId} />
+        <ScheduleArea meetupId={meetupIdNum} />
       </div>
     </div>
   );

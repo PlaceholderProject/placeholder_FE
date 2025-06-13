@@ -53,28 +53,17 @@ const ScheduleThreeDotsMenu = ({ scheduleId, meetupId }: ScheduleThreeDotsMenuPr
 
   return (
     <div className="relative" ref={menuRef}>
-      <button
-        onClick={() => setMenuOpen(!menuOpen)}
-        className="p-1 rounded-full  focus:outline-none"
-        aria-label="스케줄 메뉴"
-      >
+      <button onClick={() => setMenuOpen(!menuOpen)} className="rounded-full p-1 focus:outline-none" aria-label="스케줄 메뉴">
         <BsThreeDotsVertical className="text-gray-600" />
       </button>
 
       {menuOpen && (
-        <div className="absolute right-0 mt-1 w-36 rounded-md shadow-lg bg-white z-10">
+        <div className="absolute right-0 z-10 mt-1 w-36 rounded-md bg-white shadow-lg">
           <div className="py-1">
-            <button
-              onClick={handleEditClick}
-              className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            >
+            <button onClick={handleEditClick} className="flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
               <FiEdit className="mr-2" /> 수정하기
             </button>
-            <button
-              onClick={handleDeleteClick}
-              disabled={deleteScheduleMutation.isPending}
-              className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-            >
+            <button onClick={handleDeleteClick} disabled={deleteScheduleMutation.isPending} className="flex w-full items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
               <FiTrash2 className="mr-2" />
               {deleteScheduleMutation.isPending ? "삭제 중..." : "삭제하기"}
             </button>

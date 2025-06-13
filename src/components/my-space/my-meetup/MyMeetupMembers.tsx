@@ -1,14 +1,12 @@
 "use client";
 
 import { getMyMeetupMembersApi } from "@/services/my.space.service";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { BASE_URL } from "@/constants/baseURL";
 import OutButton from "./OutButton";
 import { MyMeetupMember } from "@/types/myMeetupMemberType";
 import Image from "next/image";
-import { useSelector } from "react-redux";
-import { RootState } from "@/stores/store";
 import { useMemberDelete } from "@/hooks/useMemberDelete";
 
 interface MyMeetupMembersProps {
@@ -16,6 +14,7 @@ interface MyMeetupMembersProps {
   // onKickMember: (memberId: number) => void;
   // isPending: boolean;
 }
+
 const MyMeetupMembers: React.FC<MyMeetupMembersProps> = ({ meetupId }) => {
   // 개별 유저 이미 관리 스테이트
   const [userImages, setUserImages] = useState<{ [userId: number]: string }>({});
@@ -34,7 +33,7 @@ const MyMeetupMembers: React.FC<MyMeetupMembersProps> = ({ meetupId }) => {
 
   const {
     data: myMeetupMembersData,
-    isPending: isDataPending,
+    // isPending,
     isError,
     error,
   } = useQuery({

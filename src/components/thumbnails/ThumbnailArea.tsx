@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useRef, useCallback } from "react";
-import { useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query";
+import React, { useCallback, useEffect, useRef } from "react";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import ThumbnailItem from "./ThumbnailItem";
 import { getHeadhuntingsApi } from "@/services/thumbnails.service";
 import { Meetup } from "@/types/meetupType";
@@ -72,7 +72,7 @@ const ThumbnailArea = () => {
       const allItems = headhuntingsData.pages.flatMap(page => page.result);
       console.log("모든 아이템 목록:", allItems);
     }
-  }, [headhuntingsData]);
+  }, [headhuntingsData, getQueryKey]);
 
   // useEffect(() => {
   //   console.log(`정렬 타입 변경 감지: ${sortType}`);

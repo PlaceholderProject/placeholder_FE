@@ -53,7 +53,7 @@ const Header = () => {
     } else {
       handleLogout();
     }
-  }, []);
+  }, [handleLogout, dispatch]);
 
   const handleNotificationPage = () => {
     router.replace("/notification");

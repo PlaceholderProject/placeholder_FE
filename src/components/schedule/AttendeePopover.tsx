@@ -33,42 +33,25 @@ const AttendeePopover = ({ participants }: AttendeePopoverProps) => {
   }
 
   // 참석자 정보 표시 텍스트 생성
-  const displayAttendee = participants.length === 1
-    ? participants[0].nickname
-    : `${participants[0].nickname} 외 ${participants.length - 1}인 참석`;
+  const displayAttendee = participants.length === 1 ? participants[0].nickname : `${participants[0].nickname} 외 ${participants.length - 1}인 참석`;
 
   return (
     <div className="relative" ref={popoverRef}>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 cursor-pointer text-gray-700 hover:text-gray-900"
-      >
-        <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-          <Image
-            src={getImageURL(participants[0].image)}
-            alt={participants[0].nickname}
-            width={32}
-            height={32}
-            className="w-full h-full object-cover"
-          />
+      <button onClick={() => setIsOpen(!isOpen)} className="flex cursor-pointer items-center space-x-2 text-gray-700 hover:text-gray-900">
+        <div className="h-8 w-8 flex-shrink-0 overflow-hidden rounded-full bg-gray-200">
+          <Image src={getImageURL(participants[0].image)} alt={participants[0].nickname} width={32} height={32} className="h-full w-full object-cover" />
         </div>
         <span>{displayAttendee}</span>
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 w-56 rounded-md shadow-lg bg-white z-10 p-2">
+        <div className="absolute left-0 top-full z-10 mt-2 w-56 rounded-md bg-white p-2 shadow-lg">
           <div className="py-1">
             <div className="max-h-60 overflow-y-auto">
               {participants.map((participant, index) => (
                 <div key={index} className="flex items-center px-3 py-2 hover:bg-gray-100">
-                  <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 mr-3 flex-shrink-0">
-                    <Image
-                      src={getImageURL(participant.image)}
-                      alt={participant.nickname}
-                      width={32}
-                      height={32}
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="mr-3 h-8 w-8 flex-shrink-0 overflow-hidden rounded-full bg-gray-200">
+                    <Image src={getImageURL(participant.image)} alt={participant.nickname} width={32} height={32} className="h-full w-full object-cover" />
                   </div>
                   <span className="text-sm text-gray-700">{participant.nickname}</span>
                 </div>

@@ -1,11 +1,10 @@
 "use client";
 
 import { useCreateNestedReply } from "@/hooks/useReply";
-import React, { useRef, useState } from "react";
+import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
 import { Reply } from "@/types/replyType";
-import { Dispatch, SetStateAction } from "react";
 import { resetReply } from "@/stores/replySlice";
 
 const NestedReplyForm = ({
@@ -55,10 +54,10 @@ const NestedReplyForm = ({
   };
 
   return (
-    <div className="w-full flex">
-      <form className="flex flex-col gap-2 w-full" onSubmit={handleNestedReplySubmit}>
-        <div className="border-[1px] border-[#CFCFCF] w-full h-[70px] flex flex-col justify-center items-center rounded-lg p-[10px] gap-2">
-          <div className="text-[8px] w-full flex justify-between">@ {nestedReply.user.nickname ? nestedReply.user.nickname : rootReply.user.nickname}</div>
+    <div className="flex w-full">
+      <form className="flex w-full flex-col gap-2" onSubmit={handleNestedReplySubmit}>
+        <div className="flex h-[70px] w-full flex-col items-center justify-center gap-2 rounded-lg border-[1px] border-[#CFCFCF] p-[10px]">
+          <div className="flex w-full justify-between text-[8px]">@ {nestedReply.user.nickname ? nestedReply.user.nickname : rootReply.user.nickname}</div>
           <textarea
             ref={textareaRef}
             className="h-[50px] w-full text-[8px]"
@@ -71,10 +70,10 @@ const NestedReplyForm = ({
         <div className="flex justify-between">
           <span className="text-[6px]">{content.length}/ 300</span>
           <span className="flex gap-2">
-            <button type="button" onClick={handleNestedReplyForm} className="bg-[#CFCFCF] w-[38px] h-[14px] text-[6px] rounded-md ">
+            <button type="button" onClick={handleNestedReplyForm} className="h-[14px] w-[38px] rounded-md bg-[#CFCFCF] text-[6px]">
               닫기
             </button>
-            <button type="submit" className="bg-[#FBFFA9] w-[38px] h-[14px] text-[6px] rounded-md ">
+            <button type="submit" className="h-[14px] w-[38px] rounded-md bg-[#FBFFA9] text-[6px]">
               등록
             </button>
           </span>

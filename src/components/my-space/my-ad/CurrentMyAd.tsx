@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { getMyAdsApi } from "@/services/my.space.service";
 import RoleIcon from "../my-meetup/RoleIcon";
 import Link from "next/link";
-import { SIZE_LIMIT, BUTTONS_PER_GROUP } from "@/constants/pagination";
+import { BUTTONS_PER_GROUP, SIZE_LIMIT } from "@/constants/pagination";
 import PaginationButtons from "../PaginationButtons";
 
 const CurrentMyAd = () => {
@@ -37,7 +37,7 @@ const CurrentMyAd = () => {
 
   //
 
-  const [isOrganizer, setIsOrganizer] = useState(true);
+  const isOrganizer = true;
   const {
     data: myAdsData,
     isPending,

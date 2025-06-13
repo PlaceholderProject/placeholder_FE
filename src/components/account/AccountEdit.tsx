@@ -57,7 +57,7 @@ const AccountEdit = () => {
       setNickname(user.nickname || "");
       setBio(user.bio || "");
     }
-  }, []);
+  }, ["data", "dispatch", "user.bio", "user.email", "user.nickname", "user.profileImage"]);
 
   if (!data) return;
 
@@ -156,13 +156,13 @@ const AccountEdit = () => {
     <div>
       <div className="my-[4rem] flex min-h-[calc(100vh-12rem)] flex-col items-center justify-center md:min-h-[calc(100vh-13.5rem)]">
         <h2 className="mb-[2rem] text-3xl font-semibold">회원 정보 수정</h2>
-        <div className="border-gray-medium flex h-full min-h-[54rem] w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] py-[2rem]">
+        <div className="flex h-full min-h-[54rem] w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] border-gray-medium py-[2rem]">
           <form onSubmit={handleAccountEditFormSubmit} className="flex flex-col justify-center gap-[1.5rem] p-[2rem]">
             <div className="relative flex items-center justify-center">
               <div className="relative h-[15rem] w-[15rem] overflow-hidden rounded-full">
                 <Image src={profileImage ? profileImage : "/profile.png"} alt="프로필 이미지" fill className="object-cover" />
               </div>
-              <label htmlFor="profileImage" className="bg-primary absolute bottom-0 right-20 flex h-[3rem] w-[3rem] cursor-pointer items-center justify-center rounded-full text-2xl text-white">
+              <label htmlFor="profileImage" className="absolute bottom-0 right-20 flex h-[3rem] w-[3rem] cursor-pointer items-center justify-center rounded-full bg-primary text-2xl text-white">
                 <FaCog />
                 <input
                   type="file"
@@ -180,15 +180,15 @@ const AccountEdit = () => {
                   닉네임
                 </label>
                 <div>
-                  <input type="text" value={nickname} onChange={handleNicknameChange} className="border-gray-medium h-[4rem] w-[18rem] rounded-l-[1rem] border-[0.1rem] px-[1rem]" />
+                  <input type="text" value={nickname} onChange={handleNicknameChange} className="h-[4rem] w-[18rem] rounded-l-[1rem] border-[0.1rem] border-gray-medium px-[1rem]" />
                   <button
                     type="button"
                     onClick={handleCheckNickname}
-                    className="border-gray-medium hover:bg-gray-medium bg-gray-light h-[4rem] w-[6rem] rounded-r-[1rem] border-y-[0.1rem] border-r-[0.1rem]"
+                    className="h-[4rem] w-[6rem] rounded-r-[1rem] border-y-[0.1rem] border-r-[0.1rem] border-gray-medium bg-gray-light hover:bg-gray-medium"
                   >
                     중복확인
                   </button>
-                  {nicknameWarning && <p className="text-warning mt-[0.3rem] w-[24rem] text-sm">{nicknameWarning}</p>}
+                  {nicknameWarning && <p className="mt-[0.3rem] w-[24rem] text-sm text-warning">{nicknameWarning}</p>}
                 </div>
               </div>
               <div className="flex flex-col">
@@ -200,9 +200,9 @@ const AccountEdit = () => {
                     value={bio}
                     onChange={handleBioChange}
                     placeholder="함께할 모임원을 위해 간단한 자기소개를 작성해주세요."
-                    className="border-gray-medium h-[7rem] w-[24rem] rounded-[1rem] border-[0.1rem] p-[1rem]"
+                    className="h-[7rem] w-[24rem] rounded-[1rem] border-[0.1rem] border-gray-medium p-[1rem]"
                   />
-                  {bioWarning && <p className="text-warning mt-[0.3rem] w-[24rem] text-sm">{bioWarning}</p>}
+                  {bioWarning && <p className="mt-[0.3rem] w-[24rem] text-sm text-warning">{bioWarning}</p>}
                   <div className="flex w-full justify-end">
                     <p className="mt-[0.3rem] text-sm">{bioTextLength}/40</p>
                   </div>
@@ -210,11 +210,11 @@ const AccountEdit = () => {
               </div>
             </div>
             <div className="flex flex-col gap-[0.8rem]">
-              <button type="submit" className="bg-secondary-dark flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] text-lg">
+              <button type="submit" className="flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] bg-secondary-dark text-lg">
                 변경하기
               </button>
               <Link href="/account">
-                <div className="bg-gray-light flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] text-lg">취소하기</div>
+                <div className="flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] bg-gray-light text-lg">취소하기</div>
               </Link>
             </div>
           </form>

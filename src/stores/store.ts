@@ -3,7 +3,7 @@ import authReducer from "./authSlice";
 import userReducer from "./userSlice";
 import notificationReducer from "./notificationSlice";
 import storage from "redux-persist/lib/storage";
-import { createTransform, FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE } from "redux-persist";
+import { FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE } from "redux-persist";
 import nonModalReducer from "./nonModalSlice";
 import modalReducer from "./modalSlice";
 import sortReducer from "./sortSlice";
@@ -12,14 +12,6 @@ import replyReducer from "./replySlice";
 import proposalReducer from "./proposalSlice";
 import searchReducer from "./searchSlice";
 import memberOutReducer from "./memberOutSlice";
-
-// 데이터 직렬화/비직렬화 변환 설정
-const transform = createTransform(
-  // 저장하기 전에 실행 (인코딩)
-  inboundState => JSON.stringify(inboundState),
-  // 불러올 때 실행 (디코딩)
-  outboundState => JSON.parse(outboundState),
-);
 
 // redux-persist 설정
 const persistConfig = {
