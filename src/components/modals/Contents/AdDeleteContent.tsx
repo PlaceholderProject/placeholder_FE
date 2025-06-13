@@ -3,11 +3,8 @@
 import React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
 import { useModal } from "@/hooks/useModal";
 import { deleteAd } from "@/services/ad.service";
-
-const token = Cookies.get("accessToken");
 
 const AdDeleteContent = ({ meetupId }: { meetupId: number }) => {
   const { closeModal } = useModal();
