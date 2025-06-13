@@ -48,9 +48,9 @@ const AdButton = ({ meetupId }: { meetupId: number }) => {
           ) : proposal.status === "acceptance" ? (
             <div className="flex w-full flex-row gap-[1rem]">
               <div className="flex h-[3.5rem] w-full items-center justify-center rounded-[0.5rem] bg-gray-light">수락 완료</div>
-              <Link href={`/meetup/${meetupId}`}>
-                <div className="flex h-[3.5rem] w-full items-center justify-center rounded-[0.5rem] bg-primary text-white">입장하기</div>
-              </Link>
+              <div className="flex h-[3.5rem] w-full items-center justify-center rounded-[0.5rem] bg-primary text-white">
+                <Link href={`/meetup/${meetupId}`}>입장하기</Link>
+              </div>
             </div>
           ) : (
             <div className="flex w-full flex-row gap-[1rem]">

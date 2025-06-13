@@ -4,6 +4,7 @@ import { transformCreatedDate } from "@/utils/ReplyDateFormat";
 import { FaUser, FaUserCheck, FaUserTimes } from "react-icons/fa";
 import { SentProposal } from "@/types/proposalType";
 import { useModal } from "@/hooks/useModal";
+import Link from "next/link";
 
 const SentProposalItem = ({ proposal }: { proposal: SentProposal }) => {
   const { openModal } = useModal();
@@ -15,6 +16,8 @@ const SentProposalItem = ({ proposal }: { proposal: SentProposal }) => {
   const handleProposalHide = () => {
     openModal("PROPOSAL_HIDE", { proposal });
   };
+
+  console.log(proposal);
 
   return (
     <div className="flex flex-col items-center justify-between gap-[0.5rem] rounded-[1rem] bg-secondary-light p-[1.5rem] shadow-md">
@@ -44,7 +47,9 @@ const SentProposalItem = ({ proposal }: { proposal: SentProposal }) => {
               </div>
             )}
           </div>
-          <div className="break-all font-semibold">{proposal.meetup_ad_title}</div>
+          <Link href={`/ad/${proposal.meetup_id}`}>
+            <div className="break-all font-semibold">{proposal.meetup_ad_title}</div>
+          </Link>
         </div>
         <span className="text-sm text-gray-dark">{transformCreatedDate(proposal.created_at)}</span>
       </div>

@@ -24,17 +24,19 @@ const MeetupNames = () => {
   if (!organizedMeetups || organizedMeetups.length === 0) return null;
 
   return (
-    <ul className="mx-[1.5rem] my-[3rem] flex h-fit flex-wrap items-center gap-2">
-      {organizedMeetups.map((meetup: OrganizedMeetup) => (
-        <li
-          key={meetup.id}
-          onClick={() => dispatch(setSelectedMeetupId(meetup.id))}
-          className={`w-fit cursor-pointer whitespace-nowrap rounded-full border-[0.1rem] border-primary px-4 py-1 ${selectedMeetupId === meetup.id ? "bg-primary text-white" : ""}`}
-        >
-          {meetup.name}
-        </li>
-      ))}
-    </ul>
+    <div className="flex flex-col items-center">
+      <ul className="my-[3rem] flex h-fit w-[90%] flex-wrap items-center gap-2 md:max-w-[80rem]">
+        {organizedMeetups.map((meetup: OrganizedMeetup) => (
+          <li
+            key={meetup.id}
+            onClick={() => dispatch(setSelectedMeetupId(meetup.id))}
+            className={`w-fit cursor-pointer whitespace-nowrap rounded-full border-[0.1rem] border-primary px-4 py-1 ${selectedMeetupId === meetup.id ? "bg-primary text-white" : ""}`}
+          >
+            {meetup.name}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 };
 

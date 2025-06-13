@@ -17,8 +17,8 @@ const ReceivedProposals = () => {
     setPage(1);
   }, [selectedMeetupId]);
 
-  const receivedProposals = data?.proposals ?? [];
-  const total = data?.total ?? 0;
+  const receivedProposals = data ? data.proposals.filter((proposal: ReceivedProposal) => proposal.status === "pending") : [];
+  const total = data ? data.total : 0;
 
   const size = 5;
   const groupSize = 5;
@@ -37,8 +37,8 @@ const ReceivedProposals = () => {
   }
 
   return (
-    <div>
-      <ul className="flex flex-col gap-[1.5rem] px-[2rem]">
+    <div className="flex flex-col items-center">
+      <ul className="flex w-[90%] flex-col gap-[1.5rem] md:max-w-[80rem]">
         {receivedProposals.map((proposal: ReceivedProposal) => (
           <li key={proposal.id}>
             <ReceivedProposalItem proposal={proposal} />
