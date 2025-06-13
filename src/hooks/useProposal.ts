@@ -12,8 +12,6 @@ import {
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Cookies from "js-cookie";
 
-const accessToken = Cookies.get("accessToken");
-
 // 신청서 등록
 export const useCreateProposal = (meetupId: number) => {
   const queryClient = useQueryClient();
