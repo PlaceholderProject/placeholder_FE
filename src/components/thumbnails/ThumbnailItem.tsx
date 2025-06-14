@@ -27,7 +27,7 @@ const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
 
   useEffect(() => {
     const profileImageUrl = thumbnail?.organizer.profileImage?.startsWith("http") ? thumbnail.organizer.profileImage : `${BASE_URL}${thumbnail.organizer.profileImage}`;
-    console.log("작성자 프사 URL", profileImageUrl);
+    // console.log("작성자 프사 URL", profileImageUrl);
     // HTMLImageElement를 사용하여 이미지 존재 여부 확인
     const imgElement = document.createElement("img");
     imgElement.onload = () => setProfileImageSource(profileImageUrl);
@@ -35,7 +35,7 @@ const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
       console.error("이미지로딩 실패", profileImageUrl);
       setProfileImageSource("/profile.png");
     };
-    console.log("작성자 프사 이미지 없음:", thumbnail?.organizer);
+    // console.log("작성자 프사 이미지 없음:", thumbnail?.organizer);
   }, [thumbnail]);
 
   const [profileImageSource, setProfileImageSource] = useState("/profile.png");

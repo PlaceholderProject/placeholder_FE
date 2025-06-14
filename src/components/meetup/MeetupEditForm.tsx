@@ -7,6 +7,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { MAX_AD_TITLE_LENGTH, MAX_DESCRIPTION_LENGTH, MAX_NAME_LENGTH, MAX_PLACE_LENGTH } from "@/constants/meetup";
 
 // displayName 추가
 const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
@@ -97,11 +98,6 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   const handleDescriptionLengthChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDescriptionLength(event.target.value.length);
   };
-
-  const MAX_NAME_LENGTH = 15;
-  const MAX_PLACE_LENGTH = 20;
-  const MAX_AD_TITLE_LENGTH = 15;
-  const MAX_DESCRIPTION_LENGTH = 60;
 
   // 체크박스 상태 관리 스테이트
   const [isStartedAtNull, setIsStartedAtNull] = useState(false);
@@ -296,6 +292,8 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
       await editMutation.mutateAsync(editedFormData);
       queryClient.invalidateQueries({ queryKey: ["meetup", meetupId] });
       queryClient.invalidateQueries({ queryKey: ["meetups"] });
+      alert("모임 수정에 성공했습니다!");
+
       router.push("/");
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "알 수 없는 오류 발생";
@@ -519,11 +517,12 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
                   name="image"
                   label="대표 이미지"
                   type="file"
+                  ref={imageRef}
                   accept="image/jpg, image/jpeg, image/png, image/webp, image/bmp"
                   onChange={handlePreviewImageChange}
-                  containerClassName="hidden"
-                  labelClassName="hidden"
-                  className="hidden"
+                  containerClassName="sr-only"
+                  labelClassName="sr-only"
+                  className="sr-only"
                 />
                 {/* 커스텀 버튼 */}
                 <div className="flex-cols-2 flex items-center justify-between text-center">
@@ -542,7 +541,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
                 label="모집글 비공개"
                 type="checkbox"
                 ref={isPublicRef}
-                defaultChecked={previousMeetupData?.isPublic}
+                defaultChecked={!previousMeetupData?.isPublic}
                 containerClassName={"flex items-center my-[3rem]"}
                 labelClassName={"text-2xl text-primary items-baseline font-semibold pl-[0.5rem] pr-[0.5rem]"}
                 className={

@@ -17,9 +17,9 @@ interface PageData {
 const LikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerProps) => {
   const queryClient = useQueryClient();
 
-  useEffect(() => {
-    console.log("좋아요눌림??", id, initialIsLike);
-  });
+  // useEffect(() => {
+  //   console.log("좋아요눌림??", id, initialIsLike);
+  // });
 
   const likeMutation = useMutation({
     mutationFn: () => toggleLikeApi(id, initialIsLike ?? false),
