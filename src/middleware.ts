@@ -5,14 +5,29 @@ import { BASE_URL } from "./constants/baseURL";
 // 아래 내용 추가 때문에 async로 바꿨어요!
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  console.log("====미들웨어 실행됨====", pathname);
-
   const accessToken = request.cookies.get("accessToken")?.value;
 
-  if (!accessToken) {
-    console.log("로그인 안 된 사용자입니다.");
-    const loginUrl = new URL("/login", request.url);
-    return NextResponse.redirect(loginUrl);
+  console.log("====미들웨어 실행됨====", pathname);
+
+  // 비로그인 :  로그인, 회원가입 페이지 접근 허용
+  if (!accessToken && (pathname === "/login" || pathname === "/signup")) {
+    console.log("비로그인 사용자, 인증 페이지 접근 허용:", pathname);
+    return NextResponse.next();
+  }
+
+  // 로그인 : 로그인, 회원가입 페이지 접근 차단
+  if (accessToken && (pathname === "/login" || pathname === "/signup")) {
+    console.log("이미 로그인된 사용자입니다. 접근 차단:", pathname);
+    return NextResponse.redirect(new URL("/", request.url)); // 또는 '/my-space' 등
+  }
+
+  // 비로그인 : 인증 필요한 페이지 접근 시 로그인 페이지로 리다이렉트
+  const protectedPaths = ["/account", "/account-delete", "/account-edit", "/password-edit", "/meetup", "/meetup-create", "/meetup-edit", "/my-space", "/notification"];
+  const isProtected = protectedPaths.some(path => path === pathname || pathname.startsWith(`${path}/`));
+
+  if (!accessToken && isProtected) {
+    console.log("로그인 필요: 인증되지 않은 접근 감지", pathname);
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   // meetup-edit 방장 외 접근 막고 ad/MeetupId로 리다이렉트하기
@@ -68,5 +83,18 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/account", "/account-delete", "/account-edit", "/password-edit", "/meetup/:path*", "/meetup-create", "/meetup-edit", "/meetup-edit/:path*", "/my-space/:path*", "/notification"],
+  matcher: [
+    "/login", // 👈 로그인 페이지도 미들웨어가 실행되도록 추가
+    "/signup", // 👈 회원가입 페이지도 추가
+    "/account",
+    "/account-delete",
+    "/account-edit",
+    "/password-edit",
+    "/meetup/:path*",
+    "/meetup-create",
+    "/meetup-edit",
+    "/meetup-edit/:path*",
+    "/my-space/:path*",
+    "/notification",
+  ],
 };

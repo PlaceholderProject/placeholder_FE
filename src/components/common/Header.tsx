@@ -51,9 +51,9 @@ const Header = () => {
     if (accessToken) {
       dispatch(setIsAuthenticated(true));
     } else {
-      handleLogout();
+      dispatch(setIsAuthenticated(false));
     }
-  }, [handleLogout, dispatch]);
+  }, [dispatch]);
 
   const handleNotificationPage = () => {
     router.replace("/notification");
