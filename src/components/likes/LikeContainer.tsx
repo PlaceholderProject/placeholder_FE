@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { toggleLikeApi } from "@/services/like.service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { InfiniteData } from "@tanstack/react-query";
