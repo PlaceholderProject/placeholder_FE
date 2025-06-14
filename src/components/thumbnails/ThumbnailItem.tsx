@@ -114,6 +114,21 @@ const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
   const thumbnailImageUrl = thumbnail.image?.startsWith("http") ? thumbnail.image : `${BASE_URL}${thumbnail.image?.startsWith("/") ? "" : "/"}${thumbnail.image}`;
 
   useEffect(() => {
+    console.log("BASE_URL:", BASE_URL);
+    console.log("thumbnail.image:", thumbnail.image);
+    console.log("최종 URL:", thumbnailImageUrl);
+
+    // 직접 fetch로 테스트
+    fetch(thumbnailImageUrl)
+      .then(response => {
+        console.log("이미지 응답:", response.status);
+      })
+      .catch(error => {
+        console.error("이미지 fetch 에러:", error);
+      });
+  }, [thumbnailImageUrl]);
+
+  useEffect(() => {
     // 프로필 이미지가 없으면 기본 이미지 사용
     if (!thumbnail?.organizer.profileImage) {
       setProfileImageSource("/profile.png");
