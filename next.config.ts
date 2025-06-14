@@ -13,11 +13,11 @@ const nextConfig: NextConfig = {
         pathname: "/media/profile_images/**",
       },
       // 프로덕션 환경을 위한 도메인도 추가하는 것이 좋습니다
-      // {
-      //   protocol: "https",
-      //   hostname: "your-production-domain.com",
-      //   pathname: "/media/profile_images/**",
-      // },
+      {
+        protocol: "https",
+        hostname: "your-production-domain.com",
+        pathname: "/media/profile_images/**",
+      },
     ],
   },
 

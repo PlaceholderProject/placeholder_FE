@@ -6,6 +6,7 @@ import { LabeledInputProps, LabeledSelectProps, NewMeetup } from "@/types/meetup
 import { useRouter } from "next/navigation";
 import { createMeetupApi } from "@/services/meetup.service";
 import Image from "next/image";
+import { MAX_AD_TITLE_LENGTH, MAX_DESCRIPTION_LENGTH, MAX_NAME_LENGTH, MAX_PLACE_LENGTH } from "@/constants/meetup";
 
 // displayName 추가
 const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
@@ -102,17 +103,12 @@ const MeetupForm = () => {
     setDescriptionLength(event.target.value.length);
   };
 
-  const MAX_NAME_LENGTH = 25;
-  const MAX_PLACE_LENGTH = 30;
-  const MAX_AD_TITLE_LENGTH = 25;
-  const MAX_DESCRIPTION_LENGTH = 70;
-
   // 체크 박스 상태 관리 위한 스테이트
   const [isStartedAtNull, setIsStartedAtNull] = useState(false);
   const [isEndedAtNull, setIsEndedAtNull] = useState(false);
 
   // 미리보기 스테이트
-  const [previewImage, setPreviewImage] = useState("/meetup_default_image.jpg");
+  const [previewImage, setPreviewImage] = useState("/meetup_default_image.png");
 
   // 셀렉트 배열
   const categoryOptions = ["운동", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
@@ -447,9 +443,9 @@ const MeetupForm = () => {
                 ref={imageRef}
                 onChange={handlePreviewImageChange}
                 required
-                containerClassName="hidden"
-                labelClassName="hidden"
-                className="hidden"
+                containerClassName="sr-only"
+                labelClassName="sr-only"
+                className="sr-only"
               />
 
               {/* 커스텀 버튼 */}
@@ -461,7 +457,17 @@ const MeetupForm = () => {
               </div>
 
               <div className="relative flex h-[14.5rem] w-[29.2rem] items-center justify-center overflow-hidden rounded-[1rem] border-[0.1rem] border-gray-light">
-                <Image src={previewImage} alt="preview image" fill style={{ objectFit: "cover" }} className="rounded-[1rem]" />
+                <Image
+                  src={previewImage}
+                  alt="preview image"
+                  fill={previewImage !== "/meetup_default_image.png"} // 업로드된 이미지일 때만 fill
+                  width={previewImage === "/meetup_default_image.png" ? 50 : undefined}
+                  height={previewImage === "/meetup_default_image.png" ? 50 : undefined}
+                  style={{
+                    objectFit: previewImage === "/meetup_default_image.png" ? "contain" : "cover",
+                  }}
+                  className="rounded-[1rem]"
+                />{" "}
               </div>
             </div>
 
