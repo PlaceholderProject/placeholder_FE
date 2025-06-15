@@ -1,25 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { toggleLikeApi } from "@/services/like.service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { InfiniteData } from "@tanstack/react-query";
 import LikePart from "./LikePart";
-import { LikeContainerProps } from "@/types/likeType";
+import { LikeContainerProps, PageData } from "@/types/likeType";
 import { Meetup } from "@/types/meetupType";
-
-// API 응답 페이지 데이터 타입
-interface PageData {
-  result: Meetup[];
-  total: number;
-  previous: string | null;
-  next: string | null;
-}
 
 const LikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerProps) => {
   const queryClient = useQueryClient();
 
   // useEffect(() => {
-  //   console.log("좋아요눌림??", id, initialIsLike);
-  // });
+  //   console.log("유즈이펙트 안 올드데이터 ㅇㄷㄷㅇㅌ:");
+  // }, []);
 
   const likeMutation = useMutation({
     mutationFn: () => toggleLikeApi(id, initialIsLike ?? false),
@@ -75,6 +67,7 @@ const LikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerPro
     // 성공시 쿼리 무효화
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
+      console.log("온석세스 안 조아요 토글 성공");
     },
   });
 

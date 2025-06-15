@@ -40,10 +40,7 @@ const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
     }
 
     // 메인 작성자 프사 이미지
-    const profileImageUrl = thumbnail.organizer.image?.startsWith("http")
-      ? thumbnail.organizer.image
-      : `${BASE_URL}${thumbnail.organizer.image?.startsWith("/") ? "" : "/"}${thumbnail.organizer.image}`;
-
+    const profileImageUrl = thumbnail.organizer.image?.startsWith("http") ? thumbnail.organizer.image : `${BASE_URL}${thumbnail.organizer.image}`;
     // console.log("작성자 프사 URL", profileImageUrl);
 
     // HTMLImageElement를 사용하여 이미지 존재 여부 확인
