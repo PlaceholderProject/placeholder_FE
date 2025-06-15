@@ -1,7 +1,7 @@
 export interface Meetup {
   organizer: {
     nickname: string;
-    profileImage: string;
+    image: string;
   };
   isLike: boolean;
   likeCount: number;
@@ -26,7 +26,7 @@ export interface Meetup {
 export interface NewMeetup {
   organizer: {
     nickname: string;
-    profileImage: string;
+    image: string;
   };
   isLike: boolean;
   likeCount: number;
