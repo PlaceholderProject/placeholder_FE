@@ -188,7 +188,7 @@ const MeetupForm = () => {
     const newMeetup: NewMeetup = {
       organizer: {
         nickname: organizerNicknameRef.current?.value || "",
-        profileImage: organizerProfileImageRef.current?.value || "",
+        image: organizerProfileImageRef.current?.value || "",
       },
       name: nameRef.current?.value || "",
       description: descriptionRef.current?.value || "",

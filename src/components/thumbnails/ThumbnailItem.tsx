@@ -13,23 +13,23 @@ import Image from "next/image";
 const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
   const [profileImageSource, setProfileImageSource] = useState("/profile.png");
 
-  // 이미지 URL 생성 시 슬래시 문제..가 있어서 슬래시 포함도 체크했었으나 베이스 유알엘 문제였다..하!
-  const thumbnailImageUrl = thumbnail.image?.startsWith("http") ? thumbnail.image : `${BASE_URL}${thumbnail.image?.startsWith("/") ? "" : "/"}${thumbnail.image}`;
+  // 이미지 URL 생성 시 슬래시 문제..?
+  const thumbnailImageUrl = thumbnail.image?.startsWith("http") ? thumbnail.image : `${BASE_URL}${thumbnail.image}`;
 
-  // useEffect(() => {
-  //   console.log("==베이스유알엘:", BASE_URL);
-  //   console.log("===thumbnail.image:", thumbnail.image);
-  //   console.log("====최종 URL:", thumbnailImageUrl);
+  useEffect(() => {
+    console.log("==베이스유알엘:", BASE_URL);
+    console.log("===thumbnail.image:", thumbnail.image);
+    console.log("====최종 URL:", thumbnailImageUrl);
 
-  //   // 직접 fetch로 테스트
-  //   fetch(thumbnailImageUrl)
-  //     .then(response => {
-  //       console.log("==페치로 테스트 이미지 응답:", response.status);
-  //     })
-  //     .catch(error => {
-  //       console.error("===이미지 fetch 에러:", error);
-  //     });
-  // }, [thumbnailImageUrl]);
+    // 직접 fetch로 테스트
+    fetch(thumbnailImageUrl)
+      .then(response => {
+        console.log("==페치로 테스트 이미지 응답:", response.status);
+      })
+      .catch(error => {
+        console.error("===이미지 fetch 에러:", error);
+      });
+  }, [thumbnailImageUrl]);
 
   useEffect(() => {
     // 프로필 이미지가 없으면 기본 이미지 사용
