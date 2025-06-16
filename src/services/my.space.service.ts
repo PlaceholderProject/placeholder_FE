@@ -100,11 +100,11 @@ export const getMyMeetupMembersApi = async (meetupId: number | undefined) => {
     throw new Error("meetupId is required");
   }
 
-  console.log("=== API 호출 시작 ===");
-  console.log("받은 meetupId:", meetupId);
-  console.log("meetupId 타입:", typeof meetupId);
-  console.log("meetupId 존재 여부:", !!meetupId);
-  console.log("===================");
+  // console.log("=== API 호출 시작 ===");
+  // console.log("받은 meetupId:", meetupId);
+  // console.log("meetupId 타입:", typeof meetupId);
+  // console.log("meetupId 존재 여부:", !!meetupId);
+  // console.log("===================");
 
   const token = Cookies.get("accessToken");
   const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}/member`, {
@@ -123,17 +123,17 @@ export const getMyMeetupMembersApi = async (meetupId: number | undefined) => {
   // 👇 실제 API 응답 구조 확인
 
   const myMeetupMembersData = await response.json();
-  console.log("=== API 응답 데이터 ===");
-  console.log("전체 응답:", myMeetupMembersData);
-  console.log("result 배열:", myMeetupMembersData.result);
+  // console.log("=== API 응답 데이터 ===");
+  // console.log("전체 응답:", myMeetupMembersData);
+  // console.log("result 배열:", myMeetupMembersData.result);
   if (myMeetupMembersData.result && myMeetupMembersData.result[0]) {
     console.log("첫 번째 멤버 보여주세요:", myMeetupMembersData.result[0]);
   }
   if (myMeetupMembersData.result && myMeetupMembersData.result[1]) {
     console.log("두 번째 멤버 보여주세요:", myMeetupMembersData.result[1]);
   }
-  console.log("=====================");
-  console.log("내공간 멤버 데이터:", myMeetupMembersData);
+  // console.log("=====================");
+  // console.log("내공간 멤버 데이터:", myMeetupMembersData);
 
   return myMeetupMembersData;
 };

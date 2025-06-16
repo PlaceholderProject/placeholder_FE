@@ -43,9 +43,9 @@ export const toggleLikeApi = async (thumbnailId: number, currentIsLike: boolean)
       isLike: newIsLike,
     }),
   });
-  console.log("🔍 서버 응답 스테이터스:", response.status);
-  console.log("🔍 서버 응답 헤더:", response.headers);
-  console.log("🔍 Content-Length:", response.headers.get("content-length"));
+  // console.log("🔍 서버 응답 스테이터스:", response.status);
+  // console.log("🔍 서버 응답 헤더:", response.headers);
+  // console.log("🔍 Content-Length:", response.headers.get("content-length"));
   if (!response.ok) {
     throw new Error(`좋아요 토글 실패: ${response.status}`);
   }

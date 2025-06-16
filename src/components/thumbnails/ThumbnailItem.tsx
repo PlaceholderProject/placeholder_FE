@@ -17,9 +17,9 @@ const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
   const thumbnailImageUrl = thumbnail.image?.startsWith("http") ? thumbnail.image : `${BASE_URL}${thumbnail.image}`;
 
   useEffect(() => {
-    console.log("==베이스유알엘:", BASE_URL);
-    console.log("===thumbnail.image:", thumbnail.image);
-    console.log("====최종 URL:", thumbnailImageUrl);
+    // console.log("==베이스유알엘:", BASE_URL);
+    // console.log("===thumbnail.image:", thumbnail.image);
+    // console.log("====최종 URL:", thumbnailImageUrl);
 
     // 직접 fetch로 테스트
     fetch(thumbnailImageUrl)
