@@ -24,7 +24,7 @@ export const toggleLikeApi = async (thumbnailId: number, currentIsLike: boolean)
   // 로그인하지 않은 유저는 좋아요 눌러도 소용없게
   const getUserResponse = await getUser();
   if (!getUserResponse) {
-    console.log("겟유저 리턴값은:", getUserResponse);
+    // console.log("겟유저 리턴값은:", getUserResponse);
 
     alert("로그인한 유저만 좋아요를 누를 수 있습니다.");
     return;
