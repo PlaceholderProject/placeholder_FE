@@ -118,7 +118,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
 
   useEffect(() => {
     if (previousMeetupData?.image) {
-      const imageUrl = `${BASE_URL}${previousMeetupData.image}`;
+      const imageUrl = `${BASE_URL}/${previousMeetupData.image}`;
       console.log("미리보기 설정되는 이미지 URL: ", imageUrl);
       setPreviewImage(imageUrl);
     }

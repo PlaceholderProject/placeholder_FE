@@ -11,7 +11,7 @@ const AdOrganizer = ({ meetupId }: { meetupId: number }) => {
 
   useEffect(() => {
     if (adData && adData.organizer && adData.organizer.profileImage) {
-      const profileImageUrl = adData?.organizer.profileImage.startsWith("http") ? adData.organizer.profileImage : `${BASE_URL}${adData.organizer.profileImage}`;
+      const profileImageUrl = adData?.organizer.profileImage.startsWith("http") ? adData.organizer.profileImage : `${BASE_URL}/${adData.organizer.profileImage}`;
 
       const imgElement = document.createElement("img");
       imgElement.onload = () => {
@@ -42,7 +42,7 @@ const AdOrganizer = ({ meetupId }: { meetupId: number }) => {
   if (isPending) return <div>로딩중..</div>;
   if (!adData) return null;
 
-  // const profileImageUrl = `${BASE_URL}${adData.organizer.profileImage}`;
+  // const profileImageUrl = `${BASE_URL}/${adData.organizer.profileImage}`;
 
   return (
     <>
