@@ -29,7 +29,7 @@ const SearchedResultItem = ({ ad }: { ad: SearchedType }) => {
   };
 
   return (
-    <div className="flex flex-col justify-between border-b-[0.1rem] border-gray-medium px-[2rem] py-[1rem]">
+    <div className="flex w-[95%] flex-col justify-between border-gray-medium py-[1rem] md:max-w-[111rem]">
       <div className="text-lg">
         <Link href={`/ad/${ad.id}`}>{renderTitle()}</Link>
       </div>

@@ -26,7 +26,7 @@ const Account = () => {
   return (
     <div className="my-[4rem] flex min-h-[calc(100vh-12rem)] flex-col items-center justify-center md:min-h-[calc(100vh-13.5rem)]">
       <h2 className="mb-[2rem] text-3xl font-semibold">계정 관리</h2>
-      <div className="flex min-h-[54rem] w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] border-gray-medium py-[3rem]">
+      <div className="flex min-h-[54rem] w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] border-gray-medium py-[3rem] md:max-w-[80rem]">
         <div className="flex w-full flex-col items-center justify-center gap-[1rem]">
           <div className="mb-[2rem] h-[15rem] w-[15rem] overflow-hidden rounded-full">
             <Image src={imagePath} alt="프로필 이미지" width="200" height="200" unoptimized={true} />

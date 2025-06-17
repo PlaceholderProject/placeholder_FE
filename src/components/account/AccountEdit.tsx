@@ -156,7 +156,7 @@ const AccountEdit = () => {
     <div>
       <div className="my-[4rem] flex min-h-[calc(100vh-12rem)] flex-col items-center justify-center md:min-h-[calc(100vh-13.5rem)]">
         <h2 className="mb-[2rem] text-3xl font-semibold">회원 정보 수정</h2>
-        <div className="flex h-full min-h-[54rem] w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] border-gray-medium py-[2rem]">
+        <div className="flex h-full min-h-[54rem] w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] border-gray-medium py-[2rem] md:max-w-[80rem]">
           <form onSubmit={handleAccountEditFormSubmit} className="flex flex-col justify-center gap-[1.5rem] p-[2rem]">
             <div className="relative flex items-center justify-center">
               <div className="relative h-[15rem] w-[15rem] overflow-hidden rounded-full">
