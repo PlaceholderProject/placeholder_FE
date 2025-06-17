@@ -11,7 +11,7 @@ const AdOrganizer = ({ meetupId }: { meetupId: number }) => {
 
   useEffect(() => {
     if (adData && adData.organizer && adData.organizer.profileImage) {
-      const profileImageUrl = adData?.organizer.profileImage.startsWith("http") ? adData.organizer.profileImage : `${BASE_URL}${adData.organizer.profileImage}`;
+      const profileImageUrl = adData?.organizer.profileImage.startsWith("http") ? adData.organizer.profileImage : `${BASE_URL}{adData.organizer.profileImage}`;
 
       const imgElement = document.createElement("img");
       imgElement.onload = () => {

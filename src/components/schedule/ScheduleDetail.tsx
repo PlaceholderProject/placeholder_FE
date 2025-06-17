@@ -1,13 +1,22 @@
 "use client";
 
 import Image from "next/image";
-import { useScheduleDetail } from "@/hooks/useSchedule";
+import { useScheduleDetail, useSchedules } from "@/hooks/useSchedule";
 import { formatDateTime } from "@/utils/scheduleDateUtils";
 import AttendeePopover from "@/components/schedule/AttendeePopover";
 import ScheduleNumber from "@/components/schedule/ScheduleNumber";
+import { useMemo } from "react";
 
-const ScheduleDetail = ({ scheduleId }: { scheduleId: number }) => {
+const ScheduleDetail = ({ scheduleId, meetupId }: { scheduleId: number; meetupId: number }) => {
   const { data: schedule, isPending, error } = useScheduleDetail(scheduleId);
+  const { data: schedules } = useSchedules(meetupId);
+
+  // 스케줄 번호 계산
+  const scheduleNumber = useMemo(() => {
+    if (!schedules || !schedule) return 1;
+    const index = schedules.findIndex(s => s.id === schedule.id);
+    return index >= 0 ? index + 1 : 1;
+  }, [schedules, schedule]);
 
   if (isPending) return <div>로딩 중...</div>;
   if (error) return <div>에러 발생: {error.message}</div>;
@@ -18,7 +27,7 @@ const ScheduleDetail = ({ scheduleId }: { scheduleId: number }) => {
       <div className="w-full rounded-md p-4">
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center">
-            <ScheduleNumber number={scheduleId} />
+            <ScheduleNumber number={scheduleNumber} />
             <div>
               <div className="text-sm font-semibold">{formatDateTime(schedule.scheduledAt)}</div>
               <div className="text-lg font-bold">{schedule.place}</div>

@@ -111,7 +111,7 @@ const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
   const [profileImageSource, setProfileImageSource] = useState("/profile.png");
 
   // 이미지 URL 생성 시 슬래시 문제 해결
-  const thumbnailImageUrl = thumbnail.image?.startsWith("http") ? thumbnail.image : `${BASE_URL}${thumbnail.image?.startsWith("/") ? "" : "/"}${thumbnail.image}`;
+  const thumbnailImageUrl = thumbnail.image?.startsWith("http") ? thumbnail.image : `${BASE_URL}/${thumbnail.image?.startsWith("/") ? "" : "/"}${thumbnail.image}`;
 
   useEffect(() => {
     // 프로필 이미지가 없으면 기본 이미지 사용
@@ -122,7 +122,7 @@ const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
 
     const profileImageUrl = thumbnail.organizer.profileImage?.startsWith("http")
       ? thumbnail.organizer.profileImage
-      : `${BASE_URL}${thumbnail.organizer.profileImage?.startsWith("/") ? "" : "/"}${thumbnail.organizer.profileImage}`;
+      : `${BASE_URL}/${thumbnail.organizer.profileImage?.startsWith("/") ? "" : "/"}${thumbnail.organizer.profileImage}`;
 
     // console.log("작성자 프사 URL", profileImageUrl);
 
