@@ -13,6 +13,7 @@ import { setHasUnreadNotifications } from "@/stores/notificationSlice";
 import { logout } from "@/stores/userSlice";
 import { useQueryClient } from "@tanstack/react-query";
 import HamburgerMenu from "@/components/common/HamburgerMenu";
+import { resetSelectedMeetupId } from "@/stores/proposalSlice";
 
 const Header = () => {
   const hasUnreadNotifications = useSelector((state: RootState) => state.notification.hasUnread);
@@ -32,6 +33,7 @@ const Header = () => {
       dispatch(logout());
       dispatch(setIsAuthenticated(false));
       dispatch(setHasUnreadNotifications(false));
+      dispatch(resetSelectedMeetupId());
 
       queryClient.invalidateQueries({ queryKey: ["myMeetups", "organizer"] });
       queryClient.invalidateQueries({ queryKey: ["receivedProposals"] });
