@@ -25,7 +25,7 @@ const AdDetail = ({ meetupId, userNickname }: { meetupId: number; userNickname: 
   const startedAt = adData.startedAt;
   const endedAt = adData.endedAt;
 
-  const imageUrl = `${BASE_URL}${adData.image}`;
+  const imageUrl = `${BASE_URL}/${adData.image}`;
 
   return (
     <>
