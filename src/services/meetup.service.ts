@@ -1,6 +1,7 @@
 import { BASE_URL } from "@/constants/baseURL";
 import Cookies from "js-cookie";
 import { refreshToken } from "./auth.service";
+import { FileType } from "@/types/meetupType";
 
 // 모임 생성 api
 export const createMeetupApi = async (meetupFormData: FormData): Promise<void> => {
@@ -88,4 +89,23 @@ export const editMeetupApi = async (meetupId: number, formData: FormData): Promi
   const responseData = await response.json();
   console.log("모임 수정 서버 응답:", responseData);
   return responseData;
+};
+
+// presigned URL 생성 api
+export const getMeetupPresignedUrl = async (filetype: FileType) => {
+  const token = Cookies.get("accessToken");
+
+  const response = await fetch(`${BASE_URL}/api/v1/meetup/presigned-url?filetype=image/jpg`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Presigned URL ㅇ청 실패");
+  }
+  console.log("프리사인드 응답:", response);
+
+  return await response.json();
 };

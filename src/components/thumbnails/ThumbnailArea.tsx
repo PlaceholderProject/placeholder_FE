@@ -7,8 +7,13 @@ import { getHeadhuntingsApi } from "@/services/thumbnails.service";
 import { Meetup } from "@/types/meetupType";
 import { useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
+import { getMeetupPresignedUrl } from "@/services/meetup.service";
 
 const ThumbnailArea = () => {
+  useEffect(() => {
+    getMeetupPresignedUrl();
+    console.log("💎프리사인드 썸넬area 유즈이펙트!💎");
+  }, []);
   // 이제 리덕스에서 정렬 타입 가져옴
   // SortArea, FilterArea, ThumbnailArea가 한 페이지에서 렌더링되면서
   // 기능은 따로, 상태나 타입은 한번에 공유

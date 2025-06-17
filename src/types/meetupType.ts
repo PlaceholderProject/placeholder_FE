@@ -110,3 +110,5 @@ export type TypeRegionType =
 export type TypePurposeType = null | "운동" | "공부" | "취준" | "취미" | "친목" | "맛집" | "여행" | "기타";
 
 export type FilterAreaType = null | "지역별" | "모임 성격별";
+
+export type FileType = "image/jpg" | "image/jpeg" | "image/png" | "image/webp" | "image/bmp";
