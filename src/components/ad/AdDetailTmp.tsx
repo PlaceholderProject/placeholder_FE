@@ -48,7 +48,7 @@ const AdDetailTmp = ({ meetupId, userNickname }: { meetupId: number; userNicknam
   const startedAt = adData.startedAt;
   const endedAt = adData.endedAt;
 
-  const imageUrl = `${BASE_URL}${adData.image}`;
+  const imageUrl = `${BASE_URL}/${adData.image}`;
 
   // 6. 콘솔에 애드데이터? 출력
   console.log("애드데이터?", adData);

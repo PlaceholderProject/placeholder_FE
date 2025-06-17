@@ -1,3 +1,4 @@
+import { BASE_URL } from "@/constants/baseURL";
 import React from "react";
 
 const LikeTmp = () => {

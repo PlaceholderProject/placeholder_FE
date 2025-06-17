@@ -11,7 +11,7 @@ const AdOrganizerTmp = ({ meetupId }: { meetupId: number }) => {
 
   // useEffect(() => {
   //   if (adData && adData.organizer && adData.organizer.profileImage) {
-  //     const profileImageUrl = adData?.organizer.profileImage.startsWith("http") ? adData.organizer.profileImage : `${BASE_URL}${adData.organizer.profileImage}`;
+  //     const profileImageUrl = adData?.organizer.profileImage.startsWith("http") ? adData.organizer.profileImage : `${BASE_URL}/${adData.organizer.profileImage}`;
   //     console.log("실제 프사 URL", profileImageUrl);
 
   //     //이미지 존재하늦지 확인
@@ -44,7 +44,7 @@ const AdOrganizerTmp = ({ meetupId }: { meetupId: number }) => {
 
     if (adData && adData.organizer && adData.organizer.profileImage) {
       console.log("4. if문 진입 성공");
-      const profileImageUrl = adData?.organizer.profileImage.startsWith("http") ? adData.organizer.profileImage : `${BASE_URL}${adData.organizer.profileImage}`;
+      const profileImageUrl = adData?.organizer.profileImage.startsWith("http") ? adData.organizer.profileImage : `${BASE_URL}/${adData.organizer.profileImage}`;
       console.log("5. 생성된 이미지 URL:", profileImageUrl);
 
       const imgElement = document.createElement("img");
@@ -70,14 +70,14 @@ const AdOrganizerTmp = ({ meetupId }: { meetupId: number }) => {
   if (isPending) return <div>로딩중..</div>;
   if (!adData) return null;
 
-  // const profileImageUrl = `${BASE_URL}${adData.organizer.profileImage}`;
+  // const profileImageUrl = `${BASE_URL}/${adData.organizer.profileImage}`;
 
   return (
     <>
       <div>
         <h4>작성자: </h4>
         <div>{adData.organizer.nickname}</div>
-        <div className="relative w-[50px] h-[50px] rounded-full overflow-hidden">
+        <div className="relative h-[50px] w-[50px] overflow-hidden rounded-full">
           <Image src={imageSource} alt="방장 프사" width={20} height={20} style={{ width: "auto", height: "auto" }} unoptimized={true} />
         </div>
       </div>

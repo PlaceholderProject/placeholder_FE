@@ -21,7 +21,7 @@ const Account = () => {
   //   }
   // }, [user]);
 
-  const imagePath = user.profileImage ? (user.profileImage.startsWith("http") ? user.profileImage : `${BASE_URL}${user.profileImage}`) : "/profile.png";
+  const imagePath = user.profileImage ? (user.profileImage.startsWith("http") ? user.profileImage : `${BASE_URL}/${user.profileImage}`) : "/profile.png";
 
   return (
     <div className="my-[4rem] flex min-h-[calc(100vh-12rem)] flex-col items-center justify-center md:min-h-[calc(100vh-13.5rem)]">

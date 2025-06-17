@@ -49,7 +49,7 @@ const AccountEdit = () => {
       fetchUser();
     } else {
       if (user.profileImage) {
-        const imagePath = user.profileImage.startsWith("http") ? user.profileImage : `${BASE_URL}${user.profileImage}`;
+        const imagePath = user.profileImage.startsWith("http") ? user.profileImage : `${BASE_URL}/${user.profileImage}`;
         setProfileImage(imagePath);
       } else {
         setProfileImage("/profile.png");
@@ -57,7 +57,7 @@ const AccountEdit = () => {
       setNickname(user.nickname || "");
       setBio(user.bio || "");
     }
-  }, ["data", "dispatch", "user.bio", "user.email", "user.nickname", "user.profileImage"]);
+  }, [data, dispatch, user.bio, user.email, user.nickname, user.profileImage]);
 
   if (!data) return;
 
@@ -129,7 +129,7 @@ const AccountEdit = () => {
       const response = await editUserMutation.mutateAsync(editedUser);
 
       if (response) {
-        const imageUrl = response.image ? (response.image.startsWith("http") ? response.image : `${BASE_URL}${response.image}`) : null;
+        const imageUrl = response.image ? (response.image.startsWith("http") ? response.image : `${BASE_URL}/{response.image}`) : null;
 
         dispatch(
           setUser({

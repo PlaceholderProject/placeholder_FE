@@ -19,7 +19,7 @@ export const validateImage = ({ data, personKey, imageKey, setImageSource, fallb
 
   // 절대경로인지 확인해 url 생성
 
-  const imageUrl = imagePath.startsWith("http") ? imagePath : `${BASE_URL}${imagePath}`;
+  const imageUrl = imagePath.startsWith("http") ? imagePath : `${BASE_URL}/${imagePath}`;
 
   // 이미지 요소 생성해 로드 테슬트
   const imgElement = document.createElement("img");

@@ -28,7 +28,7 @@ const ReceivedProposalItem = ({ proposal }: { proposal: ReceivedProposal }) => {
         <div className="flex flex-row items-center gap-[1rem]">
           <div className="h-[2rem] w-[2rem] overflow-hidden rounded-full">
             <Image
-              src={proposal.user.image ? (proposal.user.image.startsWith("http") ? proposal.user.image : `${BASE_URL}${proposal.user.image}`) : "/profile.png"}
+              src={proposal.user.image ? (proposal.user.image.startsWith("http") ? proposal.user.image : `${BASE_URL}/${proposal.user.image}`) : "/profile.png"}
               alt="프로필 이미지"
               width="20"
               height="20"
