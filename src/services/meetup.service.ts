@@ -92,7 +92,7 @@ export const editMeetupApi = async (meetupId: number, formData: FormData): Promi
 };
 
 // presigned URL 생성 api
-export const getMeetupPresignedUrl = async (filetype: FileType) => {
+export const getMeetupPresignedUrl = async () => {
   const token = Cookies.get("accessToken");
 
   const response = await fetch(`${BASE_URL}/api/v1/meetup/presigned-url?filetype=image/jpg`, {
@@ -105,7 +105,9 @@ export const getMeetupPresignedUrl = async (filetype: FileType) => {
   if (!response.ok) {
     throw new Error("Presigned URL ㅇ청 실패");
   }
-  console.log("프리사인드 응답:", response);
+  console.log("🟣🟣🟣프리사인드 응답:", response);
 
   return await response.json();
 };
+
+export const meetupUploadToS3 = async () => {};

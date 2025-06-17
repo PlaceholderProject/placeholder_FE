@@ -14,7 +14,7 @@ const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
   const [profileImageSource, setProfileImageSource] = useState("/profile.png");
 
   // 이미지 URL 생성 시 슬래시 문제..?
-  const thumbnailImageUrl = thumbnail.image?.startsWith("http") ? thumbnail.image : `${BASE_URL}${thumbnail.image}`;
+  const thumbnailImageUrl = thumbnail.image?.startsWith("http") ? thumbnail.image : `${BASE_URL}/${thumbnail.image}`;
 
   useEffect(() => {
     // console.log("==베이스유알엘:", BASE_URL);
@@ -40,7 +40,7 @@ const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
     }
 
     // 메인 작성자 프사 이미지
-    const profileImageUrl = thumbnail.organizer.image?.startsWith("http") ? thumbnail.organizer.image : `${BASE_URL}${thumbnail.organizer.image}`;
+    const profileImageUrl = thumbnail.organizer.image?.startsWith("http") ? thumbnail.organizer.image : `${BASE_URL}/${thumbnail.organizer.image}`;
     // console.log("작성자 프사 URL", profileImageUrl);
 
     // HTMLImageElement를 사용하여 이미지 존재 여부 확인

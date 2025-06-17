@@ -15,7 +15,7 @@ export const getHeadhuntingsApi = async ({ sortType, place, category }: { sortTy
   queryParams.append("page", page.toString());
   queryParams.append("size", size.toString());
 
-  let url = `${BASE_URL}api/v1/meetup?sort=${sortType}&${queryParams.toString()}`;
+  let url = `${BASE_URL}/api/v1/meetup?sort=${sortType}&${queryParams.toString()}`;
 
   if (place) {
     url = url + `&place=${place}`;

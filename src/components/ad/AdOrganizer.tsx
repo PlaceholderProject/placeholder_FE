@@ -42,8 +42,6 @@ const AdOrganizer = ({ meetupId }: { meetupId: number }) => {
   if (isPending) return <div>로딩중..</div>;
   if (!adData) return null;
 
-  // const profileImageUrl = `${BASE_URL}/${adData.organizer.profileImage}`;
-
   return (
     <>
       <div>
