@@ -2,9 +2,9 @@
 
 import React, { useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { LabeledInputProps, LabeledSelectProps, NewMeetup } from "@/types/meetupType";
+import { LabeledInputProps, LabeledSelectProps, Meetup, NewMeetup } from "@/types/meetupType";
 import { useRouter } from "next/navigation";
-import { createMeetupApi } from "@/services/meetup.service";
+import { createMeetupApi, getMeetupPresignedUrl } from "@/services/meetup.service";
 import Image from "next/image";
 import { MAX_AD_TITLE_LENGTH, MAX_DESCRIPTION_LENGTH, MAX_NAME_LENGTH, MAX_PLACE_LENGTH } from "@/constants/meetup";
 
@@ -81,6 +81,32 @@ const MeetupForm = () => {
   const categoryRef = useRef<HTMLSelectElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
 
+  // 2️⃣ s3에 직접 이미지 업로드 함수
+  const meetupUploadToS3 = async (file: File, meetupPresignedData: any) => {
+    const formData = new FormData();
+
+    Object.keys(meetupPresignedData.fields).forEach(key => {
+      formData.append(key, meetupPresignedData.fields[key]);
+      console.log("키랑 벨류 어펜드한 폼데이터", formData);
+    });
+
+    formData.append("file", file);
+    console.log("파일 붙인 폼데이터", formData);
+
+    const response = await fetch(meetupPresignedData.url, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("s3 업로드 실패");
+    }
+
+    // 업로드된 파일의 URL 생성
+    const uploadedFileUrl = `${meetupPresignedData.url}${meetupPresignedData.fields.key}`;
+    return uploadedFileUrl;
+  };
+
   // 글자수 관리 위한 스테이트
   const [nameLength, setNameLength] = useState(0);
   const [placeLength, setPlaceLength] = useState(0);
@@ -116,7 +142,7 @@ const MeetupForm = () => {
 
   // useMutation은 최상단에 위치시키라고 함
   const createMutation = useMutation({
-    mutationFn: (meetupFormData: FormData) => createMeetupApi(meetupFormData),
+    mutationFn: ({ meetupData, imageUrl }: { meetupData: NewMeetup; imageUrl: string }) => createMeetupApi(meetupData, imageUrl),
   });
 
   // async 함수로 변경함
@@ -185,46 +211,74 @@ const MeetupForm = () => {
       return;
     }
 
-    const newMeetup: NewMeetup = {
-      organizer: {
-        nickname: organizerNicknameRef.current?.value || "",
-        image: organizerProfileImageRef.current?.value || "",
-      },
-      name: nameRef.current?.value || "",
-      description: descriptionRef.current?.value || "",
-      place: placeRef.current?.value || "",
-      placeDescription: placeDescriptionRef.current?.value || "",
-      startedAt: startDate,
-      endedAt: endDate,
-      adTitle: adTitleRef.current?.value || "",
-      adEndedAt: adEndDate,
-      isPublic: !isPublicRef.current?.checked || true,
-      category: categoryRef.current?.value || "",
-      image: imageRef.current?.value || "",
-      isLike: false,
-      likeCount: 0,
-      createdAt: "",
-      commentCount: 0,
-    };
-
-    console.log("생성할 새모임 데이터:", newMeetup);
-
-    const meetupFormData = new FormData();
-    meetupFormData.append("payload", JSON.stringify(newMeetup));
-
-    if (imageRef.current?.files?.[0]) {
-      meetupFormData.append("image", imageRef.current.files[0]);
-    }
-
     try {
-      await createMutation.mutateAsync(meetupFormData);
+      let imageUrl = "";
+
+      // ---1--- 이미지 있으면 (s3에 업로드)
+      if (imageRef?.current?.files?.[0]) {
+        const imageFile = imageRef.current.files[0];
+        // presigned URL 요청
+        const presignedResponse = await getMeetupPresignedUrl();
+        const presignedData = presignedResponse.result[0];
+
+        // s3업로드 함수 실행으로 업로드 하고 imageUrl 받아오기
+        imageUrl = await meetupUploadToS3(imageFile, presignedData);
+      }
+
+      // ---2--- 모임 데이터 생성 (폼데이터X)
+      const newMeetup: NewMeetup = {
+        organizer: {
+          nickname: organizerNicknameRef.current?.value || "",
+          image: organizerProfileImageRef.current?.value || "",
+        },
+        name: nameRef.current?.value || "",
+        description: descriptionRef.current?.value || "",
+        place: placeRef.current?.value || "",
+        placeDescription: placeDescriptionRef.current?.value || "",
+        startedAt: startDate,
+        endedAt: endDate,
+        adTitle: adTitleRef.current?.value || "",
+        adEndedAt: adEndDate,
+        isPublic: !isPublicRef.current?.checked || true,
+        category: categoryRef.current?.value || "",
+        image: imageRef.current?.value || "",
+        isLike: false,
+        likeCount: 0,
+        createdAt: "",
+        commentCount: 0,
+      };
+
+      console.log("생성할 새모임 데이터:", newMeetup);
+
+      // ---3--- 모임 생성 (이미 업로드되고 받아온 이미지 url포함, 이건 유저 폼제출 이!!후!!에 유저 모르게 일어나는 과정임)
+      await createMutation.mutateAsync({
+        meetupData: newMeetup,
+        imageUrl: imageUrl,
+      });
       queryClient.invalidateQueries({ queryKey: ["meetups"] });
       queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
       alert("모임 생성에 성공했습니다!");
       router.push("/");
     } catch (error) {
-      console.error(error);
+      console.error("모임 등록 실패:", error);
     }
+
+    // const meetupFormData = new FormData();
+    // meetupFormData.append("payload", JSON.stringify(newMeetup));
+
+    // if (imageRef.current?.files?.[0]) {
+    //   meetupFormData.append("image", imageRef.current.files[0]);
+    // }
+
+    // try {
+    //   await createMutation.mutateAsync({ meetupData: newMeetup, imageUrl: imageUrl });
+    //   queryClient.invalidateQueries({ queryKey: ["meetups"] });
+    //   queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
+    //   alert("모임 생성에 성공했습니다!");
+    //   router.push("/");
+    // } catch (error) {
+    //   console.error(error);
+    // }
   };
 
   // 이미지 미리보기 스테이트
