@@ -3,15 +3,15 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import MemberSelector from "@/components/schedule/MemberSelector";
-import { Schedule } from "@/types/scheduleType";
 import { useCreateSchedule, useScheduleDetail, useUpdateSchedule } from "@/hooks/useSchedule";
 import { useDaumPostcodePopup } from "react-daum-postcode";
+import { useImageUpload } from "@/hooks/useImageUpload"; // [!code ++]
+import { BASE_URL } from "@/constants/baseURL";
 
 interface ScheduleFormProps {
   meetupId: number;
   mode?: "create" | "edit";
   scheduleId?: number;
-  initialData?: Schedule;
 }
 
 // 카카오맵 SDK 로딩 확인 훅
@@ -19,23 +19,17 @@ const useKakaoMapSDK = () => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // 이미 로드된 경우
     if (typeof window !== "undefined" && window.kakao?.maps?.services) {
       setIsLoaded(true);
       return;
     }
-
-    // SDK 로딩 확인
     const checkKakaoMaps = () => {
       if (window.kakao?.maps?.services) {
         setIsLoaded(true);
         return;
       }
-      // 100ms마다 확인
       setTimeout(checkKakaoMaps, 100);
     };
-
-    // 스크립트가 없다면 로드
     if (!document.querySelector('script[src*="dapi.kakao.com"]')) {
       const script = document.createElement("script");
       script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_APP_JS_KEY}&libraries=services&autoload=false`;
@@ -61,8 +55,11 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
   const openPostcode = useDaumPostcodePopup();
   const isKakaoMapLoaded = useKakaoMapSDK();
 
+  // 이미지 업로드 훅과 스케줄 생성/수정 훅을 모두 사용합니다.
+  const imageUploadMutation = useImageUpload();
   const createMutation = useCreateSchedule(meetupId);
   const updateMutation = useUpdateSchedule(scheduleId || 0);
+
   const { data: scheduleData, isPending: isLoadingSchedule } = useScheduleDetail(mode === "edit" && scheduleId ? scheduleId : undefined, {
     enabled: mode === "edit" && !!scheduleId,
   });
@@ -83,10 +80,9 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
-  // 폼 초기화
+  // 폼 초기화 (수정 모드일 때)
   useEffect(() => {
     if (mode === "edit" && scheduleData) {
-      // 폼 필드 초기화
       if (scheduledAtRef.current) {
         const date = new Date(scheduleData.scheduledAt);
         const formattedDate = date.toISOString().slice(0, 16);
@@ -98,15 +94,14 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
       if (longitudeRef.current) longitudeRef.current.value = scheduleData.longitude;
       if (memoRef.current) memoRef.current.value = scheduleData.memo;
 
-      // 참석자 초기화
-      const participantIds = scheduleData.participant.map(p => {
-        if (typeof p === "object" && p !== null) {
-          if ("id" in p) return p.id;
-          if ("nickname" in p) return parseInt(p.nickname);
-        }
-        return 0;
-      }) as number[];
+      // 기존 이미지가 있으면 미리보기로 설정
+      if (scheduleData.image) {
+        // 백엔드에서 전체 URL을 주지 않는 경우를 대비하여 BASE_URL과 조합
+        const fullImageUrl = scheduleData.image.startsWith("http") ? scheduleData.image : `${BASE_URL}/${scheduleData.image}`;
+        setImagePreview(fullImageUrl);
+      }
 
+      const participantIds = scheduleData.participant.map(p => (typeof p === "object" && p !== null && "id" in p ? p.id : 0)).filter(id => id > 0) as number[];
       setSelectedMember(participantIds);
     }
   }, [scheduleData, mode]);
@@ -121,8 +116,6 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
     const file = event.target.files?.[0];
     if (file) {
       setSelectedImage(file);
-
-      // 이미지 미리보기 생성
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
@@ -140,50 +133,46 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
     }
   };
 
-  // 주소 검색 처리 (안전한 Geocoder 사용)
+  // 주소 검색 처리
   const handleAddressSearch = useCallback(() => {
     openPostcode({
       onComplete: data => {
-        if (addressRef.current) {
-          addressRef.current.value = data.address;
-        }
-
-        // 카카오맵 SDK가 로드된 경우에만 Geocoder 사용
+        if (addressRef.current) addressRef.current.value = data.address;
         if (isKakaoMapLoaded && window.kakao?.maps?.services) {
-          try {
-            const geocoder = new window.kakao.maps.services.Geocoder();
-            geocoder.addressSearch(data.address, (result, status) => {
-              if (status === window.kakao.maps.services.Status.OK && result[0]) {
-                if (longitudeRef.current) longitudeRef.current.value = result[0].x;
-                if (latitudeRef.current) latitudeRef.current.value = result[0].y;
-              } else {
-                console.warn("주소를 좌표로 변환할 수 없습니다:", data.address);
-                // 기본값 설정 (필요시)
-                if (longitudeRef.current) longitudeRef.current.value = "0";
-                if (latitudeRef.current) latitudeRef.current.value = "0";
-              }
-            });
-          } catch (error) {
-            console.error("Geocoder 사용 중 오류:", error);
-            // 기본값 설정
-            if (longitudeRef.current) longitudeRef.current.value = "0";
-            if (latitudeRef.current) latitudeRef.current.value = "0";
-          }
-        } else {
-          console.warn("카카오맵 SDK가 아직 로드되지 않았습니다. 좌표 변환을 건너뜁니다.");
-          // 기본값 설정
-          if (longitudeRef.current) longitudeRef.current.value = "0";
-          if (latitudeRef.current) latitudeRef.current.value = "0";
+          const geocoder = new window.kakao.maps.services.Geocoder();
+          geocoder.addressSearch(data.address, (result, status) => {
+            if (status === window.kakao.maps.services.Status.OK && result[0]) {
+              if (longitudeRef.current) longitudeRef.current.value = result[0].x;
+              if (latitudeRef.current) latitudeRef.current.value = result[0].y;
+            }
+          });
         }
       },
     });
   }, [openPostcode, isKakaoMapLoaded]);
 
-  // 폼 제출 처리
+  // 폼 제출 처리 (Pre-signed URL 로직 적용)
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    const formData = new FormData();
+    // 수정 모드일 때, 새 이미지가 없으면 기존 이미지 경로를 유지
+    let imageKey: string | null = mode === "edit" ? scheduleData?.image || null : null;
+
+    // 1. 새 이미지가 선택된 경우, S3에 먼저 업로드
+    if (selectedImage) {
+      try {
+        const uploadedKeys = await imageUploadMutation.mutateAsync({
+          files: [selectedImage],
+          target: "schedule",
+        });
+        imageKey = uploadedKeys?.[0] || null;
+      } catch (error) {
+        alert("이미지 업로드에 실패했습니다. 다시 시도해주세요.");
+        return; // 업로드 실패 시 중단
+      }
+    }
+
+    // 2. 서버에 전송할 최종 JSON payload 생성
     const payload = {
       scheduled_at: scheduledAtRef.current?.value || "",
       place: placeRef.current?.value || "",
@@ -192,33 +181,28 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
       longitude: String(longitudeRef.current?.value || "0"),
       memo: memoRef.current?.value || "",
       participant: selectedMember,
+      image: imageKey,
     };
 
-    formData.append("payload", JSON.stringify(payload));
-    if (selectedImage) {
-      formData.append("image", selectedImage);
-    }
-
+    // 3. 스케줄 생성 또는 수정 API 호출
     try {
       if (mode === "create") {
-        await createMutation.mutateAsync(formData);
-      } else if (mode === "edit" && scheduleId && updateMutation) {
-        await updateMutation.mutateAsync({ scheduleId, formData });
+        await createMutation.mutateAsync(payload);
+      } else if (mode === "edit" && scheduleId) {
+        await updateMutation.mutateAsync({ scheduleId, payload });
       }
       router.push(`/meetup/${meetupId}`);
     } catch (error) {
-      console.error(`Failed to ${mode} schedule:`, error);
+      console.error(`스케줄 ${mode} 실패:`, error);
+      alert(`스케줄 ${mode === "create" ? "생성" : "수정"}에 실패했습니다.`);
     }
   };
 
   // 로딩 상태 처리
+  const isProcessing = createMutation.isPending || updateMutation.isPending || imageUploadMutation.isPending;
+
   if (mode === "edit" && isLoadingSchedule) {
     return <div className="p-4 text-center">데이터를 불러오는 중...</div>;
-  }
-
-  // 에러 상태 처리
-  if (createMutation.isError || (updateMutation && updateMutation.isError)) {
-    return <div className="p-4 text-center text-red-500">{`스케줄 ${mode === "create" ? "생성" : "수정"}에 실패했습니다.`}</div>;
   }
 
   return (
@@ -273,7 +257,6 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
               우편번호 찾기
             </button>
           </div>
-          {!isKakaoMapLoaded && <p className="text-xs text-amber-600">⚠️ 지도 서비스 로딩 중... 주소 검색 후 좌표 변환이 지연될 수 있습니다.</p>}
         </div>
 
         {/* 위경도 히든 필드 */}
@@ -297,9 +280,7 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
         {/* 이미지 업로드 */}
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">이미지 업로드</label>
-
           <input ref={imageRef} type="file" accept="image/*" onChange={handleImageSelect} className="hidden" id="image-upload" />
-
           <label htmlFor="image-upload" className="flex cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-4 transition-colors hover:border-gray-400">
             {imagePreview ? (
               <div className="relative">
@@ -326,10 +307,10 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
         {/* 제출 버튼 */}
         <button
           type="submit"
-          disabled={createMutation.isPending || (updateMutation && updateMutation.isPending)}
+          disabled={isProcessing}
           className="w-full rounded-md bg-[#006B8B] px-4 py-3 font-medium text-white transition-colors hover:bg-[#005070] focus:outline-none focus:ring-2 focus:ring-[#006B8B] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {createMutation.isPending || (updateMutation && updateMutation.isPending) ? "처리 중..." : mode === "create" ? "스케줄 생성" : "스케줄 수정"}
+          {isProcessing ? "처리 중..." : mode === "create" ? "스케줄 생성" : "스케줄 수정"}
         </button>
       </form>
     </div>

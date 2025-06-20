@@ -1,4 +1,6 @@
-import { Schedule } from "@/types/scheduleType";
+// src/services/schedule.service.ts
+
+import { Schedule, SchedulePayload } from "@/types/scheduleType";
 import { BASE_URL } from "@/constants/baseURL";
 import Cookies from "js-cookie";
 
@@ -23,7 +25,7 @@ export const getSchedules = async (meetupId: number): Promise<Schedule[]> => {
 };
 
 //스케줄 생성
-export const createSchedule = async (meetupId: number, formData: FormData): Promise<Schedule> => {
+export const createSchedule = async (meetupId: number, payload: SchedulePayload): Promise<Schedule> => {
   const token = Cookies.get("accessToken");
 
   try {
@@ -31,14 +33,15 @@ export const createSchedule = async (meetupId: number, formData: FormData): Prom
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
-      body: formData,
+      body: JSON.stringify({ payload: payload }),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
       console.error("서버 에러 응답:", errorData);
-      throw new Error(errorData.message || "스케줄 생성 실패");
+      throw new Error(errorData.detail?.[0]?.msg || "스케줄 생성 실패");
     }
 
     return response.json();
@@ -64,34 +67,23 @@ export const getSchedule = async (scheduleId: number): Promise<Schedule> => {
 };
 
 // 스케줄 수정
-export const updateSchedule = async (scheduleId: number, formData: FormData): Promise<Schedule> => {
+export const updateSchedule = async (scheduleId: number, payload: SchedulePayload): Promise<Schedule> => {
   const token = Cookies.get("accessToken");
 
   try {
-    // FormData에서 JSON 데이터 추출
-    const payloadStr = formData.get("payload") as string;
-    const payload = JSON.parse(payloadStr);
-
     const response = await fetch(`${BASE_URL}/api/v1/schedule/${scheduleId}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        scheduledAt: payload.scheduled_at,
-        place: payload.place,
-        address: payload.address,
-        latitude: payload.latitude,
-        longitude: payload.longitude,
-        memo: payload.memo,
-      }),
+      body: JSON.stringify({ payload: payload }),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
       console.error("서버 에러 응답:", errorData);
-      throw new Error(errorData.message || "스케줄 수정 실패");
+      throw new Error(errorData.detail?.[0]?.msg || "스케줄 수정 실패");
     }
 
     return response.json();
@@ -101,7 +93,7 @@ export const updateSchedule = async (scheduleId: number, formData: FormData): Pr
   }
 };
 
-//스케줄 삭제
+// 스케줄 삭제
 export const deleteSchedule = async (scheduleId: number): Promise<void> => {
   const token = Cookies.get("accessToken");
 

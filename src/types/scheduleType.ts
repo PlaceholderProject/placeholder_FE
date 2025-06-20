@@ -27,3 +27,14 @@ export interface Schedule {
   participant: Participant[];
   commentCount: number;
 }
+
+export interface SchedulePayload {
+  scheduled_at: string;
+  place: string;
+  address: string;
+  latitude: string;
+  longitude: string;
+  memo: string;
+  participant: number[];
+  image?: string | null;
+}
