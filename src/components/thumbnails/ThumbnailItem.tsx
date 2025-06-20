@@ -26,7 +26,7 @@
 //   // thumbnail?.image && console.log(thumbnail.image);
 
 //   useEffect(() => {
-//     const profileImageUrl = thumbnail?.organizer.profileImage?.startsWith("http") ? thumbnail.organizer.profileImage : `${BASE_URL}${thumbnail.organizer.profileImage}`;
+//     const profileImageUrl = thumbnail?.organizer.profileImage?.startsWith("http") ? thumbnail.organizer.profileImage : `${BASE_URL}/${thumbnail.organizer.profileImage}`;
 //     // console.log("작성자 프사 URL", profileImageUrl);
 //     // HTMLImageElement를 사용하여 이미지 존재 여부 확인
 //     const imgElement = document.createElement("img");
@@ -39,7 +39,7 @@
 //   }, [thumbnail]);
 
 //   const [profileImageSource, setProfileImageSource] = useState("/profile.png");
-//   const thumbnailImageUrl = `${BASE_URL}${thumbnail.image}`;
+//   const thumbnailImageUrl = `${BASE_URL}/${thumbnail.image}`;
 //   // if (isPending) return <div>로딩중</div>;
 //   // if (isError) return <div>에러발생</div>;
 //   if (!thumbnail) return null;
