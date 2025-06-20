@@ -1,7 +1,7 @@
 import { BASE_URL } from "@/constants/baseURL";
 import Cookies from "js-cookie";
 import { refreshToken } from "./auth.service";
-import { Meetup, NewMeetup } from "@/types/meetupType";
+import { FileType, NewMeetup } from "@/types/meetupType";
 
 // 모임 생성 api
 // export const createMeetupApi = async (meetupFormData: FormData): Promise<void> => {
@@ -30,10 +30,11 @@ import { Meetup, NewMeetup } from "@/types/meetupType";
 // };
 
 // 1️⃣ presigned URL 생성 주세요 api
-export const getMeetupPresignedUrl = async () => {
+export const getMeetupPresignedUrl = async (filetype: FileType) => {
   const token = Cookies.get("accessToken");
-
-  const response = await fetch(`${BASE_URL}/api/v1/meetup/presigned-url?filetype=image/jpg`, {
+  // 디버깅: 실제 요청하는 filetype 확인
+  console.log("🎯 요청할 filetype:", filetype);
+  const response = await fetch(`${BASE_URL}/api/v1/meetup/presigned-url?filetype=i${filetype}`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,

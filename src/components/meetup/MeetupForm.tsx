@@ -2,7 +2,7 @@
 
 import React, { useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { LabeledInputProps, LabeledSelectProps, Meetup, NewMeetup } from "@/types/meetupType";
+import { FileType, LabeledInputProps, LabeledSelectProps, Meetup, NewMeetup } from "@/types/meetupType";
 import { useRouter } from "next/navigation";
 import { createMeetupApi, getMeetupPresignedUrl } from "@/services/meetup.service";
 import Image from "next/image";
@@ -83,28 +83,44 @@ const MeetupForm = () => {
 
   // 2️⃣ s3에 직접 이미지 업로드 함수
   const meetupUploadToS3 = async (file: File, meetupPresignedData: any) => {
-    const formData = new FormData();
+    console.log("🔍 S3 업로드 디버깅 시작");
+    console.log("파일 정보:", {
+      name: file.name,
+      type: file.type,
+      size: file.size,
+    });
 
+    const formData = new FormData();
     Object.keys(meetupPresignedData.fields).forEach(key => {
       formData.append(key, meetupPresignedData.fields[key]);
       console.log("키랑 벨류 어펜드한 폼데이터", formData);
+      console.log(`📝 FormData 추가: ${key} = ${meetupPresignedData.fields[key]}`);
     });
 
     formData.append("file", file);
-    console.log("파일 붙인 폼데이터", formData);
+    console.log("📎 파일 추가 완료, 파일 붙인 폼데이터", formData);
 
-    const response = await fetch(meetupPresignedData.url, {
-      method: "POST",
-      body: formData,
-    });
+    try {
+      const response = await fetch(meetupPresignedData.url, {
+        method: "POST",
+        body: formData,
+      });
+      console.log("📡 S3 응답 상태:", response.status);
 
-    if (!response.ok) {
-      throw new Error("s3 업로드 실패");
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("❌ S3 오류 내용:", errorText);
+
+        throw new Error(`s3 업로드 실패:, ${response.status} ${errorText}`);
+      }
+      // 업로드된 파일의 URL 생성
+      const uploadedFileUrl = `${meetupPresignedData.url}${meetupPresignedData.fields.key}`;
+      console.log("업로드 성공 URL", uploadedFileUrl);
+      return uploadedFileUrl;
+    } catch (error) {
+      console.error("💥 업로드 중 오류:", error);
+      throw error;
     }
-
-    // 업로드된 파일의 URL 생성
-    const uploadedFileUrl = `${meetupPresignedData.url}${meetupPresignedData.fields.key}`;
-    return uploadedFileUrl;
   };
 
   // 글자수 관리 위한 스테이트
@@ -216,11 +232,22 @@ const MeetupForm = () => {
 
       // ---1--- 이미지 있으면 (s3에 업로드)
       if (imageRef?.current?.files?.[0]) {
-        const imageFile = imageRef.current.files[0];
+        const imageFile = imageRef.current.files[0]; //
+        // const fileType = typeof(imageFile).toString()
+        //위처럼 이렇게 쓰면 오브젝트 반환함 (File 객체니까)
+
+        // ✅ 파일 타입 정확히 가져오기
+        const fileType = imageFile.type as FileType;
+        console.log("🎯 파일 타입 확인:", fileType);
+
         // presigned URL 요청
-        const presignedResponse = await getMeetupPresignedUrl();
+        const presignedResponse = await getMeetupPresignedUrl(fileType);
+        console.log("🎯 presigned 응답:", presignedResponse); // 응답 확인
+
         const presignedData = presignedResponse.result[0];
 
+        // presigned 데이터의 Content-Type 확인
+        console.log("🎯 presigned Content-Type:", presignedData.fields["Content-Type"]);
         // s3업로드 함수 실행으로 업로드 하고 imageUrl 받아오기
         imageUrl = await meetupUploadToS3(imageFile, presignedData);
       }
@@ -241,7 +268,7 @@ const MeetupForm = () => {
         adEndedAt: adEndDate,
         isPublic: !isPublicRef.current?.checked || true,
         category: categoryRef.current?.value || "",
-        image: imageRef.current?.value || "",
+        // image: imageRef.current?.value || "",
         isLike: false,
         likeCount: 0,
         createdAt: "",
