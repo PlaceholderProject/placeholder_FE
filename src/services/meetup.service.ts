@@ -34,7 +34,7 @@ export const getMeetupPresignedUrl = async (filetype: FileType) => {
   const token = Cookies.get("accessToken");
   // 디버깅: 실제 요청하는 filetype 확인
   console.log("🎯 요청할 filetype:", filetype);
-  const response = await fetch(`${BASE_URL}/api/v1/meetup/presigned-url?filetype=i${filetype}`, {
+  const response = await fetch(`${BASE_URL}/api/v1/meetup/presigned-url?filetype=${filetype}`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
