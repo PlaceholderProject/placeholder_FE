@@ -1,7 +1,7 @@
 import { BASE_URL } from "@/constants/baseURL";
 import Cookies from "js-cookie";
 import { refreshToken } from "./auth.service";
-import { FileType, NewMeetup } from "@/types/meetupType";
+import { FileType, Meetup, NewMeetup, S3PresignedResponse } from "@/types/meetupType";
 
 // 모임 생성 api
 // export const createMeetupApi = async (meetupFormData: FormData): Promise<void> => {
@@ -30,7 +30,7 @@ import { FileType, NewMeetup } from "@/types/meetupType";
 // };
 
 // 1️⃣ presigned URL 생성 주세요 api
-export const getMeetupPresignedUrl = async (filetype: FileType) => {
+export const getMeetupPresignedUrl = async (filetype: FileType): Promise<S3PresignedResponse> => {
   const token = Cookies.get("accessToken");
   // 디버깅: 실제 요청하는 filetype 확인
   console.log("🎯 요청할 filetype:", filetype);
@@ -47,37 +47,18 @@ export const getMeetupPresignedUrl = async (filetype: FileType) => {
     console.log(errorText);
     throw new Error("Presigned URL ㅇ청 실패");
   }
-  const data = await response.json();
+  const data: S3PresignedResponse = await response.json();
   console.log("🟣🟣🟣프리사인드 응답:", data);
-
-  //   result
-  // :  Array(1)
-  // 0  :
-  // fields :
-  // Content-Type:
-  // "image/jpg"
-  // key :
-  // "meetup/b0fd1b82-0082-4e43-b5f4-b1738e4ed10f.jpg"
-  // policy : "eyJleHBpcmF0aW9uIjogIjIwMjUtMDYtMTdUMDg6Mzk6NTNaIiwgImNvbmRpdGlvbnMiOiBbeyJzdWNjZXNzX2FjdGlvbl9zdGF0dXMiOiAiMjAxIn0sIFsic3RhcnRzLXdpdGgiLCAiJENvbnRlbnQtVHlwZSIsICJpbWFnZS8iXSwgWyJjb250ZW50LWxlbmd0aC1yYW5nZSIsIDEwMjQsIDEwNDg1NzYwXSwgeyJidWNrZXQiOiAicGxhY2Vob2xkZXItcHJvZCJ9LCB7ImtleSI6ICJtZWV0dXAvYjBmZDFiODItMDA4Mi00ZTQzLWI1ZjQtYjE3MzhlNGVkMTBmLmpwZyJ9LCB7IngtYW16LWFsZ29yaXRobSI6ICJBV1M0LUhNQUMtU0hBMjU2In0sIHsieC1hbXotY3JlZGVudGlhbCI6ICJBS0lBWUhFWFI1RUJUUlRaN1NONy8yMDI1MDYxNy9hcC1zb3V0aGVhc3QtMi9zMy9hd3M0X3JlcXVlc3QifSwgeyJ4LWFtei1kYXRlIjogIjIwMjUwNjE3VDA4Mzk0M1oifV19"
-  // success_action_status: "201"
-  // x-amz-algorithm :
-  // "AWS4-HMAC-SHA256"
-  // x-amz-credential:   // "AKIAYHEXR5EBTRTZ7SN7/20250617/ap-southeast-2/s3/aws4_request"
-  // x-amz-date:   // "20250617T083943Z"
-  // x-amz-signature:   "0ad51acec7acb92c41a2b5c47fd1d4284a230cf5d9b3441c1c1e14b9077e6ecf"
-  // [[Prototype]]
-  // :
-  // Object
-  // url
-  // :
-  // "https://placeholder-prod.s3.amazonaws.com/"
 
   return data;
 };
 
-// 3️⃣ 모임 생성 api 수정 후
+// 3️⃣ 모임 생성 api 수정 후 ver
 // 서버에 json으로 이미지를 ㅓㄴㅎ으려면, 이미 s3에 직접 ㅏ파일 업로드가 되고
 // 그 url을 서버에 보내야겟지??
+// 근데 유저입장에서는 제출하고 모든게 끝난거 같지만
+// 사실 제출하고 나서 프리사인드받고 그 필드값 이용해서 s3에 업로드하고 그 링크를 받아서 제출이 완료된다는거
+
 export const createMeetupApi = async (meetupData: NewMeetup, imageUrl: string) => {
   const token = Cookies.get("accessToken");
   const payload = {
@@ -146,19 +127,40 @@ export const getMeetupByIdApi = async (meetupId: number) => {
 };
 
 // 모임 수정 api
-export const editMeetupApi = async (meetupId: number, formData: FormData): Promise<void> => {
+// export const editMeetupApi = async (meetupId: number, formData: FormData): Promise<void> => {
+//   const token = Cookies.get("accessToken");
+//   const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}`, {
+//     method: "PUT",
+//     headers: { Authorization: `Bearer ${token}` },
+//     body: formData,
+//   });
+//   if (!response.ok) {
+//     throw new Error("모임 수정 실패");
+//   }
+
+//   // 🚨🚨🚨🚨🚨서버 응답 형태 확인용 지금 date랑 checkbox 인풋만 수정이 안되거든요🚨🚨🚨🚨🚨
+//   const responseData = await response.json();
+//   console.log("모임 수정 서버 응답:", responseData);
+//   return responseData;
+// };
+
+//모임 수정 api 수정 후 ver
+export const editMeetupApi = async (meetupData: Meetup, imageUrl: string, meetupId: number) => {
   const token = Cookies.get("accessToken");
+  const payload = {
+    ...meetupData,
+    image: imageUrl,
+  };
+
   const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}`, {
     method: "PUT",
-    headers: { Authorization: `Bearer ${token}` },
-    body: formData,
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify(payload),
   });
-  if (!response.ok) {
-    throw new Error("모임 수정 실패");
-  }
 
-  // 🚨🚨🚨🚨🚨서버 응답 형태 확인용 지금 date랑 checkbox 인풋만 수정이 안되거든요🚨🚨🚨🚨🚨
-  const responseData = await response.json();
-  console.log("모임 수정 서버 응답:", responseData);
-  return responseData;
+  if (!response.ok) {
+    throw new Error("모임 수정 오류");
+  }
+  const data = await response.json();
+  return data;
 };

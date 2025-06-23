@@ -2,7 +2,7 @@
 
 import React, { useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { FileType, LabeledInputProps, LabeledSelectProps, Meetup, NewMeetup } from "@/types/meetupType";
+import { FileType, LabeledInputProps, LabeledSelectProps, NewMeetup, S3PresignedField, S3PresignedItem, S3PresignedResponse } from "@/types/meetupType";
 import { useRouter } from "next/navigation";
 import { createMeetupApi, getMeetupPresignedUrl } from "@/services/meetup.service";
 import Image from "next/image";
@@ -82,7 +82,7 @@ const MeetupForm = () => {
   const imageRef = useRef<HTMLInputElement>(null);
 
   // 2️⃣ s3에 직접 이미지 업로드 함수
-  const meetupUploadToS3 = async (file: File, meetupPresignedData: any) => {
+  const meetupUploadToS3 = async (file: File, meetupPresignedData: S3PresignedItem) => {
     console.log("🔍 S3 업로드 디버깅 시작");
     console.log("파일 정보:", {
       name: file.name,
@@ -91,10 +91,12 @@ const MeetupForm = () => {
     });
 
     const formData = new FormData();
+
     Object.keys(meetupPresignedData.fields).forEach(key => {
-      formData.append(key, meetupPresignedData.fields[key]);
+      const typedKey = key as keyof S3PresignedField;
+      formData.append(key, meetupPresignedData.fields[typedKey]);
       console.log("키랑 벨류 어펜드한 폼데이터", formData);
-      console.log(`📝 FormData 추가: ${key} = ${meetupPresignedData.fields[key]}`);
+      console.log(`📝 FormData 추가: ${key} = ${meetupPresignedData.fields[typedKey]}`);
     });
 
     formData.append("file", file);
@@ -234,17 +236,17 @@ const MeetupForm = () => {
       if (imageRef?.current?.files?.[0]) {
         const imageFile = imageRef.current.files[0]; //
         // const fileType = typeof(imageFile).toString()
-        //위처럼 이렇게 쓰면 오브젝트 반환함 (File 객체니까)
+        //위처럼 이렇게 쓰면 오브젝트 반환함 (File 객체니까sssss)
 
         // ✅ 파일 타입 정확히 가져오기
         const fileType = imageFile.type as FileType;
         console.log("🎯 파일 타입 확인:", fileType);
 
         // presigned URL 요청
-        const presignedResponse = await getMeetupPresignedUrl(fileType);
+        const presignedResponse: S3PresignedResponse = await getMeetupPresignedUrl(fileType);
         console.log("🎯 presigned 응답:", presignedResponse); // 응답 확인
 
-        const presignedData = presignedResponse.result[0];
+        const presignedData: S3PresignedItem = presignedResponse.result[0];
 
         // presigned 데이터의 Content-Type 확인
         console.log("🎯 presigned Content-Type:", presignedData.fields["Content-Type"]);

@@ -52,7 +52,7 @@ const MyMeetupMembers: React.FC<MyMeetupMembersProps> = ({ meetupId }) => {
         if (member.user?.id) {
           if (member.user.image) {
             const userImage = member.user.image;
-            const profileImageUrl = userImage.startsWith("http") ? userImage : `${BASE_URL}/${userImage}`;
+            const profileImageUrl = userImage;
             imageMap[member.user.id] = profileImageUrl;
           } else {
             imageMap[member.user.id] = "/profile.png";
