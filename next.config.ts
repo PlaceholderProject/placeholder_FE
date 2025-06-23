@@ -4,7 +4,9 @@ const nextConfig: NextConfig = {
   images: {
     // domains는 deprecated되었으므로 제거..하려 했으나
     // 호환성을 위해 domains도 유지
-    domains: ["localhost"],
+    // 새로운 도메인 추가!!
+    domains: ["localhost", "placeholder-prod.s3.amazonaws.com"],
+
     remotePatterns: [
       {
         protocol: "http",

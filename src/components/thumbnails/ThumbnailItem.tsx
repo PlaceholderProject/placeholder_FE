@@ -72,24 +72,24 @@ const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
   return (
     <>
       <div className={`rounded-lg border p-4 ${!thumbnail.isPublic ? "pointer-events-none text-[#D9D9D9]" : ""}`}>
-        <div className={thumbnail.isPublic ? "bg-primary" : "bg-gray-100"}>
+        <div className={thumbnail.isPublic ? "" : "bg-primary"}>
           {thumbnail.image && (
             <Link href={`/ad/${thumbnail.id}`} className="relative mb-4 block h-48">
               <Image
                 src={thumbnailImageUrl}
                 alt="thumbnailImage"
                 fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                className={`rounded object-cover ${!thumbnail.isPublic ? "opacity-60" : ""}`}
+                sizes="width-[14.2rem] height-[14.2rem]"
+                className={`rounded-[2rem] object-cover ${!thumbnail.isPublic ? "opacity-60" : ""}`}
                 loading="lazy"
               />
             </Link>
           )}
           <div className="space-y-2">
             <Image src={profileImageSource} width={20} height={20} alt="작성자 프로필 이미지" className="rounded-full" />
-            <p className="text-[1rem] text-[#484848] lg:text-[2rem]">작성자: {thumbnail.organizer.nickname}</p>
+            <span className="text-sm">{thumbnail.organizer.nickname}</span>
 
-            {!thumbnail.isPublic && <span className="bg-secondary-200 rounded-md p-1 text-[10px] text-[#FFF]">비공개</span>}
+            {!thumbnail.isPublic && <span className="rounded-md p-1 text-[10px] text-[#FFF]">비공개</span>}
             <div className="pointer-events-auto">
               <LikeContainer id={thumbnail.id} initialIsLike={thumbnail.isLike} initialLikeCount={thumbnail.likeCount} />
             </div>
@@ -98,16 +98,16 @@ const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
             <p className="text-lg font-bold">{thumbnail.adTitle}</p>
             <div>
               모임 날짜: {thumbnail.startedAt === null ? "미정" : thumbnail.startedAt.substring(0, 10)} ~ {thumbnail.endedAt === null ? "미정" : thumbnail.endedAt.substring(0, 10)}
-              <p>
+              <span>
                 {thumbnail.startedAt && thumbnail.endedAt
                   ? calculateDays({
                       startedAt: thumbnail.startedAt,
                       endedAt: thumbnail.endedAt,
                     })
                   : ""}
-              </p>
+              </span>
             </div>
-            <p className="text-sm">{thumbnail.adEndedAt?.substring(0, 10)}까지 모집</p>
+            <span className="text-sm">{thumbnail.adEndedAt?.substring(0, 10)}까지 모집</span>
             {/* <p className="text-sm">공개여부 : {thumbnail.isPublic.toString()}</p> */}
             {/* <p className="text-sm text-red-300">생성일: {thumbnail.createdAt?.substring(0, 10)}</p> */}
           </div>

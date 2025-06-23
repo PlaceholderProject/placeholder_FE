@@ -10,9 +10,6 @@ import { RootState } from "@/stores/store";
 import { getMeetupPresignedUrl } from "@/services/meetup.service";
 
 const ThumbnailArea = () => {
-  useEffect(() => {
-    getMeetupPresignedUrl();
-  }, []);
   // 이제 리덕스에서 정렬 타입 가져옴
   // SortArea, FilterArea, ThumbnailArea가 한 페이지에서 렌더링되면서
   // 기능은 따로, 상태나 타입은 한번에 공유
@@ -173,12 +170,13 @@ const ThumbnailArea = () => {
 
   return (
     <>
-      <div className="my-[5rem] grid grid-cols-1 gap-4 p-4 md:grid-cols-2 lg:grid-cols-4">
-        {allThumbnails.map((thumbnail: Meetup, index: number) => {
-          return <ThumbnailItem key={`${thumbnail.id}-${index}`} thumbnail={thumbnail} />;
-        })}
-        {/* 더 불러오기 */}
-        {/* {hasNextPage && (
+      <div className="mx-auto w-[29.2rem] border-[0.1rem] pb-[4rem]">
+        <div className="my-[5rem] grid grid-cols-2">
+          {allThumbnails.map((thumbnail: Meetup, index: number) => {
+            return <ThumbnailItem key={`${thumbnail.id}-${index}`} thumbnail={thumbnail} />;
+          })}
+          {/* 더 불러오기 */}
+          {/* {hasNextPage && (
           <div className="col-span-full flex justify-center p-4">
             <button onClick={() => fetchNextPage()} disabled={isFetchingNextPage} className="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300">
               {isFetchingNextPage ? "불러오는 중..." : "더 보기"}
@@ -186,10 +184,11 @@ const ThumbnailArea = () => {
           </div>
         )} */}
 
-        {/* 관찰대상요소 */}
+          {/* 관찰대상요소 */}
 
-        <div ref={observerRef} className="col-span-full flex h-10 items-center justify-center">
-          {isFetchingNextPage && "데이터 불러오는 중..."}
+          <div ref={observerRef} className="col-span-full flex h-10 items-center justify-center">
+            {isFetchingNextPage && "데이터 불러오는 중..."}
+          </div>
         </div>
       </div>
     </>
