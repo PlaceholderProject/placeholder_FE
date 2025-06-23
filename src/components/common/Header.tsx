@@ -13,6 +13,7 @@ import { setHasUnreadNotifications } from "@/stores/notificationSlice";
 import { logout } from "@/stores/userSlice";
 import { useQueryClient } from "@tanstack/react-query";
 import HamburgerMenu from "@/components/common/HamburgerMenu";
+import { useNotificationList } from "@/hooks/useNotification";
 
 const Header = () => {
   const hasUnreadNotifications = useSelector((state: RootState) => state.notification.hasUnread);
@@ -21,6 +22,15 @@ const Header = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const queryClient = useQueryClient();
+
+  const { data: notifications } = useNotificationList({ enabled: isAuthenticated });
+
+  useEffect(() => {
+    if (notifications) {
+      const hasUnread = notifications.some(notification => !notification.is_read);
+      dispatch(setHasUnreadNotifications(hasUnread));
+    }
+  }, [notifications, dispatch]);
 
   const handleLogout = useCallback(async () => {
     try {
