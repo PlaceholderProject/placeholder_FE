@@ -24,10 +24,10 @@ export const getSchedules = async (meetupId: number): Promise<Schedule[]> => {
   return data.result;
 };
 
-//스케줄 생성
 export const createSchedule = async (meetupId: number, payload: SchedulePayload): Promise<Schedule> => {
   const token = Cookies.get("accessToken");
 
+  // 스케줄 생성
   try {
     const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}/schedule`, {
       method: "POST",
@@ -35,7 +35,7 @@ export const createSchedule = async (meetupId: number, payload: SchedulePayload)
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ payload: payload }),
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
@@ -77,7 +77,7 @@ export const updateSchedule = async (scheduleId: number, payload: SchedulePayloa
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ payload: payload }),
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
