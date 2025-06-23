@@ -1,7 +1,7 @@
 export interface Meetup {
   organizer: {
     nickname: string;
-    profileImage: string;
+    image: string;
   };
   isLike: boolean;
   likeCount: number;
@@ -26,7 +26,7 @@ export interface Meetup {
 export interface NewMeetup {
   organizer: {
     nickname: string;
-    profileImage: string;
+    image: string;
   };
   isLike: boolean;
   likeCount: number;
@@ -110,3 +110,25 @@ export type TypeRegionType =
 export type TypePurposeType = null | "운동" | "공부" | "취준" | "취미" | "친목" | "맛집" | "여행" | "기타";
 
 export type FilterAreaType = null | "지역별" | "모임 성격별";
+
+export type FileType = "image/jpg" | "image/jpeg" | "image/png" | "image/webp" | "image/bmp";
+
+export interface S3PresignedField {
+  "Content-Type": string;
+  key: string;
+  policy: string;
+  success_action_status: string;
+  "x-amz-algorithm": string;
+  "x-amz-credential": string;
+  "x-amz-date": string;
+  "x-amz-signature": string;
+}
+
+export interface S3PresignedItem {
+  url: string;
+  fields: S3PresignedField;
+}
+
+export interface S3PresignedResponse {
+  result: S3PresignedItem[];
+}

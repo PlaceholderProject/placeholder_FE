@@ -1,8 +1,8 @@
 "use client";
 
 import { BASE_URL } from "@/constants/baseURL";
-import { editMeetupApi, getMeetupByIdApi } from "@/services/meetup.service";
-import { LabeledInputProps, LabeledSelectProps, Meetup } from "@/types/meetupType";
+import { editMeetupApi, getMeetupByIdApi, getMeetupPresignedUrl } from "@/services/meetup.service";
+import { FileType, LabeledInputProps, LabeledSelectProps, Meetup, S3PresignedField, S3PresignedItem } from "@/types/meetupType";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
@@ -65,6 +65,7 @@ LabeledSelect.displayName = "LabeledSelect";
 const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   const queryClient = useQueryClient();
 
+  //Ref
   const nameRef = useRef<HTMLInputElement>(null);
   const startedAtRef = useRef<HTMLInputElement>(null);
   const endedAtRef = useRef<HTMLInputElement>(null);
@@ -76,6 +77,34 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   const isPublicRef = useRef<HTMLInputElement>(null);
   const categoryRef = useRef<HTMLSelectElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
+
+  // s3에 직접 이미지 업로드 함수
+  const meetupUploadToS3 = async (file: File, meetupPresignedData: S3PresignedItem) => {
+    const formData = new FormData();
+    Object.keys(meetupPresignedData.fields).forEach(key => {
+      const typedKey = key as keyof S3PresignedField;
+      formData.append(key, meetupPresignedData.fields[typedKey]);
+    });
+
+    formData.append("file", file);
+
+    try {
+      const response = await fetch(meetupPresignedData.url, {
+        method: "POST",
+        body: formData,
+      });
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("s3오류:", errorText);
+        throw new Error(`s3 업로드 실패 status, errorText:, ${response.status} ${errorText}`);
+      }
+      const uploadedFileUrl = `${meetupPresignedData.url}${meetupPresignedData.fields.key}`;
+      return uploadedFileUrl;
+    } catch (error) {
+      console.error("💥 업로드 중 오류:", error);
+      throw error;
+    }
+  };
 
   // 글자수 관리 위한 스테이트
   const [nameLength, setNameLength] = useState(0);
@@ -116,23 +145,28 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
     retry: 0,
   });
 
+  // 미리보기 이미지 설정
   useEffect(() => {
     if (previousMeetupData?.image) {
-      const imageUrl = `${BASE_URL}/${previousMeetupData.image}`;
-      console.log("미리보기 설정되는 이미지 URL: ", imageUrl);
-      setPreviewImage(imageUrl);
+      const previewImageUrl = `${previousMeetupData.image}`;
+      console.log("미리보기 설정되는 이미지 URL: ", previewImageUrl);
+      setPreviewImage(previewImageUrl);
+      if (previousMeetupData) {
+        setIsStartedAtNull(previousMeetupData.startedAt === null);
+        setIsEndedAtNull(previousMeetupData.endedAt === null);
+      }
     }
   }, [previousMeetupData]);
 
-  useEffect(() => {
-    if (previousMeetupData) {
-      setIsStartedAtNull(previousMeetupData.startedAt === null);
-      setIsEndedAtNull(previousMeetupData.endedAt === null);
-    }
-  }, [previousMeetupData]);
+  // useEffect(() => {
+  //   if (previousMeetupData) {
+  //     setIsStartedAtNull(previousMeetupData.startedAt === null);
+  //     setIsEndedAtNull(previousMeetupData.endedAt === null);
+  //   }
+  // }, [previousMeetupData]);
 
-  const editMutation = useMutation<void, Error, FormData>({
-    mutationFn: formData => editMeetupApi(meetupId, formData),
+  const editMutation = useMutation({
+    mutationFn: ({ meetupData, imageUrl, meetupId }: { meetupData: Meetup; imageUrl: string; meetupId: number }) => editMeetupApi(meetupData, imageUrl, meetupId),
   });
 
   const categoryOptions = ["운동", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
@@ -262,43 +296,38 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
       return;
     }
 
-    const editedMeetup: Meetup = {
-      ...previousMeetupData,
-      name: nameRef.current?.value || "",
-      description: descriptionRef.current?.value || "",
-      place: placeRef.current?.value || "",
-      placeDescription: placeDescriptionRef.current?.value || "",
-      startedAt: isStartedAtNull ? null : startedAtRef.current?.value || null,
-      endedAt: isEndedAtNull ? null : endedAtRef.current?.value || null,
-      adTitle: adTitleRef.current?.value || "",
-      adEndedAt: adEndedAtRef.current?.value || "",
-      isPublic: !isPublicRef.current?.checked || true,
-      category: categoryRef.current?.value || "",
-      image: imageRef.current?.value || "",
-    };
-
-    const editedFormData = new FormData();
-    editedFormData.append("payload", JSON.stringify(editedMeetup));
-
-    if (imageRef.current?.files?.[0]) {
-      const file = imageRef.current.files[0];
-      editedFormData.append("image", file);
-    }
-
-    const payload = editedFormData.get("payload");
-    console.log("서버로 전송되는 수정된 모임데이터:", JSON.stringify(payload as string));
-
     try {
-      await editMutation.mutateAsync(editedFormData);
+      let imageUrl = previousMeetupData?.image || "";
+      if (imageRef?.current?.files?.[0]) {
+        const imageFile = imageRef.current.files[0];
+        const fileType = imageFile.type as FileType;
+        const presignedResponse = await getMeetupPresignedUrl(fileType);
+        const presignedData = presignedResponse.result[0];
+        imageUrl = await meetupUploadToS3(imageFile, presignedData);
+      }
+      const editedMeetup: Meetup = {
+        ...previousMeetupData,
+        name: nameRef.current?.value || "",
+        description: descriptionRef.current?.value || "",
+        place: placeRef.current?.value || "",
+        placeDescription: placeDescriptionRef.current?.value || "",
+        startedAt: isStartedAtNull ? null : startedAtRef.current?.value || null,
+        endedAt: isEndedAtNull ? null : endedAtRef.current?.value || null,
+        adTitle: adTitleRef.current?.value || "",
+        adEndedAt: adEndedAtRef.current?.value || "",
+        isPublic: !isPublicRef.current?.checked || true,
+        category: categoryRef.current?.value || "",
+        // image: imageRef.current?.value || "",
+      };
+
+      await editMutation.mutateAsync({ meetupData: editedMeetup, imageUrl: imageUrl, meetupId: meetupId });
       queryClient.invalidateQueries({ queryKey: ["meetup", meetupId] });
       queryClient.invalidateQueries({ queryKey: ["meetups"] });
       alert("모임 수정에 성공했습니다!");
-
       router.push("/");
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "알 수 없는 오류 발생";
-      console.error("모임 수정 오류:", errorMessage);
-      alert(`모임 수정중 오류 발생: ${errorMessage}`);
+    } catch (error) {
+      console.error("💥 수정 중 오류:", error);
+      throw error;
     }
   };
 
