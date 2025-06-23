@@ -36,10 +36,10 @@ const SearchedResultArea = () => {
   }
 
   return (
-    <div className="my-[5rem] border-t-[0.1rem] border-gray-medium">
+    <div className="border-gray-mediu my-[4rem] border-t-[0.1rem]">
       <ul>
         {searchedAds.map((ad: SearchedType) => (
-          <li key={ad.id}>
+          <li key={ad.id} className="flex justify-center border-b-[0.1rem]">
             <SearchedResultItem ad={ad} />
           </li>
         ))}

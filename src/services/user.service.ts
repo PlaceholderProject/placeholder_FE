@@ -61,39 +61,56 @@ export const getUser = async (retryCount: number = 0): Promise<User | null> => {
 };
 
 // edit-user
-export const editUser = async (editedUser: EditedUserProps, retryCount: number = 0) => {
+export const editUser = async (editedUser: EditedUserProps, retryCount: number = 0): Promise<User | null> => {
   const accessToken = Cookies.get("accessToken");
   if (!accessToken) return null;
 
-  const formData = new FormData();
+  let profileImageUrl = "";
 
-  formData.append("nickname", editedUser.nickname);
-  formData.append("bio", editedUser.bio);
-
+  // 이미지 업로드 처리
   if (editedUser.profileImage) {
-    formData.append("image", editedUser.profileImage);
-  }
-
-  try {
-    const response = await fetch(`${BASE_URL}/api/v1/user/me`, {
-      method: "PUT",
-      body: formData,
+    // 1. presigned 정보 요청
+    const filetype = editedUser.profileImage.type;
+    const response = await fetch(`${BASE_URL}/api/v1/user/presigned-url?filetype=${encodeURIComponent(filetype)}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
 
+    if (!response.ok) throw new Error("presigned URL 요청 실패");
+    const presignedResult = (await response.json()).result[0]; // 첫 presigned entry
+    profileImageUrl = await uploadToS3WithForm(editedUser.profileImage, presignedResult);
+  }
+
+  // 2. 최종 유저 정보 전달
+  const payload = {
+    nickname: editedUser.nickname,
+    bio: editedUser.bio,
+    image: profileImageUrl || null,
+  };
+
+  try {
+    const response = await fetch(`${BASE_URL}/api/v1/user/me`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
     if (!response.ok) {
       if (response.status === 401 && retryCount < 3) {
-        await refreshToken(); // 토큰 갱신
-        return getUser(retryCount + 1); // 데이터 다시 요청
+        await refreshToken();
+        return editUser(editedUser, retryCount + 1);
       }
       return null;
     }
-    const result = await response.json();
-    return result;
+
+    return await response.json();
   } catch (error) {
-    console.error("사용자 데이터 수정 중 오류", error);
+    console.error("유저 수정 중 오류:", error);
+    return null;
   }
 };
 
@@ -122,4 +139,30 @@ export const deleteUser = async () => {
   } catch (error) {
     console.error("사용자 데이터 삭제 중 오류", error);
   }
+};
+
+const uploadToS3WithForm = async (file: File, presignedData: any) => {
+  const { url, fields } = presignedData;
+
+  const formData = new FormData();
+
+  // presigned 필드들 모두 form에 append
+  Object.entries(fields).forEach(([key, value]) => {
+    formData.append(key, value as string);
+  });
+
+  // 마지막에 실제 파일을 넣어야 함
+  formData.append("file", file);
+
+  const response = await fetch(url, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error("S3 업로드 실패");
+  }
+
+  // 업로드 성공 시 S3 경로는: `${url}${fields.key}`
+  return `${url}${fields.key}`;
 };
