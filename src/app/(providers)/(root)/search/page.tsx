@@ -1,11 +1,11 @@
-import SearchArea from "@/components/search/SearchArea";
+import SearchForm from "@/components/search/SearchForm";
 import SearchedResultArea from "@/components/search/SearchedResultArea";
 import React from "react";
 
 const page = () => {
   return (
     <div>
-      <SearchArea />
+      <SearchForm />
       <SearchedResultArea />
     </div>
   );
