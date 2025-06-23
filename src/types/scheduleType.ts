@@ -29,7 +29,7 @@ export interface Schedule {
 }
 
 export interface SchedulePayload {
-  scheduled_at: string;
+  scheduledAt: string;
   place: string;
   address: string;
   latitude: string;
