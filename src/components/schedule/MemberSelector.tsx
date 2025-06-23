@@ -14,13 +14,12 @@ const MemberSelector = ({ meetupId, selectedMember, onMemberSelect }: MemberSele
 
   return (
     <div className="space-y-2">
-      <label className="font-medium">참석자 등록하기</label>
       <div className="max-h-60 space-y-2 overflow-y-auto rounded-md border p-2">
         {isPending ? (
           <div className="py-4 text-center text-gray-500">멤버 정보를 불러오는 중...</div>
         ) : members?.length ? (
           members.map((participant: Member) => (
-            <div key={participant.id} className="flex items-center border-b py-2">
+            <div key={participant.id} className="flex items-center">
               <div className="mr-2 flex h-8 w-8 items-center justify-center rounded-full bg-gray-200">
                 {participant.user.image ? (
                   <Image src={getImageURL(participant.user.image)} alt={participant.user.nickname} width={32} height={32} className="h-full w-full rounded-full object-cover" />
