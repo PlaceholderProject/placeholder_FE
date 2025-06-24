@@ -8,9 +8,6 @@ import { setSortType } from "@/stores/sortSlice";
 import SortButtons from "./SortButtons";
 
 const SortArea = () => {
-  // 정렬 상태관리
-  // const [sortType, setSortType] = useState<Sort Type>("like");
-
   const dispatch = useDispatch();
   const sortType = useSelector((state: RootState) => state.sort.sortType);
   // 이건 어디서 읽어오는지?
@@ -50,7 +47,7 @@ const SortArea = () => {
 
   return (
     <>
-      <div className="flex justify-center justify-items-center">
+      <div className="my-[1rem] flex justify-start justify-items-center">
         <SortButtons currentSort={sortType} handleSortChange={handleSortChange} />
       </div>
     </>
