@@ -20,7 +20,7 @@ const PlaceButtons = () => {
 
   return (
     <>
-      <div className="mx-auto grid w-[29.2rem] grid-cols-4">
+      <div className="mx-auto grid w-full max-w-[34rem] grid-cols-4">
         {places.map(placeItem => (
           <button
             key={placeItem}

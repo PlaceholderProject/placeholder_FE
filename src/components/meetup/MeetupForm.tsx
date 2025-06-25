@@ -268,7 +268,7 @@ const MeetupForm = () => {
         endedAt: endDate,
         adTitle: adTitleRef.current?.value || "",
         adEndedAt: adEndDate,
-        isPublic: !isPublicRef.current?.checked || true,
+        isPublic: !isPublicRef.current?.checked,
         category: categoryRef.current?.value || "",
         // image: imageRef.current?.value || "",
         isLike: false,

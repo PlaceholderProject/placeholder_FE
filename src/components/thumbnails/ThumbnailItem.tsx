@@ -7,6 +7,7 @@ import LikeContainer from "../likes/LikeContainer";
 import { Meetup } from "@/types/meetupType";
 import Link from "next/link";
 import Image from "next/image";
+import { FaLock } from "react-icons/fa";
 
 // id 였는데 썸네일 객체를 직접 전달하도록 수정
 // 구조분해할당, 타입지정
@@ -71,20 +72,18 @@ const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
 
   return (
     <>
-      <div className={`rounded-lg border p-4 ${!thumbnail.isPublic ? "pointer-events-none text-[#D9D9D9]" : ""}`}>
-        <div className={thumbnail.isPublic ? "" : "bg-primary"}>
-          {thumbnail.image && (
-            <Link href={`/ad/${thumbnail.id}`} className="relative mb-4 block h-48">
-              <Image
-                src={thumbnailImageUrl}
-                alt="thumbnailImage"
-                fill
-                sizes="width-[14.2rem] height-[14.2rem]"
-                className={`rounded-[2rem] object-cover ${!thumbnail.isPublic ? "opacity-60" : ""}`}
-                loading="lazy"
-              />
-            </Link>
-          )}
+      <div className="my-[1rem] w-full rounded-lg">
+        <div className={thumbnail.isPublic === false ? "text-gray-medium opacity-90" : ""}>
+          {thumbnail.image &&
+            (thumbnail.isPublic === true ? (
+              <Link href={`/ad/${thumbnail.id}`} className="relative block h-[14.2rem] w-[14.2rem]">
+                <Image src={thumbnailImageUrl} alt="thumbnailImage" fill sizes="width-[14.2rem] height-[14.2rem]" className="rounded-[2rem] object-cover" loading="lazy" />
+              </Link>
+            ) : (
+              <div className="flex h-[14.2rem] w-[14.2rem] items-center justify-center rounded-[2rem] bg-gray-light">
+                <FaLock className="h-[4rem] w-[4rem] text-gray-dark" />
+              </div>
+            ))}
           <div className="space-y-2">
             <Image src={profileImageSource} width={20} height={20} alt="작성자 프로필 이미지" className="rounded-full" />
             <span className="text-sm">{thumbnail.organizer.nickname}</span>

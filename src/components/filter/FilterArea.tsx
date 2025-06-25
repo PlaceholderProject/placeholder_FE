@@ -23,11 +23,11 @@ const FilterArea = () => {
 
   return (
     <>
-      <div className="mx-auto flex w-[29.2rem] justify-center justify-items-center bg-gray-medium py-[0.5rem]">
+      <div className="mx-auto flex w-[34rem] justify-center justify-items-center bg-gray-medium py-[0.5rem]">
         {filterButtonsArray.map(({ type, label }) => (
           <button
             key={type}
-            className={`rounded-lg px-[1rem] py-[0.5rem] text-base ${(type === "지역별" && isPlaceMenuOpen) || (type === "모임 성격별" && isCategoryMenuOpen) ? "font-bold" : ""}`}
+            className={`rounded-lg px-[2rem] py-[0.5rem] text-base ${(type === "지역별" && isPlaceMenuOpen) || (type === "모임 성격별" && isCategoryMenuOpen) ? "font-bold" : ""}`}
             onClick={() => handleFilterChange(type)}
           >
             {label}
