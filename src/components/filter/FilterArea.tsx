@@ -1,39 +1,49 @@
-"use client";
 import React from "react";
-import { resetFilter, setFilterType, toggleCategoryMenu, togglePlaceMenu } from "@/stores/filterSlice";
+import { FilterType } from "@/types/meetupType";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
-import { FilterType } from "@/types/meetupType";
-import FilterButtonsArea from "./FilterButtonsArea";
+import { resetFilter, setFilterType } from "@/stores/filterSlice";
+import PlaceButtons from "./PlaceButtons";
+import CategoryButtons from "./CategoryButtons";
 
 const FilterArea = () => {
   const dispatch = useDispatch();
-  const filterType = useSelector((state: RootState) => state.filter.filterType);
+  const { filterType, isPlaceMenuOpen, isCategoryMenuOpen, isFilterActive } = useSelector((state: RootState) => state.filter);
+  const filterButtonsArray = [
+    { type: "지역별" as FilterType, label: "지역별" },
+    { type: "모임 성격별" as FilterType, label: "모임 성격별" },
+  ];
   const handleFilterChange = (newFilterType: FilterType) => {
     dispatch(setFilterType(newFilterType));
   };
+
+  const handleResetFilter = () => {
+    dispatch(resetFilter());
+  };
+
   return (
-    /* <button className={`rounded-lg border px-4 py-2 ${isPlaceMenuOpen ? "border-blue-300 bg-blue-100" : "border-gray-300"}`} onClick={handlePlaceButtonClick}>
-      지역별
-      </button>
-      
-      <button className={`rounded-lg border px-4 py-2 ${isCategoryMenuOpen ? "border-blue-300 bg-blue-100" : "border-gray-300"}`} onClick={handleCategoryButtonClick}>
-      모임 성격별
-      </button> 
-
-       {isFilterActive ? (
-        <button className="px-4 py-2 text-red-600 hover:text-red-800" onClick={handleResetFilter}>
-        필터 초기화
+    <div>
+      {filterButtonsArray.map(({ type, label }) => (
+        <button
+          key={type}
+          className={`rounded-lg border px-4 py-2 text-base ${
+            (type === "지역별" && isPlaceMenuOpen) || (type === "모임 성격별" && isCategoryMenuOpen) ? "border-blue-300 bg-blue-100 text-blue-800" : "border-gray-300 bg-white text-gray-700"
+          }`}
+          onClick={() => handleFilterChange(type)}
+        >
+          {label}
         </button>
-        ) : (
-          "선택된 필터가 없습니다."
-      )} */
-
-    <>
-      <div>
-        <FilterButtonsArea currentFilter={filterType} handleFilterChange={handleFilterChange} />
+      ))}
+      {isFilterActive && (
+        <button className="px-4 py-2 text-red-600 hover:text-red-800" onClick={handleResetFilter}>
+          필터 초기화
+        </button>
+      )}
+      <div className="bg-gray-50 p-4">
+        {isPlaceMenuOpen && <PlaceButtons />}
+        {isCategoryMenuOpen && <CategoryButtons />}
       </div>
-    </>
+    </div>
   );
 };
 
