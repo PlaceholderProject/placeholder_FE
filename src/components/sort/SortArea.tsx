@@ -26,7 +26,7 @@ const SortArea = () => {
   const handleSortChange = (newSortType: SortType) => {
     // newSortType은 어디서 튀어나왓냐?
     // 함수 파라미터로 선언이 된 것이고, 버튼 클릭이벤트에서 값을 바당온다
-    console.log(`정렬 변경: ${sortType} -> ${newSortType}`);
+    // console.log(`정렬 변경: ${sortType} -> ${newSortType}`);
 
     dispatch(setSortType(newSortType));
   };

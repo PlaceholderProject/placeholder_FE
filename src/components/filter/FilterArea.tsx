@@ -1,14 +1,17 @@
 "use client";
 import React from "react";
-import { resetFilter, toggleCategoryMenu, togglePlaceMenu } from "@/stores/filterSlice";
+import { resetFilter, setFilterType, toggleCategoryMenu, togglePlaceMenu } from "@/stores/filterSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
-import CategoryButtons from "./CategoryButtons";
-import PlaceButtons from "./PlaceButtons";
-import { FilterAreaType } from "@/types/meetupType";
+import { FilterType } from "@/types/meetupType";
 import FilterButtonsArea from "./FilterButtonsArea";
 
 const FilterArea = () => {
+  const dispatch = useDispatch();
+  const filterType = useSelector((state: RootState) => state.filter.filterType);
+  const handleFilterChange = (newFilterType: FilterType) => {
+    dispatch(setFilterType(newFilterType));
+  };
   return (
     /* <button className={`rounded-lg border px-4 py-2 ${isPlaceMenuOpen ? "border-blue-300 bg-blue-100" : "border-gray-300"}`} onClick={handlePlaceButtonClick}>
       지역별
@@ -28,7 +31,7 @@ const FilterArea = () => {
 
     <>
       <div>
-        <FilterButtonsArea />
+        <FilterButtonsArea currentFilter={filterType} handleFilterChange={handleFilterChange} />
       </div>
     </>
   );
