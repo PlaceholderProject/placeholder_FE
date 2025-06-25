@@ -24,7 +24,7 @@ const SortButtons = ({ currentSort, handleSortChange }: { currentSort: SortType;
 
       <div>
         {sortButtonsArray.map(({ type, label }) => (
-          <button key={type} className={`mt-[1rem] px-[1rem] text-base ${currentSort === type ? "" : "text-gray-medium"}`} onClick={() => handleSortChange(type)}>
+          <button key={type} className={`mr-[0.9rem] mt-[1rem] text-base ${currentSort === type ? "" : "text-gray-medium"}`} onClick={() => handleSortChange(type)}>
             {label}
           </button>
         ))}
