@@ -4,11 +4,11 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import MemberSelector from "@/components/schedule/MemberSelector";
 import { useCreateSchedule, useScheduleDetail, useUpdateSchedule } from "@/hooks/useSchedule";
-import { useImageUpload } from "@/hooks/useImageUpload"; // ✅ 추가
+import { useImageUpload } from "@/hooks/useImageUpload";
 import { useDaumPostcodePopup } from "react-daum-postcode";
 import { FaSearch } from "react-icons/fa";
 import ScheduleNumber from "./ScheduleNumber";
-import { BASE_URL } from "@/constants/baseURL";
+import { getS3ImageURL } from "@/utils/getImageURL";
 
 interface ScheduleFormProps {
   meetupId: number;
@@ -16,7 +16,6 @@ interface ScheduleFormProps {
   scheduleId?: number;
 }
 
-// 카카오맵 SDK 로딩 확인 훅 (이전과 동일)
 const useKakaoMapSDK = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   useEffect(() => {
@@ -48,7 +47,6 @@ const useKakaoMapSDK = () => {
   return isLoaded;
 };
 
-// 폼 데이터의 초기 상태
 const initialFormData = {
   date: "",
   time: "12:00",
@@ -66,11 +64,9 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
   const openPostcode = useDaumPostcodePopup();
   const isKakaoMapLoaded = useKakaoMapSDK();
 
-  // useState로 폼 데이터 관리
   const [formData, setFormData] = useState(initialFormData);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  // ✅ 이미지 업로드 훅 추가
   const imageUploadMutation = useImageUpload();
   const createMutation = useCreateSchedule(meetupId);
   const updateMutation = useUpdateSchedule(scheduleId || 0);
@@ -78,7 +74,6 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
     enabled: mode === "edit" && !!scheduleId,
   });
 
-  // 수정 모드일 때 기존 데이터로 폼 상태 초기화
   useEffect(() => {
     if (mode === "edit" && scheduleData) {
       const scheduledDate = new Date(scheduleData.scheduledAt);
@@ -94,21 +89,17 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
         image: null,
       });
 
-      // ✅ 기존 이미지 미리보기 설정
       if (scheduleData.image) {
-        const fullImageUrl = scheduleData.image.startsWith("http") ? scheduleData.image : `${BASE_URL}/${scheduleData.image}`;
-        setImagePreview(fullImageUrl);
+        setImagePreview(getS3ImageURL(scheduleData.image));
       }
     }
   }, [scheduleData, mode]);
 
-  // 입력값 변경 핸들러
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // 멤버 선택 핸들러
   const handleMemberSelect = (memberId: number) => {
     setFormData(prev => ({
       ...prev,
@@ -116,7 +107,6 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
     }));
   };
 
-  // 이미지 선택 핸들러
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -127,7 +117,6 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
     }
   };
 
-  // ✅ 이미지 제거 핸들러 추가
   const handleImageRemove = () => {
     setFormData(prev => ({ ...prev, image: null }));
     setImagePreview(null);
@@ -153,11 +142,9 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
     });
   }, [openPostcode, isKakaoMapLoaded]);
 
-  // ✅ 폼 제출 처리 - 완전히 수정
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    // 1. 이미지 업로드 처리
     let imageKey: string | null = mode === "edit" ? scheduleData?.image || null : null;
 
     if (formData.image) {
@@ -174,7 +161,6 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
       }
     }
 
-    // 2. payload 생성
     const scheduledAtString = `${formData.date}T${formData.time}:00`;
 
     const payload = {
@@ -183,17 +169,11 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
       address: formData.address,
       latitude: String(formData.latitude),
       longitude: String(formData.longitude),
-      memo: formData.memo || "", // 빈 문자열 보장
-      // participant: formData.participant, // ❌ Swagger에 없는 필드 제거
-      image: imageKey || "", // 빈 문자열 보장
+      memo: formData.memo || "",
+      participant: formData.participant,
+      image: imageKey || "",
     };
 
-    // 디버깅을 위한 로그 출력
-    console.log("📝 Form Data:", formData);
-    console.log("📦 Final Payload:", payload);
-    console.log("📅 Scheduled At String:", scheduledAtString);
-
-    // 필수 필드 검증
     if (!formData.place.trim()) {
       alert("모임 장소를 입력해주세요.");
       return;
@@ -211,7 +191,6 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
       return;
     }
 
-    // 3. API 호출
     try {
       if (mode === "create") {
         await createMutation.mutateAsync(payload);
@@ -230,7 +209,6 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
     return <div className="p-4 text-center">데이터를 불러오는 중...</div>;
   }
 
-  // ✅ 로딩 상태에 이미지 업로드도 포함
   const isSubmitting = createMutation.isPending || updateMutation.isPending || imageUploadMutation.isPending;
 
   return (
@@ -325,7 +303,6 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
               />
             </div>
 
-            {/* ✅ 이미지 업로드 섹션 개선 */}
             <div>
               <label className="mb-2 block text-base font-bold">이미지 업로드</label>
               <input type="file" id="image-upload" accept="image/*" onChange={handleImageSelect} className="hidden" />
@@ -334,7 +311,11 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
                   htmlFor="image-upload"
                   className="flex h-48 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-4 transition-colors hover:border-gray-400"
                 >
-                  {imagePreview ? <img src={imagePreview} alt="미리보기" className="h-full w-full rounded-lg object-cover" /> : <div className="text-center text-gray-500">클릭하여 이미지 선택</div>}
+                  {imagePreview ? (
+                    <img src={getS3ImageURL(imagePreview)} alt="미리보기" className="h-full w-full rounded-lg object-cover" />
+                  ) : (
+                    <div className="text-center text-gray-500">클릭하여 이미지 선택</div>
+                  )}
                 </label>
                 {imagePreview && (
                   <button type="button" onClick={handleImageRemove} className="absolute right-2 top-2 rounded-full bg-red-500 px-2 py-1 text-sm text-white hover:bg-red-600">
@@ -353,7 +334,6 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
           </div>
         </div>
 
-        {/* 제출 버튼 */}
         <div className="mt-10">
           <button
             type="submit"
