@@ -7,7 +7,6 @@ import { getHeadhuntingsApi } from "@/services/thumbnails.service";
 import { Meetup } from "@/types/meetupType";
 import { useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
-import { getMeetupPresignedUrl } from "@/services/meetup.service";
 
 const ThumbnailArea = () => {
   // 이제 리덕스에서 정렬 타입 가져옴
@@ -170,8 +169,8 @@ const ThumbnailArea = () => {
 
   return (
     <>
-      <div className="mx-auto w-[29.2rem] border-[0.1rem] pb-[4rem]">
-        <div className="my-[5rem] grid grid-cols-2">
+      <div className="mx-auto w-[34rem]">
+        <div className="mx-[1rem] my-[0.1rem] grid grid-cols-2 gap-[3.5rem]">
           {allThumbnails.map((thumbnail: Meetup, index: number) => {
             return <ThumbnailItem key={`${thumbnail.id}-${index}`} thumbnail={thumbnail} />;
           })}

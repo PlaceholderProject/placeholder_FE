@@ -1,7 +1,8 @@
-import { TypePurposeType, TypeRegionType } from "@/types/meetupType";
+import { FilterType, TypePurposeType, TypeRegionType } from "@/types/meetupType";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface FilterState {
+  filterType: FilterType;
   place: TypeRegionType;
   category: TypePurposeType;
   isFilterActive: boolean;
@@ -18,6 +19,7 @@ interface FilterState {
 // ❗️아니 근데 열리는 순간 서울 되는 거면 닫히면 서울 어케됨????
 
 const initialState: FilterState = {
+  filterType: null,
   place: null,
   category: null,
   isFilterActive: false,
@@ -29,6 +31,33 @@ const filterSlice = createSlice({
   name: "filter",
   initialState,
   reducers: {
+    setFilterType: (state, action: PayloadAction<FilterType>) => {
+      state.filterType = action.payload;
+      if (action.payload === "지역별") {
+        state.isPlaceMenuOpen = !state.isPlaceMenuOpen;
+        state.isCategoryMenuOpen = false;
+        if (state.isPlaceMenuOpen) {
+          state.place = "서울";
+          state.category = null;
+          state.isFilterActive = true;
+        } else {
+          state.place = null;
+          state.isFilterActive = state.category !== null;
+        }
+      } else if (action.payload === "모임 성격별") {
+        state.isCategoryMenuOpen = !state.isCategoryMenuOpen;
+        state.isPlaceMenuOpen = false;
+        if (state.isCategoryMenuOpen) {
+          state.category = "운동";
+          state.place = null;
+          state.isFilterActive = true;
+        } else {
+          state.category = null;
+          state.isFilterActive = state.place !== null;
+        }
+      }
+    },
+
     setPlace: (state, action: PayloadAction<TypeRegionType>) => {
       state.place = action.payload;
       //지역 필터 눌렸는지는 null 아니거나 모임성격이 null 아니면 true라고?
@@ -45,44 +74,23 @@ const filterSlice = createSlice({
       state.place = null;
       state.category = null;
       state.isFilterActive = false;
+      state.isPlaceMenuOpen = false;
+      state.isCategoryMenuOpen = false;
+      state.filterType = null;
     },
 
     // isFilterActive랑 isPureposeMenuOpen, isRegionMenuOpen 각 목적 확실히 해야되겟는데
     // 지금 좀 상태가 많아보임
     // 왜냐면 나는 뭐라도 menuOpen이 true면 active도 자동으로 true된다 생각했거든
 
-    togglePlaceMenu: state => {
-      state.isPlaceMenuOpen = !state.isPlaceMenuOpen;
-
-      if (state.isPlaceMenuOpen) {
-        state.place = "서울";
-        state.category = null;
-        state.isFilterActive = true;
-        state.isCategoryMenuOpen = false;
-      } else if (!state.isCategoryMenuOpen) {
-        state.place = null;
-        state.isFilterActive = false;
-      }
-    },
-
-    toggleCategoryMenu: state => {
-      state.isCategoryMenuOpen = !state.isCategoryMenuOpen;
-
-      if (state.isCategoryMenuOpen) {
-        state.category = "운동";
-        state.place = null;
-        state.isFilterActive = true;
-        state.isPlaceMenuOpen = false;
-      }
-    },
-
     // 이게 필요함?
     closeAllMenus: state => {
       state.isPlaceMenuOpen = false;
       state.isCategoryMenuOpen = false;
+      state.filterType = null;
     },
   },
 });
 
-export const { setPlace, setCatregory, resetFilter, togglePlaceMenu, toggleCategoryMenu, closeAllMenus } = filterSlice.actions;
+export const { setFilterType, setPlace, setCatregory, resetFilter, closeAllMenus } = filterSlice.actions;
 export default filterSlice.reducer;

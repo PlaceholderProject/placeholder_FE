@@ -3,11 +3,11 @@
 import { getMyMeetupMembersApi } from "@/services/my.space.service";
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
-import { BASE_URL } from "@/constants/baseURL";
 import OutButton from "./OutButton";
 import { MyMeetupMember } from "@/types/myMeetupMemberType";
 import Image from "next/image";
 import { useMemberDelete } from "@/hooks/useMemberDelete";
+import { BASE_URL } from "@/constants/baseURL";
 
 interface MyMeetupMembersProps {
   meetupId: number;
@@ -51,7 +51,7 @@ const MyMeetupMembers: React.FC<MyMeetupMembersProps> = ({ meetupId }) => {
       myMeetupMembersData.result.forEach((member: MyMeetupMember) => {
         if (member.user?.id) {
           if (member.user.image) {
-            const userImage = member.user.image;
+            const userImage = member.user.image.startsWith("http") ? member.user.image : `${BASE_URL}/${member.user.image}`;
             const profileImageUrl = userImage;
             imageMap[member.user.id] = profileImageUrl;
           } else {

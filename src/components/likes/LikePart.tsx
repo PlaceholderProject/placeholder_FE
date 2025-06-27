@@ -5,11 +5,7 @@ import React from "react";
 import LikeItem from "./LikeItem";
 
 const LikePart = ({ isLike, likeCount, onToggle, isPending = false }: LikePartProps) => {
-  return (
-    <div>
-      <LikeItem isLike={isLike} likeCount={likeCount} onClick={onToggle} disabled={isPending} />
-    </div>
-  );
+  return <LikeItem isLike={isLike} likeCount={likeCount} onClick={onToggle} disabled={isPending} />;
 };
 
 export default LikePart;

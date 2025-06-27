@@ -1,6 +1,5 @@
 "use client";
 
-import { BASE_URL } from "@/constants/baseURL";
 import { editMeetupApi, getMeetupByIdApi, getMeetupPresignedUrl } from "@/services/meetup.service";
 import { FileType, LabeledInputProps, LabeledSelectProps, Meetup, S3PresignedField, S3PresignedItem } from "@/types/meetupType";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -315,7 +314,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
         endedAt: isEndedAtNull ? null : endedAtRef.current?.value || null,
         adTitle: adTitleRef.current?.value || "",
         adEndedAt: adEndedAtRef.current?.value || "",
-        isPublic: !isPublicRef.current?.checked || true,
+        isPublic: !isPublicRef.current?.checked,
         category: categoryRef.current?.value || "",
         // image: imageRef.current?.value || "",
       };
@@ -570,7 +569,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
                 label="모집글 비공개"
                 type="checkbox"
                 ref={isPublicRef}
-                defaultChecked={!previousMeetupData?.isPublic}
+                defaultChecked={previousMeetupData?.isPublic === false}
                 containerClassName={"flex items-center my-[3rem]"}
                 labelClassName={"text-2xl text-primary items-baseline font-semibold pl-[0.5rem] pr-[0.5rem]"}
                 className={

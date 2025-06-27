@@ -8,9 +8,6 @@ import { setSortType } from "@/stores/sortSlice";
 import SortButtons from "./SortButtons";
 
 const SortArea = () => {
-  // 정렬 상태관리
-  // const [sortType, setSortType] = useState<Sort Type>("like");
-
   const dispatch = useDispatch();
   const sortType = useSelector((state: RootState) => state.sort.sortType);
   // 이건 어디서 읽어오는지?
@@ -29,7 +26,7 @@ const SortArea = () => {
   const handleSortChange = (newSortType: SortType) => {
     // newSortType은 어디서 튀어나왓냐?
     // 함수 파라미터로 선언이 된 것이고, 버튼 클릭이벤트에서 값을 바당온다
-    console.log(`정렬 변경: ${sortType} -> ${newSortType}`);
+    // console.log(`정렬 변경: ${sortType} -> ${newSortType}`);
 
     dispatch(setSortType(newSortType));
   };
@@ -50,7 +47,7 @@ const SortArea = () => {
 
   return (
     <>
-      <div className="flex justify-center justify-items-center">
+      <div className="mx-auto my-[1rem] flex w-[34rem] justify-start justify-items-center">
         <SortButtons currentSort={sortType} handleSortChange={handleSortChange} />
       </div>
     </>
