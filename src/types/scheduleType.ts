@@ -1,4 +1,5 @@
 export interface Participant {
+  id: number;
   nickname: string;
   image: string | null;
 }

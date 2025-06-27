@@ -9,13 +9,9 @@ import { useDaumPostcodePopup } from "react-daum-postcode";
 import { FaSearch } from "react-icons/fa";
 import ScheduleNumber from "./ScheduleNumber";
 import { getS3ImageURL } from "@/utils/getImageURL";
+import Image from "next/image"; // ✅ [수정] Image 컴포넌트 import
 
-interface ScheduleFormProps {
-  meetupId: number;
-  mode?: "create" | "edit";
-  scheduleId?: number;
-}
-
+// ... (useKakaoMapSDK, initialFormData 코드는 기존과 동일)
 const useKakaoMapSDK = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   useEffect(() => {
@@ -59,7 +55,7 @@ const initialFormData = {
   image: null as File | null,
 };
 
-const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormProps) => {
+const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: { meetupId: number; mode?: "create" | "edit"; scheduleId?: number }) => {
   const router = useRouter();
   const openPostcode = useDaumPostcodePopup();
   const isKakaoMapLoaded = useKakaoMapSDK();
@@ -85,7 +81,8 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
         latitude: scheduleData.latitude,
         longitude: scheduleData.longitude,
         memo: scheduleData.memo,
-        participant: (scheduleData.participant.map(participant => (typeof participant === "object" && "id" in participant ? participant.id : 0)) as number[]).filter(id => id > 0),
+
+        participant: scheduleData.participant.map(participant => participant.id),
         image: null,
       });
 
@@ -122,7 +119,6 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
     setImagePreview(null);
   };
 
-  // 주소 검색 처리
   const handleAddressSearch = useCallback(() => {
     openPostcode({
       onComplete: data => {
@@ -150,7 +146,7 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
     if (formData.image) {
       try {
         const uploadedKeys = await imageUploadMutation.mutateAsync({
-          files: [formData.image],
+          files: [formData.image], // 단일 파일 배열로 전달
           target: "schedule",
         });
         imageKey = uploadedKeys?.[0] || null;
@@ -312,7 +308,7 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
                   className="flex h-48 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-4 transition-colors hover:border-gray-400"
                 >
                   {imagePreview ? (
-                    <img src={getS3ImageURL(imagePreview)} alt="미리보기" className="h-full w-full rounded-lg object-cover" />
+                    <Image src={imagePreview} alt="미리보기" fill style={{ objectFit: "cover" }} className="rounded-lg" />
                   ) : (
                     <div className="text-center text-gray-500">클릭하여 이미지 선택</div>
                   )}
@@ -325,7 +321,6 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
               </div>
             </div>
           </div>
-
           <div className="mt-6 space-y-6 lg:mt-0">
             <div>
               <label className="mb-2 block text-base font-bold">참석자 등록하기</label>
@@ -333,7 +328,6 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
             </div>
           </div>
         </div>
-
         <div className="mt-10">
           <button
             type="submit"
