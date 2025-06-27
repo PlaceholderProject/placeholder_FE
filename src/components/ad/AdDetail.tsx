@@ -25,7 +25,7 @@ const AdDetail = ({ meetupId, userNickname }: { meetupId: number; userNickname: 
   const startedAt = adData.startedAt;
   const endedAt = adData.endedAt;
 
-  const imageUrl = `${BASE_URL}${adData.image}`;
+  const imageUrl = adData.image?.startsWith("http") ? adData.image : `${BASE_URL}/${adData.image}`;
 
   return (
     <>
@@ -42,6 +42,7 @@ const AdDetail = ({ meetupId, userNickname }: { meetupId: number; userNickname: 
         <div>
           🍎 모임장소 : [{adData.place}] {adData.placeDescription}
         </div>
+        <div>🗝️ 공개니???? : {`${adData.isPublic}`}</div>
         <div>
           모임날짜 : {startedAt === null ? "미정" : startedAt.substring(0, 10)} ~ {endedAt === null ? "미정" : endedAt.substring(0, 10)}
           <div>

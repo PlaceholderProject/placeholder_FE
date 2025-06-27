@@ -3,22 +3,41 @@ import { toggleLikeApi } from "@/services/like.service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { InfiniteData } from "@tanstack/react-query";
 import LikePart from "./LikePart";
-import { LikeContainerProps } from "@/types/likeType";
+import { LikeContainerProps, PageData } from "@/types/likeType";
 import { Meetup } from "@/types/meetupType";
-
-// API 응답 페이지 데이터 타입
-interface PageData {
-  result: Meetup[];
-  total: number;
-  previous: string | null;
-  next: string | null;
-}
+import { useSelector } from "react-redux";
+import { RootState } from "@/stores/store";
 
 const LikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerProps) => {
   const queryClient = useQueryClient();
 
+  // ThumbnailArea와 동일한 상태값들 가져오기
+  const sortType = useSelector((state: RootState) => state.sort.sortType);
+  const place = useSelector((state: RootState) => state.filter.place);
+  const category = useSelector((state: RootState) => state.filter.category);
+  const isFilterActive = useSelector((state: RootState) => state.filter.isFilterActive);
+
+  // ThumbnailArea와 동일한 쿼리 키 생성 함수
+  // 여기서 oldData가 있으려면 부모와 같은 ㅝ리키를 사용하고 업뎃하고 무효화하고 해야되는데
+  // 부모 쿼리키가 동적으로 생성되는거지..?
+
+  const baseQueryKey = ["headhuntings", sortType];
+  const getQueryKey = () => {
+    if (isFilterActive) {
+      if (place) {
+        baseQueryKey.push("place", place);
+      }
+      if (category) {
+        baseQueryKey.push("category", category);
+      }
+    }
+    return baseQueryKey;
+  };
+
   useEffect(() => {
-    console.log("좋아요눌림??", id, initialIsLike);
+    console.log("---현재 쿼리 키 가져온 결과:", getQueryKey());
+    console.log("❤️베이스 쿼리키 타입", typeof baseQueryKey);
+    console.log("👈베이스쿼리키 뭐야", baseQueryKey);
   });
 
   const likeMutation = useMutation({
@@ -26,21 +45,73 @@ const LikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerPro
 
     // 낙관적 업데이트
     onMutate: async () => {
-      // 이전 쿼리요청 취소
-      await queryClient.cancelQueries({ queryKey: ["headhuntings"] });
+      const currentQueryKey = getQueryKey();
+      console.log("---사용할 현재 쿼리키:", currentQueryKey);
+      console.log("❤️베이스 쿼리키 타입", typeof baseQueryKey);
+      console.log("👈베이스쿼리키 뭐야", baseQueryKey);
+
+      // // 이전 쿼리요청 취소 수정ver
+      // await queryClient.cancelQueries({ queryKey: ["headhuntings"] });
+      await queryClient.cancelQueries({ queryKey: currentQueryKey });
       await queryClient.cancelQueries({ queryKey: ["like", id] });
 
-      // 이전 데이터 백업
-      const previousHeadhuntingsData = queryClient.getQueryData(["headhuntings"]);
+      // 이전 데이터 백업 수정 ver
+      const previousHeadhuntingsData = queryClient.getQueryData<InfiniteData<PageData>>(currentQueryKey);
 
       // headhuntings 쿼리 데이터 업데이트 - 정확한 타입 지정
-      queryClient.setQueryData<InfiniteData<PageData>>(["headhuntings"], oldData => {
-        if (!oldData) return oldData;
-        console.log("ㅇㄷㄷㅇㅌ", oldData);
+      queryClient.setQueryData<InfiniteData<PageData>>(currentQueryKey, oldData => {
+        if (!oldData) {
+          console.log("🔍 oldData가 없음!");
+          return oldData;
+        }
+
+        console.log("🔍 ============ oldData 전체 구조 ============");
+        console.log("🔍 oldData 타입:", typeof oldData);
+        console.log("🔍 oldData 키들:", Object.keys(oldData));
+        console.log("🔍 oldData 전체:", oldData);
+
+        console.log("🔍 ============ pages 배열 분석 ============");
+        console.log("🔍 pages 길이:", oldData.pages?.length);
+        console.log("🔍 첫 번째 페이지:", oldData.pages?.[0]);
+        //탠스택 내장 타입인 InfiniteDatas는 pages랑 pageParams를 가지고 있는디
+        // 나의 데이터인 PAgeData의 요소가 객체 하나하나로 pges에 담긴다
+        // pageParams는 페이지 숫자
+        if (oldData.pages?.[0]) {
+          const firstPage = oldData.pages[0];
+          console.log("🔍 첫 번째 페이지 키들:", Object.keys(firstPage));
+          console.log("🔍 result 배열 길이:", firstPage.result?.length);
+          console.log("🔍 total:", firstPage.total);
+          console.log("🔍 previous:", firstPage.previous);
+          console.log("🔍 next:", firstPage.next);
+
+          if (firstPage.result?.[0]) {
+            console.log("🔍 첫 번째 아이템 샘플:", firstPage.result[0]);
+          }
+        }
+
+        console.log("🔍 ============ pageParams 분석 ============");
+        console.log("🔍 pageParams:", oldData.pageParams);
+
+        console.log("🔍 ============ 전체 아이템 개수 ============");
+        const allItems = oldData.pages?.flatMap(page => page.result) || [];
+        console.log("🔍 모든 아이템 개수:", allItems.length);
+
+        console.log("🔍 ============ 타겟 아이템 찾기 ============");
+        const targetItem = allItems.find(item => item.id === id);
+        console.log("🔍 수정하려는 아이템:", targetItem);
 
         return {
           ...oldData,
+          // 실행전
+          // oldData = {
+          //   pages: [...],
+          //   pageParams: [1, 2, 3]
+          // } 이렇게 생긴애라고
           pages: oldData.pages.map(page => ({
+            //[ 실행전
+            //   { result: [meetup1, meetup2, ...], total: 10, next: "..." },  // page 0
+            //   { result: [meetup11, meetup12, ...], total: 10, next: null }   // page 1
+            // ]
             ...page,
             result: page.result.map((item: Meetup) =>
               item.id === id
@@ -55,15 +126,18 @@ const LikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerPro
         };
       });
 
-      return { previousHeadhuntingsData };
+      // 오직 에러 롤백을위한 리턴 값 - 백업 데이터
+      return { previousHeadhuntingsData, queryKey: currentQueryKey };
     },
+
+    //---on mutate---
 
     // 에러 발생 롤백
     onError: (error, variables, context) => {
       console.error("좋아요 토글 에러 ", error);
 
-      if (context?.previousHeadhuntingsData) {
-        queryClient.setQueryData(["headhuntings"], context.previousHeadhuntingsData);
+      if (context?.previousHeadhuntingsData && context?.queryKey) {
+        queryClient.setQueryData(context.queryKey, context.previousHeadhuntingsData);
       }
 
       // 인증 에러 아닐 때만 에러메세지 표시
@@ -75,6 +149,7 @@ const LikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerPro
     // 성공시 쿼리 무효화
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
+      console.log("온석세스 안 조아요 토글 성공");
     },
   });
 

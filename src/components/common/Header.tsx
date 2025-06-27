@@ -13,6 +13,7 @@ import { setHasUnreadNotifications } from "@/stores/notificationSlice";
 import { logout } from "@/stores/userSlice";
 import { useQueryClient } from "@tanstack/react-query";
 import HamburgerMenu from "@/components/common/HamburgerMenu";
+import { resetSelectedMeetupId } from "@/stores/proposalSlice";
 
 const Header = () => {
   const hasUnreadNotifications = useSelector((state: RootState) => state.notification.hasUnread);
@@ -32,6 +33,7 @@ const Header = () => {
       dispatch(logout());
       dispatch(setIsAuthenticated(false));
       dispatch(setHasUnreadNotifications(false));
+      dispatch(resetSelectedMeetupId());
 
       queryClient.invalidateQueries({ queryKey: ["myMeetups", "organizer"] });
       queryClient.invalidateQueries({ queryKey: ["receivedProposals"] });
@@ -51,9 +53,9 @@ const Header = () => {
     if (accessToken) {
       dispatch(setIsAuthenticated(true));
     } else {
-      handleLogout();
+      dispatch(setIsAuthenticated(false));
     }
-  }, [handleLogout, dispatch]);
+  }, [dispatch]);
 
   const handleNotificationPage = () => {
     router.replace("/notification");
@@ -61,7 +63,7 @@ const Header = () => {
 
   return (
     <header className="fixed left-0 right-0 top-0 z-50 flex h-[6rem] items-center justify-center bg-primary md:h-[7.5rem]">
-      <div className="flex w-[95%] justify-between md:w-[111rem] md:px-[1.5rem]">
+      <div className="flex w-[95%] justify-between">
         <Link href="/">
           <Image src="/smallLogo.png" alt="작은 로고" width={30} height={30} className="block transition-all duration-300 md:hidden" />
           <Image src="/logo.png" alt="큰 로고" width={175} height={60} className="hidden transition-all duration-300 md:block" />

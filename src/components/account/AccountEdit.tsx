@@ -5,6 +5,7 @@ import { useEditUser, useUser } from "@/hooks/useUser";
 import { checkNickname } from "@/services/auth.service";
 import { RootState } from "@/stores/store";
 import { setUser } from "@/stores/userSlice";
+import { resizeImage } from "@/utils/resizeImage";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -49,7 +50,7 @@ const AccountEdit = () => {
       fetchUser();
     } else {
       if (user.profileImage) {
-        const imagePath = user.profileImage.startsWith("http") ? user.profileImage : `${BASE_URL}${user.profileImage}`;
+        const imagePath = user.profileImage.startsWith("http") ? user.profileImage : `${BASE_URL}/${user.profileImage}`;
         setProfileImage(imagePath);
       } else {
         setProfileImage("/profile.png");
@@ -57,13 +58,17 @@ const AccountEdit = () => {
       setNickname(user.nickname || "");
       setBio(user.bio || "");
     }
-  }, ["data", "dispatch", "user.bio", "user.email", "user.nickname", "user.profileImage"]);
+  }, [data, dispatch, user.bio, user.email, user.nickname, user.profileImage]);
 
   if (!data) return;
 
   const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      // if (!["image/png", "image/jpeg"].includes(file.type)) {
+      //   alert("JPG 또는 PNG 파일을 선택해주세요.");
+      //   return;
+      // }
       const objectUrl = URL.createObjectURL(file);
       setProfileImage(objectUrl); // Blob URL을 React 상태에 설정
     }
@@ -118,18 +123,24 @@ const AccountEdit = () => {
     }
 
     const file = fileInputRef.current?.files?.[0];
+    let resizedFile: File | null = null;
+
+    if (file) {
+      const resizedBlob = await resizeImage(file, 300, 300); // 예: 최대 300x300
+      resizedFile = new File([resizedBlob], file.name, { type: file.type });
+    }
 
     const editedUser = {
       nickname,
       bio,
-      profileImage: file || null,
+      profileImage: resizedFile, // 리사이징된 파일 사용
     };
 
     try {
       const response = await editUserMutation.mutateAsync(editedUser);
 
       if (response) {
-        const imageUrl = response.image ? (response.image.startsWith("http") ? response.image : `${BASE_URL}${response.image}`) : null;
+        const imageUrl = response.image ? (response.image.startsWith("http") ? response.image : `${BASE_URL}/${response.image}`) : null;
 
         dispatch(
           setUser({
@@ -156,7 +167,7 @@ const AccountEdit = () => {
     <div>
       <div className="my-[4rem] flex min-h-[calc(100vh-12rem)] flex-col items-center justify-center md:min-h-[calc(100vh-13.5rem)]">
         <h2 className="mb-[2rem] text-3xl font-semibold">회원 정보 수정</h2>
-        <div className="flex h-full min-h-[54rem] w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] border-gray-medium py-[2rem]">
+        <div className="flex h-full min-h-[54rem] w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] border-gray-medium py-[2rem] md:max-w-[80rem]">
           <form onSubmit={handleAccountEditFormSubmit} className="flex flex-col justify-center gap-[1.5rem] p-[2rem]">
             <div className="relative flex items-center justify-center">
               <div className="relative h-[15rem] w-[15rem] overflow-hidden rounded-full">

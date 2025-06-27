@@ -10,7 +10,7 @@ const CategoryButtons = () => {
   const categories: TypePurposeType[] = ["운동", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
   // --TO DO--
   // PlaceButtons.tsx CategoryButtons.tsx에서 중복 코드 간결화
-  const handlePurposeSelect = (newCategory: TypePurposeType) => {
+  const handleCategorySelect = (newCategory: TypePurposeType) => {
     if (category === newCategory) {
       dispatch(resetFilter());
     } else {
@@ -20,12 +20,12 @@ const CategoryButtons = () => {
 
   return (
     <>
-      <div>
+      <div className="mx-auto grid w-full max-w-[34rem] grid-cols-4">
         {categories.map(categoryItem => (
           <button
             key={categoryItem}
-            onClick={() => handlePurposeSelect(categoryItem)}
-            className={`rounded-lg border px-3 py-1 text-sm ${category === categoryItem ? "border-blue-300 bg-blue-200 text-blue-900" : "border-gray-400 bg-gray-200 text-gray-800"}`}
+            onClick={() => handleCategorySelect(categoryItem)}
+            className={`m-[0.3rem] rounded-[5rem] border-[0.1rem] border-primary px-[2rem] py-[0.5rem] text-base ${category === categoryItem ? "text-bold bg-primary text-gray-light" : ""}`}
           >
             {categoryItem}
           </button>

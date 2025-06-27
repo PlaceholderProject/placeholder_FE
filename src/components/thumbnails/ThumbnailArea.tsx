@@ -66,13 +66,13 @@ const ThumbnailArea = () => {
   });
 
   // useEffect 추가 - 데이터 변경 감지
-  useEffect(() => {
-    if (headhuntingsData) {
-      console.log("ThumbnailArea 데이터 변경 감지:", headhuntingsData);
-      const allItems = headhuntingsData.pages.flatMap(page => page.result);
-      console.log("모든 아이템 목록:", allItems);
-    }
-  }, [headhuntingsData, getQueryKey]);
+  // useEffect(() => {
+  //   if (headhuntingsData) {
+  //     console.log("ThumbnailArea 데이터 변경 감지:", headhuntingsData);
+  //     const allItems = headhuntingsData.pages.flatMap(page => page.result);
+  //     console.log("모든 아이템 목록:", allItems);
+  //   }
+  // }, [headhuntingsData, getQueryKey]);
 
   // useEffect(() => {
   //   console.log(`정렬 타입 변경 감지: ${sortType}`);
@@ -169,12 +169,13 @@ const ThumbnailArea = () => {
 
   return (
     <>
-      <div className="my-[5rem] grid grid-cols-1 gap-4 p-4 md:grid-cols-2 lg:grid-cols-4">
-        {allThumbnails.map((thumbnail: Meetup, index: number) => {
-          return <ThumbnailItem key={`${thumbnail.id}-${index}`} thumbnail={thumbnail} />;
-        })}
-        {/* 더 불러오기 */}
-        {/* {hasNextPage && (
+      <div className="mx-auto w-[34rem]">
+        <div className="mx-[1rem] my-[0.1rem] grid grid-cols-2 gap-[3.5rem]">
+          {allThumbnails.map((thumbnail: Meetup, index: number) => {
+            return <ThumbnailItem key={`${thumbnail.id}-${index}`} thumbnail={thumbnail} />;
+          })}
+          {/* 더 불러오기 */}
+          {/* {hasNextPage && (
           <div className="col-span-full flex justify-center p-4">
             <button onClick={() => fetchNextPage()} disabled={isFetchingNextPage} className="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300">
               {isFetchingNextPage ? "불러오는 중..." : "더 보기"}
@@ -182,10 +183,11 @@ const ThumbnailArea = () => {
           </div>
         )} */}
 
-        {/* 관찰대상요소 */}
+          {/* 관찰대상요소 */}
 
-        <div ref={observerRef} className="col-span-full flex h-10 items-center justify-center">
-          {isFetchingNextPage && "데이터 불러오는 중..."}
+          <div ref={observerRef} className="col-span-full flex h-10 items-center justify-center">
+            {isFetchingNextPage && "데이터 불러오는 중..."}
+          </div>
         </div>
       </div>
     </>

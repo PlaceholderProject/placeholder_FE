@@ -22,7 +22,7 @@ const ReplyForm = () => {
 
   useEffect(() => {
     if (user.profileImage) {
-      const imagePath = user.profileImage.startsWith("http") ? user.profileImage : `${BASE_URL}${user.profileImage}`;
+      const imagePath = user.profileImage.startsWith("http") ? user.profileImage : `${BASE_URL}/${user.profileImage}`;
       setProfileImage(imagePath);
     } else {
       setProfileImage("/profile.png");

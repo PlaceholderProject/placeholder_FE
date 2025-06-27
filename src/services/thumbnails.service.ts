@@ -25,7 +25,7 @@ export const getHeadhuntingsApi = async ({ sortType, place, category }: { sortTy
     url = url + `&category=${category}`;
   }
 
-  // 헤더 객체를 조건부로 구성하기
+  // 헤더 객체를 로그인 여부 조건부로 구성하기
   // 새삼 헤더도 객체지..
   // headers: {}임. 당연함.
 

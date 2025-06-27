@@ -69,7 +69,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId, sche
         <div className="flex flex-row items-center gap-[0.5rem]">
           <div className="h-[2.5rem] w-[2.5rem] overflow-hidden rounded-full">
             <Image
-              src={reply.user.image ? (reply.user.image.startsWith("http") ? reply.user.image : `${BASE_URL}${reply.user.image}`) : "/profile.png"}
+              src={reply.user.image ? (reply.user.image.startsWith("http") ? reply.user.image : `${BASE_URL}/${reply.user.image}`) : "/profile.png"}
               alt="프로필 이미지"
               width="30"
               height="30"
