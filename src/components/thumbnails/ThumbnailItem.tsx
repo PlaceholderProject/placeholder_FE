@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { BASE_URL } from "@/constants/baseURL";
-import calculateDays from "@/utils/calculateDays";
 import LikeContainer from "../likes/LikeContainer";
 import { Meetup } from "@/types/meetupType";
 import Link from "next/link";

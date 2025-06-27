@@ -2,7 +2,7 @@ import React from "react";
 import { FilterType } from "@/types/meetupType";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
-import { resetFilter, setFilterType } from "@/stores/filterSlice";
+import { setFilterType } from "@/stores/filterSlice";
 import PlaceButtons from "./PlaceButtons";
 import CategoryButtons from "./CategoryButtons";
 

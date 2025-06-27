@@ -1,6 +1,5 @@
 "use client";
 
-import { BASE_URL } from "@/constants/baseURL";
 import { editMeetupApi, getMeetupByIdApi, getMeetupPresignedUrl } from "@/services/meetup.service";
 import { FileType, LabeledInputProps, LabeledSelectProps, Meetup, S3PresignedField, S3PresignedItem } from "@/types/meetupType";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

@@ -7,7 +7,6 @@ import { getHeadhuntingsApi } from "@/services/thumbnails.service";
 import { Meetup } from "@/types/meetupType";
 import { useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
-import { getMeetupPresignedUrl } from "@/services/meetup.service";
 
 const ThumbnailArea = () => {
   // 이제 리덕스에서 정렬 타입 가져옴
