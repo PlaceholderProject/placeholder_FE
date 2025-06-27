@@ -26,8 +26,8 @@ export const useCreateUser = () => {
 export const useEditUser = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<User, Error, EditedUserProps>({
-    mutationFn: (editedUser: EditedUserProps) => editUser(editedUser), // File 포함된 formData
+  return useMutation<User | null, Error, EditedUserProps>({
+    mutationFn: (editedUser: EditedUserProps) => editUser(editedUser),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
     },
