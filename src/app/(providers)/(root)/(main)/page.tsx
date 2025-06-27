@@ -1,5 +1,3 @@
-
-
 import React from "react";
 
 import ThumbnailArea from "@/components/thumbnails/ThumbnailArea";
