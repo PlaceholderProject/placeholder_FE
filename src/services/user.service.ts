@@ -1,7 +1,7 @@
 import { BASE_URL } from "@/constants/baseURL";
 import Cookies from "js-cookie";
 import { refreshToken } from "./auth.service";
-import { EditedUserProps, User } from "@/types/userType";
+import { EditedUserProps, PresignedUrlProps, User } from "@/types/userType";
 import { NewUserProps } from "@/types/authType";
 
 // create user
@@ -141,8 +141,10 @@ export const deleteUser = async () => {
   }
 };
 
-const uploadToS3WithForm = async (file: File, presignedData: any) => {
+const uploadToS3WithForm = async (file: File, presignedData: PresignedUrlProps) => {
   const { url, fields } = presignedData;
+
+  console.log(presignedData);
 
   const formData = new FormData();
 
