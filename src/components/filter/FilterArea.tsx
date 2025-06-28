@@ -41,7 +41,7 @@ const FilterArea = () => {
         </button>
       )} */}
       </div>
-      <div className="bg-gray-50 p-[1rem]">
+      <div className="mb-[1rem] bg-gray-50 p-[1rem]">
         {isPlaceMenuOpen && <PlaceButtons />}
         {isCategoryMenuOpen && <CategoryButtons />}
       </div>
