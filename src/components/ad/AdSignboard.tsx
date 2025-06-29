@@ -14,10 +14,8 @@ const AdSignboard = ({ meetupId }: { meetupId: number }) => {
   return (
     <>
       <div>
-        <h4>사인보드</h4>
-        <div>{adData.adTitle}</div>
-        <div>{adData.adEndedAt?.substring(0, 10)}까지 모집</div>
-        <div>⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯</div>
+        <div className="text-lg">{adData.adTitle}</div>
+        <div className="flex justify-end text-xs text-gray-medium">{adData.adEndedAt?.substring(0, 10)}까지 모집</div>
       </div>
     </>
   );

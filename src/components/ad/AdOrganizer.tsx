@@ -44,12 +44,11 @@ const AdOrganizer = ({ meetupId }: { meetupId: number }) => {
 
   return (
     <>
-      <div>
-        <h4>작성자: </h4>
-        <div>{adData.organizer.nickname}</div>
+      <div className="grid grid-cols-2">
         <div className="relative h-[50px] w-[50px] overflow-hidden rounded-full">
           <Image src={imageSource} alt="방장 프사" width={20} height={20} style={{ width: "auto", height: "auto" }} unoptimized={true} />
         </div>
+        <div className="text-base">{adData.organizer.nickname}</div>
       </div>
     </>
   );

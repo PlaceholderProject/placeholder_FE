@@ -30,19 +30,13 @@ const AdDetail = ({ meetupId, userNickname }: { meetupId: number; userNickname: 
   return (
     <>
       <div>
-        <div>⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯</div>
-        {/* <Image width={50} height={20} src={imageUrl} alt={"모임 광고글 이미지"} /> */}
         <Image src={imageUrl} alt="모임 광고글 이미지" width={150} height={100} />
-
-        <div>⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯</div>
-        <div>🩵 모임이름 : {adData.name}</div>
-
-        <div>방장이름:{adData.organizer.nickname}</div>
-        {isAuthorized && <AdNonModal meetupId={meetupId} />}
-        <div>
-          🍎 모임장소 : [{adData.place}] {adData.placeDescription}
+        <div className="text-lg">모임이름</div>
+        <div className="text-base">{adData.name}</div>
+        <div className="text-lg">모임장소</div>{" "}
+        <div className="text-base">
+          [{adData.place}] {adData.placeDescription}
         </div>
-        <div>🗝️ 공개니???? : {`${adData.isPublic}`}</div>
         <div>
           모임날짜 : {startedAt === null ? "미정" : startedAt.substring(0, 10)} ~ {endedAt === null ? "미정" : endedAt.substring(0, 10)}
           <div>
@@ -55,8 +49,9 @@ const AdDetail = ({ meetupId, userNickname }: { meetupId: number; userNickname: 
           </div>
           <br />
         </div>
-
-        <div>{adData.description}</div>
+        {isAuthorized && <AdNonModal meetupId={meetupId} />}
+        {/* <div>🗝️ 공개니???? : {`${adData.isPublic}`}</div> */}
+        <div className="text-base font-light">{adData.description}</div>
       </div>
     </>
   );
