@@ -8,6 +8,7 @@ import dynamic from "next/dynamic";
 import ScheduleNumber from "@/components/schedule/ScheduleNumber";
 import { MapProps, MarkerClustererProps } from "react-kakao-maps-sdk";
 
+// ... (dynamic import, useKakaoMapScript, MapBoundsController 등 다른 코드는 동일)
 // 서버 사이드 렌더링 방지를 위한 dynamic import
 const DynamicMap = dynamic<MapProps>(() => import("react-kakao-maps-sdk").then(mod => mod.Map), { ssr: false });
 
@@ -85,7 +86,6 @@ const MapBoundsController: React.FC<MapBoundsControllerProps> = ({ schedules, ma
   return null;
 };
 
-// 컴포넌트 Props 타입 정의
 interface KakaoMapsProps {
   meetupId: number;
 }
@@ -96,7 +96,6 @@ const KakaoMaps: React.FC<KakaoMapsProps> = ({ meetupId }) => {
   const { isLoaded, error: scriptError } = useKakaoMapScript();
   const { data: schedules, isPending, error: dataError } = useSchedules(meetupId);
 
-  // 스케줄 클릭 핸들러 최적화
   const handleScheduleClick = useCallback(
     (scheduleId: number) => {
       router.push(`/meetup/${meetupId}/schedule/${scheduleId}`);
@@ -109,29 +108,18 @@ const KakaoMaps: React.FC<KakaoMapsProps> = ({ meetupId }) => {
     setMapInstance(map);
   }, []);
 
-  // 로딩 상태 표시
-  if (!isLoaded) {
-    return <div className="flex h-[400px] items-center justify-center bg-gray-100">카카오맵 SDK 로딩 중...</div>;
+  if (!isLoaded || isPending) {
+    return <div className="flex h-full w-full items-center justify-center bg-gray-100">로딩 중...</div>;
   }
 
-  if (scriptError) {
-    return <div className="flex h-[400px] items-center justify-center bg-red-100">카카오맵 SDK 로드 오류: {scriptError.message}</div>;
+  if (scriptError || dataError) {
+    return <div className="flex h-full w-full items-center justify-center bg-red-100">오류 발생</div>;
   }
 
-  if (isPending) {
-    return <div className="flex h-[400px] items-center justify-center bg-gray-100">일정 데이터 로딩 중...</div>;
-  }
-
-  if (dataError) {
-    return <div className="flex h-[400px] items-center justify-center bg-red-100">데이터 오류: {dataError.message}</div>;
-  }
-
-  // 스케줄이 없는 경우
   if (!schedules?.length) {
-    return <div className="flex h-[400px] items-center justify-center bg-gray-100">표시할 일정이 없습니다</div>;
+    return <div className="flex h-full w-full items-center justify-center bg-gray-100">표시할 일정이 없습니다</div>;
   }
 
-  // 기본 위치 설정 (첫 번째 일정 위치 또는 기본값)
   const center = {
     lat: Number(schedules[0]?.latitude) || 37.5665,
     lng: Number(schedules[0]?.longitude) || 126.978,
@@ -140,12 +128,10 @@ const KakaoMaps: React.FC<KakaoMapsProps> = ({ meetupId }) => {
   const CLUSTER_THRESHOLD = 5;
 
   return (
-    <DynamicMap center={center} style={{ width: "100%", height: "400px" }} level={5} onCreate={handleMapCreate}>
+    <DynamicMap center={center} style={{ width: "100%", height: "100%" }} level={5} onCreate={handleMapCreate}>
       {mapInstance && <MapBoundsController schedules={schedules} map={mapInstance} />}
 
-      {/* 스케줄 수에 따른 조건부 렌더링 */}
       {schedules.length <= CLUSTER_THRESHOLD ? (
-        // 적은 수의 스케줄일 때는 클러스터링 없이 개별 마커 표시
         schedules.map((schedule, index) => (
           <ScheduleNumber
             key={schedule.id}
@@ -160,7 +146,6 @@ const KakaoMaps: React.FC<KakaoMapsProps> = ({ meetupId }) => {
           />
         ))
       ) : (
-        // 많은 수의 스케줄일 때는 클러스터링 적용
         <DynamicMarkerClusterer averageCenter minLevel={8}>
           {schedules.map((schedule, index) => (
             <ScheduleNumber

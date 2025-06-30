@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { FilterType } from "@/types/meetupType";
 import { useDispatch, useSelector } from "react-redux";
