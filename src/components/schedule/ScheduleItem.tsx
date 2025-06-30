@@ -15,19 +15,26 @@ const ScheduleItem = ({ schedule, number }: { schedule: Schedule; number: number
   }, [router, schedule.meetupId, schedule.id]);
 
   return (
-    <div className="mb-2 flex items-start rounded-lg border p-4">
-      <ScheduleNumber number={number} />
+    <div className="flex flex-col rounded-lg border bg-white p-4 shadow-sm lg:bg-white">
+      <div className="flex items-start">
+        <ScheduleNumber number={number} />
 
-      <div className="flex flex-1 flex-col gap-2" onClick={handleItemClick}>
-        <div className="text-lg font-semibold">{formatDateTime(schedule.scheduledAt)}</div>
-        <div className="font-medium text-gray-800">{schedule.place}</div>
-        <div className="text-sm text-gray-600">{schedule.address}</div>
-        {schedule.memo && <div className="mt-2 rounded p-2 text-sm text-gray-500">{schedule.memo}</div>}
+        <div className="flex-1 cursor-pointer" onClick={handleItemClick}>
+          <div className="mb-1 inline-block bg-primary px-2 py-0.5 text-sm font-bold text-white">{schedule.place}</div>
+          <div className="text-base font-bold text-primary">{formatDateTime(schedule.scheduledAt)}</div>
+          <div className="text-sm text-gray-dark">{schedule.address}</div>
+        </div>
+
+        <div onClick={e => e.stopPropagation()} className="ml-auto pl-2">
+          <ScheduleThreeDotsMenu scheduleId={schedule.id} meetupId={schedule.meetupId} />
+        </div>
       </div>
 
-      <div onClick={e => e.stopPropagation()} className="ml-auto">
-        <ScheduleThreeDotsMenu scheduleId={schedule.id} meetupId={schedule.meetupId} />
-      </div>
+      {schedule.memo && (
+        <div className="mt-2 w-full cursor-pointer rounded-lg bg-secondary-light p-3 text-base text-gray-800" onClick={handleItemClick}>
+          <p className="whitespace-pre-wrap">{schedule.memo}</p>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,10 +1,11 @@
+// src/hooks/useSchedule.ts
+
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createSchedule, deleteSchedule, getSchedule, getSchedules, updateSchedule } from "@/services/schedule.service";
-import { Member, Schedule } from "@/types/scheduleType";
+import { Member, Schedule, SchedulePayload } from "@/types/scheduleType";
 import { getMeetupMembers } from "@/services/member.service";
 
 // 모임의 모든 스케줄
-// 해당 모임의 모든 스케줄 가져오기 훅
 export const useSchedules = (meetupId: number) => {
   return useQuery<Schedule[], Error>({
     queryKey: ["schedules", meetupId],
@@ -13,7 +14,6 @@ export const useSchedules = (meetupId: number) => {
 };
 
 // 멤버
-// 모임 멤버 가져오기 훅
 export const useMeetupMembers = (meetupId: number) => {
   return useQuery<Member[], Error>({
     queryKey: ["members", meetupId],
@@ -21,13 +21,12 @@ export const useMeetupMembers = (meetupId: number) => {
   });
 };
 
-// 단일 스케줄
 // 단일 스케줄 생성 훅
 export const useCreateSchedule = (meetupId: number) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (formData: FormData) => createSchedule(meetupId, formData),
+    mutationFn: (payload: SchedulePayload) => createSchedule(meetupId, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["schedules", meetupId] });
     },
@@ -48,9 +47,10 @@ export const useUpdateSchedule = (scheduleId: number) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ scheduleId, formData }: { scheduleId: number; formData: FormData }) => updateSchedule(scheduleId, formData),
+    mutationFn: ({ scheduleId, payload }: { scheduleId: number; payload: SchedulePayload }) => updateSchedule(scheduleId, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["schedules", scheduleId] });
+      queryClient.invalidateQueries({ queryKey: ["schedule", scheduleId] });
     },
   });
 };

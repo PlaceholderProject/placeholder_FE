@@ -16,7 +16,7 @@ interface ScheduleNumberProps {
 
 const ScheduleNumber: React.FC<ScheduleNumberProps> = ({ number, isMapMarker = false, position, onClick, label }) => {
   const NumberCircle = (
-    <div className="mr-4 flex h-10 w-10 items-center justify-center rounded-full border-4 border-[#006B8B] text-sm font-bold text-[#006B8B]" onClick={onClick}>
+    <div className="mr-4 flex h-10 w-10 items-center justify-center rounded-full border-4 border-[#006B8B] font-bold text-[#006B8B]" onClick={onClick}>
       {number}
     </div>
   );
@@ -26,7 +26,7 @@ const ScheduleNumber: React.FC<ScheduleNumberProps> = ({ number, isMapMarker = f
     return (
       <CustomOverlayMap position={position} xAnchor={0.5} yAnchor={1}>
         <div className="flex flex-col items-center">
-          {label && <div className="mb-1 max-w-[120px] truncate whitespace-nowrap rounded-md border bg-white px-2 py-1 text-xs font-medium text-gray-800 shadow-md">{label}</div>}
+          {label && <div className="mb-1 inline-block bg-primary px-2 py-0.5 text-sm font-bold text-white">{label}</div>}
           <div className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-4 border-[#006B8B] bg-white text-sm font-bold text-[#006B8B] shadow-lg" onClick={onClick}>
             {number}
           </div>
