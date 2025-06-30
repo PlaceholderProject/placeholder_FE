@@ -65,8 +65,8 @@ const Header = () => {
     <header className="fixed left-0 right-0 top-0 z-50 flex h-[6rem] items-center justify-center bg-primary md:h-[7.5rem]">
       <div className="flex w-[95%] justify-between">
         <Link href="/">
-          <Image src="/smallLogo.png" alt="작은 로고" width={30} height={30} className="block transition-all duration-300 md:hidden" />
-          <Image src="/logo.png" alt="큰 로고" width={175} height={60} className="hidden transition-all duration-300 md:block" />
+          <Image src="/smallLogo.png" alt="작은 로고" width={30} height={30} priority className="block transition-all duration-300 md:hidden" />
+          <Image src="/logo.png" alt="큰 로고" width={175} height={60} priority className="hidden transition-all duration-300 md:block" />
         </Link>
 
         <div className="flex items-center justify-center gap-[1rem]">
