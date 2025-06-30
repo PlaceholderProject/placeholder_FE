@@ -1,165 +1,98 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import type { Address } from "react-daum-postcode";
+import { FaSearch } from "react-icons/fa";
+
 import MemberSelector from "@/components/schedule/MemberSelector";
+import ScheduleNumber from "./ScheduleNumber";
 import { useCreateSchedule, useScheduleDetail, useUpdateSchedule } from "@/hooks/useSchedule";
 import { useImageUpload } from "@/hooks/useImageUpload";
-import { useDaumPostcodePopup } from "react-daum-postcode";
-import { FaSearch } from "react-icons/fa";
-import ScheduleNumber from "./ScheduleNumber";
-import { getS3ImageURL } from "@/utils/getImageURL";
-import Image from "next/image"; // ✅ [수정] Image 컴포넌트 import
+import { useScheduleForm } from "@/hooks/useScheduleForm";
+import { useModal } from "@/hooks/useModal";
 
-// ... (useKakaoMapSDK, initialFormData 코드는 기존과 동일)
+interface ScheduleFormProps {
+  meetupId: number;
+  mode?: "create" | "edit";
+  scheduleId?: number;
+}
+
 const useKakaoMapSDK = () => {
   const [isLoaded, setIsLoaded] = useState(false);
-
   useEffect(() => {
-    if (typeof window !== "undefined" && window.kakao?.maps?.services) {
-      setIsLoaded(true);
-      return;
-    }
-    const checkKakaoMaps = () => {
+    const loadKakaoSDK = () => {
       if (window.kakao?.maps?.services) {
         setIsLoaded(true);
-        return;
+      } else if (!document.querySelector("script[src*='dapi.kakao.com']")) {
+        const script = document.createElement("script");
+        script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_APP_JS_KEY}&libraries=services&autoload=false`;
+        script.async = true;
+        script.onload = () => window.kakao.maps.load(() => setIsLoaded(true));
+        document.head.appendChild(script);
       }
-      setTimeout(checkKakaoMaps, 100);
     };
-    if (!document.querySelector('script[src*="dapi.kakao.com"]')) {
-      const script = document.createElement("script");
-      script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_APP_JS_KEY}&libraries=services&autoload=false`;
-      script.async = true;
-      script.onload = () => {
-        if (window.kakao?.maps) {
-          window.kakao.maps.load(checkKakaoMaps);
-        }
-      };
-      document.head.appendChild(script);
-    } else {
-      checkKakaoMaps();
+    if (typeof window !== "undefined") {
+      loadKakaoSDK();
     }
   }, []);
   return isLoaded;
 };
 
-const initialFormData = {
-  date: "",
-  time: "12:00",
-  place: "",
-  address: "",
-  latitude: "0",
-  longitude: "0",
-  memo: "",
-  participant: [] as number[],
-  image: null as File | null,
-};
-
-const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: { meetupId: number; mode?: "create" | "edit"; scheduleId?: number }) => {
+const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormProps) => {
   const router = useRouter();
-  const openPostcode = useDaumPostcodePopup();
   const isKakaoMapLoaded = useKakaoMapSDK();
+  const { openModal } = useModal();
 
-  const [formData, setFormData] = useState(initialFormData);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
+  const { data: scheduleData, isPending: isLoadingSchedule } = useScheduleDetail(mode === "edit" ? scheduleId : undefined, { enabled: mode === "edit" && !!scheduleId });
 
+  const { formData, imagePreview, handleChange, handleMemberSelect, handleImageSelect, handleImageRemove, setAddress } = useScheduleForm(mode, scheduleData);
+
+  const handleCompletePostcode = useCallback(
+    (data: Address) => {
+      if (!isKakaoMapLoaded || !window.kakao?.maps?.services) {
+        alert("지도 서비스가 아직 로딩 중입니다. 잠시 후 다시 시도해주세요.");
+        return;
+      }
+      const geocoder = new window.kakao.maps.services.Geocoder();
+      geocoder.addressSearch(data.address, (result, status) => {
+        if (status === window.kakao.maps.services.Status.OK && result?.[0]) {
+          setAddress(data.address, result[0].y, result[0].x);
+        } else {
+          setAddress(data.address, "0", "0");
+        }
+      });
+    },
+    [isKakaoMapLoaded, setAddress],
+  );
+
+  const handleAddressSearch = useCallback(() => {
+    openModal("POSTCODE", { onCompletePostcode: handleCompletePostcode });
+  }, [openModal, handleCompletePostcode]);
+
+  // ... (handleSubmit 등 나머지 코드는 이전과 동일)
   const imageUploadMutation = useImageUpload();
   const createMutation = useCreateSchedule(meetupId);
   const updateMutation = useUpdateSchedule(scheduleId || 0);
-  const { data: scheduleData, isPending: isLoadingSchedule } = useScheduleDetail(mode === "edit" && scheduleId ? scheduleId : undefined, {
-    enabled: mode === "edit" && !!scheduleId,
-  });
-
-  useEffect(() => {
-    if (mode === "edit" && scheduleData) {
-      const scheduledDate = new Date(scheduleData.scheduledAt);
-      setFormData({
-        date: scheduledDate.toISOString().split("T")[0],
-        time: scheduledDate.toTimeString().slice(0, 5),
-        place: scheduleData.place,
-        address: scheduleData.address,
-        latitude: scheduleData.latitude,
-        longitude: scheduleData.longitude,
-        memo: scheduleData.memo,
-
-        participant: scheduleData.participant.map(participant => participant.id),
-        image: null,
-      });
-
-      if (scheduleData.image) {
-        setImagePreview(getS3ImageURL(scheduleData.image));
-      }
-    }
-  }, [scheduleData, mode]);
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = event.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleMemberSelect = (memberId: number) => {
-    setFormData(prev => ({
-      ...prev,
-      participant: prev.participant.includes(memberId) ? prev.participant.filter(id => id !== memberId) : [...prev.participant, memberId],
-    }));
-  };
-
-  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setFormData(prev => ({ ...prev, image: file }));
-      const reader = new FileReader();
-      reader.onloadend = () => setImagePreview(reader.result as string);
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleImageRemove = () => {
-    setFormData(prev => ({ ...prev, image: null }));
-    setImagePreview(null);
-  };
-
-  const handleAddressSearch = useCallback(() => {
-    if (isPostcodeOpen) return; // 이미 열려있으면 중복 실행 방지
-
-    setIsPostcodeOpen(true); // 팝업이 열렸음을 상태에 저장
-
-    openPostcode({
-      onComplete: data => {
-        setFormData(prev => ({ ...prev, address: data.address }));
-        setIsPostcodeOpen(false); // 주소 선택 완료 시 상태 변경
-
-        if (isKakaoMapLoaded && window.kakao?.maps?.services) {
-          const geocoder = new window.kakao.maps.services.Geocoder();
-          geocoder.addressSearch(data.address, (result, status) => {
-            if (status === window.kakao.maps.services.Status.OK && result[0]) {
-              setFormData(prev => ({ ...prev, longitude: result[0].x, latitude: result[0].y }));
-            } else {
-              setFormData(prev => ({ ...prev, longitude: "0", latitude: "0" }));
-            }
-          });
-        }
-      },
-      onClose: () => {
-        setIsPostcodeOpen(false);
-      },
-    });
-  }, [openPostcode, isKakaoMapLoaded, isPostcodeOpen]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    let imageKey: string | null = mode === "edit" ? scheduleData?.image || null : null;
+    if (!formData.place.trim() || !formData.address.trim() || !formData.date || !formData.time) {
+      alert("모든 필수 항목을 입력해주세요.");
+      return;
+    }
+
+    let imageKey: string | null = mode === "edit" ? (scheduleData?.image ?? null) : null;
 
     if (formData.image) {
       try {
-        const uploadedKeys = await imageUploadMutation.mutateAsync({
+        const [uploadedKey] = await imageUploadMutation.mutateAsync({
           files: [formData.image],
           target: "schedule",
         });
-        imageKey = uploadedKeys?.[0] || null;
+        imageKey = uploadedKey ?? null;
       } catch (error) {
         console.error("이미지 업로드 실패:", error);
         alert("이미지 업로드에 실패했습니다. 다시 시도해주세요.");
@@ -167,47 +100,22 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: { meetupId: num
       }
     }
 
-    const scheduledAtString = `${formData.date}T${formData.time}:00`;
-
     const payload = {
-      scheduledAt: scheduledAtString,
-      place: formData.place,
-      address: formData.address,
-      latitude: String(formData.latitude),
-      longitude: String(formData.longitude),
-      memo: formData.memo || "",
-      participant: formData.participant,
+      ...formData,
+      scheduledAt: `${formData.date}T${formData.time}:00`,
       image: imageKey || "",
     };
-
-    if (!formData.place.trim()) {
-      alert("모임 장소를 입력해주세요.");
-      return;
-    }
-    if (!formData.address.trim()) {
-      alert("주소를 검색해주세요.");
-      return;
-    }
-    if (!formData.date) {
-      alert("날짜를 선택해주세요.");
-      return;
-    }
-    if (!formData.time) {
-      alert("시간을 선택해주세요.");
-      return;
-    }
 
     try {
       if (mode === "create") {
         await createMutation.mutateAsync(payload);
-      } else if (mode === "edit" && scheduleId) {
+      } else if (scheduleId) {
         await updateMutation.mutateAsync({ scheduleId, payload });
       }
       router.push(`/meetup/${meetupId}`);
     } catch (error) {
-      console.error(`Failed to ${mode} schedule:`, error);
-      console.error("Error details:", error);
-      alert(`스케줄 ${mode === "create" ? "생성" : "수정"}에 실패했습니다.`);
+      console.error(`스케줄 ${mode === "create" ? "생성" : "수정"} 실패:`, error);
+      alert(`스케줄 처리 중 오류가 발생했습니다.`);
     }
   };
 
@@ -257,12 +165,7 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: { meetupId: num
                   onClick={handleAddressSearch}
                   className="flex-1 cursor-pointer rounded-md border border-gray-300 bg-gray-50 px-3 py-2 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
-                <button
-                  type="button"
-                  onClick={handleAddressSearch}
-                  disabled={isPostcodeOpen}
-                  className="rounded-md bg-primary p-3 text-white transition-colors hover:bg-opacity-80 disabled:opacity-50"
-                >
+                <button type="button" onClick={handleAddressSearch} className="rounded-md bg-primary p-3 text-white transition-colors hover:bg-opacity-80">
                   <FaSearch />
                 </button>
               </div>

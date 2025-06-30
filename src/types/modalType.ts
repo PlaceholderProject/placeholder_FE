@@ -1,10 +1,9 @@
 import { Meetup } from "./meetupType";
 import { SentProposal } from "./proposalType";
+import type { Address } from "react-daum-postcode";
 
-// 모달 타입 정의
-export type ModalType = "AD_DELETE" | "PROPOSAL_HIDE" | "PROPOSAL_CANCELLATION" | "PROPOSAL_DELETION" | "PROPOSAL_POSTCARD" | "MEETUP_MEMBERS" | "MEETUP_INFO" | "MEMBER_DELETE" | null;
+export type ModalType = "AD_DELETE" | "PROPOSAL_HIDE" | "PROPOSAL_CANCELLATION" | "PROPOSAL_DELETION" | "PROPOSAL_POSTCARD" | "MEETUP_MEMBERS" | "MEETUP_INFO" | "MEMBER_DELETE" | "POSTCODE" | null;
 
-// 각 모달 데이터 타입
 export interface ModalData {
   meetupId?: number;
   proposal?: SentProposal;
@@ -12,6 +11,7 @@ export interface ModalData {
   meetupName?: string;
   isOrganizer?: boolean;
   memberId?: number;
+  onCompletePostcode?: (data: Address) => void;
 }
 
 export interface ModalState {
