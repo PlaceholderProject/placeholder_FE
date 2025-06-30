@@ -2,11 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import { BASE_URL } from "@/constants/baseURL";
-import { useAdItem } from "@/hooks/useAdItem";
 import Image from "next/image";
+import AdLike from "./AdLike";
+import { Meetup } from "@/types/meetupType";
 
-const AdOrganizer = ({ meetupId }: { meetupId: number }) => {
-  const { adData, error, isPending } = useAdItem(meetupId);
+const AdOrganizer = ({ adData }: { adData: Meetup }) => {
   const [imageSource, setImageSource] = useState("/profile.png");
 
   useEffect(() => {
@@ -38,17 +38,18 @@ const AdOrganizer = ({ meetupId }: { meetupId: number }) => {
     // 이미지 경로 validate 함수 따로 만들어서 빼기!!!!
   }, [adData]);
 
-  if (error) return <div>에러 발생: {error.message}</div>;
-  if (isPending) return <div>로딩중..</div>;
-  if (!adData) return null;
-
   return (
     <>
-      <div>
-        <h4>작성자: </h4>
-        <div>{adData.organizer.nickname}</div>
-        <div className="relative h-[50px] w-[50px] overflow-hidden rounded-full">
-          <Image src={imageSource} alt="방장 프사" width={20} height={20} style={{ width: "auto", height: "auto" }} unoptimized={true} />
+      <div className="mx-auto flex w-[32.1rem] justify-between space-y-[0.5rem] border-t-[0.1rem] border-gray-medium py-[0.8rem]">
+        <div className="flex items-center justify-center">
+          <div className="relative h-[30x] w-[30px] overflow-hidden rounded-full">
+            <Image src={imageSource} alt="방장 프사" width={30} height={30} style={{ width: "auto", height: "auto" }} unoptimized={true} />
+          </div>
+          <div className="text-base">{adData.organizer.nickname}</div>
+        </div>
+
+        <div className="">
+          <AdLike />
         </div>
       </div>
     </>

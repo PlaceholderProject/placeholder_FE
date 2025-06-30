@@ -8,17 +8,11 @@ export interface PageData {
   next: string | null;
 }
 
-export interface LikePartProps {
-  isLike: boolean;
-  likeCount: number;
-  onToggle: () => void;
-  isPending?: boolean;
-}
-
 export interface LikeItemProps {
   isLike: boolean;
   likeCount: number;
-  onClick: () => void;
+  onToggle: () => void;
+  isPending: boolean;
   disabled?: boolean;
 }
 
