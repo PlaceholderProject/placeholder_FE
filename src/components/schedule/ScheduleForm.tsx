@@ -14,6 +14,7 @@ import Image from "next/image"; // ✅ [수정] Image 컴포넌트 import
 // ... (useKakaoMapSDK, initialFormData 코드는 기존과 동일)
 const useKakaoMapSDK = () => {
   const [isLoaded, setIsLoaded] = useState(false);
+
   useEffect(() => {
     if (typeof window !== "undefined" && window.kakao?.maps?.services) {
       setIsLoaded(true);
@@ -62,6 +63,7 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: { meetupId: num
 
   const [formData, setFormData] = useState(initialFormData);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
 
   const imageUploadMutation = useImageUpload();
   const createMutation = useCreateSchedule(meetupId);
@@ -120,9 +122,14 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: { meetupId: num
   };
 
   const handleAddressSearch = useCallback(() => {
+    if (isPostcodeOpen) return; // 이미 열려있으면 중복 실행 방지
+
+    setIsPostcodeOpen(true); // 팝업이 열렸음을 상태에 저장
+
     openPostcode({
       onComplete: data => {
         setFormData(prev => ({ ...prev, address: data.address }));
+        setIsPostcodeOpen(false); // 주소 선택 완료 시 상태 변경
 
         if (isKakaoMapLoaded && window.kakao?.maps?.services) {
           const geocoder = new window.kakao.maps.services.Geocoder();
@@ -135,8 +142,11 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: { meetupId: num
           });
         }
       },
+      onClose: () => {
+        setIsPostcodeOpen(false);
+      },
     });
-  }, [openPostcode, isKakaoMapLoaded]);
+  }, [openPostcode, isKakaoMapLoaded, isPostcodeOpen]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -146,7 +156,7 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: { meetupId: num
     if (formData.image) {
       try {
         const uploadedKeys = await imageUploadMutation.mutateAsync({
-          files: [formData.image], // 단일 파일 배열로 전달
+          files: [formData.image],
           target: "schedule",
         });
         imageKey = uploadedKeys?.[0] || null;
@@ -247,7 +257,12 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: { meetupId: num
                   onClick={handleAddressSearch}
                   className="flex-1 cursor-pointer rounded-md border border-gray-300 bg-gray-50 px-3 py-2 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
-                <button type="button" onClick={handleAddressSearch} className="rounded-md bg-primary p-3 text-white transition-colors hover:bg-opacity-80">
+                <button
+                  type="button"
+                  onClick={handleAddressSearch}
+                  disabled={isPostcodeOpen}
+                  className="rounded-md bg-primary p-3 text-white transition-colors hover:bg-opacity-80 disabled:opacity-50"
+                >
                   <FaSearch />
                 </button>
               </div>
