@@ -4,11 +4,15 @@ import React, { useEffect, useState } from "react";
 import calculateDays from "@/utils/calculateDays";
 import AdNonModal from "./AdNonModal";
 import { BASE_URL } from "@/constants/baseURL";
-import { useAdItem } from "@/hooks/useAdItem";
 import Image from "next/image";
+import { Meetup } from "@/types/meetupType";
 
-const AdDetail = ({ meetupId, userNickname }: { meetupId: number; userNickname: string }) => {
-  const { adData, error, isPending } = useAdItem(meetupId);
+interface AdDetailProps {
+  adData: Meetup;
+  userNickname: string;
+}
+
+const AdDetail = ({ adData, userNickname }: AdDetailProps) => {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const organizerNickname = adData?.organizer.nickname;
 
@@ -17,10 +21,6 @@ const AdDetail = ({ meetupId, userNickname }: { meetupId: number; userNickname: 
     setIsAuthorized(isMatch);
     console.log(`유즈 이펙트 안 : 방장 닉넴=${organizerNickname}. 유저 닉넴=${userNickname}, 같니?: ${isMatch}`);
   }, [adData, userNickname, organizerNickname]);
-
-  if (error) return <div>에러 발생: {error.message}</div>;
-  if (isPending) return <div>로딩중...</div>;
-  if (!adData) return null;
 
   const startedAt = adData.startedAt;
   const endedAt = adData.endedAt;
@@ -38,7 +38,7 @@ const AdDetail = ({ meetupId, userNickname }: { meetupId: number; userNickname: 
             <div className="text-lg">모임이름</div>
             <div className="flex items-center justify-between text-base">
               <span>{adData.name}</span>
-              {isAuthorized && <AdNonModal meetupId={meetupId} />}
+              {isAuthorized && <AdNonModal meetupId={adData.id} />}
             </div>
             <div className="text-lg">모임장소</div>{" "}
             <div className="text-base">

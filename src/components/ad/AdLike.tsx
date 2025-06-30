@@ -1,7 +1,7 @@
 import React from "react";
 import { IoMdHeart } from "react-icons/io";
 
-const AdLike = ({ meetupId }: { meetupId: number }) => {
+const AdLike = () => {
   return (
     <div className="flex flex-wrap justify-between">
       <div className="flex items-center">

@@ -1,16 +1,9 @@
 "use client";
 
 import React from "react";
+import { Meetup } from "@/types/meetupType";
 
-import { useAdItem } from "@/hooks/useAdItem";
-
-const AdSignboard = ({ meetupId }: { meetupId: number }) => {
-  const { adData, error, isPending } = useAdItem(meetupId);
-
-  if (error) return <div>에러 발생 : {error.message} </div>;
-  if (isPending) return <div>로딩중...</div>;
-  if (!adData) return null;
-
+const AdSignboard = ({ adData }: { adData: Meetup }) => {
   return (
     <>
       <div className="mx-auto mt-[2rem] w-[32.1rem] space-y-[0.5rem]">

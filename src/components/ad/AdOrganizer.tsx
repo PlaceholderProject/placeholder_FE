@@ -2,12 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import { BASE_URL } from "@/constants/baseURL";
-import { useAdItem } from "@/hooks/useAdItem";
 import Image from "next/image";
 import AdLike from "./AdLike";
+import { Meetup } from "@/types/meetupType";
 
-const AdOrganizer = ({ meetupId }: { meetupId: number }) => {
-  const { adData, error, isPending } = useAdItem(meetupId);
+const AdOrganizer = ({ adData }: { adData: Meetup }) => {
   const [imageSource, setImageSource] = useState("/profile.png");
 
   useEffect(() => {
@@ -39,10 +38,6 @@ const AdOrganizer = ({ meetupId }: { meetupId: number }) => {
     // 이미지 경로 validate 함수 따로 만들어서 빼기!!!!
   }, [adData]);
 
-  if (error) return <div>에러 발생: {error.message}</div>;
-  if (isPending) return <div>로딩중..</div>;
-  if (!adData) return null;
-
   return (
     <>
       <div className="mx-auto flex w-[32.1rem] justify-between space-y-[0.5rem] border-t-[0.1rem] border-gray-medium py-[0.8rem]">
@@ -54,7 +49,7 @@ const AdOrganizer = ({ meetupId }: { meetupId: number }) => {
         </div>
 
         <div className="">
-          <AdLike meetupId={meetupId} />
+          <AdLike />
         </div>
       </div>
     </>
