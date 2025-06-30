@@ -29,29 +29,38 @@ const AdDetail = ({ meetupId, userNickname }: { meetupId: number; userNickname: 
 
   return (
     <>
-      <div>
-        <Image src={imageUrl} alt="모임 광고글 이미지" width={150} height={100} />
-        <div className="text-lg">모임이름</div>
-        <div className="text-base">{adData.name}</div>
-        <div className="text-lg">모임장소</div>{" "}
-        <div className="text-base">
-          [{adData.place}] {adData.placeDescription}
+      <div className="mt-[1em] w-[34rem] space-y-[0.2rem]">
+        <div className="flex justify-center">
+          <Image src={imageUrl} alt="모임 광고글 이미지" width={321} height={209} className="w-[32.1rem] object-cover" />
         </div>
-        <div>
-          모임날짜 : {startedAt === null ? "미정" : startedAt.substring(0, 10)} ~ {endedAt === null ? "미정" : endedAt.substring(0, 10)}
-          <div>
-            {startedAt && endedAt
-              ? calculateDays({
-                  startedAt: startedAt,
-                  endedAt: endedAt,
-                })
-              : ""}
+        <div className="mx-auto w-[32.1rem] px-[1.5rem] py-[2rem]">
+          <div className="grid grid-cols-[25%_75%] items-center text-left">
+            <div className="text-lg">모임이름</div>
+            <div className="flex items-center justify-between text-base">
+              <span>{adData.name}</span>
+              {isAuthorized && <AdNonModal meetupId={meetupId} />}
+            </div>
+            <div className="text-lg">모임장소</div>{" "}
+            <div className="text-base">
+              [{adData.place}] {adData.placeDescription}
+            </div>
+            <div className="text-lg">모임날짜</div>
+            <div className="flex items-center justify-between text-sm">
+              <div className="flex h-[2rem] w-[8rem] items-center justify-center rounded-[0.5rem] bg-gray-medium text-center">{startedAt === null ? "미정" : startedAt.substring(0, 10)}</div>~
+              <div className="flex h-[2rem] w-[8rem] items-center justify-center rounded-[0.5rem] bg-gray-medium text-center">{endedAt === null ? "미정" : endedAt.substring(0, 10)}</div>
+              <div>
+                {startedAt && endedAt
+                  ? calculateDays({
+                      startedAt: startedAt,
+                      endedAt: endedAt,
+                    })
+                  : ""}
+              </div>
+            </div>
+            {/* <div>🗝️ 공개니???? : {`${adData.isPublic}`}</div> */}
           </div>
-          <br />
+          <div className="pt-[2rem] text-base font-light">{adData.description}</div>
         </div>
-        {isAuthorized && <AdNonModal meetupId={meetupId} />}
-        {/* <div>🗝️ 공개니???? : {`${adData.isPublic}`}</div> */}
-        <div className="text-base font-light">{adData.description}</div>
       </div>
     </>
   );

@@ -13,11 +13,13 @@ const AdArea = () => {
   const user = useSelector((state: RootState) => state.user.user);
   const userNickname = user?.nickname || "";
   return (
-    <div>
-      <AdSignboard meetupId={meetupIdNum} />
-      <AdOrganizer meetupId={meetupIdNum} />
-      <AdDetail meetupId={meetupIdNum} userNickname={userNickname} />
-      <AdButton meetupId={meetupIdNum} />
+    <div className="mx-auto w-[34rem]">
+      <div className="flex-col space-y-[0.5rem]">
+        <AdSignboard meetupId={meetupIdNum} />
+        <AdOrganizer meetupId={meetupIdNum} />
+        <AdDetail meetupId={meetupIdNum} userNickname={userNickname} />
+        <AdButton meetupId={meetupIdNum} />
+      </div>
     </div>
   );
 };
