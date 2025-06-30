@@ -5,32 +5,38 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
 import { closeModal } from "@/stores/modalSlice";
 import { ModalData, ModalType } from "@/types/modalType";
-import AdDeleteContent from "@/components/modals/Contents/AdDeleteContent";
-import ProposalCancellationContent from "@/components/modals/Contents/ProposalCancellationContent";
-import ProposalPostcardContent from "@/components/modals/Contents/ProposalPostcardContent";
-import MeetupMembersContent from "@/components/modals/Contents/MeetupMembersContent";
 import MeetupInfoContent from "@/components/modals/Contents/MeetupInfoContent";
-import MemberDeleteContent from "@/components/modals/Contents/MemberDeleteContent";
-import ProposalHideContent from "@/components/modals/Contents/ProposalHideContent";
+// ... (다른 콘텐츠 import)
+import AdDeleteContent from "./Contents/AdDeleteContent";
+import ProposalCancellationContent from "./Contents/ProposalCancellationContent";
+import ProposalPostcardContent from "./Contents/ProposalPostcardContent";
+import MeetupMembersContent from "./Contents/MeetupMembersContent";
+import MemberDeleteContent from "./Contents/MemberDeleteContent";
+import ProposalHideContent from "./Contents/ProposalHideContent";
+import { FaTimes } from "react-icons/fa";
 
-// 모달 크기 설정
-const getModalSize = (modalType: ModalType): string => {
+// [수정] PC에서 적용될 구체적인 패딩 값을 포함하도록 함수를 수정합니다.
+const getModalContainerStyles = (modalType: ModalType): string => {
+  // 기본적으로 적용될 모바일 스타일
+  const mobileStyles = "rounded-2xl p-6";
+
   switch (modalType) {
-    case "MEETUP_MEMBERS":
     case "MEETUP_INFO":
-      return "w-full max-w-md max-h-[90vh] overflow-y-auto";
-    case "PROPOSAL_POSTCARD":
-      return "w-[280px] max-w-[90vw]";
-    // getModalSize 함수에 추가
+      // PC(lg)일 때만 특별한 radius와 패딩을 적용합니다.
+      // 88px -> 8.8rem, 71px -> 7.1rem
+      return `w-full max-w-lg rounded-[2.7rem] p-6 lg:px-[8.8rem] lg:py-[7.1rem]`;
+
+    case "MEETUP_MEMBERS":
     case "MEMBER_DELETE":
-      return "w-full max-w-md max-h-[90vh] overflow-y-auto";
+      return `w-full max-w-md ${mobileStyles}`;
+
     default:
-      return "w-[280px] h-[287px] max-w-[90vw] max-h-[90vh]";
+      return `w-full max-w-sm ${mobileStyles}`;
   }
 };
 
-// 모달 컨텐츠 렌더링
 const renderModalContent = (modalType: ModalType, modalData: ModalData): JSX.Element | null => {
+  // ... renderModalContent 내용은 이전과 동일합니다.
   switch (modalType) {
     case "AD_DELETE":
       return <AdDeleteContent meetupId={modalData.meetupId!} />;
@@ -44,9 +50,6 @@ const renderModalContent = (modalType: ModalType, modalData: ModalData): JSX.Ele
       return <MeetupMembersContent meetupId={modalData.meetupId!} meetupName={modalData.meetupName!} />;
     case "MEETUP_INFO":
       return <MeetupInfoContent meetupData={modalData.meetupData!} isOrganizer={modalData.isOrganizer!} meetupId={modalData.meetupId!} />;
-    // case "MEMBER_DELETE":
-    //   return <MemberDeleteContent memberId={modalData.memberId!} />;
-    // renderModalContent 함수에 추가 수정
     case "MEMBER_DELETE":
       return <MemberDeleteContent />;
     default:
@@ -58,7 +61,7 @@ const ModalContainer = () => {
   const dispatch = useDispatch();
   const { modalType, modalData, isOpen } = useSelector((state: RootState) => state.modal);
 
-  // ESC 키로 모달 닫기 + 바디 스크롤 방지
+  // ... useEffect, handleOverlayClick 함수는 이전과 동일합니다.
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
       if (event.key === "Escape" && isOpen) {
@@ -77,19 +80,21 @@ const ModalContainer = () => {
     };
   }, [isOpen, dispatch]);
 
-  // 모달 외부 클릭 시 닫기
   const handleOverlayClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if (event.target === event.currentTarget) {
       dispatch(closeModal());
     }
   };
 
-  // 모달이 열려있지 않으면 렌더링 안함
   if (!isOpen || !modalType) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4" onClick={handleOverlayClick}>
-      <div className={`rounded-lg bg-white p-6 shadow-lg ${getModalSize(modalType)} flex items-center justify-center`} onClick={e => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-20 p-4 backdrop-blur-sm backdrop-filter" onClick={handleOverlayClick}>
+      <div className={`relative max-h-[90vh] overflow-y-auto bg-white shadow-xl ${getModalContainerStyles(modalType)}`} onClick={e => e.stopPropagation()}>
+        <button onClick={() => dispatch(closeModal())} className="absolute right-6 top-6 text-gray-400 hover:text-gray-800" aria-label="Close modal">
+          <FaTimes size={24} />
+        </button>
+
         {renderModalContent(modalType, modalData)}
       </div>
     </div>

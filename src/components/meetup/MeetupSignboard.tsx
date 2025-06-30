@@ -67,7 +67,7 @@ const MeetupSignboard = ({ meetupId }: MeetupSignboardProps) => {
   if (!meetupData) return <div className="h-11 bg-orange-300">모임 데이터를 찾을 수 없습니다</div>;
 
   return (
-    <div className="relative flex h-16 items-center justify-between bg-[#FBFFA9] px-4 text-black">
+    <div className="relative flex h-16 items-center justify-between bg-[#FBFFA9] px-4 text-black lg:mt-9 lg:rounded-[50px]">
       {/* 좌측 멤버 버튼 */}
       <button onClick={handleMembersModalToggle} className="rounded-full p-2 transition-colors hover:bg-white" aria-label="모임 멤버 보기">
         <FaUserFriends size={24} className="text-black" />

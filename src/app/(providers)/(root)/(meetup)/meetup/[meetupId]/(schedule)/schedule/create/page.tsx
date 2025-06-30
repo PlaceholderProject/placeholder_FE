@@ -13,7 +13,6 @@ const MeetupCreatePage = async ({ params }: MeetupCreatePageProps) => {
 
   return (
     <div>
-      <h1>스케줄 생성</h1>
       <ScheduleForm meetupId={meetupIdNum} />
     </div>
   );
