@@ -7,6 +7,8 @@ import { getHeadhuntingsApi } from "@/services/thumbnails.service";
 import { Meetup } from "@/types/meetupType";
 import { useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
+import { SkeletonTheme } from "react-loading-skeleton";
+import ThumbnailSkeleton from "@/components/thumbnails/ThumbnailSkeleton";
 
 const ThumbnailArea = () => {
   // 이제 리덕스에서 정렬 타입 가져옴
@@ -119,7 +121,18 @@ const ThumbnailArea = () => {
       }
     };
   }, [handleObserver]);
-  if (isPending) return <div>로딩중</div>;
+  if (isPending)
+    return (
+      <SkeletonTheme baseColor="#E8E8E8" highlightColor="#D9D9D9">
+        <div className="mx-auto w-[34rem]">
+          <div className="mx-[1rem] my-[0.1rem] grid grid-cols-2 gap-[3.5rem]">
+            {Array.from({ length: 10 }).map((_, index) => (
+              <ThumbnailSkeleton key={index} />
+            ))}
+          </div>
+        </div>
+      </SkeletonTheme>
+    );
   if (isError) return <div>에러 발생</div>;
 
   // 가져올 때 이미 소트한 뒤로 서버에서 보내주니까 sortedThumbnails로 네이밍
