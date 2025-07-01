@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import ScheduleItem from "@/components/schedule/ScheduleItem";
 import { FaPlus } from "react-icons/fa";
+import Loading from "@/components/common/Loading";
 
 const ScheduleArea = ({ meetupId }: { meetupId: number }) => {
   const router = useRouter();
@@ -14,7 +15,7 @@ const ScheduleArea = ({ meetupId }: { meetupId: number }) => {
     router.push(`/meetup/${meetupId}/schedule/create`);
   }, [router, meetupId]);
 
-  if (isPending) return <div>Loading...</div>;
+  if (isPending) return <Loading />;
   if (error) return <div>Error: {error.message}</div>;
 
   const hasSchedules = schedules && schedules.length > 0;
