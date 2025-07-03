@@ -170,7 +170,7 @@ const ThumbnailArea = () => {
   return (
     <>
       <div className="mx-auto w-[34rem]">
-        <div className="mx-[1rem] my-[0.1rem] grid grid-cols-2 gap-[3.5rem]">
+        <div className="mx-[1rem] my-[0.1rem] grid grid-cols-2 gap-x-[3.5rem]">
           {allThumbnails.map((thumbnail: Meetup, index: number) => {
             return <ThumbnailItem key={`${thumbnail.id}-${index}`} thumbnail={thumbnail} />;
           })}

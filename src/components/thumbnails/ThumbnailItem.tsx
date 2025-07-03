@@ -84,15 +84,15 @@ const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
             ))}
 
           {/* 콘텐츠 */}
-          <div className="mt-[1rem]">
+          <div className="mt-[1rem] space-y-[0.5rem]">
             {/* 프로필 & 좋아요 */}
             <div className="flex items-center justify-between">
               {/* 작성자 */}
-              <div className="flex items-center gap-[0.4rem]">
+              <div className="flex items-center gap-[0.2rem]">
                 <div className="relative flex h-[1.8rem] w-[1.8rem] flex-shrink-0 text-sm">
                   <Image src={profileImageSource} fill alt="작성자 프로필 이미지" className="rounded-full object-cover" />
                 </div>
-                <div className="truncate text-sm font-medium">{thumbnail.organizer.nickname}</div>
+                <div className="text-sm font-medium">{thumbnail.organizer.nickname}</div>
               </div>
 
               {/* 좋아요 */}
@@ -101,17 +101,37 @@ const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
               </div>
             </div>
 
-            <div className="flex h-[3rem] w-[14.2rem] justify-items-start text-sm font-semibold">
-              <div>[{thumbnail.place}]</div>
-              <div>{thumbnail.adTitle}</div>
+            <div className="w-[14rem] text-sm font-semibold">
+              <h3 className="break-words leading-tight">
+                <span className="whitespace-nowrap">[{thumbnail.place}]</span>
+                {thumbnail.adTitle}
+              </h3>
             </div>
 
-            <div className="flex justify-start space-x-1">
-              <FaRegCalendarAlt className="mt-[0.2rem] h-[1.05rem] w-[1.2rem]" />
-              <div className="text-xs">
-                {thumbnail.startedAt === null ? "미정" : thumbnail.startedAt.substring(0, 10)} ~ {thumbnail.endedAt === null ? "미정" : thumbnail.endedAt.substring(0, 10)}
+            {/* <div className="flex-warp flex w-[14.2rem] gap-1 text-sm font-semibold">
+              <div
+                style={{
+                  textIndent: "-3rem", // 첫 줄을 왼쪽으로 3rem 당김
+                  paddingLeft: "3rem", // 전체를 오른쪽으로 3rem 밀어서 상쇄
+                }}
+                className="line-clamp-2 min-w-0 flex-shrink-0 leading-tight"
+              >
+                <span>[{thumbnail.place}]</span> <span>{thumbnail.adTitle}</span>
               </div>
-              {/* <span>
+            </div>
+
+            <div className="grid grid-cols-[auto_1fr] gap-1">
+              <span>[{thumbnail.place}]</span>
+              <span className="line-clamp-2 min-w-0 break-words leading-tight">{thumbnail.adTitle}</span>
+            </div> */}
+
+            <div className="text-xs">
+              <div className="flex justify-start space-x-[0.1rem]">
+                <FaRegCalendarAlt className="mt-[0.2rem] h-[1.05rem] w-[1.2rem]" />
+                <div className="">
+                  {thumbnail.startedAt === null ? "미정" : thumbnail.startedAt.substring(0, 10)} ~ {thumbnail.endedAt === null ? "미정" : thumbnail.endedAt.substring(0, 10)}
+                </div>
+                {/* <span>
                 {thumbnail.startedAt && thumbnail.endedAt
                   ? calculateDays({
                       startedAt: thumbnail.startedAt,
@@ -119,10 +139,9 @@ const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
                     })
                   : ""}
               </span> */}
+              </div>
+              <span className="">{thumbnail.adEndedAt?.substring(0, 10)}까지 모집</span>
             </div>
-            <span className="text-xs">{thumbnail.adEndedAt?.substring(0, 10)}까지 모집</span>
-            {/* <p className="text-sm">공개여부 : {thumbnail.isPublic.toString()}</p> */}
-            {/* <p className="text-sm text-red-300">생성일: {thumbnail.createdAt?.substring(0, 10)}</p> */}
           </div>
         </div>
       </div>

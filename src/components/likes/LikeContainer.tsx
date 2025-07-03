@@ -2,11 +2,11 @@ import React, { useEffect } from "react";
 import { toggleLikeApi } from "@/services/like.service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { InfiniteData } from "@tanstack/react-query";
-import LikePart from "./LikePart";
 import { LikeContainerProps, PageData } from "@/types/likeType";
 import { Meetup } from "@/types/meetupType";
 import { useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
+import LikeItem from "./LikeItem";
 
 const LikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerProps) => {
   const queryClient = useQueryClient();
@@ -158,7 +158,7 @@ const LikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerPro
     likeMutation.mutate();
   };
 
-  return <LikePart isLike={initialIsLike} likeCount={initialLikeCount} onToggle={handleToggleLike} isPending={likeMutation.isPending} />;
+  return <LikeItem isLike={initialIsLike} likeCount={initialLikeCount} onToggle={handleToggleLike} isPending={likeMutation.isPending} />;
 };
 
 export default LikeContainer;

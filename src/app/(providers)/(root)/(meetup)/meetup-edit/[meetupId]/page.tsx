@@ -8,7 +8,6 @@ const MeetupEditPage = () => {
   const { meetupId } = useParams<{ meetupId: string }>();
   return (
     <>
-      <div>모임 수정 페이지</div>
       <MeetupEditForm meetupId={parseInt(meetupId, 10)} />
     </>
   );
