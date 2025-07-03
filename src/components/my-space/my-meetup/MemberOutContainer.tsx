@@ -70,7 +70,7 @@ const MemberOutContainer: React.FC<MemberOutContainerProps> = ({ meetupId, isOrg
     <>
       <div>
         {isOrganizer ? (
-          <button onClick={handleMemberListButtonClick} className="p-2">
+          <button onClick={handleMemberListButtonClick} className="p-[0.5rem]">
             <FaRegUserCircle size={20} />
           </button>
         ) : (
