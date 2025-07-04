@@ -84,25 +84,24 @@ const MyMeetupMembers: React.FC<MyMeetupMembersProps> = ({ meetupId }) => {
   if (!meetupId) return <div>모임 아이디 필요핣니다.</div>;
   // if (isPending) return <div>로딩중...</div>;
   if (isError) return <div>에러 : {error.message}</div>;
-  if (!myMeetupMembersData || !myMeetupMembersData.result || myMeetupMembersData.result.length === 0) return <div>멤버가 없습니다.</div>;
+  if (!myMeetupMembersData || !myMeetupMembersData.result || myMeetupMembersData.result.length === 0) return <p>멤버가 없습니다.</p>;
 
   return (
     <>
       {myMeetupMembersData.result.map((member: MyMeetupMember) => {
         const userImageSource = userImages[member.user?.id || 0] || "/profile.png";
         return (
-          <div key={member.id}>
-            {member.role == "organizer" && <span>👑</span>}mebmer.id래요 언제 생성되심? : {member.id}
-            <Image src={userImageSource} alt="내 모임 회원 프로필 이미지" width={32} height={32} className="rounded-full" />
-            모임아이디 : {member.meetupId}
-            <br />
-            모임에서 역할 : {member.role}
-            <br />
-            이게 유저아이디 member.user.id 이게 맞는거같은데: {member.user?.id}
-            <br />
-            유저닉넴 : {member.user?.nickname}
-            <br />
-            {member.role !== "organizer" && <OutButton text="강퇴" onClick={() => handleKickMember(member.id)} />}
+          <div key={member.id} className="mx-[1rem] my-[1rem] grid grid-cols-[10%_15%_60%_15%] items-center border-b-[0.1rem] border-gray-medium pb-[0.8rem] text-base last:border-b-0">
+            <div>{member.role == "organizer" ? <span className="ml-[0.5rem]">👑</span> : <span className="ml-[0.5rem]"> </span>}</div>
+            {/* mebmer.id래요 언제 생성되심? : {member.id} */}
+            <div className="mx-auto flex h-[1.8rem] w-[1.8rem] items-center">
+              <Image src={userImageSource} alt="내 모임 회원 프로필 이미지" width={18} height={18} className="rounded-full object-cover" />
+            </div>
+            <div>{member.user?.nickname}</div>
+            {/* 모임아이디 : {member.meetupId} */}
+            {/* 모임에서 역할 : {member.role} */}
+            {/* 이게 유저아이디 member.user.id 이게 맞는거같은데: {member.user?.id} */}
+            <div>{member.role !== "organizer" && <OutButton text="강퇴" onClick={() => handleKickMember(member.id)} />}</div>
           </div>
         );
       })}

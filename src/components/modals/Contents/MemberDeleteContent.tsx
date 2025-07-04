@@ -16,31 +16,26 @@ const MemberDeleteContent: React.FC = () => {
   const { closeModal } = useModal();
   const chosenMeetupId = useSelector((state: RootState) => state.memberOut.chosenMeetupId);
 
+  const modalData = useSelector((state: RootState) => state.modal.modalData);
+  const meetupName = modalData?.meetupName || "모임 멤버";
   const handleClose = () => {
     dispatch(clearChosenMeetupId());
     closeModal();
   };
 
   if (!chosenMeetupId) {
-    return <div>모임을 선택해주세요.</div>;
+    return <p>모임을 선택해주세요.</p>;
   }
   // --TO DO--
   // ❓Portal을 사용하는 것이 이상적이지만, 여기서는 z-index를 높게 설정하고 모달을 body 바로 아래에 렌더링
 
   return (
     <div className="w-full max-w-md">
+      <h2 className="mb-[1.5rem] mt-[2rem] text-center text-lg font-bold">{meetupName}</h2>
+
       {/* <MemberDeleteModal meetupId={meetupId} /> */}
       {/* 무한재귀 제거 */}
-      <h2 className="mb-[3rem] text-lg font-bold">모임 멤버</h2>
-
-      {/* {meetupId && <MyMeetupMembers meetupId={meetupId} />} */}
       <MyMeetupMembers meetupId={chosenMeetupId} />
-
-      <div className="flex justify-end space-x-2">
-        <button className="rounded bg-gray-200 px-4 py-2 hover:bg-gray-300" onClick={handleClose}>
-          닫기
-        </button>
-      </div>
     </div>
   );
 };
