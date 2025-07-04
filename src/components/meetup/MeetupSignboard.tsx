@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react"; // useEffect, useState 제거
 import { useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
-import { getMeetupByIdApi } from "@/services/meetup.service";
-import { Meetup } from "@/types/meetupType";
 import { FaInfoCircle, FaUserFriends } from "react-icons/fa";
 import { useModal } from "@/hooks/useModal";
+import { useAdItem } from "@/hooks/useAdItem"; // ✨ useAdItem 훅 가져오기
 
 interface MeetupSignboardProps {
   meetupId: number;
@@ -14,33 +13,14 @@ interface MeetupSignboardProps {
 
 const MeetupSignboard = ({ meetupId }: MeetupSignboardProps) => {
   const { openModal } = useModal();
-
   const userFromRedux = useSelector((state: RootState) => state.user.user);
 
-  // 모임 데이터를 위한 상태 관리, 임시로 state로 로딩 에러처리
-  const [meetupData, setMeetupData] = useState<Meetup | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isOrganizer, setIsOrganizer] = useState(false);
+  const { adData: meetupData, isPending, error } = useAdItem(meetupId);
 
-  // 컴포넌트 마운트 시 모임 데이터 가져오기
-  useEffect(() => {
-    const fetchMeetupData = async () => {
-      try {
-        setIsLoading(true);
-        const data = await getMeetupByIdApi(meetupId);
-        setMeetupData(data);
-
-        setIsOrganizer(data.organizer?.nickname === userFromRedux?.nickname);
-      } catch (error) {
-        console.error("모임 데이터 로드 실패:", error);
-        setError("모임 정보를 불러오는데 실패했습니다.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchMeetupData();
-  }, [meetupId, userFromRedux?.nickname]);
+  const isOrganizer = React.useMemo(() => {
+    if (!meetupData || !userFromRedux) return false;
+    return meetupData.organizer?.nickname === userFromRedux?.nickname;
+  }, [meetupData, userFromRedux]);
 
   // 모달 토글 핸들러 함수들
   const handleMembersModalToggle = () => {
@@ -62,8 +42,8 @@ const MeetupSignboard = ({ meetupId }: MeetupSignboardProps) => {
   };
 
   // 로딩 및 에러 상태 처리
-  if (isLoading) return <div className="h-11 animate-pulse bg-gray-300">로딩 중...</div>;
-  if (error) return <div className="h-11 bg-red-300">{error}</div>;
+  if (isPending) return <div className="h-11 animate-pulse bg-gray-300">로딩 중...</div>;
+  if (error) return <div className="h-11 bg-red-300">{error.message}</div>;
   if (!meetupData) return <div className="h-11 bg-orange-300">모임 데이터를 찾을 수 없습니다</div>;
 
   return (
