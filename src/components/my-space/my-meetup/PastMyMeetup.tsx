@@ -158,21 +158,21 @@ const PastMyMeetup = () => {
 
   if (isPending) return <div>로딩 중...</div>;
   if (isError) return <div> 에러 발생: {error.message}</div>;
-  if (!myMeetupsData || myMeetupsData.result.length === 0) return <div>참여했던 모임이 없습니다.</div>;
+  if (!myMeetupsData || myMeetupsData.result.length === 0) return <p className="mt-[6rem] flex justify-center">지난 내 모임이 없습니다.</p>;
 
   return (
     <>
-      <div className="grid grid-cols-1">
-        {myMeetupsData.result.map(myMeetup => (
-          <div key={myMeetup.id} className="flex items-center justify-between">
-            <Link href={`http://localhost:3000/meetup/${myMeetup.id}`} className="flex grow items-center">
+      {myMeetupsData.result.map(myMeetup => (
+        <div className="grid grid-cols-1" key={myMeetup.id}>
+          <li key={myMeetup.id} className="my-[0.7rem] flex h-[4rem] w-[30.1rem] items-center justify-between rounded-[1rem] bg-gray-medium px-[1rem] text-base shadow-md">
+            <Link href={`http://localhost:3000/meetup/${myMeetup.id}`} className="flex items-center">
               <RoleIcon isOrganizer={myMeetup.is_organizer} />
-              <span>{myMeetup.name}</span>
+              <div className="max-w-[21rem] truncate">{myMeetup.name}</div>
             </Link>
             <MemberOutContainer meetupId={myMeetup.id} isOrganizer={myMeetup.is_organizer} onSelfLeave={handleSelfLeave} isPending={deleteMutation.isPending} />
-          </div>
-        ))}
-      </div>
+          </li>
+        </div>
+      ))}
 
       {/* 버튼 영역 */}
       <PaginationButtons
