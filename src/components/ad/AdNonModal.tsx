@@ -45,7 +45,7 @@ const AdNonModal = ({ meetupId }: { meetupId: number }) => {
       {isAdNonModalOpen && (
         <div className="absolute bottom-[10rem] right-[3.4rem] z-10 flex h-[6rem] w-[6rem] flex-col items-center justify-center rounded-[0.5rem] bg-white shadow-md">
           <div>
-            <Link href={`http://localhost:3000/meetup-edit/${meetupId}`}>수정</Link>
+            <Link href={`/meetup-edit/${meetupId}`}>수정</Link>
           </div>
 
           <button type="button" onClick={handleCloseButtonClick}>
