@@ -9,6 +9,8 @@ import ScheduleNumber from "@/components/schedule/ScheduleNumber";
 import { getS3ImageURL } from "@/utils/getImageURL";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SchedulePayload } from "@/types/scheduleType";
+import { SkeletonTheme } from "react-loading-skeleton";
+import ScheduleDetailSkeleton from "@/components/schedule/ScheduleDetailSkeleton";
 
 const ScheduleDetail = ({ scheduleId, meetupId }: { scheduleId: number; meetupId: number }) => {
   const { data: schedule, isPending, error } = useScheduleDetail(scheduleId);
@@ -92,7 +94,13 @@ const ScheduleDetail = ({ scheduleId, meetupId }: { scheduleId: number; meetupId
     setImagePreview(null);
   };
 
-  if (isPending) return <div className="p-4 text-center">로딩 중...</div>;
+  if (isPending) {
+    return (
+      <SkeletonTheme baseColor="#E8E8E8" highlightColor="#D9D9D9">
+        <ScheduleDetailSkeleton />
+      </SkeletonTheme>
+    );
+  }
   if (error) return <div className="p-4 text-center">에러 발생: {error.message}</div>;
   if (!schedule) return <div className="p-4 text-center">스케줄을 찾을 수 없습니다.</div>;
 

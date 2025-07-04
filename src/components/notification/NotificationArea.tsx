@@ -3,11 +3,12 @@
 import React from "react";
 import NotificationItem from "@/components/notification/NotificationItem";
 import { useNotificationList } from "@/hooks/useNotification";
+import Loading from "@/components/common/Loading";
 
 const NotificationArea = () => {
   const { data: notifications, isPending, error } = useNotificationList();
 
-  if (isPending) return <div className="p-8 text-center">Loading...</div>;
+  if (isPending) return <Loading />;
   if (error) return <div className="p-8 text-center text-error">Error</div>;
 
   return (
