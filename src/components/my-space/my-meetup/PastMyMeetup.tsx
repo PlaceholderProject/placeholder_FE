@@ -167,7 +167,7 @@ const PastMyMeetup = () => {
           <li key={myMeetup.id} className="my-[0.7rem] flex h-[4rem] w-[30.1rem] items-center justify-between rounded-[1rem] bg-gray-medium px-[1rem] text-base shadow-md">
             <Link href={`http://localhost:3000/meetup/${myMeetup.id}`} className="flex items-center">
               <RoleIcon isOrganizer={myMeetup.is_organizer} />
-              <span>{myMeetup.name}</span>
+              <div className="max-w-[21rem] truncate">{myMeetup.name}</div>
             </Link>
             <MemberOutContainer meetupId={myMeetup.id} isOrganizer={myMeetup.is_organizer} onSelfLeave={handleSelfLeave} isPending={deleteMutation.isPending} />
           </li>
