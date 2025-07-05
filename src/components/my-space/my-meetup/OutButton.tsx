@@ -40,7 +40,7 @@ const OutButton: React.FC<OutButtonProps> = ({ text, onClick, isPending = false 
 
   return (
     <div>
-      <button onClick={onClick} disabled={isPending} className="rounded-md bg-red-500 px-2 py-1 text-white">
+      <button onClick={onClick} disabled={isPending} className="h-[2rem] w-[2.5rem] rounded-[0.5rem] bg-warning text-xs font-bold text-white">
         {isPending ? "처리중..." : text}
       </button>
     </div>

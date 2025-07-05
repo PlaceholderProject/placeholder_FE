@@ -33,7 +33,7 @@ const AdDetail = ({ adData, userNickname }: AdDetailProps) => {
         <div className="flex justify-center">
           <Image src={imageUrl} alt="모임 광고글 이미지" width={321} height={209} className="w-[32.1rem] object-cover" />
         </div>
-        <div className="mx-auto w-[32.1rem] px-[1.5rem] py-[2rem]">
+        <div className="relative mx-auto w-[32.1rem] px-[1.5rem] py-[2rem]">
           <div className="grid grid-cols-[25%_75%] items-center text-left">
             <div className="text-lg">모임이름</div>
             <div className="flex items-center justify-between text-base">

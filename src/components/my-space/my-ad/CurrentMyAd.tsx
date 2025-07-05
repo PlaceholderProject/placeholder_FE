@@ -65,17 +65,20 @@ const CurrentMyAd = () => {
 
   if (isPending) return <div>로딩중..</div>;
   if (isError) return <div>에러: {error.message}</div>;
-  if (!myAdsData || myAdsData.result.length === 0) return <div>현재 광고글이 없습니다.</div>;
+  if (!myAdsData || myAdsData.result.length === 0) return <p className="mt-[6rem] flex justify-center">현재 내 광고가 없습니다.</p>;
+
   return (
     <>
-      <div className="grid grid-cols-1">
-        {myAdsData.result.map(myAd => (
-          <Link href={`http://localhost:3000/ad/${myAd.id}`} key={myAd.id} className="flex justify-between">
-            <RoleIcon isOrganizer={isOrganizer} />
-            광고글 이름: {myAd.ad_title} 광고종료일: {myAd.ad_ended_at}
-          </Link>
-        ))}
-      </div>
+      {myAdsData.result.map(myAd => (
+        <div className="grid grid-cols-1" key={myAd.id}>
+          <li key={myAd.id} className="my-[0.7rem] flex h-[4rem] w-[30.1rem] items-center justify-between rounded-[1rem] bg-secondary-dark px-[1rem] text-base shadow-md">
+            <Link href={`/ad/${myAd.id}`} className="flex items-center">
+              <RoleIcon isOrganizer={isOrganizer} />
+              {myAd.ad_title}
+            </Link>
+          </li>
+        </div>
+      ))}
 
       {/* 버튼 영역 */}
 
