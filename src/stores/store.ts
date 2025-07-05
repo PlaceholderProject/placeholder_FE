@@ -1,9 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
+import storage from "redux-persist/lib/storage";
+import { FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE } from "redux-persist";
+
 import authReducer from "./authSlice";
 import userReducer from "./userSlice";
 import notificationReducer from "./notificationSlice";
-import storage from "redux-persist/lib/storage";
-import { FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE } from "redux-persist";
 import nonModalReducer from "./nonModalSlice";
 import modalReducer from "./modalSlice";
 import sortReducer from "./sortSlice";
@@ -19,7 +20,6 @@ const persistConfig = {
   storage,
 };
 
-// user reducer에 persistReducer적용
 const persistedUserReducer = persistReducer(persistConfig, userReducer);
 
 export const store = configureStore({
@@ -39,7 +39,9 @@ export const store = configureStore({
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+        // 'modal/openModal' 액션과 non-serializable 값 검사무시
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER, "modal/openModal"],
+        ignoredPaths: ["modal.modalData.onCompletePostcode"],
       },
     }),
 });

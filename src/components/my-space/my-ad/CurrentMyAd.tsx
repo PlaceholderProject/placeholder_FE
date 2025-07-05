@@ -72,7 +72,7 @@ const CurrentMyAd = () => {
       {myAdsData.result.map(myAd => (
         <div className="grid grid-cols-1" key={myAd.id}>
           <li key={myAd.id} className="my-[0.7rem] flex h-[4rem] w-[30.1rem] items-center justify-between rounded-[1rem] bg-secondary-dark px-[1rem] text-base shadow-md">
-            <Link href={`http://localhost:3000/ad/${myAd.id}`} key={myAd.id} className="flex items-center">
+            <Link href={`/ad/${myAd.id}`} className="flex items-center">
               <RoleIcon isOrganizer={isOrganizer} />
               {myAd.ad_title}
             </Link>
