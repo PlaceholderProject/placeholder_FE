@@ -10,7 +10,7 @@ const ProposalPostcardContent = ({ meetupId }: { meetupId: number }) => {
   const [bioTextLength, setBioTextLength] = useState(0);
   const [messageWarning, setMessageWarning] = useState("");
 
-  const { mutate } = useCreateProposal(meetupId);
+  const proposalMutation = useCreateProposal(meetupId);
 
   const handleProposalText = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value.length > 40) {
@@ -27,7 +27,7 @@ const ProposalPostcardContent = ({ meetupId }: { meetupId: number }) => {
     e.preventDefault();
 
     try {
-      mutate(proposalText);
+      proposalMutation.mutate(proposalText);
       closeModal(); // 성공 시 모달 닫기
     } catch (error) {
       console.error("신청서 제출 실패:", error);
@@ -48,7 +48,7 @@ const ProposalPostcardContent = ({ meetupId }: { meetupId: number }) => {
             <p className="mt-[0.3rem] text-sm">{bioTextLength}/40</p>
           </div>
         </div>
-        <button type="submit" className="flex h-[4rem] items-center justify-center rounded-[1rem] bg-secondary-dark text-lg">
+        <button type="submit" disabled={proposalMutation.isPending} className="flex h-[4rem] items-center justify-center rounded-[1rem] bg-secondary-dark text-lg">
           신청하기
         </button>
       </form>
