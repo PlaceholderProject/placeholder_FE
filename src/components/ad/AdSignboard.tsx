@@ -6,7 +6,7 @@ import { Meetup } from "@/types/meetupType";
 const AdSignboard = ({ adData }: { adData: Meetup }) => {
   return (
     <>
-      <div className="mx-auto mt-[2rem] w-[32.1rem] space-y-[0.5rem]">
+      <div className="mx-auto mt-[2rem] w-[95%] space-y-[0.5rem] md:max-w-[90rem]">
         <div className="w-full">
           <div className="flex justify-start text-lg">{adData.adTitle}</div>
         </div>

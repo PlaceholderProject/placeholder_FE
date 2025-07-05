@@ -18,7 +18,8 @@ const config: Config = {
         pretendard: ["var(--font-pretendard)"],
       },
       screens: {
-        lg: { min: "769px" }, // PC (769px 이상)
+        md: { min: "768px" }, // 명시하든 안 하든 똑같음 (기본값)
+        lg: { min: "1024px" }, // PC (1024px 이상), 추후 사용 가능성
       },
       colors: {
         primary: "#006B8B",

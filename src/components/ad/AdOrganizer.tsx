@@ -40,7 +40,7 @@ const AdOrganizer = ({ adData }: { adData: Meetup }) => {
 
   return (
     <>
-      <div className="mx-auto flex w-[32.1rem] justify-between space-y-[0.5rem] border-t-[0.1rem] border-gray-medium py-[0.8rem]">
+      <div className="mx-auto flex w-[95%] justify-between space-y-[0.5rem] border-t-[0.1rem] border-gray-medium py-[0.8rem] md:max-w-[90rem]">
         <div className="flex items-center justify-center">
           <div className="relative h-[30x] w-[30px] overflow-hidden rounded-full">
             <Image src={imageSource} alt="방장 프사" width={30} height={30} style={{ width: "auto", height: "auto" }} unoptimized={true} />

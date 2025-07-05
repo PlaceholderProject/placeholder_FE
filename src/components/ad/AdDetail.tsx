@@ -29,11 +29,11 @@ const AdDetail = ({ adData, userNickname }: AdDetailProps) => {
 
   return (
     <>
-      <div className="mt-[1em] w-[34rem] space-y-[0.2rem]">
+      <div className="mt-[1em] w-[95%] space-y-[0.2rem] md:max-w-[90rem]">
         <div className="flex justify-center">
-          <Image src={imageUrl} alt="모임 광고글 이미지" width={321} height={209} className="w-[32.1rem] object-cover" />
+          <Image src={imageUrl} alt="모임 광고글 이미지" width={321} height={209} className="w-full object-cover md:max-w-[80rem]" />
         </div>
-        <div className="relative mx-auto w-[32.1rem] px-[1.5rem] py-[2rem]">
+        <div className="relative mx-auto w-[95%] px-[1.5rem] py-[2rem] md:max-w-[90rem]">
           <div className="grid grid-cols-[25%_75%] items-center text-left">
             <div className="text-lg">모임이름</div>
             <div className="flex items-center justify-between text-base">
