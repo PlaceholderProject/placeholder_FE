@@ -41,10 +41,10 @@ const ReceivedProposalItem = ({ proposal }: { proposal: ReceivedProposal }) => {
         <p className="pt-[0.5rem]">{proposal.text}</p>
       </div>
       <div className="flex flex-row items-center gap-3">
-        <button onClick={handleProposalAccept} className="text-[2.5rem] text-[#028AB3]">
+        <button onClick={handleProposalAccept} disabled={acceptProposal.isPending || refuseProposal.isPending} className="text-[2.5rem] text-[#028AB3]">
           <FaUserCheck />
         </button>
-        <button onClick={handleProposalRefuse} className="text-[2.5rem] text-warning">
+        <button onClick={handleProposalRefuse} disabled={acceptProposal.isPending || refuseProposal.isPending} className="text-[2.5rem] text-warning">
           <FaUserTimes />
         </button>
       </div>

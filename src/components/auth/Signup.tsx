@@ -230,7 +230,7 @@ const Signup = () => {
             </div>
           </div>
           <div className="flex flex-col gap-[0.8rem]">
-            <button type="submit" className="flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] bg-secondary-dark text-lg">
+            <button type="submit" disabled={createUserMutation.isPending} className="flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] bg-secondary-dark text-lg">
               회원가입
             </button>
             <Link href="/login">
