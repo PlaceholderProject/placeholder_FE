@@ -77,6 +77,9 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   const categoryRef = useRef<HTMLSelectElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
 
+  // 제출 상태
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // s3에 직접 이미지 업로드 함수
   const meetupUploadToS3 = async (file: File, meetupPresignedData: S3PresignedItem) => {
     const formData = new FormData();
@@ -186,6 +189,12 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   // 모임 수정 후 제출 함수
   const handleEditFormSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    if (isSubmitting) {
+      return;
+    }
+
+    setIsSubmitting(true);
 
     // 유효성 검사 빌드업 시작
     if (!previousMeetupData) return;
@@ -577,7 +586,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
                 }
               />
               <div className="mt-[3rem] flex justify-center">
-                <button type="submit" className="text-bold h-[4rem] w-[14rem] items-center rounded-[1rem] bg-primary text-center text-lg text-white">
+                <button type="submit" className="text-bold h-[4rem] w-[14rem] items-center rounded-[1rem] bg-primary text-center text-lg text-white disabled:bg-gray-medium" disabled={isSubmitting}>
                   모임 수정
                 </button>
               </div>

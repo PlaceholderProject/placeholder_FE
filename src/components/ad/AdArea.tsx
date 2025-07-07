@@ -31,8 +31,8 @@ const AdArea = () => {
   if (!adData) return <div>데이터를 찾을 수 없습니다.</div>;
 
   return (
-    <div className="mx-auto w-[95%] md:max-w-[90rem]">
-      <div className="flex-col space-y-[0.5rem]">
+    <div className="mx-auto w-[95%] min-w-[32rem] md:mx-0 md:max-w-[90rem]">
+      <div className="mx-auto flex-col space-y-[0.5rem] md:mx-0">
         <AdSignboard adData={adData} />
         <AdOrganizer adData={adData} />
         <AdDetail adData={adData} userNickname={userNickname} />

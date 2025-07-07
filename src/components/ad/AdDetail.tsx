@@ -29,37 +29,40 @@ const AdDetail = ({ adData, userNickname }: AdDetailProps) => {
 
   return (
     <>
-      <div className="mt-[1em] w-[95%] space-y-[0.2rem] md:max-w-[90rem]">
-        <div className="flex justify-center">
-          <Image src={imageUrl} alt="모임 광고글 이미지" width={321} height={209} className="w-full object-cover md:max-w-[80rem]" />
+      <div className="mt-[1em] w-full space-y-[0.2rem] md:max-w-[90rem]">
+        <div className="mx-auto flex justify-center">
+          <Image src={imageUrl} alt="모임 광고글 이미지" width={321} height={209} className="mx-auto w-[95%] object-cover md:max-w-[80rem]" />
         </div>
         <div className="relative mx-auto w-[95%] px-[1.5rem] py-[2rem] md:max-w-[90rem]">
-          <div className="grid grid-cols-[25%_75%] items-center text-left">
-            <div className="text-lg">모임이름</div>
-            <div className="flex items-center justify-between text-base">
-              <span>{adData.name}</span>
-              {isAuthorized && <AdNonModal meetupId={adData.id} />}
-            </div>
-            <div className="text-lg">모임장소</div>{" "}
-            <div className="text-base">
-              [{adData.place}] {adData.placeDescription}
-            </div>
-            <div className="text-lg">모임날짜</div>
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex h-[2rem] w-[8rem] items-center justify-center rounded-[0.5rem] bg-gray-medium text-center">{startedAt === null ? "미정" : startedAt.substring(0, 10)}</div>~
-              <div className="flex h-[2rem] w-[8rem] items-center justify-center rounded-[0.5rem] bg-gray-medium text-center">{endedAt === null ? "미정" : endedAt.substring(0, 10)}</div>
-              <div>
-                {startedAt && endedAt
-                  ? calculateDays({
-                      startedAt: startedAt,
-                      endedAt: endedAt,
-                    })
-                  : ""}
+          <div className="grid-cols-[50%_50%] md:grid">
+            {" "}
+            <div className="grid grid-cols-[25%_75%] items-center text-left md:items-start">
+              <div className="bg-red-100 text-lg">모임이름</div>
+              <div className="flex items-center justify-between text-base">
+                <div className="bg-slate-200">{adData.name}</div>
+                {isAuthorized && <AdNonModal meetupId={adData.id} />}
               </div>
+              <div className="text-lg">모임장소</div>{" "}
+              <div className="text-base">
+                [{adData.place}] {adData.placeDescription}
+              </div>
+              <div className="text-lg">모임날짜</div>
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex h-[2rem] w-[8rem] items-center justify-center rounded-[0.5rem] bg-gray-medium text-center">{startedAt === null ? "미정" : startedAt.substring(0, 10)}</div>~
+                <div className="flex h-[2rem] w-[8rem] items-center justify-center rounded-[0.5rem] bg-gray-medium text-center">{endedAt === null ? "미정" : endedAt.substring(0, 10)}</div>
+                <div>
+                  {startedAt && endedAt
+                    ? calculateDays({
+                        startedAt: startedAt,
+                        endedAt: endedAt,
+                      })
+                    : ""}
+                </div>
+              </div>
+              {/* <div>🗝️ 공개니???? : {`${adData.isPublic}`}</div> */}
             </div>
-            {/* <div>🗝️ 공개니???? : {`${adData.isPublic}`}</div> */}
+            <div className="pt-[2rem] text-base font-light">{adData.description}</div>
           </div>
-          <div className="pt-[2rem] text-base font-light">{adData.description}</div>
         </div>
       </div>
     </>
