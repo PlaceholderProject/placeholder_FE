@@ -39,7 +39,7 @@ const AdDetail = ({ adData, userNickname }: AdDetailProps) => {
           <div className="ml-[1.5rem] mr-[1.5rem] mt-[2rem]">
             <div className="md:grid md:grid-cols-[90%_10%]">
               <div className="grid grid-cols-[25%_75%] items-center text-left md:grid-cols-[15%_45%]">
-                <div className="text-lg md:text-2xl">모임이름</div>
+                <div className="text-lg">모임이름</div>
                 <div className="flex items-center justify-between text-base md:grid-cols-2">
                   <div>{adData.name}</div>
                   <div className="md:hidden">{isAuthorized && <AdNonModal meetupId={adData.id} />}</div>
@@ -65,10 +65,11 @@ const AdDetail = ({ adData, userNickname }: AdDetailProps) => {
               <div className="hidden md:block">
                 {isAuthorized && (
                   <>
-                    <Link className="text-2xl text-gray-medium" href={`/meetup-edit/${adData.id}`}>
+                    <Link className="text-xl text-gray-medium" href={`/meetup-edit/${adData.id}`}>
                       수정
                     </Link>
-                    <button className="text-2xl text-gray-medium" type="button" onClick={() => openModal({ type: "AD_DELETE", data: { meetupId: adData.id } })}>
+                    <span className="text-xl text-gray-medium"> | </span>
+                    <button className="text-xl text-gray-medium" type="button" onClick={() => openModal({ type: "AD_DELETE", data: { meetupId: adData.id } })}>
                       삭제
                     </button>
                   </>

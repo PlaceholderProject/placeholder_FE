@@ -148,8 +148,17 @@ const LikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerPro
 
     // 성공시 쿼리 무효화
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
-      console.log("온석세스 안 조아요 토글 성공");
+      const currentQueryKey = getQueryKey();
+
+      if (sortType === "like") {
+        console.log("인기순 재정렬 위해 즉시 refetch한다🚀");
+        queryClient.refetchQueries({ queryKey: currentQueryKey });
+      } else {
+        console.log("⏰  다른 기준 정렬은 나중에 invalidate");
+        queryClient.invalidateQueries({ queryKey: currentQueryKey });
+      }
+      // queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
+      // console.log("온석세스 안 조아요 토글 성공");
     },
   });
 
