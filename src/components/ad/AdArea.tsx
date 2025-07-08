@@ -31,13 +31,19 @@ const AdArea = () => {
   if (!adData) return <div>데이터를 찾을 수 없습니다.</div>;
 
   return (
-    <div className="mx-auto w-[95%] min-w-[32rem] md:mx-0 md:max-w-[90rem]">
-      <div className="mx-auto flex-col space-y-[0.5rem] md:mx-0">
-        <AdSignboard adData={adData} />
-        <AdOrganizer adData={adData} />
-        <AdDetail adData={adData} userNickname={userNickname} />
-        <AdButton meetupId={meetupIdNum} />
-      </div>
+    // <div className="mx-auto w-[95%] min-w-[32rem] md:max-w-[90rem]">
+    //   <div className="mx-auto flex-col space-y-[0.5rem]">
+    //     <AdSignboard adData={adData} />
+    //     <AdOrganizer adData={adData} />
+    //     <AdDetail adData={adData} userNickname={userNickname} />
+    //     <AdButton meetupId={meetupIdNum} />
+    //   </div>
+    // </div>
+    <div className="flex min-w-[32rem] flex-col items-center justify-center space-y-[0.5rem]">
+      <AdSignboard adData={adData} />
+      <AdOrganizer adData={adData} />
+      <AdDetail adData={adData} userNickname={userNickname} />
+      <AdButton meetupId={meetupIdNum} />
     </div>
   );
 };
