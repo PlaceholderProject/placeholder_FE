@@ -105,7 +105,7 @@ export const getMeetupByIdApi = async (meetupId: number) => {
     headers,
   });
 
-  let url = `${BASE_URL}/api/v1/meetup/${meetupId}`;
+  const url = `${BASE_URL}/api/v1/meetup/${meetupId}`;
   console.log(`⚛️⚛️⚛️모임 가져오는 url ${url}`);
 
   if (!response.ok) {

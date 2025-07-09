@@ -182,10 +182,14 @@ const ThumbnailArea = () => {
 
   return (
     <>
-      <div className="mx-auto w-[34rem] bg-green-400 md:w-[95%] md:max-w-[80rem]">
-        <div className="mx-[1rem] my-[0.1rem] grid grid-cols-2 gap-x-[3.5rem] bg-purple-200 md:grid-cols-4">
+      <div className="mx-auto w-[34rem] md:w-full md:max-w-[80rem]">
+        <div className="my-[0.1rem] grid grid-cols-2 gap-x-[17%] md:grid-cols-4 md:justify-items-center md:gap-x-[1px]">
           {allThumbnails.map((thumbnail: Meetup, index: number) => {
-            return <ThumbnailItem key={`${thumbnail.id}-${index}`} thumbnail={thumbnail} />;
+            return (
+              <div key={`${thumbnail.id}-${index}`} className="w-[14.2rem] pb-[1rem] pt-[0.4rem] md:w-[150px]">
+                <ThumbnailItem thumbnail={thumbnail} />
+              </div>
+            );
           })}
           {/* 더 불러오기 */}
           {/* {hasNextPage && (

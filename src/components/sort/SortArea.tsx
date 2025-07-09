@@ -33,7 +33,7 @@ const SortArea = () => {
 
   return (
     <>
-      <div className="mx-auto my-[1rem] flex w-[34rem] min-w-[32rem] justify-start md:w-[95%] md:max-w-[80rem]">
+      <div className="mx-auto mb-[1rem] mt-[1rem] flex w-[34rem] min-w-[32rem] justify-start md:mb-[1.2rem] md:mt-[0.1rem] md:w-[95%] md:max-w-[80rem]">
         <SortButtons currentSort={sortType} handleSortChange={handleSortChange} />
       </div>
     </>
