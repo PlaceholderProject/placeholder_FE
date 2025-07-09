@@ -124,7 +124,7 @@ const ThumbnailArea = () => {
   if (isPending)
     return (
       <SkeletonTheme baseColor="#E8E8E8" highlightColor="#D9D9D9">
-        <div className="mx-auto w-[34rem]">
+        <div className="mx-auto flex w-[34rem]">
           <div className="mx-[1rem] my-[0.1rem] grid grid-cols-2 gap-[3.5rem]">
             {Array.from({ length: 10 }).map((_, index) => (
               <ThumbnailSkeleton key={index} />
@@ -182,8 +182,8 @@ const ThumbnailArea = () => {
 
   return (
     <>
-      <div className="mx-auto w-[34rem]">
-        <div className="mx-[1rem] my-[0.1rem] grid grid-cols-2 gap-x-[3.5rem]">
+      <div className="mx-auto w-[34rem] bg-green-400 md:w-[95%] md:max-w-[80rem]">
+        <div className="mx-[1rem] my-[0.1rem] grid grid-cols-2 gap-x-[3.5rem] bg-purple-200 md:grid-cols-4">
           {allThumbnails.map((thumbnail: Meetup, index: number) => {
             return <ThumbnailItem key={`${thumbnail.id}-${index}`} thumbnail={thumbnail} />;
           })}
