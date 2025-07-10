@@ -6,6 +6,8 @@ import AdNonModal from "./AdNonModal";
 import { BASE_URL } from "@/constants/baseURL";
 import Image from "next/image";
 import { Meetup } from "@/types/meetupType";
+import Link from "next/link";
+import { openModal } from "@/stores/modalSlice";
 
 interface AdDetailProps {
   adData: Meetup;
@@ -29,37 +31,55 @@ const AdDetail = ({ adData, userNickname }: AdDetailProps) => {
 
   return (
     <>
-      <div className="mt-[1em] w-[34rem] space-y-[0.2rem]">
-        <div className="flex justify-center">
-          <Image src={imageUrl} alt="모임 광고글 이미지" width={321} height={209} className="w-[32.1rem] object-cover" />
+      <div className="mt-[1em] w-full space-y-[0.2rem] md:max-w-[90rem]">
+        <div className="mx-auto flex justify-center">
+          <Image src={imageUrl} alt="모임 광고글 이미지" width={321} height={209} className="mx-auto w-[95%] object-cover md:max-w-[80rem]" />
         </div>
-        <div className="relative mx-auto w-[32.1rem] px-[1.5rem] py-[2rem]">
-          <div className="grid grid-cols-[25%_75%] items-center text-left">
-            <div className="text-lg">모임이름</div>
-            <div className="flex items-center justify-between text-base">
-              <span>{adData.name}</span>
-              {isAuthorized && <AdNonModal meetupId={adData.id} />}
-            </div>
-            <div className="text-lg">모임장소</div>{" "}
-            <div className="text-base">
-              [{adData.place}] {adData.placeDescription}
-            </div>
-            <div className="text-lg">모임날짜</div>
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex h-[2rem] w-[8rem] items-center justify-center rounded-[0.5rem] bg-gray-medium text-center">{startedAt === null ? "미정" : startedAt.substring(0, 10)}</div>~
-              <div className="flex h-[2rem] w-[8rem] items-center justify-center rounded-[0.5rem] bg-gray-medium text-center">{endedAt === null ? "미정" : endedAt.substring(0, 10)}</div>
-              <div>
-                {startedAt && endedAt
-                  ? calculateDays({
-                      startedAt: startedAt,
-                      endedAt: endedAt,
-                    })
-                  : ""}
+        <div className="relative mx-auto w-[95%] md:max-w-[80rem]">
+          <div className="ml-[1.5rem] mr-[1.5rem] mt-[2rem]">
+            <div className="md:grid md:grid-cols-[90%_10%]">
+              <div className="grid grid-cols-[25%_75%] items-center text-left md:grid-cols-[15%_45%]">
+                <div className="text-lg">모임이름</div>
+                <div className="flex items-center justify-between text-base md:grid-cols-2">
+                  <div>{adData.name}</div>
+                  <div className="md:hidden">{isAuthorized && <AdNonModal meetupId={adData.id} />}</div>
+                </div>
+                <div className="text-lg">모임장소</div>
+                <div className="text-base">
+                  [{adData.place}] {adData.placeDescription}
+                </div>
+                <div className="text-lg">모임날짜</div>
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex h-[2rem] w-[8rem] items-center justify-center rounded-[0.5rem] bg-gray-medium text-center">{startedAt === null ? "미정" : startedAt.substring(0, 10)}</div>~
+                  <div className="flex h-[2rem] w-[8rem] items-center justify-center rounded-[0.5rem] bg-gray-medium text-center">{endedAt === null ? "미정" : endedAt.substring(0, 10)}</div>
+                  <div>
+                    {startedAt && endedAt
+                      ? calculateDays({
+                          startedAt: startedAt,
+                          endedAt: endedAt,
+                        })
+                      : ""}
+                  </div>
+                </div>
+              </div>
+              <div className="hidden md:block">
+                {isAuthorized && (
+                  <>
+                    <Link className="text-xl text-gray-medium" href={`/meetup-edit/${adData.id}`}>
+                      수정
+                    </Link>
+                    <span className="text-xl text-gray-medium"> | </span>
+                    <button className="text-xl text-gray-medium" type="button" onClick={() => openModal({ type: "AD_DELETE", data: { meetupId: adData.id } })}>
+                      삭제
+                    </button>
+                  </>
+                )}
               </div>
             </div>
-            {/* <div>🗝️ 공개니???? : {`${adData.isPublic}`}</div> */}
+            <div>
+              <div className="pt-[2rem] text-base font-light">{adData.description}</div>
+            </div>
           </div>
-          <div className="pt-[2rem] text-base font-light">{adData.description}</div>
         </div>
       </div>
     </>

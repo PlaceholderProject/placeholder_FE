@@ -81,6 +81,9 @@ const MeetupForm = () => {
   const categoryRef = useRef<HTMLSelectElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
 
+  // 제출 상태 로컬 관리
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // 2️⃣ s3에 직접 이미지 업로드 함수
   const meetupUploadToS3 = async (file: File, meetupPresignedData: S3PresignedItem) => {
     console.log("🔍 S3 업로드 디버깅 시작");
@@ -122,6 +125,8 @@ const MeetupForm = () => {
     } catch (error) {
       console.error("💥 업로드 중 오류:", error);
       throw error;
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -166,6 +171,12 @@ const MeetupForm = () => {
   // async 함수로 변경함
   const handleMeetupFormSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    if (isSubmitting) {
+      return;
+    }
+
+    setIsSubmitting(true);
 
     // 모든 날짜가 오늘보다 과거인지 유효성 검사
     const now = new Date();
@@ -321,9 +332,9 @@ const MeetupForm = () => {
 
   return (
     <>
-      <div className="mx-auto w-[29.2rem] border-[0.1rem] pb-[4rem]">
+      <div className="mx-auto w-[29.2rem] pb-[4rem]">
         <div className="mb-[8rem] grid min-h-screen place-items-center">
-          <h1 className="mb-[4rem] mt-[10rem] text-center text-3xl font-semibold">모임 생성하기</h1>
+          <h1 className="mb-[4rem] text-center text-3xl font-semibold">모임 생성하기</h1>
           <form onSubmit={handleMeetupFormSubmit}>
             <h2 className="text-2xl font-semibold text-primary">모임에 대해 알려주세요.</h2>
             <div>
@@ -568,7 +579,7 @@ const MeetupForm = () => {
             />
 
             <div className="mt-[3rem] flex justify-center">
-              <button type="submit" className="text-bold h-[4rem] w-[14rem] items-center rounded-[1rem] bg-primary text-center text-lg text-white">
+              <button type="submit" className="text-bold h-[4rem] w-[14rem] items-center rounded-[1rem] bg-primary text-center text-lg text-white disabled:bg-gray-medium" disabled={isSubmitting}>
                 모임 등록
               </button>
             </div>
