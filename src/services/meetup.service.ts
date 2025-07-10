@@ -105,6 +105,9 @@ export const getMeetupByIdApi = async (meetupId: number) => {
     headers,
   });
 
+  const url = `${BASE_URL}/api/v1/meetup/${meetupId}`;
+  console.log(`⚛️⚛️⚛️모임 가져오는 url ${url}`);
+
   if (!response.ok) {
     console.error("가져오기 실패: ", response.status, response.statusText);
     throw new Error("해당 id 모임 가져오기 실패");

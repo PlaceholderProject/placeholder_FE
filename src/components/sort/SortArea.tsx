@@ -31,23 +31,9 @@ const SortArea = () => {
     dispatch(setSortType(newSortType));
   };
 
-  //   // 여기다가 SortType에 따른 로직을 따로 쓰게 해야지
-  //   if (newSortType === "like") {
-  //     alert("인기순이야");
-  //   }
-
-  //   if (newSortType === "latest") {
-  //     alert("최신순이야");
-  //   }
-
-  //   if (newSortType === "deadline") {
-  //     alert("마감 임받순이야");
-  //   }
-  // };
-
   return (
     <>
-      <div className="mx-auto my-[1rem] flex w-[34rem] justify-start justify-items-center">
+      <div className="mx-auto mb-[1rem] mt-[1rem] flex w-[34rem] min-w-[32rem] justify-start md:mb-[1.2rem] md:mt-[0.1rem] md:w-[95%] md:max-w-[80rem]">
         <SortButtons currentSort={sortType} handleSortChange={handleSortChange} />
       </div>
     </>
