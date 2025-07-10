@@ -15,6 +15,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import HamburgerMenu from "@/components/common/HamburgerMenu";
 import { useNotificationList } from "@/hooks/useNotification";
 import { resetSelectedMeetupId } from "@/stores/proposalSlice";
+import { getUser } from "@/services/user.service";
+import { setUser } from "@/stores/userSlice";
 
 const Header = () => {
   const hasUnreadNotifications = useSelector((state: RootState) => state.notification.hasUnread);
@@ -62,6 +64,22 @@ const Header = () => {
 
     if (accessToken) {
       dispatch(setIsAuthenticated(true));
+      if (!user.nickname) {
+        const fetchUser = async () => {
+          const data = await getUser();
+          if (data) {
+            dispatch(
+              setUser({
+                email: data.email,
+                nickname: data.nickname,
+                bio: data.bio,
+                profileImage: data.image,
+              }),
+            );
+          }
+        };
+        fetchUser();
+      }
     } else {
       dispatch(setIsAuthenticated(false));
     }
