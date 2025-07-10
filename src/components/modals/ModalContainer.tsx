@@ -7,14 +7,14 @@ import { closeModal } from "@/stores/modalSlice";
 import { ModalData, ModalType } from "@/types/modalType";
 import { FaTimes } from "react-icons/fa";
 
-import AdDeleteContent from "./Contents/AdDeleteContent";
-import ProposalCancellationContent from "./Contents/ProposalCancellationContent";
-import ProposalPostcardContent from "./Contents/ProposalPostcardContent";
-import MeetupMembersContent from "./Contents/MeetupMembersContent";
-import MeetupInfoContent from "./Contents/MeetupInfoContent";
-import MemberDeleteContent from "./Contents/MemberDeleteContent";
-import ProposalHideContent from "./Contents/ProposalHideContent";
-import PostcodeContent from "./Contents/PostcodeContent";
+import AdDeleteContent from "./contents/AdDeleteContent";
+import ProposalCancellationContent from "./contents/ProposalCancellationContent";
+import ProposalPostcardContent from "./contents/ProposalPostcardContent";
+import MeetupMembersContent from "./contents/MeetupMembersContent";
+import MeetupInfoContent from "./contents/MeetupInfoContent";
+import MemberDeleteContent from "./contents/MemberDeleteContent";
+import ProposalHideContent from "./contents/ProposalHideContent";
+import PostcodeContent from "./contents/PostcodeContent";
 
 const getModalContainerStyles = (modalType: ModalType): string => {
   const baseStyles = "w-full rounded-2xl p-6";
