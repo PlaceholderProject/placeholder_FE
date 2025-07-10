@@ -332,9 +332,9 @@ const MeetupForm = () => {
 
   return (
     <>
-      <div className="mx-auto w-[29.2rem] border-[0.1rem] pb-[4rem]">
+      <div className="mx-auto w-[29.2rem] pb-[4rem]">
         <div className="mb-[8rem] grid min-h-screen place-items-center">
-          <h1 className="mb-[4rem] mt-[10rem] text-center text-3xl font-semibold">모임 생성하기</h1>
+          <h1 className="mb-[4rem] text-center text-3xl font-semibold">모임 생성하기</h1>
           <form onSubmit={handleMeetupFormSubmit}>
             <h2 className="text-2xl font-semibold text-primary">모임에 대해 알려주세요.</h2>
             <div>
