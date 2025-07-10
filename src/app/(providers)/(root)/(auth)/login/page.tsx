@@ -4,7 +4,7 @@ import React from "react";
 
 const page = () => {
   return (
-    <div className="flex min-h-[calc(100vh-12rem)] flex-row md:min-h-[calc(100vh-13.5rem)]">
+    <div className="flex min-h-[calc(100vh-12rem)] flex-row md:min-h-[calc(100vh-7.5rem)]">
       <div className="w-full md:w-[50%]">
         <Login />
       </div>
