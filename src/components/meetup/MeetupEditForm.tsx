@@ -344,8 +344,8 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
 
   return (
     <>
-      <div className="mx-auto w-[29.2rem] pb-[4rem]">
-        <div className="mb-[8rem] grid min-h-screen place-items-center">
+      <div className="mx-auto my-[5rem] w-[32rem] rounded-[1rem] border-[0.1rem] border-gray-medium p-[3rem]">
+        <div className="place-items-center">
           <h1 className="mb-[4rem] text-center text-3xl font-semibold">모임 수정하기</h1>
           <form onSubmit={handleEditFormSubmit}>
             <h3 className="text-2xl font-semibold text-primary">모임에 대해 알려주세요.</h3>
