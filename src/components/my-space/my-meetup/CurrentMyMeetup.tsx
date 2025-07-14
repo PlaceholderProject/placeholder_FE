@@ -11,6 +11,7 @@ import PaginationButtons from "../PaginationButtons";
 import { getUser } from "@/services/user.service";
 import { useMemberDelete } from "@/hooks/useMemberDelete";
 import { MyMeetupMember, MyMeetupMembersResponse } from "@/types/myMeetupMemberType";
+import MySpaceListItem from "../MySpaceListItem";
 
 // 기존 타입 import 추가 (파일 상단에서 import 해야 함)
 // import { MyMeetupMember, MyMeetupMembersResponse } from "@/types/meetupType";
@@ -164,15 +165,13 @@ const CurrentMyMeetup = () => {
   return (
     <>
       {myMeetupsData.result.map(myMeetup => (
-        <div className="grid grid-cols-1" key={myMeetup.id}>
-          <li key={myMeetup.id} className="my-[0.7rem] flex h-[4rem] w-[30.1rem] items-center justify-between rounded-[1rem] bg-secondary-dark px-[1rem] text-base shadow-md">
-            <Link href={`/meetup/${myMeetup.id}`} className="flex items-center">
-              <RoleIcon isOrganizer={myMeetup.is_organizer} />
-              <div className="max-w-[21rem] truncate">{myMeetup.name}</div>
-            </Link>
-            <MemberOutContainer meetupId={myMeetup.id} isOrganizer={myMeetup.is_organizer} onSelfLeave={handleSelfLeave} isPending={deleteMutation.isPending} />
-          </li>
-        </div>
+        <MySpaceListItem key={myMeetup.id} isOngoing={true}>
+          <Link href={`/meetup/${myMeetup.id}`} className="flex items-center">
+            <RoleIcon isOrganizer={myMeetup.is_organizer} />
+            <div className="max-w-[21rem] truncate">{myMeetup.name}</div>
+          </Link>
+          <MemberOutContainer meetupId={myMeetup.id} isOrganizer={myMeetup.is_organizer} onSelfLeave={handleSelfLeave} isPending={deleteMutation.isPending} />
+        </MySpaceListItem>
       ))}
 
       <PaginationButtons

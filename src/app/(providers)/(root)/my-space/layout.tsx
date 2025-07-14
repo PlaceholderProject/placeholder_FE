@@ -26,7 +26,7 @@ const MySpaceLayout = ({ children }: { children: React.ReactNode }) => {
   }, [pathname]);
   return (
     <>
-      <div className="mx-auto w-[34rem]">
+      <div className="mx-auto w-full min-w-[32rem]">
         <div className="mx-auto w-[30.1rem] text-center">
           <h1 className="m-[3rem] text-3xl font-bold">내 공간</h1>
           <div className="mb-[2rem]">
@@ -60,7 +60,7 @@ const MySpaceLayout = ({ children }: { children: React.ReactNode }) => {
             </Link>
           </div>
         </div>
-        <div className="border-t-[0.1rem] border-gray-medium">
+        <div className="w-full border-t-[0.1rem] border-gray-medium">
           <div className="mx-auto w-[30.1rem]">{children}</div>
         </div>
       </div>

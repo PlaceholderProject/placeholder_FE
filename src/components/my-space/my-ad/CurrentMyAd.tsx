@@ -7,6 +7,7 @@ import RoleIcon from "../my-meetup/RoleIcon";
 import Link from "next/link";
 import { BUTTONS_PER_GROUP, SIZE_LIMIT } from "@/constants/pagination";
 import PaginationButtons from "../PaginationButtons";
+import MySpaceListItem from "../MySpaceListItem";
 
 const CurrentMyAd = () => {
   const [page, setPage] = useState(1);
@@ -70,14 +71,12 @@ const CurrentMyAd = () => {
   return (
     <>
       {myAdsData.result.map(myAd => (
-        <div className="grid grid-cols-1" key={myAd.id}>
-          <li key={myAd.id} className="my-[0.7rem] flex h-[4rem] w-[30.1rem] items-center justify-between rounded-[1rem] bg-secondary-dark px-[1rem] text-base shadow-md">
-            <Link href={`/ad/${myAd.id}`} className="flex items-center">
-              <RoleIcon isOrganizer={isOrganizer} />
-              {myAd.ad_title}
-            </Link>
-          </li>
-        </div>
+        <MySpaceListItem key={myAd.id} isOngoing={true}>
+          <Link href={`/ad/${myAd.id}`} className="flex items-center">
+            <RoleIcon isOrganizer={isOrganizer} />
+            {myAd.ad_title}
+          </Link>
+        </MySpaceListItem>
       ))}
 
       {/* 버튼 영역 */}
