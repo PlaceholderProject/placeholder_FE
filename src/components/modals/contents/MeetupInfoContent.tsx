@@ -67,7 +67,7 @@ const MeetupInfoContent = ({ meetupData, isOrganizer, meetupId }: MeetupInfoCont
   return (
     <div className="w-full text-gray-800">
       <div className="mb-8 text-center">
-        <h2 className="text-2xl font-bold text-primary lg:text-3xl">{meetupData.name}</h2>
+        <h2 className="text-2xl font-bold text-primary md:text-3xl">{meetupData.name}</h2>
       </div>
 
       <div className="grid grid-cols-[8rem_1fr] items-center gap-x-4 gap-y-5 text-base">

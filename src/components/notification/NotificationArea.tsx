@@ -12,8 +12,8 @@ const NotificationArea = () => {
   if (error) return <div className="p-8 text-center text-error">Error</div>;
 
   return (
-    <div className="px-4 pb-8 lg:bg-gray-50 lg:px-0 lg:py-12">
-      <div className="mx-auto max-w-3xl lg:rounded-lg lg:bg-white lg:shadow-sm">
+    <div className="px-4 pb-8 md:bg-gray-50 md:px-0 md:py-12">
+      <div className="mx-auto max-w-3xl md:rounded-lg md:bg-white md:shadow-sm">
         <h1 className="p-4 py-6 text-center text-2xl font-bold text-gray-800">알림</h1>
 
         {notifications && notifications.length > 0 ? (
