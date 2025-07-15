@@ -1,6 +1,7 @@
 "use client";
 
 import { editMeetupApi, getMeetupByIdApi, getMeetupPresignedUrl } from "@/services/meetup.service";
+import { RiseLoader } from "react-spinners";
 import { FileType, LabeledInputProps, LabeledSelectProps, Meetup, S3PresignedField, S3PresignedItem } from "@/types/meetupType";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -63,6 +64,7 @@ LabeledSelect.displayName = "LabeledSelect";
 
 const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   //Ref
   const nameRef = useRef<HTMLInputElement>(null);
@@ -134,8 +136,10 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   const [isStartedAtNull, setIsStartedAtNull] = useState(false);
   const [isEndedAtNull, setIsEndedAtNull] = useState(false);
 
-  const router = useRouter();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+  const categoryOptions = ["운동", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
+  const placeOptions = ["서울", "경기", "인천", "강원", "대전", "세종", "충남", "충북", "부산", "울산", "경남", "경북", "대구", "광주", "전남", "전북", "제주", "전국", "미정"];
 
   const {
     data: previousMeetupData,
@@ -170,9 +174,6 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   const editMutation = useMutation({
     mutationFn: ({ meetupData, imageUrl, meetupId }: { meetupData: Meetup; imageUrl: string; meetupId: number }) => editMeetupApi(meetupData, imageUrl, meetupId),
   });
-
-  const categoryOptions = ["운동", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
-  const placeOptions = ["서울", "경기", "인천", "강원", "대전", "세종", "충남", "충북", "부산", "울산", "경남", "경북", "대구", "광주", "전남", "전북", "제주", "전국", "미정"];
 
   // 미리보기 이미지 변경 핸들 함수
   const handlePreviewImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -336,6 +337,8 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
     } catch (error) {
       console.error("💥 수정 중 오류:", error);
       throw error;
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -344,6 +347,11 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
 
   return (
     <>
+      {isSubmitting && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center border-[0.1rem] border-gray-dark bg-black bg-opacity-50 shadow-sm">
+          <RiseLoader color="#FBFFA9" size={15} />
+        </div>
+      )}
       <div className="mx-auto my-[5rem] w-[32rem] rounded-[1rem] border-[0.1rem] border-gray-medium p-[3rem]">
         <div className="place-items-center">
           <h1 className="mb-[4rem] text-center text-3xl font-semibold">모임 수정하기</h1>

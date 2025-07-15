@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from "react";
+import { RiseLoader } from "react-spinners";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FileType, LabeledInputProps, LabeledSelectProps, NewMeetup, S3PresignedField, S3PresignedItem, S3PresignedResponse } from "@/types/meetupType";
 import { useRouter } from "next/navigation";
@@ -125,8 +126,6 @@ const MeetupForm = () => {
     } catch (error) {
       console.error("💥 업로드 중 오류:", error);
       throw error;
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -301,6 +300,8 @@ const MeetupForm = () => {
       router.push("/");
     } catch (error) {
       console.error("모임 등록 실패:", error);
+    } finally {
+      setIsSubmitting(false);
     }
 
     // const meetupFormData = new FormData();
@@ -332,6 +333,11 @@ const MeetupForm = () => {
 
   return (
     <>
+      {isSubmitting && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 shadow-sm">
+          <RiseLoader color="#FBFFA9" size={15} />
+        </div>
+      )}
       <div className="mx-auto my-[5rem] w-[32rem] rounded-[1rem] border-[0.1rem] border-gray-medium p-[3rem]">
         <div className="place-items-center">
           <h1 className="mb-[4rem] text-center text-3xl font-semibold">모임 생성하기</h1>
