@@ -67,13 +67,12 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId, sche
       {/* 1️⃣ 댓글 정보 */}
       <div className="flex w-full justify-between">
         <div className="flex flex-row items-center gap-[0.5rem]">
-          <div className="h-[2.5rem] w-[2.5rem] overflow-hidden rounded-full">
+          <div className="relative h-[2.5rem] w-[2.5rem] overflow-hidden rounded-full">
             <Image
               src={reply.user.image ? (reply.user.image.startsWith("http") ? reply.user.image : `${BASE_URL}/${reply.user.image}`) : "/profile.png"}
               alt="프로필 이미지"
-              width="30"
-              height="30"
-              unoptimized={true}
+              fill
+              className="object=cover"
             />
           </div>
           <span className="text-sm">
