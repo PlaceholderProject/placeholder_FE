@@ -52,8 +52,8 @@ const ReplyForm = () => {
       <form onSubmit={handleReplySubmit} className="flex w-[80%] flex-col gap-[0.5rem] md:max-w-[80rem]">
         <div className="flex w-full flex-col items-center justify-center gap-[1rem] rounded-[1rem] border-[0.1rem] border-gray-medium bg-white p-[1.5rem]">
           <div className="flex w-full flex-row items-center gap-[0.5rem]">
-            <div className="h-[2rem] w-[2rem] overflow-hidden rounded-full">
-              <Image src={profileImage || "/profile.png"} alt="프로필 이미지" width="25" height="25" unoptimized={true} />
+            <div className="relative h-[2rem] w-[2rem] overflow-hidden rounded-full">
+              <Image src={profileImage || "/profile.png"} alt="프로필 이미지" fill className="object-cover" />
             </div>
             <span>{user.nickname && `${user.nickname} ✨`}</span>
           </div>

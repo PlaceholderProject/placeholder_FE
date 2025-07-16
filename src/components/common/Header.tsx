@@ -83,7 +83,7 @@ const Header = () => {
     } else {
       dispatch(setIsAuthenticated(false));
     }
-  }, [dispatch]);
+  }, [dispatch, user.nickname]);
 
   const handleNotificationPage = () => {
     router.replace("/notification");
