@@ -167,7 +167,7 @@ const PastMyMeetup = () => {
         <MySpaceListItem key={myMeetup.id} isOngoing={false}>
           <Link href={`/meetup/${myMeetup.id}`} className="flex items-center">
             <RoleIcon isOrganizer={myMeetup.is_organizer} />
-            <div className="max-w-[21rem] truncate">{myMeetup.name}</div>
+            <div className="max-w-[20rem] truncate md:max-w-[36rem]">{myMeetup.name}</div>
           </Link>
           <MemberOutContainer meetupId={myMeetup.id} isOrganizer={myMeetup.is_organizer} onSelfLeave={handleSelfLeave} isPending={deleteMutation.isPending} />
         </MySpaceListItem>

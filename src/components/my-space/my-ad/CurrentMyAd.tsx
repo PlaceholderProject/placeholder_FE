@@ -74,7 +74,7 @@ const CurrentMyAd = () => {
         <MySpaceListItem key={myAd.id} isOngoing={true}>
           <Link href={`/ad/${myAd.id}`} className="flex items-center">
             <RoleIcon isOrganizer={isOrganizer} />
-            {myAd.ad_title}
+            <div className="max-w-[20rem] truncate md:max-w-[36rem]">{myAd.ad_title}</div>
           </Link>
         </MySpaceListItem>
       ))}

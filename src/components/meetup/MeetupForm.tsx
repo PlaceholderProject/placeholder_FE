@@ -586,7 +586,7 @@ const MeetupForm = () => {
 
             <div className="mt-[3rem] flex justify-center">
               <button type="submit" className="text-bold h-[4rem] w-[14rem] items-center rounded-[1rem] bg-primary text-center text-lg text-white disabled:bg-gray-medium" disabled={isSubmitting}>
-                모임 등록
+                {isSubmitting ? "처리 중..." : "모임 등록"}
               </button>
             </div>
           </form>

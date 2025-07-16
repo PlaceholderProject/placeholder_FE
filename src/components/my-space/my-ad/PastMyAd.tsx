@@ -70,7 +70,7 @@ const PastMyAd = () => {
         <MySpaceListItem key={myAd.id} isOngoing={false}>
           <div className="flex items-center">
             <RoleIcon isOrganizer={true} />
-            {myAd.ad_title}
+            <div className="max-w-[20rem] truncate md:max-w-[36rem]">{myAd.ad_title}</div>
           </div>
         </MySpaceListItem>
       ))}
