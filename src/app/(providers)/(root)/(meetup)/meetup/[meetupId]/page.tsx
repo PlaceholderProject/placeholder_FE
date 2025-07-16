@@ -1,12 +1,16 @@
 import KakaoMaps from "@/components/kakao/KakaoMaps";
 import MeetupSignboard from "@/components/meetup/MeetupSignboard";
 import ScheduleArea from "@/components/schedule/ScheduleArea";
+import { notFound } from "next/navigation";
 import React from "react";
 
 const MeetupPage = async ({ params }: { params: Promise<{ meetupId: string }> }) => {
   const { meetupId } = await params;
 
   const meetupIdNum = Number(meetupId);
+  if (isNaN(meetupIdNum) || meetupIdNum <= 0) {
+    notFound();
+  }
 
   return (
     <div className="-mb-[6rem] flex h-[calc(100vh-6rem)] h-[calc(100vh-7.5rem)] flex-col">
