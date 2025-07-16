@@ -5,7 +5,7 @@ interface MySpaceListItemProps {
   isOngoing: boolean;
 }
 const MySpaceListItem = ({ children, isOngoing }: MySpaceListItemProps) => {
-  const baseClasses = "my-[0.7rem] flex h-[4rem] w-full items-center justify-between rounded-[1rem] bg-gray-medium px-[1rem] text-base shadow-md";
+  const baseClasses = "my-[0.7rem] md:my-[1.2rem] flex h-[4rem] md:h-[5rem] w-full items-center justify-between rounded-[1rem] bg-gray-medium px-[1rem] text-base md:text-lg shadow-md";
   const bgClass = isOngoing ? "bg-secondary-dark" : "bg-gray-medium";
   return (
     <div className="grid grid-cols-1">
