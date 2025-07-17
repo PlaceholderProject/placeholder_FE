@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import type { Address } from "react-daum-postcode";
 import { FaSearch } from "react-icons/fa";
-import { RiseLoader } from "react-spinners";
 
 import MemberSelector from "@/components/schedule/MemberSelector";
 import ScheduleNumber from "./ScheduleNumber";
@@ -13,6 +12,7 @@ import { useCreateSchedule, useScheduleDetail, useUpdateSchedule } from "@/hooks
 import { useImageUpload } from "@/hooks/useImageUpload";
 import { useScheduleForm } from "@/hooks/useScheduleForm";
 import { useModal } from "@/hooks/useModal";
+import SubmitLoader from "../common/SubmitLoader";
 
 interface ScheduleFormProps {
   meetupId: number;
@@ -128,11 +128,8 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
 
   return (
     <>
-      {isSubmitting && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center border-[0.1rem] border-gray-dark bg-black bg-opacity-50 shadow-sm">
-          <RiseLoader color="#FBFFA9" size={15} />
-        </div>
-      )}
+      {isSubmitting && <SubmitLoader isLoading={isSubmitting} />}
+
       <div className="p-4 lg:p-8">
         <form onSubmit={handleSubmit} className="mx-auto max-w-4xl">
           <div className="mb-6 flex justify-center">

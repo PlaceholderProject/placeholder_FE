@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { RiseLoader } from "react-spinners";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FileType, LabeledInputProps, LabeledSelectProps, NewMeetup, S3PresignedField, S3PresignedItem, S3PresignedResponse } from "@/types/meetupType";
 import { useRouter } from "next/navigation";
 import { createMeetupApi, getMeetupPresignedUrl } from "@/services/meetup.service";
 import Image from "next/image";
 import { MAX_AD_TITLE_LENGTH, MAX_DESCRIPTION_LENGTH, MAX_NAME_LENGTH, MAX_PLACE_LENGTH } from "@/constants/meetup";
+import SubmitLoader from "../common/SubmitLoader";
 
 // displayName 추가
 const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
@@ -333,11 +333,7 @@ const MeetupForm = () => {
 
   return (
     <>
-      {isSubmitting && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 shadow-sm">
-          <RiseLoader color="#FBFFA9" size={15} />
-        </div>
-      )}
+      {isSubmitting && <SubmitLoader isLoading={isSubmitting} />}
       <div className="mx-auto my-[5rem] w-[32rem] rounded-[1rem] border-[0.1rem] border-gray-medium p-[3rem]">
         <div className="place-items-center">
           <h1 className="mb-[4rem] text-center text-3xl font-semibold">모임 생성하기</h1>

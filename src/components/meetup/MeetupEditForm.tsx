@@ -1,13 +1,13 @@
 "use client";
 
 import { editMeetupApi, getMeetupByIdApi, getMeetupPresignedUrl } from "@/services/meetup.service";
-import { RiseLoader } from "react-spinners";
 import { FileType, LabeledInputProps, LabeledSelectProps, Meetup, S3PresignedField, S3PresignedItem } from "@/types/meetupType";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { MAX_AD_TITLE_LENGTH, MAX_DESCRIPTION_LENGTH, MAX_NAME_LENGTH, MAX_PLACE_LENGTH } from "@/constants/meetup";
+import SubmitLoader from "../common/SubmitLoader";
 
 // displayName 추가
 const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
@@ -347,11 +347,8 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
 
   return (
     <>
-      {isSubmitting && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center border-[0.1rem] border-gray-dark bg-black bg-opacity-50 shadow-sm">
-          <RiseLoader color="#FBFFA9" size={15} />
-        </div>
-      )}
+      {isSubmitting && <SubmitLoader isLoading={isSubmitting} />}
+
       <div className="mx-auto my-[5rem] w-[32rem] rounded-[1rem] border-[0.1rem] border-gray-medium p-[3rem]">
         <div className="place-items-center">
           <h1 className="mb-[4rem] text-center text-3xl font-semibold">모임 수정하기</h1>
