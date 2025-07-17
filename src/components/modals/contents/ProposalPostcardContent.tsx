@@ -61,7 +61,7 @@ const ProposalPostcardContent = ({ meetupId }: { meetupId: number }) => {
             </div>
           </div>
           <button type="submit" disabled={proposalMutation.isPending} className="flex h-[4rem] items-center justify-center rounded-[1rem] bg-secondary-dark text-lg">
-            신청하기
+            {isSubmitting ? "처리 중..." : "신청하기"}
           </button>
         </form>
       </div>
