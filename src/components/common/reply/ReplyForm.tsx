@@ -58,29 +58,33 @@ const ReplyForm = () => {
   };
 
   return (
-    <div className="flex w-full items-center justify-center border-y-[1px] border-gray-medium p-[2rem]">
-      <form onSubmit={handleReplySubmit} className="flex w-[80%] flex-col gap-[0.5rem] md:max-w-[80rem]">
-        <div className="flex w-full flex-col items-center justify-center gap-[1rem] rounded-[1rem] border-[0.1rem] border-gray-medium bg-white p-[1.5rem]">
-          <div className="flex w-full flex-row items-center gap-[0.5rem]">
-            <div className="relative h-[2rem] w-[2rem] overflow-hidden rounded-full">
-              <Image src={profileImage || "/profile.png"} alt="프로필 이미지" fill className="object-cover" />
+    <>
+      {isSubmitting && <SubmitLoader isLoading={isSubmitting} />}
+
+      <div className="flex w-full items-center justify-center border-y-[1px] border-gray-medium p-[2rem]">
+        <form onSubmit={handleReplySubmit} className="flex w-[80%] flex-col gap-[0.5rem] md:max-w-[80rem]">
+          <div className="flex w-full flex-col items-center justify-center gap-[1rem] rounded-[1rem] border-[0.1rem] border-gray-medium bg-white p-[1.5rem]">
+            <div className="flex w-full flex-row items-center gap-[0.5rem]">
+              <div className="relative h-[2rem] w-[2rem] overflow-hidden rounded-full">
+                <Image src={profileImage || "/profile.png"} alt="프로필 이미지" fill className="object-cover" />
+              </div>
+              <span>{user.nickname && `${user.nickname} ✨`}</span>
             </div>
-            <span>{user.nickname && `${user.nickname} ✨`}</span>
+            <textarea
+              className="min-h-[10rem] w-full"
+              placeholder={user.email ? "댓글을 남겨보세요" : "로그인한 이후에 댓글을 작성할 수 있습니다."}
+              onChange={handleContentChange}
+              value={content}
+              disabled={!user.email}
+            />
           </div>
-          <textarea
-            className="min-h-[10rem] w-full"
-            placeholder={user.email ? "댓글을 남겨보세요" : "로그인한 이후에 댓글을 작성할 수 있습니다."}
-            onChange={handleContentChange}
-            value={content}
-            disabled={!user.email}
-          />
-        </div>
-        <div className="flex justify-between">
-          <span className="text-sm">{content.length}/ 300</span>
-          <button className="h-[2.5rem] w-[6rem] rounded-[0.5rem] bg-secondary-dark text-sm">등록</button>
-        </div>
-      </form>
-    </div>
+          <div className="flex justify-between">
+            <span className="text-sm">{content.length}/ 300</span>
+            <button className="h-[2.5rem] w-[6rem] rounded-[0.5rem] bg-secondary-dark text-sm">등록</button>
+          </div>
+        </form>
+      </div>
+    </>
   );
 };
 
