@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { createMeetupApi, getMeetupPresignedUrl } from "@/services/meetup.service";
 import Image from "next/image";
 import { MAX_AD_TITLE_LENGTH, MAX_DESCRIPTION_LENGTH, MAX_NAME_LENGTH, MAX_PLACE_LENGTH } from "@/constants/meetup";
+import SubmitLoader from "../common/SubmitLoader";
 
 // displayName 추가
 const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
@@ -125,8 +126,6 @@ const MeetupForm = () => {
     } catch (error) {
       console.error("💥 업로드 중 오류:", error);
       throw error;
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -301,6 +300,8 @@ const MeetupForm = () => {
       router.push("/");
     } catch (error) {
       console.error("모임 등록 실패:", error);
+    } finally {
+      setIsSubmitting(false);
     }
 
     // const meetupFormData = new FormData();
@@ -332,9 +333,10 @@ const MeetupForm = () => {
 
   return (
     <>
-      <div className="mx-auto w-[29.2rem] pb-[4rem]">
-        <div className="mb-[8rem] grid min-h-screen place-items-center">
-          <h1 className="mb-[4rem] text-center text-3xl font-semibold">모임 생성하기 PR TEST</h1>
+      {isSubmitting && <SubmitLoader isLoading={isSubmitting} />}
+      <div className="mx-auto my-[5rem] w-[32rem] rounded-[1rem] border-[0.1rem] border-gray-medium p-[3rem]">
+        <div className="place-items-center">
+          <h1 className="mb-[4rem] text-center text-3xl font-semibold">모임 생성하기</h1>
           <form onSubmit={handleMeetupFormSubmit}>
             <h2 className="text-2xl font-semibold text-primary">모임에 대해 알려주세요.</h2>
             <div>
@@ -580,7 +582,7 @@ const MeetupForm = () => {
 
             <div className="mt-[3rem] flex justify-center">
               <button type="submit" className="text-bold h-[4rem] w-[14rem] items-center rounded-[1rem] bg-primary text-center text-lg text-white disabled:bg-gray-medium" disabled={isSubmitting}>
-                모임 등록
+                {isSubmitting ? "처리 중..." : "모임 등록"}
               </button>
             </div>
           </form>

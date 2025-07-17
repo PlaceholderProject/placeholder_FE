@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { MAX_AD_TITLE_LENGTH, MAX_DESCRIPTION_LENGTH, MAX_NAME_LENGTH, MAX_PLACE_LENGTH } from "@/constants/meetup";
+import SubmitLoader from "../common/SubmitLoader";
 
 // displayName 추가
 const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
@@ -63,6 +64,7 @@ LabeledSelect.displayName = "LabeledSelect";
 
 const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   //Ref
   const nameRef = useRef<HTMLInputElement>(null);
@@ -134,8 +136,10 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   const [isStartedAtNull, setIsStartedAtNull] = useState(false);
   const [isEndedAtNull, setIsEndedAtNull] = useState(false);
 
-  const router = useRouter();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+  const categoryOptions = ["운동", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
+  const placeOptions = ["서울", "경기", "인천", "강원", "대전", "세종", "충남", "충북", "부산", "울산", "경남", "경북", "대구", "광주", "전남", "전북", "제주", "전국", "미정"];
 
   const {
     data: previousMeetupData,
@@ -170,9 +174,6 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   const editMutation = useMutation({
     mutationFn: ({ meetupData, imageUrl, meetupId }: { meetupData: Meetup; imageUrl: string; meetupId: number }) => editMeetupApi(meetupData, imageUrl, meetupId),
   });
-
-  const categoryOptions = ["운동", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
-  const placeOptions = ["서울", "경기", "인천", "강원", "대전", "세종", "충남", "충북", "부산", "울산", "경남", "경북", "대구", "광주", "전남", "전북", "제주", "전국", "미정"];
 
   // 미리보기 이미지 변경 핸들 함수
   const handlePreviewImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -336,6 +337,8 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
     } catch (error) {
       console.error("💥 수정 중 오류:", error);
       throw error;
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -344,8 +347,10 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
 
   return (
     <>
-      <div className="mx-auto w-[29.2rem] pb-[4rem]">
-        <div className="mb-[8rem] grid min-h-screen place-items-center">
+      {isSubmitting && <SubmitLoader isLoading={isSubmitting} />}
+
+      <div className="mx-auto my-[5rem] w-[32rem] rounded-[1rem] border-[0.1rem] border-gray-medium p-[3rem]">
+        <div className="place-items-center">
           <h1 className="mb-[4rem] text-center text-3xl font-semibold">모임 수정하기</h1>
           <form onSubmit={handleEditFormSubmit}>
             <h3 className="text-2xl font-semibold text-primary">모임에 대해 알려주세요.</h3>
@@ -587,7 +592,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
               />
               <div className="mt-[3rem] flex justify-center">
                 <button type="submit" className="text-bold h-[4rem] w-[14rem] items-center rounded-[1rem] bg-primary text-center text-lg text-white disabled:bg-gray-medium" disabled={isSubmitting}>
-                  모임 수정
+                  {isSubmitting ? "처리 중..." : "모임 수정"}
                 </button>
               </div>
             </div>
