@@ -70,21 +70,21 @@ const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
 
   return (
     <>
-      <div className="my-[1rem] w-full rounded-lg">
+      <div className="my-[1rem] rounded-lg">
         <div className={thumbnail.isPublic === false ? "text-gray-dark opacity-90" : ""}>
           {thumbnail.image &&
             (thumbnail.isPublic === true ? (
-              <Link href={`/ad/${thumbnail.id}`} className="relative mx-auto block h-[14.2rem] w-[14.2rem]">
-                <Image src={thumbnailImageUrl} alt="thumbnailImage" fill sizes="width-[14.2rem] height-[14.2rem]" className="rounded-[2rem] object-cover" loading="lazy" />
+              <Link href={`/ad/${thumbnail.id}`} className="relative mx-auto block h-[14.2rem] w-[14.2rem] items-center justify-center md:h-[150px] md:w-[150px]">
+                <Image src={thumbnailImageUrl} alt="thumbnailImage" fill sizes="width=14.2rem, height=14.2rem" className="rounded-[2rem] object-cover" loading="lazy" />
               </Link>
             ) : (
-              <div className="flex h-[14.2rem] w-[14.2rem] items-center justify-center rounded-[2rem] bg-gray-medium">
+              <div className="mx-auto flex h-[14.2rem] w-[14.2rem] items-center justify-center rounded-[2rem] bg-gray-medium md:h-[150px] md:w-[150px]">
                 <FaLock className="h-[4rem] w-[4rem] text-gray-dark" />
               </div>
             ))}
 
           {/* 콘텐츠 */}
-          <div className="mt-[1rem] space-y-[0.5rem]">
+          <div className="mt-[1rem] w-full space-y-[0.5rem]">
             {/* 프로필 & 좋아요 */}
             <div className="flex items-center justify-between">
               {/* 작성자 */}

@@ -25,7 +25,7 @@ const FilterArea = () => {
 
   return (
     <>
-      <div className="mx-auto flex w-[34rem] justify-center justify-items-center bg-gray-medium py-[0.5rem]">
+      <div className="mx-auto flex w-[34rem] min-w-[32rem] justify-center justify-items-center bg-gray-medium py-[0.5rem] md:w-[95%] md:max-w-[80rem]">
         {filterButtonsArray.map(({ type, label }) => (
           <button
             key={type}

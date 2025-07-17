@@ -26,13 +26,12 @@ const ReceivedProposalItem = ({ proposal }: { proposal: ReceivedProposal }) => {
     <div className="flex flex-row justify-between gap-[1rem] rounded-[1rem] bg-secondary-light p-[1.5rem] shadow-md">
       <div className="w-full">
         <div className="flex flex-row items-center gap-[1rem]">
-          <div className="h-[2rem] w-[2rem] overflow-hidden rounded-full">
+          <div className="relative h-[2rem] w-[2rem] overflow-hidden rounded-full">
             <Image
               src={proposal.user.image ? (proposal.user.image.startsWith("http") ? proposal.user.image : `${BASE_URL}/${proposal.user.image}`) : "/profile.png"}
               alt="프로필 이미지"
-              width="20"
-              height="20"
-              unoptimized={true}
+              fill
+              className="object-cover"
             />
           </div>
           <span>{proposal.user.nickname}</span>
@@ -41,10 +40,10 @@ const ReceivedProposalItem = ({ proposal }: { proposal: ReceivedProposal }) => {
         <p className="pt-[0.5rem]">{proposal.text}</p>
       </div>
       <div className="flex flex-row items-center gap-3">
-        <button onClick={handleProposalAccept} className="text-[2.5rem] text-[#028AB3]">
+        <button onClick={handleProposalAccept} disabled={acceptProposal.isPending || refuseProposal.isPending} className="text-[2.5rem] text-[#028AB3]">
           <FaUserCheck />
         </button>
-        <button onClick={handleProposalRefuse} className="text-[2.5rem] text-warning">
+        <button onClick={handleProposalRefuse} disabled={acceptProposal.isPending || refuseProposal.isPending} className="text-[2.5rem] text-warning">
           <FaUserTimes />
         </button>
       </div>

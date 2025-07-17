@@ -54,13 +54,13 @@ const NestedReplyForm = ({
   };
 
   return (
-    <div className="flex w-full">
-      <form className="flex w-full flex-col gap-2" onSubmit={handleNestedReplySubmit}>
-        <div className="flex h-[70px] w-full flex-col items-center justify-center gap-2 rounded-lg border-[1px] border-[#CFCFCF] p-[10px]">
-          <div className="flex w-full justify-between text-[8px]">@ {nestedReply.user.nickname ? nestedReply.user.nickname : rootReply.user.nickname}</div>
+    <div className="flex w-full justify-center">
+      <form onSubmit={handleNestedReplySubmit} className="flex w-[80%] flex-col gap-[0.5rem] md:max-w-[80rem]">
+        <div className="flex w-full flex-col items-center justify-center gap-[1rem] rounded-[1rem] border-[0.1rem] border-gray-medium bg-white p-[1.5rem]">
+          <div className="justify-betwee flex w-full text-sm">@ {nestedReply.user.nickname ? nestedReply.user.nickname : rootReply.user.nickname}</div>
           <textarea
             ref={textareaRef}
-            className="h-[50px] w-full text-[8px]"
+            className="h-[50px] w-full text-sm"
             placeholder={user.email ? `${nestedReply.user.nickname ? nestedReply.user.nickname : rootReply.user.nickname}님에게 답글 다는 중` : "로그인한 이후에 댓글을 작성할 수 있습니다."}
             onChange={handleContentChange}
             value={content}
@@ -68,12 +68,12 @@ const NestedReplyForm = ({
           />
         </div>
         <div className="flex justify-between">
-          <span className="text-[6px]">{content.length}/ 300</span>
+          <span className="text-sm">{content.length}/ 300</span>
           <span className="flex gap-2">
-            <button type="button" onClick={handleNestedReplyForm} className="h-[14px] w-[38px] rounded-md bg-[#CFCFCF] text-[6px]">
+            <button type="button" onClick={handleNestedReplyForm} className="h-[2.5rem] w-[6rem] rounded-[0.5rem] bg-gray-medium text-sm">
               닫기
             </button>
-            <button type="submit" className="h-[14px] w-[38px] rounded-md bg-[#FBFFA9] text-[6px]">
+            <button type="submit" className="h-[2.5rem] w-[6rem] rounded-[0.5rem] bg-secondary-dark text-sm">
               등록
             </button>
           </span>
