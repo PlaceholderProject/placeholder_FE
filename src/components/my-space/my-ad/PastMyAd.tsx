@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getMyAdsApi } from "@/services/my.space.service";
 import { BUTTONS_PER_GROUP, SIZE_LIMIT } from "@/constants/pagination";
 import PaginationButtons from "../PaginationButtons";
+import MySpaceListItem from "../MySpaceListItem";
 
 const PastMyAd = () => {
   const [page, setPage] = useState(1);
@@ -66,14 +67,12 @@ const PastMyAd = () => {
   return (
     <>
       {myAdsData.result.map(myAd => (
-        <div className="grid grid-cols-1" key={myAd.id}>
-          <li className="my-[0.7rem] flex h-[4rem] w-[30.1rem] items-center justify-between rounded-[1rem] bg-gray-medium px-[1rem] text-base shadow-md">
-            <div className="flex items-center">
-              <RoleIcon isOrganizer={true} />
-              {myAd.ad_title}
-            </div>
-          </li>
-        </div>
+        <MySpaceListItem key={myAd.id} isOngoing={false}>
+          <div className="flex items-center">
+            <RoleIcon isOrganizer={true} />
+            <div className="max-w-[20rem] truncate md:max-w-[36rem]">{myAd.ad_title}</div>
+          </div>
+        </MySpaceListItem>
       ))}
       {/* 버튼 영역 */}
 
