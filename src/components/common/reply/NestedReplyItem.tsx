@@ -35,13 +35,12 @@ const NestedReplyItem = ({ nestedReply, meetupId, handleReplyUpdate }: { nestedR
     <div className="mt-[0.5rem] flex w-full flex-col items-start gap-[0.5rem]">
       <div className="flex w-full justify-between">
         <span className="flex flex-row items-center gap-[0.5rem]">
-          <div className="h-[2.5rem] w-[2.5rem] overflow-hidden rounded-full">
+          <div className="relative h-[2.5rem] w-[2.5rem] overflow-hidden rounded-full">
             <Image
               src={nestedReply.user.image ? (nestedReply.user.image.startsWith("http") ? nestedReply.user.image : `${BASE_URL}/${nestedReply.user.image}`) : "/profile.png"}
               alt="프로필 이미지"
-              width="25"
-              height="25"
-              unoptimized={true}
+              fill
+              className="object-cover"
             />
           </div>
           <span className="text-sm">
