@@ -74,7 +74,7 @@ export const getReceivedProposals = async (meetupId: number, page: number) => {
   const size = 5;
 
   try {
-    const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}/proposal?page=${page}&size=${size}`, {
+    const response = await fetch(`${BASE_URL}/api/v1/user/me/meetup/${meetupId}/proposal?page=${page}&size=${size}&status=pending`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
