@@ -1,10 +1,10 @@
 "use client";
 
-import { editMeetupApi, getMeetupByIdApi, getMeetupPresignedUrl } from "@/services/meetup.service";
-import { FileType, LabeledInputProps, LabeledSelectProps, Meetup, S3PresignedField, S3PresignedItem } from "@/types/meetupType";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { FileType, LabeledInputProps, LabeledSelectProps, Meetup, S3PresignedField, S3PresignedItem } from "@/types/meetupType";
+import { editMeetupApi, getMeetupByIdApi, getMeetupPresignedUrl } from "@/services/meetup.service";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { MAX_AD_TITLE_LENGTH, MAX_DESCRIPTION_LENGTH, MAX_NAME_LENGTH, MAX_PLACE_LENGTH } from "@/constants/meetup";
 import SubmitLoader from "../common/SubmitLoader";
@@ -25,7 +25,7 @@ const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
             placeholder={placeholder}
             value={value}
             defaultValue={defaultValue}
-            defaultChecked={defaultChecked}
+            defaultChecked={defaultChecked} // ✨이게 MeetupForm에는 없음
             disabled={disabled}
             required={required}
             checked={checked}
@@ -63,8 +63,8 @@ const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({
 LabeledSelect.displayName = "LabeledSelect";
 
 const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
-  const queryClient = useQueryClient();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   //Ref
   const nameRef = useRef<HTMLInputElement>(null);
@@ -102,6 +102,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
         console.error("s3오류:", errorText);
         throw new Error(`s3 업로드 실패 status, errorText:, ${response.status} ${errorText}`);
       }
+      // 업로드된 파일의 URL 생성
       const uploadedFileUrl = `${meetupPresignedData.url}${meetupPresignedData.fields.key}`;
       return uploadedFileUrl;
     } catch (error) {
@@ -136,11 +137,15 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   const [isStartedAtNull, setIsStartedAtNull] = useState(false);
   const [isEndedAtNull, setIsEndedAtNull] = useState(false);
 
+  // 미리보기 스테이트
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
+  // 셀렉트 배열
   const categoryOptions = ["운동", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
   const placeOptions = ["서울", "경기", "인천", "강원", "대전", "세종", "충남", "충북", "부산", "울산", "경남", "경북", "대구", "광주", "전남", "전북", "제주", "전국", "미정"];
 
+  // 기존 모임 정보 가져오는 탠스택
+  // ✨이게 MeetupForm에는 없음
   const {
     data: previousMeetupData,
     isPending,
@@ -151,7 +156,8 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
     retry: 0,
   });
 
-  // 미리보기 이미지 설정
+  // 미리보기 이미지, 미정 여부 설정
+  //  ✨이게 MeetupForm에는 없음
   useEffect(() => {
     if (previousMeetupData?.image) {
       const previewImageUrl = `${previousMeetupData.image}`;
@@ -164,13 +170,8 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
     }
   }, [previousMeetupData]);
 
-  // useEffect(() => {
-  //   if (previousMeetupData) {
-  //     setIsStartedAtNull(previousMeetupData.startedAt === null);
-  //     setIsEndedAtNull(previousMeetupData.endedAt === null);
-  //   }
-  // }, [previousMeetupData]);
-
+  // 수정 mutation
+  //  ✨이게 MeetupForm에는 없음
   const editMutation = useMutation({
     mutationFn: ({ meetupData, imageUrl, meetupId }: { meetupData: Meetup; imageUrl: string; meetupId: number }) => editMeetupApi(meetupData, imageUrl, meetupId),
   });
@@ -190,25 +191,19 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
   // 모임 수정 후 제출 함수
   const handleEditFormSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-
     if (isSubmitting) {
       return;
     }
-
     setIsSubmitting(true);
 
     // 유효성 검사 빌드업 시작
     if (!previousMeetupData) return;
 
-    // 오늘 날짜 겟
+    // 모든 날짜가 오늘보다 과거인지 유효성 검사
     const now = new Date();
     now.setHours(0, 0, 0, 0);
 
-    const startDate = isStartedAtNull ? null : startedAtRef?.current?.value || null;
-    const endDate = isEndedAtNull ? null : endedAtRef?.current?.value || null;
-    const adEndDate = adEndedAtRef.current?.value || null;
-
-    //필드 이름
+    //필드 이름 케이스별로 가져오기
     const getDateFieldName = (fieldName: string): string => {
       switch (fieldName) {
         case "startedAt":
@@ -221,6 +216,11 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
           return fieldName;
       }
     };
+    // 인풋 필드에서 날짜값 가져옴
+    const startDate = isStartedAtNull ? null : startedAtRef?.current?.value || null;
+    const endDate = isEndedAtNull ? null : endedAtRef?.current?.value || null;
+    // const adEndDate = adEndedAtRef.current?.value || null;
+    const adEndDate = adEndedAtRef.current?.value || "";
 
     // 실질적 유효성 검사 함수
     // 불리언값을 리턴
@@ -240,6 +240,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
         previousEndDate.setHours(0, 0, 0, 0);
       }
 
+      // 사용자 입력값 미정이면 true (통과)
       if (!date) {
         return true;
       }
@@ -307,6 +308,7 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
 
     try {
       let imageUrl = previousMeetupData?.image || "";
+
       if (imageRef?.current?.files?.[0]) {
         const imageFile = imageRef.current.files[0];
         const fileType = imageFile.type as FileType;
@@ -320,10 +322,13 @@ const MeetupEditForm = ({ meetupId }: { meetupId: number }) => {
         description: descriptionRef.current?.value || "",
         place: placeRef.current?.value || "",
         placeDescription: placeDescriptionRef.current?.value || "",
-        startedAt: isStartedAtNull ? null : startedAtRef.current?.value || null,
-        endedAt: isEndedAtNull ? null : endedAtRef.current?.value || null,
+        // startedAt: isStartedAtNull ? null : startedAtRef.current?.value || null,
+        startedAt: startDate,
+        endedAt: endDate,
+        // endedAt: isEndedAtNull ? null : endedAtRef.current?.value || null,
         adTitle: adTitleRef.current?.value || "",
-        adEndedAt: adEndedAtRef.current?.value || "",
+        // adEndedAt: adEndedAtRef.current?.value || "",
+        adEndedAt: adEndDate,
         isPublic: !isPublicRef.current?.checked,
         category: categoryRef.current?.value || "",
         // image: imageRef.current?.value || "",
