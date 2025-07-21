@@ -54,7 +54,7 @@ const ReceivedProposals = () => {
   }
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="mb-[6rem] flex flex-col items-center gap-[3rem]">
       <ul className="flex w-[90%] flex-col gap-[1.5rem] md:max-w-[80rem]">
         {receivedProposals.map((proposal: ReceivedProposal) => (
           <li key={proposal.id}>
