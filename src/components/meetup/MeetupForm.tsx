@@ -490,6 +490,7 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
                   label="광고글 제목"
                   type="text"
                   ref={adTitleRef}
+                  defaultValue={mode === "edit" ? previousMeetupData?.adTitle : undefined}
                   required
                   onChange={handleAdTitleLengthChange}
                   maxLength={MAX_AD_TITLE_LENGTH}
@@ -510,6 +511,7 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
                   label="광고 종료일"
                   type="date"
                   ref={adEndedAtRef}
+                  defaultValue={mode === "edit" && previousMeetupData?.adEndedAt ? previousMeetupData.adEndedAt.substring(0, 10) : undefined}
                   required
                   containerClassName={"flex justify-between"}
                   labelClassName={"text-base pt-[1rem] w-[8rem]"}
@@ -524,6 +526,7 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
                   type="text"
                   placeholder="만날 곳의 대략적 위치를 작성해주세요. 예) 강남역"
                   ref={placeDescriptionRef}
+                  defaultValue={mode === "edit" ? previousMeetupData.placeDescription : undefined}
                   required
                   onChange={handlePlaceLengthChange}
                   maxLength={MAX_PLACE_LENGTH}
@@ -542,6 +545,7 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
                 label="모임 지역"
                 options={placeOptions}
                 ref={placeRef}
+                defaultValue={mode === "edit" ? previousMeetupData?.place : undefined}
                 required
                 containerClassName={"flex my-[1rem] items-center"}
                 labelClassName={"text-base mr-[0.5rem]"}
@@ -556,8 +560,8 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
               <textarea
                 id="description"
                 name="description"
-                defaultValue=""
-                placeholder="멤버 광고글에 보일 설명을 작성해주세요."
+                defaultValue={mode === "edit" ? previousMeetupData.description : ""}
+                placeholder="멤버 모집 광고글에 보일 설명을 작성해주세요."
                 ref={descriptionRef}
                 maxLength={MAX_DESCRIPTION_LENGTH}
                 onChange={handleDescriptionLengthChange}
@@ -614,6 +618,7 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
               label="모집글 비공개"
               type="checkbox"
               ref={isPublicRef}
+              defaultChecked={mode === "edit" ? previousMeetupData?.isPublic === false : false}
               containerClassName={"flex items-center my-[3rem]"}
               labelClassName={"text-2xl text-primary items-baseline font-semibold pl-[0.5rem] pr-[0.5rem]"}
               className={
@@ -623,7 +628,7 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
 
             <div className="mt-[3rem] flex justify-center">
               <button type="submit" className="text-bold h-[4rem] w-[14rem] items-center rounded-[1rem] bg-primary text-center text-lg text-white disabled:bg-gray-medium" disabled={isSubmitting}>
-                {isSubmitting ? "처리 중..." : "모임 등록"}
+                {isSubmitting ? "처리 중..." : mode === "create" ? "모임 등록" : "모임 수정"}
               </button>
             </div>
           </form>
