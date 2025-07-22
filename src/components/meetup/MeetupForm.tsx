@@ -275,8 +275,11 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
         // console.log("🎯 파일 타입 확인:", fileType);
 
         // presigned URL 요청
-        const presignedResponse: S3PresignedResponse = await getMeetupPresignedUrl(fileType);
-        const presignedData: S3PresignedItem = presignedResponse.result[0];
+        // const presignedResponse: S3PresignedResponse = await getMeetupPresignedUrl(fileType);
+        // const presignedData: S3PresignedItem = presignedResponse.result[0];
+
+        const presignedResponse = await getPresignedUrl.mutateAsync(fileType);
+        const presignedData = presignedResponse.result[0];
 
         // presigned 데이터의 Content-Type 확인
         // console.log("🎯 presigned Content-Type:", presignedData.fields["Content-Type"]);
@@ -371,7 +374,7 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
       {isSubmitting && <SubmitLoader isLoading={isSubmitting} />}
       <div className="mx-auto my-[5rem] w-[32rem] rounded-[1rem] border-[0.1rem] border-gray-medium p-[3rem]">
         <div className="place-items-center">
-          <h1 className="mb-[4rem] text-center text-3xl font-semibold">모임 생성하기</h1>
+          <h1 className="mb-[4rem] text-center text-3xl font-semibold">{mode === "create" ? "모임 생성하기" : "모임 수정하기"}</h1>
           <form onSubmit={handleMeetupFormSubmit}>
             <h2 className="text-2xl font-semibold text-primary">모임에 대해 알려주세요.</h2>
             <div>
@@ -382,6 +385,7 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
                 options={categoryOptions}
                 ref={categoryRef}
                 required
+                defaultValue={mode === "edit" ? previousMeetupData?.category : undefined}
                 containerClassName={"my-[0.5rem] flex items-center"}
                 labelClassName={"font-semibold text-lg mr-7"}
                 className={"h-[4rem] w-[21.3rem] rounded-[1rem] border-[0.1rem] border-gray-light text-center text-base"}
@@ -393,6 +397,7 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
                   label="모임 이름"
                   type="text"
                   ref={nameRef}
+                  defaultValue={mode === "edit" ? previousMeetupData.name : undefined}
                   required
                   onChange={handleNameLengthChange}
                   maxLength={MAX_NAME_LENGTH}
@@ -415,6 +420,7 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
                   label="시작일"
                   type="date"
                   ref={startedAtRef}
+                  defaultValue={mode === "edit" && previousMeetupData?.startedAt ? previousMeetupData.startedAt.substring(0, 10) : undefined}
                   disabled={isStartedAtNull}
                   required
                   containerClassName={"grid grid-cols-4 mt-[1rem]"}
