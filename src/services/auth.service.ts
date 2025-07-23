@@ -1,6 +1,7 @@
 import { BASE_URL } from "@/constants/baseURL";
 import { LoginProps } from "@/types/authType";
 import Cookies from "js-cookie";
+import { toast } from "sonner";
 
 // 회원가입페이지 : 이메일 중복확인
 export const checkEmail = async (email: string) => {
@@ -15,16 +16,20 @@ export const checkEmail = async (email: string) => {
       }),
     });
 
-    if (!response.ok) {
-      alert("이미 사용중인 이메일입니다.");
-      return;
-    } else {
-      alert("사용 가능한 이메일입니다.");
+    if (response.ok) {
+      toast.success("사용 가능한 이메일입니다.");
       return true;
     }
+
+    const errorData = await response.json();
+
+    const errorMessage = errorData?.detail?.[0]?.ctx?.error || errorData?.detail?.[0]?.msg || "알 수 없는 오류가 발생했습니다.";
+    toast.error(errorMessage);
+    return false;
   } catch (error) {
     console.error("네트워크 오류:", error);
-    return null;
+    toast.error("네트워크에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    return false;
   }
 };
 
@@ -41,16 +46,18 @@ export const checkNickname = async (nickname: string) => {
       }),
     });
 
-    if (!response.ok) {
-      alert("이미 사용중인 닉네임입니다.");
-      return;
-    } else {
-      alert("사용 가능한 닉네임입니다.");
+    if (response.ok) {
+      toast.success("사용 가능한 닉네임입니다.");
       return true;
     }
+
+    const errorData = await response.json();
+    const errorMessage = errorData?.detail?.[0]?.ctx?.error || errorData?.detail?.[0]?.msg || "알 수 없는 오류가 발생했습니다.";
+    toast.error(errorMessage);
+    return false;
   } catch (error) {
     console.error("네트워크 오류:", error);
-    return null;
+    return false;
   }
 };
 
@@ -68,21 +75,23 @@ export const login = async ({ email, password }: LoginProps) => {
       }),
     });
 
-    if (!response.ok) {
-      console.log("이메일 또는 비밀번호가 잘못되었습니다. 다시 시도해주세요.");
-      throw new Error("이메일 또는 비밀번호가 잘못되었습니다. 다시 시도해주세요.");
+    if (response.ok) {
+      const { access, refresh } = await response.json();
+
+      Cookies.set("accessToken", access, { expires: 1, secure: true, sameSite: "Strict" });
+      Cookies.set("refreshToken", refresh, { expires: 7, secure: true, sameSite: "Strict" });
+
+      return { access, refresh };
     }
+    const errorData = await response.json();
+    const errorMessage = errorData?.detail || "알 수 없는 오류가 발생했습니다.";
+    toast.error(errorMessage);
 
-    const { access, refresh } = await response.json();
-
-    Cookies.set("accessToken", access, { expires: 1, secure: true, sameSite: "Strict" });
-    Cookies.set("refreshToken", refresh, { expires: 7, secure: true, sameSite: "Strict" });
-
-    return { access, refresh };
+    return false;
   } catch (error) {
     console.error("네트워크 오류:", error);
-    alert("이메일 또는 비밀번호가 잘못되었습니다. 다시 시도해주세요.");
-    return;
+    toast.error("네트워크에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    return false;
   }
 };
 
@@ -90,7 +99,8 @@ export const login = async ({ email, password }: LoginProps) => {
 export const refreshToken = async () => {
   const refreshToken = Cookies.get("refreshToken"); // 쿠키에서 refresh 토큰 가져오기
   if (!refreshToken) {
-    console.error("No refreshToken available.");
+    console.error("refressToken이 없습니다. 다시 로그인 해주세요.");
+    toast.error("다시 로그인해주세요.");
     return null;
   }
 
@@ -104,14 +114,13 @@ export const refreshToken = async () => {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to refresh token");
+      console.error("refressToken이 없습니다. 다시 로그인 해주세요.");
+      toast.error("다시 로그인해주세요.");
     }
 
     const { access, refresh } = await response.json();
     Cookies.set("accessToken", access, { expires: 1, secure: true, sameSite: "Strict" });
     Cookies.set("refreshToken", refresh, { expires: 7, secure: true, sameSite: "Strict" });
-
-    // console.log("토큰 갱신 성공");
   } catch (error) {
     console.error("토큰 갱신 요청 실패:", error);
     return null;
@@ -131,26 +140,18 @@ export const recheckPassword = async (password: string) => {
       body: JSON.stringify({ password: password }),
     });
 
-    // console.log("HTTP 상태 코드:", response.status);
-
-    if (!response.ok) {
-      throw new Error("비밀번호가 잘못되었습니다. 다시 시도해주세요.");
+    if (response.ok) {
+      toast.success("비밀번호가 일치합니다.");
+      return true;
     }
 
-    // 응답 본문 확인
-    const contentLength = response.headers.get("content-length");
-    if (!contentLength || parseInt(contentLength) === 0) {
-      console.warn("서버에서 빈 응답을 반환했습니다.");
-      return { message: "Password rechecked successfully." }; // 기본 메시지
-    }
-
-    // JSON 형식으로 파싱
-    const data = await response.json();
-    return data;
+    const errorData = await response.json();
+    const errorMessage = errorData?.message || "알 수 없는 오류가 발생했습니다.";
+    toast.error(errorMessage);
   } catch (error) {
     console.error("네트워크 오류:", error);
-    alert("비밀번호 확인 중 문제가 발생했습니다.");
-    return;
+    toast.error("네트워크에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    return false;
   }
 };
 
@@ -169,22 +170,18 @@ export const resetPassword = async (password: string) => {
       }),
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      const errorMessage = errorData.detail?.[0]?.msg || "비밀번호 변경 중 오류가 발생했습니다.";
-
-      throw new Error(errorMessage);
+    if (response.ok) {
+      const { access, refresh } = await response.json();
+      Cookies.set("accessToken", access, { expires: 1, secure: true, sameSite: "Strict" });
+      Cookies.set("refreshToken", refresh, { expires: 7, secure: true, sameSite: "Strict" });
+      toast.success("비밀번호를 재설정했습니다.");
+      return { access, refresh };
     }
 
-    const { access, refresh } = await response.json();
-
-    Cookies.set("accessToken", access, { expires: 1, secure: true, sameSite: "Strict" });
-    Cookies.set("refreshToken", refresh, { expires: 7, secure: true, sameSite: "Strict" });
-
-    return { access, refresh };
+    toast("비밀번호 변경 중 오류가 발생했습니다. 다시 시도해주세요.");
   } catch (error) {
     console.error("네트워크 오류:", error);
-    alert("로그인 처리 중 문제가 발생했습니다.");
-    return;
+    toast.error("네트워크에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    return false;
   }
 };

@@ -6,6 +6,7 @@ import NavigationBar from "@/components/common/NavigationBar";
 import ReduxProvider from "@/stores/ReduxProvider";
 import QueryProvider from "./(providers)/_providers/QueryProvider";
 import ModalContainer from "@/components/modals/ModalContainer";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Placeholder",
@@ -36,6 +37,7 @@ export default function RootLayout({
             <main className="pb-[6rem] pt-[6rem] md:pb-[0rem] md:pt-[7.5rem]">{children}</main>
             <ModalContainer />
             <NavigationBar />
+            <Toaster position="top-center" />
           </QueryProvider>
         </ReduxProvider>
       </body>
