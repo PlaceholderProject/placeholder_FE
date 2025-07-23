@@ -3,7 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { FileType, LabeledInputProps, LabeledSelectProps, Meetup, NewMeetup, S3PresignedField, S3PresignedItem, S3PresignedResponse } from "@/types/meetupType";
+import { FileType, LabeledInputProps, LabeledSelectProps, Meetup, NewMeetup } from "@/types/meetupType";
 import { MAX_AD_TITLE_LENGTH, MAX_DESCRIPTION_LENGTH, MAX_NAME_LENGTH, MAX_PLACE_LENGTH } from "@/constants/meetup";
 import SubmitLoader from "../common/SubmitLoader";
 import { useMeetupForm } from "@/hooks/useMeetupForm";
@@ -49,7 +49,7 @@ const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({
         <label htmlFor={id} className={labelClassName}>
           {label}
         </label>
-        <select id={id} name={name} required={required} ref={ref} className={className}>
+        <select id={id} name={name} required={required} ref={ref} defaultValue={defaultValue} className={className}>
           {options.map(option => {
             return (
               <option key={option} value={option}>
@@ -170,18 +170,17 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
   // 미리보기 이미지, 미정 여부 설정
   //  ✨이게 MeetupForm에는 없음
 
-  if (mode === "edit") {
-    useEffect(() => {
+  useEffect(() => {
+    if (mode === "edit" && previousMeetupData) {
       // if (previousMeetupData?.image) {
       //   const previewImageUrl = `${previousMeetupData.image}`;
       //   console.log("미리보기 설정되는 이미지 URL: ", previewImageUrl);
       // }
-      if (previousMeetupData) {
-        setIsStartedAtNull(previousMeetupData.startedAt === null);
-        setIsEndedAtNull(previousMeetupData.endedAt === null);
-      }
-    }, [previousMeetupData]);
-  }
+
+      setIsStartedAtNull(previousMeetupData.startedAt === null);
+      setIsEndedAtNull(previousMeetupData.endedAt === null);
+    }
+  }, [mode, previousMeetupData, setIsStartedAtNull, setIsEndedAtNull]);
 
   // 생성 useMutation은 최상단에 위치시키라고 함
   //  ✨이게 MeetupEditForm에는 없음

@@ -11,7 +11,8 @@ export const useCreateMeetup = () => {
   return useMutation({
     mutationFn: ({ data, imageUrl }: { data: NewMeetup; imageUrl: string }) => createMeetupApi(data, imageUrl),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["meetups"] }), queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
+      queryClient.invalidateQueries({ queryKey: ["meetups"] });
+      queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
     },
   });
 };
