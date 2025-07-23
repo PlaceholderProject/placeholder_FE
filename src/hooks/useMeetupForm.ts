@@ -45,6 +45,7 @@ export const useMeetupForm = (mode: "create" | "edit", previousData?: Meetup) =>
       const previewFile = event.target.files[0];
       const previewFileUrl = URL.createObjectURL(previewFile);
       setPreviewImage(previewFileUrl);
+      console.log("useMeetupForm에서 미리보기 설정하는 previewFileUrl", previewFile);
     }
   };
 
