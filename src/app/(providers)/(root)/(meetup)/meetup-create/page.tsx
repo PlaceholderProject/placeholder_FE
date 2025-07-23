@@ -7,7 +7,7 @@ import MeetupForm from "@/components/meetup/MeetupForm";
 const MeetupCreatePage = () => {
   return (
     <div>
-      <MeetupForm />
+      <MeetupForm mode="create" />
     </div>
   );
 };
