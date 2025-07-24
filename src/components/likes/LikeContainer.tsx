@@ -66,9 +66,9 @@ const LikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerPro
         }
 
         console.log("🔍 ============ oldData 전체 구조 ============");
-        console.log("🔍 oldData 타입:", typeof oldData);
+        console.log("👛 oldData 타입:", typeof oldData);
         console.log("🔍 oldData 키들:", Object.keys(oldData));
-        console.log("🔍 oldData 전체:", oldData);
+        console.log("👛 oldData 전체:", oldData);
 
         console.log("🔍 ============ pages 배열 분석 ============");
         console.log("🔍 pages 길이:", oldData.pages?.length);
