@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
 
 const PasswordRecheck = () => {
   const [password, setPassword] = useState("");
@@ -28,7 +29,7 @@ const PasswordRecheck = () => {
     event.preventDefault();
 
     if (!password.trim()) {
-      alert("비밀번호를 입력해주세요");
+      toast.error("비밀번호를 입력해주세요");
       return;
     }
 

@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -97,39 +98,39 @@ const Signup = () => {
     event.preventDefault();
 
     if (!email.trim()) {
-      alert("이메일을 작성해주세요.");
+      toast.error("이메일을 작성해주세요.");
       return;
     }
     if (!isCheckedEmail) {
-      alert("이메일을 중복확인해주세요.");
+      toast.error("이메일을 중복확인해주세요.");
       return;
     }
     if (!password.trim()) {
-      alert("비밀번호를 작성해주세요.");
+      toast.error("비밀번호를 작성해주세요.");
       return;
     }
     if (!passwordConfirm.trim()) {
-      alert("비밀번호 확인란에 비밀번호를 작성해주세요.");
+      toast.error("비밀번호 확인란에 비밀번호를 작성해주세요.");
       return;
     }
     if (!nickname.trim()) {
-      alert("닉네임을 작성해주세요.");
+      toast.error("닉네임을 작성해주세요.");
       return;
     }
     if (!isCheckedNickname) {
-      alert("닉네임을 중복확인해주세요.");
+      toast.error("닉네임을 중복확인해주세요.");
       return;
     }
     if (password.trim() !== passwordConfirm.trim()) {
-      alert("비밀번호가 일치하지 않습니다. 비밀번호를 다시 입력해주세요.");
+      toast.error("비밀번호가 일치하지 않습니다. 비밀번호를 다시 입력해주세요.");
       return;
     }
     if (!PASSWORD_REGULAR_EXPRESSION.test(password)) {
-      alert("비밀번호는 숫자 1개, 특수문자 1개를 포함하여 6~15자리 사이여야 합니다.");
+      toast.error("비밀번호는 숫자 1개, 특수문자 1개를 포함하여 6~15자리 사이여야 합니다.");
       return;
     }
     if (nickname.length < 2 || nickname.length > 8) {
-      alert("닉네임은 최소 2자 최대 8자까지 가능합니다.");
+      toast.error("닉네임은 최소 2자 최대 8자까지 가능합니다.");
       return;
     }
 
@@ -144,7 +145,7 @@ const Signup = () => {
       const result = await createUserMutation.mutateAsync(newUser);
 
       if (result) {
-        alert(`${newUser.nickname}님 회원가입을 축하드립니다.`);
+        toast.success(`${newUser.nickname}님 회원가입을 축하드립니다.`);
         router.replace("/login");
       }
     } catch (error) {

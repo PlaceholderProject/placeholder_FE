@@ -11,6 +11,7 @@ import { useState } from "react";
 import { useDeleteReply, useEditReply } from "@/hooks/useReply";
 import NestedReplyForm from "./NestedReplyForm";
 import { useDeleteScheduleReply, useUpdateScheduleReply } from "@/hooks/useScheduleReply";
+import { toast } from "sonner";
 
 const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId, scheduleId }) => {
   const user = useSelector((state: RootState) => state.user.user);
@@ -37,7 +38,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId, sche
       } else if (meetupId) {
         await deleteReplyMutation.mutate(replyId);
       }
-      alert("정상적으로 삭제되었습니다.");
+      toast.success("정상적으로 삭제되었습니다.");
     }
   };
 
@@ -57,7 +58,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId, sche
       } else if (meetupId) {
         await editReplyMutation.mutate({ text, replyId });
       }
-      alert("정상적으로 수정되었습니다.");
+      toast.success("정상적으로 수정되었습니다.");
       setIsEditMode(false);
     }
   };

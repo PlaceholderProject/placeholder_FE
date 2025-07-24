@@ -1,6 +1,7 @@
 import { BASE_URL } from "@/constants/baseURL";
 import { newReplyProps } from "@/types/replyType";
 import Cookies from "js-cookie";
+import { toast } from "sonner";
 
 // 스케줄 댓글 생성
 export const createScheduleReply = async (newReply: newReplyProps, scheduleId: number) => {
@@ -17,14 +18,14 @@ export const createScheduleReply = async (newReply: newReplyProps, scheduleId: n
 
     if (!response.ok) {
       const errorResult = await response.json();
-      alert(errorResult.detail || "댓글 등록에 실패했습니다.");
+      toast.error(errorResult.detail || "댓글 등록에 실패했습니다.");
       return;
     }
 
     return await response.json();
   } catch (error) {
     console.error("댓글 등록 중 오류:", error);
-    alert("댓글을 등록하지 못했습니다. 다시 시도해주세요.");
+    toast.error("댓글을 등록하지 못했습니다. 다시 시도해주세요.");
     return;
   }
 };
@@ -44,14 +45,14 @@ export const createScheduleNestedReply = async (newReply: newReplyProps, replyId
 
     if (!response.ok) {
       const errorResult = await response.json();
-      alert(errorResult.detail || "답글 등록에 실패했습니다.");
+      toast.error(errorResult.detail || "답글 등록에 실패했습니다.");
       return;
     }
 
     return await response.json();
   } catch (error) {
     console.error("답글 등록 중 오류:", error);
-    alert("답글을 등록하지 못했습니다. 다시 시도해주세요.");
+    toast.error("답글을 등록하지 못했습니다. 다시 시도해주세요.");
     return;
   }
 };
@@ -97,14 +98,14 @@ export const updateScheduleReply = async (text: string, replyId: number) => {
 
     if (!response.ok) {
       const errorResult = await response.json();
-      alert(errorResult.detail || "댓글 수정에 실패했습니다.");
+      toast.error(errorResult.detail || "댓글 수정에 실패했습니다.");
       return;
     }
 
     return await response.json();
   } catch (error) {
     console.error("댓글 수정 중 오류:", error);
-    alert("댓글을 수정하지 못했습니다. 다시 시도해주세요.");
+    toast.error("댓글을 수정하지 못했습니다. 다시 시도해주세요.");
     return null;
   }
 };
@@ -122,14 +123,14 @@ export const deleteScheduleReply = async (replyId: number) => {
 
     if (!response.ok) {
       const errorResult = await response.json().catch(() => ({ message: "댓글 삭제에 실패했습니다." }));
-      alert(errorResult.message || "댓글 삭제에 실패했습니다.");
+      toast.error(errorResult.message || "댓글 삭제에 실패했습니다.");
       return false;
     }
 
     return true;
   } catch (error) {
     console.error("댓글 삭제 중 오류:", error);
-    alert("댓글을 삭제하지 못했습니다. 다시 시도해주세요.");
+    toast.error("댓글을 삭제하지 못했습니다. 다시 시도해주세요.");
     return false;
   }
 };

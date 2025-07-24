@@ -1,6 +1,7 @@
 import { BASE_URL } from "@/constants/baseURL";
 import { newReplyProps } from "@/types/replyType";
 import Cookies from "js-cookie";
+import { toast } from "sonner";
 
 // create-reply
 export const createReply = async (newReply: newReplyProps, meetupId: string | string[]) => {
@@ -17,17 +18,17 @@ export const createReply = async (newReply: newReplyProps, meetupId: string | st
 
     if (!response.ok) {
       const errorResult = await response.json();
-      alert(errorResult.detail);
+      toast.error(errorResult.detail);
       return;
     }
 
     const result = response.status;
-    alert("댓글이 등록되었습니다.");
+    toast.success("댓글이 등록되었습니다.");
 
     return result;
   } catch (error) {
     console.log(error);
-    alert("댓글을 등록하지 못했습니다. 다시 시도해주세요.");
+    toast.error("댓글을 등록하지 못했습니다. 다시 시도해주세요.");
     return;
   }
 };
@@ -47,17 +48,17 @@ export const createNestedReply = async (newReply: newReplyProps, replyId: number
 
     if (!response.ok) {
       const errorResult = await response.json();
-      alert(errorResult.detail);
+      toast.error(errorResult.detail);
       return;
     }
 
     const result = response.status;
-    alert("답글이 등록되었습니다.");
+    toast.success("답글이 등록되었습니다.");
 
     return result;
   } catch (error) {
     console.log(error);
-    alert("답글을 등록하지 못했습니다. 다시 시도해주세요.");
+    toast.error("답글을 등록하지 못했습니다. 다시 시도해주세요.");
     return;
   }
 };
@@ -71,7 +72,7 @@ export const getReply = async (meetupId: string | string[]) => {
 
     if (!response.ok) {
       const errorResult = await response.json();
-      alert(errorResult.detail);
+      toast.error(errorResult.detail);
       return;
     }
 
@@ -98,7 +99,7 @@ export const editReply = async (text: string, replyId: number) => {
 
     if (!response.ok) {
       const errorResult = await response.json();
-      alert(errorResult.detail);
+      toast.error(errorResult.detail);
       return;
     }
 
@@ -127,7 +128,7 @@ export const deleteReply = async (replyId: number) => {
       return { message: "User delete successfully." }; // 기본 메시지
     }
 
-    alert("댓글이 삭제되었습니다.");
+    toast.success("댓글이 삭제되었습니다.");
     // JSON 형식으로 파싱
     const data = await response.json();
     return data;
