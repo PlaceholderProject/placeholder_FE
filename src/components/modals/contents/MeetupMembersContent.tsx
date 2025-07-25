@@ -8,6 +8,8 @@ import { useModal } from "@/hooks/useModal";
 import { useMemberDelete } from "@/hooks/useMemberDelete";
 import { useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
+// import { showConfirmToast } from "../ConfirmDialog";
+// import { toast } from "sonner";
 
 interface MeetupMembersContentProps {
   meetupId: number;
@@ -27,6 +29,19 @@ const MeetupMembersContent = ({ meetupId, meetupName }: MeetupMembersContentProp
 
   // 강퇴 버튼 클릭 핸들러
   const handleKickOut = (memberId: number, memberNickname: string) => {
+    // showConfirmToast({
+    //   message: `정말로 '${memberNickname}' 님을 강퇴하시겠습니까?`,
+    //   confirmText: "강퇴",
+    //   cancelText: "취소",
+    //   onConfirm: async () => {
+    //     try {
+    //       await deleteMutation.mutateAsync(memberId);
+    //       toast.success(`'${memberNickname}' 님을 강퇴했습니다.`);
+    //     } catch (_error) {
+    //       toast.error("강퇴 처리 중 문제가 발생했습니다.");
+    //     }
+    //   },
+    // });
     if (window.confirm(`정말로 '${memberNickname}' 님을 강퇴하시겠습니까?`)) {
       deleteMutation.mutate(memberId);
     }
