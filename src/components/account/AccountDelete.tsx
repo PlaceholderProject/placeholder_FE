@@ -8,6 +8,7 @@ import Link from "next/link";
 import { setIsAuthenticated } from "@/stores/authSlice";
 import Cookies from "js-cookie";
 import { useDeleteUser } from "@/hooks/useUser";
+import { toast } from "sonner";
 
 const AccountDelete = () => {
   const [isDeletedAccount, setIsDeletedAccount] = useState(false);
@@ -24,8 +25,8 @@ const AccountDelete = () => {
       Cookies.remove("refreshToken");
       dispatch(setIsAuthenticated(false));
       setIsDeletedAccount(true);
-    } catch (error) {
-      alert(error);
+    } catch {
+      toast.error("회원탈퇴 중 오류가 발생했습니다.");
     }
   };
 

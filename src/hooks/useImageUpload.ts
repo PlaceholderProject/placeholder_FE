@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { getPresignedUrls, uploadImageToS3 } from "@/services/image.service"; // 경로는 실제 위치에 맞게 수정
+import { toast } from "sonner";
 
 /**
  * 여러 개의 이미지를 S3에 업로드하는 비동기 로직을 처리하는 useMutation 훅
@@ -41,7 +42,7 @@ export const useImageUpload = () => {
     },
     onError: error => {
       console.error("이미지 업로드 중 에러 발생:", error);
-      alert("이미지 업로드에 실패했습니다. 다시 시도해주세요.");
+      toast.error("이미지 업로드에 실패했습니다. 다시 시도해주세요.");
     },
   });
 };

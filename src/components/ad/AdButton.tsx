@@ -6,6 +6,7 @@ import { useMyProposalStatus } from "@/hooks/useProposal";
 import { useAdItem } from "@/hooks/useAdItem";
 import { useModal } from "@/hooks/useModal";
 import Link from "next/link";
+import { toast } from "sonner";
 
 const AdButton = ({ meetupId }: { meetupId: number }) => {
   const { openModal } = useModal();
@@ -18,7 +19,7 @@ const AdButton = ({ meetupId }: { meetupId: number }) => {
 
   const handleProposalModal = () => {
     if (!user.email) {
-      alert("로그인이 필요합니다.");
+      toast.error("로그인이 필요합니다.");
       return;
     }
     openModal("PROPOSAL_POSTCARD", { meetupId });
