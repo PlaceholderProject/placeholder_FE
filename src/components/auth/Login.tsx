@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { TiDelete } from "react-icons/ti";
 import { login } from "@/services/auth.service";
+import { toast } from "sonner";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -27,11 +28,11 @@ const Login = () => {
     event.preventDefault();
 
     if (!email.trim()) {
-      alert("이메일을 입력해주세요.");
+      toast.error("이메일을 입력해주세요.");
       return;
     }
     if (!password.trim()) {
-      alert("비밀번호를 입력해주세요");
+      toast.error("비밀번호를 입력해주세요");
       return;
     }
 

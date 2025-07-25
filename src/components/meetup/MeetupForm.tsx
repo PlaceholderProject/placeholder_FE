@@ -8,6 +8,7 @@ import { MAX_AD_TITLE_LENGTH, MAX_DESCRIPTION_LENGTH, MAX_NAME_LENGTH, MAX_PLACE
 import SubmitLoader from "../common/SubmitLoader";
 import { useMeetupForm } from "@/hooks/useMeetupForm";
 import { useCreateMeetup, useEditMeetup, useMeetupDetail, useGetPresignedUrl, useS3Upload } from "@/hooks/useMeetupApi";
+import { toast } from "sonner";
 
 // displayName 추가
 const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
@@ -327,7 +328,7 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
         // ---3--- 모임 생성 (이미 업로드되고 받아온 이미지 url포함, 이건 유저 폼제출 이!!후!!에 유저 모르게 일어나는 과정임)
 
         await createMutation.mutateAsync({ data: newMeetup, imageUrl });
-        alert("모임 생성에 성공했습니다!");
+        toast.success("모임 생성에 성공했습니다!");
         console.log("생성할 새모임 데이터:", newMeetup);
         // queryClient.invalidateQueries({ queryKey: ["meetups"] });
         // queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
@@ -351,7 +352,7 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
           // image: imageRef.current?.value || "",
         };
         await editMutation.mutateAsync({ data: editedMeetup, imageUrl, meetupId: meetupId! });
-        alert("모임 수정에 성공했습니다!");
+        toast.success("모임 수정에 성공했습니다!");
       }
 
       router.push("/");

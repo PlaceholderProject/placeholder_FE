@@ -2,6 +2,8 @@
 // endedAt :
 // adEndedAt :
 
+import { toast } from "sonner";
+
 // 1.
 // 미정이 아니라면 오늘 이후여야 함
 
@@ -25,7 +27,7 @@ const validatePresentDate = (date: string) => {
   const inputDate = Number(date.substring(10, 0));
   const isNegative = inputDate - now < 0 ? true : false;
 
-  return isNegative ? alert("날짜가 이미 지난 날짜로 설정되었습니다.") : null;
+  return isNegative ? toast.error("날짜가 이미 지난 날짜로 설정되었습니다.") : null;
 };
 
 export default validatePresentDate;

@@ -5,6 +5,7 @@ import { transformCreatedDate } from "@/utils/ReplyDateFormat";
 import Image from "next/image";
 import React from "react";
 import { FaUserCheck, FaUserTimes } from "react-icons/fa";
+import { toast } from "sonner";
 
 const ReceivedProposalItem = ({ proposal }: { proposal: ReceivedProposal }) => {
   const acceptProposal = useAcceptProposal();
@@ -12,15 +13,13 @@ const ReceivedProposalItem = ({ proposal }: { proposal: ReceivedProposal }) => {
 
   const handleProposalAccept = () => {
     acceptProposal.mutate(proposal.id);
-    alert(`${proposal.user.nickname}님을 수락했습니다.`);
+    toast.success(`${proposal.user.nickname}님을 수락했습니다.`);
   };
 
   const handleProposalRefuse = () => {
     refuseProposal.mutate(proposal.id);
-    alert(`${proposal.user.nickname}님을 거절했습니다.`);
+    toast.success(`${proposal.user.nickname}님을 거절했습니다.`);
   };
-
-  console.log(proposal);
 
   return (
     <div className="flex flex-row justify-between gap-[1rem] rounded-[1rem] bg-secondary-light p-[1.5rem] shadow-md">

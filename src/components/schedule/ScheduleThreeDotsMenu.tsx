@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 import { useDeleteSchedule } from "@/hooks/useSchedule";
+import { toast } from "sonner";
 
 interface ScheduleThreeDotsMenuProps {
   scheduleId: number;
@@ -45,7 +46,7 @@ const ScheduleThreeDotsMenu = ({ scheduleId, meetupId }: ScheduleThreeDotsMenuPr
           setMenuOpen(false);
         },
         onError: () => {
-          alert("스케줄 삭제 실패");
+          toast.error("스케줄 삭제 실패");
         },
       });
     }

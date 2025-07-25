@@ -12,6 +12,7 @@ import { MyMeetupMember, MyMeetupMembersResponse } from "@/types/myMeetupMemberT
 import Link from "next/link";
 import MemberOutContainer from "./MemberOutContainer";
 import MySpaceListItem from "../MySpaceListItem";
+import { toast } from "sonner";
 
 const PastMyMeetup = () => {
   const deleteMutation = useMemberDelete();
@@ -85,7 +86,7 @@ const PastMyMeetup = () => {
   // 스스로 퇴장 핸들러
   const handleSelfLeave = async (meetupId: number) => {
     if (!currentUserData?.nickname) {
-      alert("사용자 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
+      toast.error("사용자 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
       return;
     }
 
@@ -101,7 +102,7 @@ const PastMyMeetup = () => {
       console.log("퇴장 실행 - 멤버 ID:", myMemberId);
       deleteMutation.mutate(myMemberId);
     } else {
-      alert("모임 퇴장 중 오류가 발생했습니다.");
+      toast.error("모임 퇴장 중 오류가 발생했습니다.");
     }
   };
 

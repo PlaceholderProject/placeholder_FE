@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { useDispatch } from "react-redux";
+import { toast } from "sonner";
 
 const SearchForm = () => {
   const [range, setRange] = useState("ad_title");
@@ -26,7 +27,7 @@ const SearchForm = () => {
   const handleKeywordSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (keyword.trim().length === 0) {
-      alert("검색어를 입력해주세요.");
+      toast.error("검색어를 입력해주세요.");
       return;
     }
     const result = await getSearchedAd(range, keyword, 1);

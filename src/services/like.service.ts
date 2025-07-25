@@ -1,5 +1,6 @@
 import { BASE_URL } from "@/constants/baseURL";
 import Cookies from "js-cookie";
+import { toast } from "sonner";
 
 // 개별 like 가져오는 api 임시
 // export const getLikeByIdApi = async (thumbnailId: number) => {
@@ -28,6 +29,8 @@ export const toggleLikeApi = async (thumbnailId: number, currentIsLike: boolean)
   //   alert("로그인한 유저만 좋아요를 누를 수 있습니다.");
   //   return;
   // }
+  // toast.error("로그인한 유저만 좋아요를 누를 수 있습니다.");
+  // return;
 
   const newIsLike = !currentIsLike;
   console.log("🔍 API 요청 - 현재 상태:", currentIsLike, "→ 새로운 상태:", newIsLike);
