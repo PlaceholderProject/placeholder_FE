@@ -8,6 +8,8 @@ import { useModal } from "@/hooks/useModal";
 import calculateDays from "@/utils/calculateDays";
 import { Meetup } from "@/types/meetupType";
 import { BASE_URL } from "@/constants/baseURL";
+import { toast } from "sonner";
+import { showConfirmToast } from "../ConfirmDialog";
 
 interface MeetupInfoContentProps {
   meetupData: Meetup;
@@ -45,9 +47,22 @@ const MeetupInfoContent = ({ meetupData, isOrganizer, meetupId }: MeetupInfoCont
   };
 
   const handleDelete = () => {
-    if (confirm("정말로 이 모임을 삭제하시겠습니까?")) {
-      deleteMutation.mutate();
-    }
+    showConfirmToast({
+      message: "정말로 이 모임을 삭제하시겠습니까?",
+      confirmText: "삭제",
+      cancelText: "취소",
+      onConfirm: async () => {
+        try {
+          await deleteMutation.mutateAsync();
+          toast.success("정상적으로 삭제되었습니다.");
+        } catch (_error) {
+          toast.error("삭제 중 문제가 발생했습니다.");
+        }
+      },
+    });
+    // if (confirm("정말로 이 모임을 삭제하시겠습니까?")) {
+    //   deleteMutation.mutate();
+    // }
   };
 
   const duration =
