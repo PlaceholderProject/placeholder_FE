@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
 import LikeItem from "./LikeItem";
 import { getUser } from "@/services/user.service";
+import { toast } from "sonner";
 
 const LikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerProps) => {
   const queryClient = useQueryClient();
@@ -170,7 +171,7 @@ const LikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerPro
   const handleToggleLike = async () => {
     const getUserResponse = await getUser();
     if (!getUserResponse) {
-      alert("로그인한 유저만 좋아요를 누를 수 있습니다.");
+      toast.error("로그인한 유저만 좋아요를 누를 수 있습니다.");
       return;
     }
     likeMutation.mutate();

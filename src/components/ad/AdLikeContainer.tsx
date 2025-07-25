@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toggleLikeApi } from "@/services/like.service";
 import { Meetup } from "@/types/meetupType";
 import { getUser } from "@/services/user.service";
+import { toast } from "sonner";
 
 const AdLikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerProps) => {
   const queryClient = useQueryClient();
@@ -55,7 +56,7 @@ const AdLikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerP
   const handleToggleLike = async () => {
     const getUserResponse = await getUser();
     if (!getUserResponse) {
-      alert("로그인한 유저만 좋아요를 누를 수 있습니다.");
+      toast.error("로그인한 유저만 좋아요를 누를 수 있습니다.");
       return;
     }
     console.log("좋아요 토글 시작");
