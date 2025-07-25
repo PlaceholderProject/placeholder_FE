@@ -1,6 +1,5 @@
 import { BASE_URL } from "@/constants/baseURL";
 import Cookies from "js-cookie";
-import { getUser } from "./user.service";
 
 // 개별 like 가져오는 api 임시
 // export const getLikeByIdApi = async (thumbnailId: number) => {
