@@ -387,12 +387,12 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
   return (
     <>
       {isSubmitting && <SubmitLoader isLoading={isSubmitting} />}
-      <div className="mx-auto my-[5rem] w-[32rem] rounded-[1rem] border-[0.1rem] border-gray-medium p-[3rem] md:w-full md:max-w-[80rem]">
+      <div className="mx-auto my-[5rem] w-[32rem] rounded-[1rem] border-[0.1rem] border-gray-medium p-[3rem] md:w-full md:max-w-[100rem]">
         <div className="place-items-center">
           <h1 className="mb-[4rem] text-center text-3xl font-semibold">{mode === "create" ? "모임 생성하기" : "모임 수정하기"}</h1>
           <form onSubmit={handleMeetupFormSubmit}>
-            <div className="grid gap-x-[5%] md:grid-cols-2">
-              <div className="좌측영역 bg-purple-200">
+            <div className="grid md:grid-cols-2 md:gap-x-[7rem]">
+              <div className="좌측영역">
                 <h2 className="text-2xl font-semibold text-primary">모임에 대해 알려주세요.</h2>
                 <LabeledSelect
                   id="category"
@@ -402,9 +402,9 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
                   ref={categoryRef}
                   required
                   defaultValue={mode === "edit" ? previousMeetupData?.category : undefined}
-                  containerClassName={"my-[0.5rem] flex justify-between bg-yellow-200 items-center"}
-                  labelClassName={"font-semibold text-lg bg-white"}
-                  className={"h-[4rem] w-[21.3rem] rounded-[1rem] border-[0.1rem] border-gray-light bg-red-300 text-center text-base"}
+                  containerClassName={"my-[0.5rem] flex justify-between items-center"}
+                  labelClassName={"font-semibold text-lg "}
+                  className={"h-[4rem] w-[21.3rem] rounded-[1rem] border-[0.1rem] border-gray-light text-center text-base"}
                 />
                 <div>
                   <LabeledInput
@@ -439,9 +439,9 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
                     defaultValue={mode === "edit" && previousMeetupData?.startedAt ? previousMeetupData.startedAt.substring(0, 10) : undefined}
                     disabled={isStartedAtNull}
                     required
-                    containerClassName={"flex justify-between mt-[1rem] bg-gray-200"}
+                    containerClassName={"flex justify-between mt-[1rem]"}
                     labelClassName={"text-base pt-[1rem] pr-[1rem]"}
-                    className={"h-[4rem] w-[18rem] rounded-[1rem] border-[0.1rem] border-gray-light bg-green-200 px-[1rem] py-[1rem]"}
+                    className={"h-[4rem] w-[18rem] rounded-[1rem] border-[0.1rem] border-gray-light px-[1rem] py-[1rem]"}
                   />
                   <LabeledInput
                     id="startedAtUndecided"
@@ -453,10 +453,10 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
                     onChange={event => {
                       setIsStartedAtNull(event.target.checked);
                     }}
-                    containerClassName={"flex items-center bg-blue-200"}
-                    labelClassName={"text-base ml-[0.5rem] mr-[0.5rem] mt-[1rem] bg-yellow-200"}
+                    containerClassName={"flex items-center "}
+                    labelClassName={"text-base ml-[0.5rem] mr-[0.5rem] mt-[1rem] "}
                     className={
-                      "mt-[1rem] h-[1.5rem] w-[1.5rem] appearance-none rounded-[0.2rem] border-[0.2rem] border-[#013A4B] bg-red-200 checked:border-primary checked:bg-primary checked:after:flex checked:after:h-full checked:after:items-center checked:after:justify-center checked:after:text-xs checked:after:font-bold checked:after:text-white checked:after:content-['✓']"
+                      "mt-[1rem] h-[1.5rem] w-[1.5rem] appearance-none rounded-[0.2rem] border-[0.2rem] border-[#013A4B] checked:border-primary checked:bg-primary checked:after:flex checked:after:h-full checked:after:items-center checked:after:justify-center checked:after:text-xs checked:after:font-bold checked:after:text-white checked:after:content-['✓']"
                     }
                   />
                 </div>
@@ -498,7 +498,7 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
                     </p>
                   )}
                 </span>
-                <h2 className="my-[0.5rem] items-baseline justify-start text-2xl font-semibold text-primary">
+                <h2 className="my-[1rem] items-baseline justify-start pt-[0.5rem] text-2xl font-semibold text-primary md:pt-[1rem]">
                   멤버 모집 광고글의 내용을
                   <br /> 작성해주세요.
                 </h2>
@@ -548,9 +548,9 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
                       ref={placeRef}
                       defaultValue={mode === "edit" ? previousMeetupData?.place : undefined}
                       required
-                      containerClassName={"flex my-[1rem] justify-between beitems-center bg-yellow-300"}
-                      labelClassName={"text-base bg-blue-100"}
-                      className={"h-[4rem] w-full rounded-[1rem] border-[0.1rem] border-gray-light px-[1rem] py-[1rem] text-center"}
+                      containerClassName={"flex my-[1rem] justify-between items-center "}
+                      labelClassName={"text-base "}
+                      className={"h-[4rem] w-[80%] rounded-[1rem] border-[0.1rem] border-gray-light px-[1rem] py-[1rem] text-center"}
                     />
                   </div>
                   <LabeledInput
@@ -565,16 +565,16 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
                     onChange={handlePlaceLengthChange}
                     maxLength={MAX_PLACE_LENGTH}
                     containerClassName={"flex flex-col my-[0.5rem]"}
-                    labelClassName={"bg-pink-100 hidden"}
+                    labelClassName={"hidden"}
                     className={"h-[4rem] w-full items-center rounded-[1rem] border-[0.1rem] border-gray-light px-[0.5rem] text-start text-[1.36rem]"}
                   />
-                  <span className="text-sm text-gray-dark">
+                  <span className="text-sm text-gray-dark md:pb-[2rem]">
                     {placeLength <= MAX_PLACE_LENGTH ? placeLength : MAX_PLACE_LENGTH} / {MAX_PLACE_LENGTH} 자
                   </span>
                   {placeLength >= MAX_PLACE_LENGTH && <p className="text-sm text-warning">모임 장소 설명은 최대 {MAX_PLACE_LENGTH}자까지 입력할 수 있습니다.</p>}
                 </div>
               </div>
-              <div className="우측이동 bg-slate-500">
+              <div className="우측이동">
                 <div className="my-[0.5rem] flex flex-col py-[0.5rem]">
                   <label className="my-[0.5rem] text-lg font-semibold" htmlFor="description">
                     광고글 설명
@@ -588,10 +588,9 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
                     ref={descriptionRef}
                     maxLength={MAX_DESCRIPTION_LENGTH}
                     onChange={handleDescriptionLengthChange}
-                    className="h-[17rem] w-[29.2rem] rounded-[1rem] border-[0.1rem] border-gray-light px-[0.5rem] text-start text-base"
+                    className="h-[17rem] w-full rounded-[1rem] border-[0.1rem] border-gray-light px-[0.5rem] text-start text-base"
                   />
                   <span className="pt-[1rem] text-sm text-gray-dark">
-                    {" "}
                     {descriptionLength <= MAX_DESCRIPTION_LENGTH ? descriptionLength : MAX_DESCRIPTION_LENGTH} / {MAX_DESCRIPTION_LENGTH} 자
                   </span>
                   {descriptionLength >= MAX_DESCRIPTION_LENGTH && <p className="text-sm text-warning">광고글 설명은 최대 {MAX_DESCRIPTION_LENGTH}자 까지 입력할 수 있습니다.</p>}
@@ -619,7 +618,7 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
                     </label>
                   </div>
 
-                  <div className="relative flex h-[14.5rem] w-[29.2rem] items-center justify-center overflow-hidden rounded-[1rem] border-[0.1rem] border-gray-light">
+                  <div className="relative flex h-[14.5rem] w-full items-center justify-center overflow-hidden rounded-[1rem] border-[0.1rem] border-gray-light">
                     <Image
                       src={previewImage}
                       alt="preview image"
@@ -640,14 +639,18 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
                   type="checkbox"
                   ref={isPublicRef}
                   defaultChecked={mode === "edit" ? previousMeetupData?.isPublic === false : false}
-                  containerClassName={"flex items-center my-[3rem]"}
-                  labelClassName={"text-2xl text-primary items-baseline font-semibold pl-[0.5rem] pr-[0.5rem]"}
+                  containerClassName={"flex md:justify-center items-center my-[3rem]"}
+                  labelClassName={"text-2xl text-primary items-baseline font-semibold ml-[0.5rem] mr-[0.5rem]"}
                   className={
                     "h-[1.5rem] w-[1.5rem] appearance-none rounded-[0.2rem] border-[0.2rem] border-[#013A4B] checked:border-primary checked:bg-primary checked:after:flex checked:after:h-full checked:after:items-center checked:after:justify-center checked:after:text-xs checked:after:font-bold checked:after:text-white checked:after:content-['✓']"
                   }
                 />
                 <div className="mt-[3rem] flex justify-center">
-                  <button type="submit" className="text-bold h-[4rem] w-[14rem] items-center rounded-[1rem] bg-primary text-center text-lg text-white disabled:bg-gray-medium" disabled={isSubmitting}>
+                  <button
+                    type="submit"
+                    className="text-bold h-[4rem] w-[14rem] items-center rounded-[1rem] bg-primary text-center text-lg text-white disabled:bg-gray-medium md:w-full"
+                    disabled={isSubmitting}
+                  >
                     {isSubmitting ? "처리 중..." : mode === "create" ? "모임 등록" : "모임 수정"}
                   </button>
                 </div>
