@@ -62,17 +62,17 @@ const AdDetail = ({ adData, userNickname }: AdDetailProps) => {
                   </div>
                 </div>
               </div>
-              <div className="hidden md:block">
+              <div className="hidden md:block md:w-[7rem]">
                 {isAuthorized && (
-                  <>
-                    <Link className="text-xl text-gray-medium" href={`/meetup-edit/${adData.id}`}>
+                  <div className="flex w-[7rem] justify-between">
+                    <Link className="text-lg text-gray-dark" href={`/meetup-edit/${adData.id}`}>
                       수정
                     </Link>
-                    <span className="text-xl text-gray-medium"> | </span>
-                    <button className="text-xl text-gray-medium" type="button" onClick={() => openModal({ type: "AD_DELETE", data: { meetupId: adData.id } })}>
+                    <span className="text-lg text-gray-dark"> | </span>
+                    <button className="text-lg text-gray-dark" type="button" onClick={() => openModal({ type: "AD_DELETE", data: { meetupId: adData.id } })}>
                       삭제
                     </button>
-                  </>
+                  </div>
                 )}
               </div>
             </div>

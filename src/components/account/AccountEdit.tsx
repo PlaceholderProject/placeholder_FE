@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { FaCog } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
 
 const AccountEdit = () => {
   const [profileImage, setProfileImage] = useState<string | null>("");
@@ -65,10 +66,6 @@ const AccountEdit = () => {
   const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // if (!["image/png", "image/jpeg"].includes(file.type)) {
-      //   alert("JPG 또는 PNG 파일을 선택해주세요.");
-      //   return;
-      // }
       const objectUrl = URL.createObjectURL(file);
       setProfileImage(objectUrl); // Blob URL을 React 상태에 설정
     }
@@ -96,15 +93,15 @@ const AccountEdit = () => {
 
   const handleCheckNickname = async () => {
     if (nickname === user.nickname) {
-      alert("사용 가능한 닉네임입니다.");
+      toast.success("사용 가능한 닉네임입니다.");
       return;
     }
     if (!nickname.trim()) {
-      alert("닉네임을 입력해주세요.");
+      toast.error("닉네임을 입력해주세요.");
       return;
     }
     if (nickname.length < 2 || nickname.length > 8) {
-      alert("닉네임은 최소 2자 최대 8자까지 가능합니다.");
+      toast.error("닉네임은 최소 2자 최대 8자까지 가능합니다.");
       return;
     }
     await checkNickname(nickname);
@@ -114,11 +111,11 @@ const AccountEdit = () => {
     event.preventDefault();
 
     if (!nickname.trim()) {
-      alert("닉네임을 입력해주세요.");
+      toast.error("닉네임을 입력해주세요.");
       return;
     }
     if (nickname.length < 2 || nickname.length > 8) {
-      alert("닉네임은 최소 2자 최대 8자까지 가능합니다.");
+      toast.error("닉네임은 최소 2자 최대 8자까지 가능합니다.");
       return;
     }
 
@@ -152,11 +149,11 @@ const AccountEdit = () => {
         );
 
         setProfileImage(imageUrl);
-        alert("회원 정보가 변경되었습니다.");
+        toast.success("회원 정보가 변경되었습니다.");
         router.replace("/account");
       }
     } catch (error) {
-      alert("이미 사용 중인 닉네임입니다. 닉네임 중복을 확인해주세요.");
+      toast.error("이미 사용 중인 닉네임입니다. 닉네임 중복을 확인해주세요.");
       console.error("Update failed:", error);
     }
   };

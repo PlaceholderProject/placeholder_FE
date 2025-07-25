@@ -11,6 +11,8 @@ import { getUser } from "@/services/user.service";
 import { MyMeetupMember, MyMeetupMembersResponse } from "@/types/myMeetupMemberType";
 import Link from "next/link";
 import MemberOutContainer from "./MemberOutContainer";
+import MySpaceListItem from "../MySpaceListItem";
+import { toast } from "sonner";
 
 const PastMyMeetup = () => {
   const deleteMutation = useMemberDelete();
@@ -84,7 +86,7 @@ const PastMyMeetup = () => {
   // 스스로 퇴장 핸들러
   const handleSelfLeave = async (meetupId: number) => {
     if (!currentUserData?.nickname) {
-      alert("사용자 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
+      toast.error("사용자 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
       return;
     }
 
@@ -100,7 +102,7 @@ const PastMyMeetup = () => {
       console.log("퇴장 실행 - 멤버 ID:", myMemberId);
       deleteMutation.mutate(myMemberId);
     } else {
-      alert("모임 퇴장 중 오류가 발생했습니다.");
+      toast.error("모임 퇴장 중 오류가 발생했습니다.");
     }
   };
 
@@ -163,15 +165,13 @@ const PastMyMeetup = () => {
   return (
     <>
       {myMeetupsData.result.map(myMeetup => (
-        <div className="grid grid-cols-1" key={myMeetup.id}>
-          <li key={myMeetup.id} className="my-[0.7rem] flex h-[4rem] w-[30.1rem] items-center justify-between rounded-[1rem] bg-gray-medium px-[1rem] text-base shadow-md">
-            <Link href={`/meetup/${myMeetup.id}`} className="flex items-center">
-              <RoleIcon isOrganizer={myMeetup.is_organizer} />
-              <div className="max-w-[21rem] truncate">{myMeetup.name}</div>
-            </Link>
-            <MemberOutContainer meetupId={myMeetup.id} isOrganizer={myMeetup.is_organizer} onSelfLeave={handleSelfLeave} isPending={deleteMutation.isPending} />
-          </li>
-        </div>
+        <MySpaceListItem key={myMeetup.id} isOngoing={false}>
+          <Link href={`/meetup/${myMeetup.id}`} className="flex items-center">
+            <RoleIcon isOrganizer={myMeetup.is_organizer} />
+            <div className="max-w-[20rem] truncate md:max-w-[36rem]">{myMeetup.name}</div>
+          </Link>
+          <MemberOutContainer meetupId={myMeetup.id} isOrganizer={myMeetup.is_organizer} onSelfLeave={handleSelfLeave} isPending={deleteMutation.isPending} />
+        </MySpaceListItem>
       ))}
 
       {/* 버튼 영역 */}

@@ -1,5 +1,6 @@
 import { deleteMeetupMemberApi } from "@/services/my.space.service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export const useMemberDelete = () => {
   const queryClient = useQueryClient();
@@ -12,7 +13,7 @@ export const useMemberDelete = () => {
     },
     onError: error => {
       console.error("멤버 삭제 실패", error);
-      alert("멤버 삭제 중 오류가 발생했습니다.");
+      toast.error("멤버 삭제 중 오류가 발생했습니다.");
     },
   });
 };

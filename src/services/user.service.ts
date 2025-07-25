@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 import { refreshToken } from "./auth.service";
 import { EditedUserProps, PresignedUrlProps, User } from "@/types/userType";
 import { NewUserProps } from "@/types/authType";
+import { toast } from "sonner";
 
 // create user
 export const createUser = async (newUser: NewUserProps): Promise<number | undefined> => {
@@ -17,7 +18,7 @@ export const createUser = async (newUser: NewUserProps): Promise<number | undefi
 
     if (!response.ok) {
       const errorResult = await response.json();
-      alert(errorResult.detail);
+      toast.error(errorResult.detail);
       return;
     }
 
@@ -26,7 +27,7 @@ export const createUser = async (newUser: NewUserProps): Promise<number | undefi
     return result;
   } catch (error) {
     console.log(error);
-    alert("회원가입을 실패했습니다. 다시 시도해주세요.");
+    toast.error("회원가입을 실패했습니다. 다시 시도해주세요.");
     return;
   }
 };
@@ -132,7 +133,7 @@ export const deleteUser = async () => {
       return { message: "User delete successfully." }; // 기본 메시지
     }
 
-    alert("탈퇴되었습니다.");
+    toast.success("탈퇴되었습니다.");
     // JSON 형식으로 파싱
     const data = await response.json();
     return data;
