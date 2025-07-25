@@ -36,6 +36,7 @@ const AdLikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerP
         queryClient.setQueryData(["ad", id], context.previousAdData);
       }
 
+      // 401 제외 에러메시지는 임시 처리했음!
       const isAuthError = error.message.includes("User not authenticated") || error.message.includes("401") || error.message.includes("Unauthorized");
 
       if (isAuthError) {
