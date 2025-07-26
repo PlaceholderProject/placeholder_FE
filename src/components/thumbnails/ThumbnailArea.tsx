@@ -121,6 +121,11 @@ const ThumbnailArea = () => {
       }
     };
   }, [handleObserver]);
+
+  const user = useSelector((state: RootState) => state.user.user);
+  const userNickname = user.nickname;
+  console.log("➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️현재유저닉넴", userNickname);
+
   if (isPending)
     return (
       <SkeletonTheme baseColor="#E8E8E8" highlightColor="#D9D9D9">
@@ -187,7 +192,8 @@ const ThumbnailArea = () => {
           {allThumbnails.map((thumbnail: Meetup, index: number) => {
             return (
               <div key={`${thumbnail.id}-${index}`} className="w-[14.2rem] pb-[1rem] pt-[0.4rem] md:w-[150px]">
-                <ThumbnailItem thumbnail={thumbnail} />
+                <ThumbnailItem thumbnail={thumbnail} userNickname={userNickname} />
+                {/* <ThumbnailItem thumbnail={thumbnail} /> */}
               </div>
             );
           })}
