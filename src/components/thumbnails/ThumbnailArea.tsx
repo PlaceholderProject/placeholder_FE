@@ -83,8 +83,7 @@ const ThumbnailArea = () => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    // 쿼리키 변경시 자동으로 데이터 다시 가져오지만
-    // 명시적으로 캐시 초기화할 수도 잇다
+    // 쿼리키 변경시 자동으로 데이터 다시 가져오지만 명시적으로 캐시 초기화할 수도 잇다
 
     queryClient.resetQueries({ queryKey: getQueryKey() });
   }, [sortType, place, category, isFilterActive, queryClient]);
@@ -92,7 +91,7 @@ const ThumbnailArea = () => {
   // 관찰 대상 요소ref
   const observerRef = useRef<HTMLDivElement>(null);
 
-  // 무한 슼르롤 콜백
+  // 무한 스크롤 콜백
   const handleObserver = useCallback(
     (entries: IntersectionObserverEntry[]) => {
       const [entry] = entries;
@@ -124,7 +123,6 @@ const ThumbnailArea = () => {
 
   const user = useSelector((state: RootState) => state.user.user);
   const userNickname = user.nickname;
-  console.log("➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️현재유저닉넴", userNickname);
 
   if (isPending)
     return (
@@ -147,10 +145,6 @@ const ThumbnailArea = () => {
   // 모든 페이지 데이터를 하나의 배열로 합침
   const allThumbnails = headhuntingsData?.pages.flatMap(page => page.result) || [];
   console.log("필터 적용 전 모든 데이터:", allThumbnails);
-
-  // sortedThumbnails 변수를 만들 때 필터링 확인
-  // 여기에 추가 필터링 로직이 있는지 확인하고 로깅
-
   console.log("화면에 표시할 데이터:", allThumbnails);
 
   // sort 이거 얻다 불니하고 싶었는데 이 로직을 백엔드에서 처리해줬다
