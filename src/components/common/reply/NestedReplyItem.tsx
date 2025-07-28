@@ -26,7 +26,7 @@ const NestedReplyItem = ({ nestedReply, meetupId, handleReplyUpdate }: { nestedR
         try {
           await deleteReplyMutation.mutateAsync(replyId);
           toast.success("정상적으로 삭제되었습니다.");
-        } catch (_error) {
+        } catch {
           toast.error("삭제 중 문제가 발생했습니다.");
         }
       },

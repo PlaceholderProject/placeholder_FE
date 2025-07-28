@@ -31,7 +31,7 @@ const AdDeleteContent = ({ meetupId }: { meetupId: number }) => {
           await deleteMutation.mutateAsync({ meetupId });
           toast.success("정상적으로 삭제되었습니다.");
           closeModal();
-        } catch (_error) {
+        } catch {
           toast.error("삭제 중 문제가 발생했습니다.");
         }
       },

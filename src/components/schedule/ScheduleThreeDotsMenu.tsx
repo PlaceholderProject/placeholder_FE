@@ -50,7 +50,7 @@ const ScheduleThreeDotsMenu = ({ scheduleId, meetupId }: ScheduleThreeDotsMenuPr
           toast.success("정상적으로 삭제되었습니다.");
           router.refresh();
           setMenuOpen(false);
-        } catch (_error) {
+        } catch {
           toast.error("스케줄 삭제 실패");
         }
       },
