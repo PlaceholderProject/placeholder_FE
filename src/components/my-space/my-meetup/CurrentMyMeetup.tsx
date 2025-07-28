@@ -160,8 +160,7 @@ const CurrentMyMeetup = () => {
 
   if (isPending) return <div>로딩중...</div>;
   if (isError) return <div>에러 : {error.message}</div>;
-  if (!myMeetupsData || myMeetupsData.result.length === 0) return;
-  <p className="mt-[6rem] flex justify-center">현재 내 모임이 없습니다.</p>;
+  if (!myMeetupsData || myMeetupsData.result.length === 0) return <p className="mt-[6rem] flex justify-center">현재 내 모임이 없습니다.</p>;
 
   return (
     <>
