@@ -23,10 +23,26 @@ const MyMeetupMembers: React.FC<MyMeetupMembersProps> = ({ meetupId }) => {
 
   //강퇴 핸들러를 내부에서 구현
   const handleKickMember = (memberId: number) => {
+    // ⭐️ 확인 후 삭제
     const confirmed = window.confirm("정말 이 멤버를 강퇴하시겠습니까?");
     if (confirmed) {
       deleteMutation.mutate(memberId);
     }
+
+    // ⭐️ confirm 커스텀
+    // showConfirmToast({
+    //       message: "정말 이 멤버를 강퇴하시겠습니까?",
+    //       confirmText: "강퇴",
+    //       cancelText: "취소",
+    //       onConfirm: async () => {
+    //         try {
+    //           await deleteMutation.mutateAsync(memberId);
+    //           toast.success("정상적으로 멤버를 강퇴했습니다.");
+    //         } catch (_error) {
+    //           toast.error("멤버 강퇴 처리 중 문제가 발생했습니다.");
+    //         }
+    //       },
+    //     });
   };
 
   // const selectedMeetupId = useSelector((state: RootState) => state.modal.selectedMeetupId);

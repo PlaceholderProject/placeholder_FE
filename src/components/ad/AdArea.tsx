@@ -9,6 +9,7 @@ import { RootState } from "@/stores/store";
 import { useAdItem } from "@/hooks/useAdItem";
 import { SkeletonTheme } from "react-loading-skeleton";
 import AdAreaSkeleton from "@/components/ad/AdAreaSkeleton";
+import AdLikeContainer from "./AdLikeContainer";
 
 const AdArea = () => {
   const { meetupId } = useParams();
@@ -29,6 +30,7 @@ const AdArea = () => {
     );
   }
   if (!adData) return <div>데이터를 찾을 수 없습니다.</div>;
+  console.log("광고 애드데이터:", adData);
 
   return (
     // <div className="mx-auto w-[95%] min-w-[32rem] md:max-w-[90rem]">
@@ -41,7 +43,11 @@ const AdArea = () => {
     // </div>
     <div className="flex min-w-[32rem] flex-col items-center justify-center space-y-[0.5rem]">
       <AdSignboard adData={adData} />
-      <AdOrganizer adData={adData} />
+      <div className="flex w-[95%] justify-between py-[1rem] md:max-w-[80rem]">
+        <AdOrganizer adData={adData} />
+        <AdLikeContainer id={adData.id} initialIsLike={adData.isLike} initialLikeCount={adData.likeCount} />
+      </div>
+
       <AdDetail adData={adData} userNickname={userNickname} />
       <AdButton meetupId={meetupIdNum} />
     </div>

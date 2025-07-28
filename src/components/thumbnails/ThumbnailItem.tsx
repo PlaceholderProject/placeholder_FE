@@ -8,10 +8,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { FaLock } from "react-icons/fa";
 import { FaRegCalendarAlt } from "react-icons/fa";
+import { FaCrown } from "react-icons/fa6";
 
 // id 였는데 썸네일 객체를 직접 전달하도록 수정
 // 구조분해할당, 타입지정
-const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
+const ThumbnailItem = ({ thumbnail, userNickname }: { thumbnail: Meetup; userNickname: string | null }) => {
   const [profileImageSource, setProfileImageSource] = useState("/profile.png");
   const thumbnailImageUrl = thumbnail.image?.startsWith("http") ? thumbnail.image : `${BASE_URL}/${thumbnail.image}`;
 
@@ -68,20 +69,73 @@ const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
   // if (isError) return <div>에러발생</div>;
   if (!thumbnail) return null;
 
+  const renderThumbnailItem = () => {
+    if (!thumbnail.image) return null;
+
+    if (thumbnail.isPublic === true) {
+      return (
+        <Link href={`/ad/${thumbnail.id}`} className="relative mx-auto block h-[14.2rem] w-[14.2rem] items-center justify-center md:h-[150px] md:w-[150px]">
+          <Image src={thumbnailImageUrl} alt="thumbnailImage" fill sizes="width=14.2rem, height=14.2rem" className="rounded-[2rem] object-cover" loading="lazy" />
+
+          {userNickname === thumbnail.organizer.nickname && (
+            <div className="absolute left-3 top-3 flex h-[2.2rem] w-[2.2rem] place-content-center items-center rounded-full bg-primary bg-opacity-70 text-[1.6rem] text-secondary-dark text-opacity-70">
+              <FaCrown />
+              {/* <LuCrown /> */}
+            </div>
+          )}
+        </Link>
+      );
+    } else {
+      return (
+        <>
+          {userNickname === thumbnail.organizer.nickname ? (
+            <div>
+              <Link href={`/ad/${thumbnail.id}`} className="relative mx-auto block h-[14.2rem] w-[14.2rem] items-center justify-center md:h-[150px] md:w-[150px]">
+                <div className="mx-auto flex h-[14.2rem] w-[14.2rem] items-center justify-center rounded-[2rem] bg-gray-medium text-opacity-20 md:h-[150px] md:w-[150px]">
+                  <FaLock className="h-[4rem] w-[4rem] text-gray-dark" />
+                </div>
+                {userNickname === thumbnail.organizer.nickname && (
+                  <div className="absolute left-3 top-3 flex h-[2.2rem] w-[2.2rem] place-content-center items-center rounded-full bg-primary bg-opacity-70 text-[1.6rem] text-secondary-dark text-opacity-70">
+                    <FaCrown />
+                    {/* <LuCrown /> */}
+                  </div>
+                )}
+              </Link>
+            </div>
+          ) : (
+            <div>
+              <div className="mx-auto flex h-[14.2rem] w-[14.2rem] items-center justify-center rounded-[2rem] bg-gray-medium text-opacity-20 md:h-[150px] md:w-[150px]">
+                <FaLock className="h-[4rem] w-[4rem] text-gray-dark" />
+              </div>
+            </div>
+          )}
+        </>
+      );
+    }
+  };
+
   return (
     <>
       <div className="my-[1rem] rounded-lg">
         <div className={thumbnail.isPublic === false ? "text-gray-dark opacity-90" : ""}>
-          {thumbnail.image &&
+          {/* {thumbnail.image &&
             (thumbnail.isPublic === true ? (
               <Link href={`/ad/${thumbnail.id}`} className="relative mx-auto block h-[14.2rem] w-[14.2rem] items-center justify-center md:h-[150px] md:w-[150px]">
                 <Image src={thumbnailImageUrl} alt="thumbnailImage" fill sizes="width=14.2rem, height=14.2rem" className="rounded-[2rem] object-cover" loading="lazy" />
+
+                {userNickname === thumbnail.organizer.nickname && (
+                  <div className="absolute left-3 top-3 flex h-[2.2rem] w-[2.2rem] place-content-center items-center rounded-full bg-primary bg-opacity-70 text-[1.6rem] text-secondary-dark text-opacity-70">
+                    <FaCrown />
+                  </div>
+                )}
               </Link>
             ) : (
-              <div className="mx-auto flex h-[14.2rem] w-[14.2rem] items-center justify-center rounded-[2rem] bg-gray-medium md:h-[150px] md:w-[150px]">
+              <div className="mx-auto flex h-[14.2rem] w-[14.2rem] items-center justify-center rounded-[2rem] bg-gray-medium text-opacity-20 md:h-[150px] md:w-[150px]">
                 <FaLock className="h-[4rem] w-[4rem] text-gray-dark" />
               </div>
-            ))}
+            ))} */}
+
+          {renderThumbnailItem()}
 
           {/* 콘텐츠 */}
           <div className="mt-[1rem] w-full space-y-[0.5rem]">
@@ -101,8 +155,8 @@ const ThumbnailItem = ({ thumbnail }: { thumbnail: Meetup }) => {
               </div>
             </div>
 
-            <div className="w-[14rem] text-sm font-semibold">
-              <h3 className="break-words leading-tight">
+            <div className="w-[14.2rem] text-sm font-semibold">
+              <h3 className="line-clamp-2 break-words leading-tight">
                 <span className="whitespace-nowrap">[{thumbnail.place}]</span>
                 {thumbnail.adTitle}
               </h3>

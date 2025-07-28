@@ -90,6 +90,7 @@ const PastMyMeetup = () => {
       return;
     }
 
+    // ⭐️ 확인 후 삭제
     const confirmed = window.confirm("정말 이 모임에서 퇴장하시겠습니까?");
     if (!confirmed) return;
 
@@ -104,6 +105,29 @@ const PastMyMeetup = () => {
     } else {
       toast.error("모임 퇴장 중 오류가 발생했습니다.");
     }
+
+    // ⭐️ confirm 커스텀
+    // showConfirmToast({
+    //   message: "정말 이 모임에서 퇴장하시겠습니까?",
+    //   confirmText: "퇴장",
+    //   cancelText: "취소",
+    //   onConfirm: async () => {
+    //     try {
+    //       console.log("=== 퇴장 프로세스 시작 ===");
+    //       console.log("모임 ID:", meetupId);
+    //       console.log("현재 사용자 닉네임:", currentUserData.nickname);
+    //       const myMemberId = await getMyMemberId(meetupId);
+    //       if (myMemberId) {
+    //         console.log("퇴장 실행 - 멤버 ID:", myMemberId);
+    //         await deleteMutation.mutateAsync(myMemberId);
+    //       }
+
+    //       toast.success("정상적으로 퇴장되었습니다.");
+    //     } catch (_error) {
+    //       toast.error("퇴장 중 문제가 발생했습니다.");
+    //     }
+    //   },
+    // });
   };
 
   // 페이지네이션 핸들러들

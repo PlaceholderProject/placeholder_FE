@@ -7,7 +7,7 @@ import { BASE_URL } from "@/constants/baseURL";
 import Image from "next/image";
 import { Meetup } from "@/types/meetupType";
 import Link from "next/link";
-import { openModal } from "@/stores/modalSlice";
+import { useModal } from "@/hooks/useModal";
 
 interface AdDetailProps {
   adData: Meetup;
@@ -17,6 +17,7 @@ interface AdDetailProps {
 const AdDetail = ({ adData, userNickname }: AdDetailProps) => {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const organizerNickname = adData?.organizer.nickname;
+  const { openModal } = useModal();
 
   useEffect(() => {
     const isMatch = organizerNickname === userNickname;
@@ -69,7 +70,7 @@ const AdDetail = ({ adData, userNickname }: AdDetailProps) => {
                       수정
                     </Link>
                     <span className="text-lg text-gray-dark"> | </span>
-                    <button className="text-lg text-gray-dark" type="button" onClick={() => openModal({ type: "AD_DELETE", data: { meetupId: adData.id } })}>
+                    <button className="text-lg text-gray-dark" type="button" onClick={() => openModal("AD_DELETE", { meetupId: adData.id })}>
                       삭제
                     </button>
                   </div>
