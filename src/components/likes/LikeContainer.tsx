@@ -7,6 +7,8 @@ import { Meetup } from "@/types/meetupType";
 import { useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
 import LikeItem from "./LikeItem";
+import { getUser } from "@/services/user.service";
+import { toast } from "sonner";
 
 const LikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerProps) => {
   const queryClient = useQueryClient();
@@ -66,9 +68,9 @@ const LikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerPro
         }
 
         console.log("🔍 ============ oldData 전체 구조 ============");
-        console.log("🔍 oldData 타입:", typeof oldData);
+        console.log("👛 oldData 타입:", typeof oldData);
         console.log("🔍 oldData 키들:", Object.keys(oldData));
-        console.log("🔍 oldData 전체:", oldData);
+        console.log("👛 oldData 전체:", oldData);
 
         console.log("🔍 ============ pages 배열 분석 ============");
         console.log("🔍 pages 길이:", oldData.pages?.length);
@@ -140,9 +142,13 @@ const LikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerPro
         queryClient.setQueryData(context.queryKey, context.previousHeadhuntingsData);
       }
 
-      // 인증 에러 아닐 때만 에러메세지 표시
-      if (!error.message.includes("User not authenticated")) {
-        console.error("좋아요 처리 중 오류가 발생했습니다.");
+      // 401 제외 에러메시지는 임시 처리했음!
+      const isAuthError = error.message.includes("User not authenticated") || error.message.includes("401") || error.message.includes("Unauthorized");
+
+      if (isAuthError) {
+        console.log("🦾인증 필요 기능");
+      } else {
+        console.error("좋아요 처리 중 오류가 발생했습니다", error.message);
       }
     },
 
@@ -162,8 +168,12 @@ const LikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerPro
     },
   });
 
-  const handleToggleLike = () => {
-    console.log("좋아요 토글 시작");
+  const handleToggleLike = async () => {
+    const getUserResponse = await getUser();
+    if (!getUserResponse) {
+      toast.error("로그인한 유저만 좋아요를 누를 수 있습니다.");
+      return;
+    }
     likeMutation.mutate();
   };
 
