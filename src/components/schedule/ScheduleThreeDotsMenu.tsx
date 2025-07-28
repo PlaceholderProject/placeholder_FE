@@ -6,7 +6,7 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 import { useDeleteSchedule } from "@/hooks/useSchedule";
 import { toast } from "sonner";
-import { showConfirmToast } from "../modals/ConfirmDialog";
+import { showConfirmToast } from "../common/ConfirmDialog";
 
 interface ScheduleThreeDotsMenuProps {
   scheduleId: number;
@@ -55,17 +55,6 @@ const ScheduleThreeDotsMenu = ({ scheduleId, meetupId }: ScheduleThreeDotsMenuPr
         }
       },
     });
-    // if (window.confirm("정말로 이 스케줄을 삭제하시겠습니까?")) {
-    //   deleteScheduleMutation.mutate(scheduleId, {
-    //     onSuccess: () => {
-    //       router.refresh();
-    //       setMenuOpen(false);
-    //     },
-    //     onError: () => {
-    //       toast.error("스케줄 삭제 실패");
-    //     },
-    //   });
-    // }
   };
 
   return (

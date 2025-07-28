@@ -9,7 +9,7 @@ import calculateDays from "@/utils/calculateDays";
 import { Meetup } from "@/types/meetupType";
 import { BASE_URL } from "@/constants/baseURL";
 import { toast } from "sonner";
-import { showConfirmToast } from "../ConfirmDialog";
+import { showConfirmToast } from "../../common/ConfirmDialog";
 
 interface MeetupInfoContentProps {
   meetupData: Meetup;
@@ -60,9 +60,6 @@ const MeetupInfoContent = ({ meetupData, isOrganizer, meetupId }: MeetupInfoCont
         }
       },
     });
-    // if (confirm("정말로 이 모임을 삭제하시겠습니까?")) {
-    //   deleteMutation.mutate();
-    // }
   };
 
   const duration =

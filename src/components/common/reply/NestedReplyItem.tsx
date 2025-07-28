@@ -1,5 +1,5 @@
 "use client";
-import { showConfirmToast } from "@/components/modals/ConfirmDialog";
+import { showConfirmToast } from "@/components/common/ConfirmDialog";
 import { BASE_URL } from "@/constants/baseURL";
 import { useDeleteReply } from "@/hooks/useReply";
 import { RootState } from "@/stores/store";

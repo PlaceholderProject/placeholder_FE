@@ -12,7 +12,7 @@ import { useDeleteReply, useEditReply } from "@/hooks/useReply";
 import NestedReplyForm from "./NestedReplyForm";
 import { useDeleteScheduleReply, useUpdateScheduleReply } from "@/hooks/useScheduleReply";
 import { toast } from "sonner";
-import { showConfirmToast } from "@/components/modals/ConfirmDialog";
+import { showConfirmToast } from "@/components/common/ConfirmDialog";
 
 const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId, scheduleId }) => {
   const user = useSelector((state: RootState) => state.user.user);
@@ -47,7 +47,6 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId, sche
             toast.error("삭제 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
             return;
           }
-
           toast.success("정상적으로 삭제되었습니다.");
         } catch (_error) {
           toast.error("삭제 중 문제가 발생했습니다.");
@@ -79,19 +78,11 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId, sche
           }
           toast.success("정상적으로 수정되었습니다.");
           setIsEditMode(false);
-        } catch (_error) {}
+        } catch (_error) {
+          toast.error("댓글 수정 중 문제가 발생했습니다.");
+        }
       },
     });
-
-    // if (confirm("정말로 댓글을 수정하시겠습니까?")) {
-    //   if (scheduleId) {
-    //     await editScheduleReplyMutation.mutate({ text, replyId });
-    //   } else if (meetupId) {
-    //     await editReplyMutation.mutate({ text, replyId });
-    //   }
-    //   toast.success("정상적으로 수정되었습니다.");
-    //   setIsEditMode(false);
-    // }
   };
 
   return (
