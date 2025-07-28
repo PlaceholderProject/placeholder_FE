@@ -67,19 +67,6 @@ const ThumbnailArea = () => {
     },
   });
 
-  // useEffect 추가 - 데이터 변경 감지
-  // useEffect(() => {
-  //   if (headhuntingsData) {
-  //     console.log("ThumbnailArea 데이터 변경 감지:", headhuntingsData);
-  //     const allItems = headhuntingsData.pages.flatMap(page => page.result);
-  //     console.log("모든 아이템 목록:", allItems);
-  //   }
-  // }, [headhuntingsData, getQueryKey]);
-
-  // useEffect(() => {
-  //   console.log(`정렬 타입 변경 감지: ${sortType}`);
-  // }, [sortType]);
-
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -146,6 +133,8 @@ const ThumbnailArea = () => {
   const allThumbnails = headhuntingsData?.pages.flatMap(page => page.result) || [];
   console.log("필터 적용 전 모든 데이터:", allThumbnails);
   console.log("화면에 표시할 데이터:", allThumbnails);
+
+  if (allThumbnails.length === 0) return <p className="mt-[6rem] flex justify-center">해당하는 모임이 없습니다.</p>;
 
   // sort 이거 얻다 불니하고 싶었는데 이 로직을 백엔드에서 처리해줬다
   // 인기순 (기본)

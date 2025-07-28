@@ -467,6 +467,7 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
                     label="종료일"
                     type="date"
                     ref={endedAtRef}
+                    defaultValue={mode === "edit" && previousMeetupData?.endedAt ? previousMeetupData.endedAt.substring(0, 10) : undefined}
                     disabled={isEndedAtNull}
                     required
                     containerClassName={"flex justify-between mt-[1rem]"}
