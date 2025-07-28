@@ -43,7 +43,7 @@ const NestedReplyForm = ({
     event.preventDefault();
     if (content.trim().length === 0) return;
     if (rootReply.id) {
-      createNestedReplyMutation.mutate({ text: content });
+      await createNestedReplyMutation.mutateAsync({ text: content });
     }
 
     if (isSubmitting) return;
@@ -52,6 +52,7 @@ const NestedReplyForm = ({
     if (process.env.NODE_ENV === "development") {
       await new Promise(resolve => setTimeout(resolve, 2000)); // 2초 지연
     }
+
     setIsVisiableNestedReply(true);
     setContent("");
     setIsSubmitting(false);
