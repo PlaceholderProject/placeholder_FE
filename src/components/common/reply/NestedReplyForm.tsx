@@ -16,7 +16,7 @@ const NestedReplyForm = ({
   setIsVisiableNestedReply,
 }: {
   rootReply: Reply;
-  meetupId: string | string[];
+  meetupId: number;
   isVisiableNestedReplyForm: boolean;
   setIsVisiableNestedReplyForm: Dispatch<SetStateAction<boolean>>;
   setIsVisiableNestedReply: Dispatch<SetStateAction<boolean>>;

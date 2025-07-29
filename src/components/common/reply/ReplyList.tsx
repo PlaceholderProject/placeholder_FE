@@ -3,13 +3,15 @@ import ReplyItem from "./ReplyItem";
 import { Reply } from "@/types/replyType";
 import { useScheduleReply } from "@/hooks/useScheduleReply";
 
-const ReplyList = ({ meetupId, scheduleId }: { meetupId: string | string[]; scheduleId?: string | string[] }) => {
+const ReplyList = ({ meetupId, scheduleId }: { meetupId: number; scheduleId?: number }) => {
   const { data: meetupReply, isLoading } = useReplyList(meetupId, {
     enabled: !scheduleId,
   });
   const { data: scheduleReply, isPending } = useScheduleReply(Number(scheduleId), {
     enabled: !!scheduleId,
   });
+
+  console.log("scheduleReply", scheduleReply);
 
   const replyData = scheduleReply ? scheduleReply : meetupReply;
   const loading = scheduleId ? isPending : isLoading;
