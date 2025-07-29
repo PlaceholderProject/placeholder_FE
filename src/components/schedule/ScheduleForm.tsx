@@ -13,6 +13,7 @@ import { useImageUpload } from "@/hooks/useImageUpload";
 import { useScheduleForm } from "@/hooks/useScheduleForm";
 import { useModal } from "@/hooks/useModal";
 import SubmitLoader from "../common/SubmitLoader";
+import { toast } from "sonner";
 
 interface ScheduleFormProps {
   meetupId: number;
@@ -53,7 +54,7 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
   const handleCompletePostcode = useCallback(
     (data: Address) => {
       if (!isKakaoMapLoaded || !window.kakao?.maps?.services) {
-        alert("지도 서비스가 아직 로딩 중입니다. 잠시 후 다시 시도해주세요.");
+        toast.success("지도 서비스가 아직 로딩 중입니다. 잠시 후 다시 시도해주세요.");
         return;
       }
       const geocoder = new window.kakao.maps.services.Geocoder();
@@ -81,7 +82,7 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
     event.preventDefault();
 
     if (!formData.place.trim() || !formData.address.trim() || !formData.date || !formData.time) {
-      alert("모든 필수 항목을 입력해주세요.");
+      toast.error("모든 필수 항목을 입력해주세요.");
       return;
     }
 
@@ -96,7 +97,7 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
         imageKey = uploadedKey ?? null;
       } catch (error) {
         console.error("이미지 업로드 실패:", error);
-        alert("이미지 업로드에 실패했습니다. 다시 시도해주세요.");
+        toast.error("이미지 업로드에 실패했습니다. 다시 시도해주세요.");
         return;
       }
     }
@@ -116,7 +117,7 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
       router.push(`/meetup/${meetupId}`);
     } catch (error) {
       console.error(`스케줄 ${mode === "create" ? "생성" : "수정"} 실패:`, error);
-      alert(`스케줄 처리 중 오류가 발생했습니다.`);
+      toast.error(`스케줄 처리 중 오류가 발생했습니다.`);
     }
   };
 

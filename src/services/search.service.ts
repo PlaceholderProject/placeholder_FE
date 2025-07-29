@@ -1,4 +1,5 @@
 import { BASE_URL } from "@/constants/baseURL";
+import { toast } from "sonner";
 
 // 메인 페이지, 검색결과 페이지 : 검색어 제출
 export const getSearchedAd = async (range: string, keyword: string, page: number) => {
@@ -15,10 +16,10 @@ export const getSearchedAd = async (range: string, keyword: string, page: number
     if (!response.ok) {
       if (response.headers.get("Content-Type")?.includes("application/json")) {
         const errorResult = await response.json();
-        alert(errorResult.message);
+        toast.error(errorResult.message);
       } else {
         const errorText = await response.text();
-        alert(errorText);
+        toast.error(errorText);
       }
       return;
     }
@@ -31,7 +32,7 @@ export const getSearchedAd = async (range: string, keyword: string, page: number
     };
   } catch (error) {
     console.log(error);
-    alert("신청서를 보내는 도중 오류가 발생했습니다. 다시 시도해주세요.");
+    toast.error("신청서를 보내는 도중 오류가 발생했습니다. 다시 시도해주세요.");
     return;
   }
 };

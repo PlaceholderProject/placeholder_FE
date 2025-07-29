@@ -132,8 +132,8 @@ export const getMyMeetupMembersApi = async (meetupId: number | undefined) => {
   if (myMeetupMembersData.result && myMeetupMembersData.result[1]) {
     console.log("두 번째 멤버 보여주세요:", myMeetupMembersData.result[1]);
   }
-  // console.log("=====================");
-  // console.log("내공간 멤버 데이터:", myMeetupMembersData);
+  console.log("=====================");
+  console.log("내공간 멤버 데이터:", myMeetupMembersData);
 
   return myMeetupMembersData;
 };
@@ -147,6 +147,7 @@ export const deleteMeetupMemberApi = async (member_id: number) => {
       Authorization: `Bearer ${token}`,
     },
   });
+  console.log("💎💎💎💎💎💎멤ㄴ삭 응답:", response);
 
-  return response.json();
+  return response;
 };

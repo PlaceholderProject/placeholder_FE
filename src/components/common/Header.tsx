@@ -51,7 +51,7 @@ const Header = () => {
       queryClient.invalidateQueries({ queryKey: ["receivedProposals"] });
       queryClient.invalidateQueries({ queryKey: ["sentProposals"] });
 
-      await queryClient.clear();
+      queryClient.clear();
 
       router.replace("/");
     } catch (error) {

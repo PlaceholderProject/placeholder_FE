@@ -5,6 +5,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/hooks/useModal";
 import { deleteAd } from "@/services/ad.service";
+import { showConfirmToast } from "@/components/common/ConfirmDialog";
+import { toast } from "sonner";
 
 const AdDeleteContent = ({ meetupId }: { meetupId: number }) => {
   const { closeModal } = useModal();
@@ -20,9 +22,20 @@ const AdDeleteContent = ({ meetupId }: { meetupId: number }) => {
   });
 
   const handleDeleteClick = () => {
-    const confirmed = window.confirm("정말 삭제하시겠습니까?");
-    if (confirmed) deleteMutation.mutate({ meetupId });
-    closeModal();
+    showConfirmToast({
+      message: "정말 삭제하시겠습니까?",
+      confirmText: "삭제",
+      cancelText: "취소",
+      onConfirm: async () => {
+        try {
+          await deleteMutation.mutateAsync({ meetupId });
+          toast.success("정상적으로 삭제되었습니다.");
+          closeModal();
+        } catch {
+          toast.error("삭제 중 문제가 발생했습니다.");
+        }
+      },
+    });
   };
 
   return (

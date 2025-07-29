@@ -16,10 +16,13 @@ const ReplyForm = () => {
 
   const { meetupId, scheduleId } = useParams();
 
+  const meetupNumberId = Number(meetupId);
+  const scheduleNumberId = Number(scheduleId);
+
   const user = useSelector((state: RootState) => state.user.user);
 
-  const createReplyMutation = useCreateReply(meetupId!);
-  const createScheduleMutation = useCreateScheduleReply(Number(scheduleId));
+  const createReplyMutation = useCreateReply(meetupNumberId);
+  const createScheduleMutation = useCreateScheduleReply(scheduleNumberId);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -41,6 +44,7 @@ const ReplyForm = () => {
   const handleReplySubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (content.trim().length === 0) return;
+
     if (scheduleId) {
       createScheduleMutation.mutate({ text: content });
     } else {

@@ -11,6 +11,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { SchedulePayload } from "@/types/scheduleType";
 import { SkeletonTheme } from "react-loading-skeleton";
 import ScheduleDetailSkeleton from "@/components/schedule/ScheduleDetailSkeleton";
+import { toast } from "sonner";
 
 const ScheduleDetail = ({ scheduleId, meetupId }: { scheduleId: number; meetupId: number }) => {
   const { data: schedule, isPending, error } = useScheduleDetail(scheduleId);
@@ -79,7 +80,7 @@ const ScheduleDetail = ({ scheduleId, meetupId }: { scheduleId: number; meetupId
       setNewImageFile(null);
     } catch (err) {
       console.error("이미지 수정 실패:", err);
-      alert("이미지 수정에 실패했습니다.");
+      toast.error("이미지 수정에 실패했습니다.");
     }
   };
 

@@ -1,6 +1,5 @@
 import { BASE_URL } from "@/constants/baseURL";
 import Cookies from "js-cookie";
-import { getUser } from "./user.service";
 
 // 개별 like 가져오는 api 임시
 // export const getLikeByIdApi = async (thumbnailId: number) => {
@@ -22,13 +21,15 @@ export const toggleLikeApi = async (thumbnailId: number, currentIsLike: boolean)
   const token = Cookies.get("accessToken");
 
   // 로그인하지 않은 유저는 좋아요 눌러도 소용없게
-  const getUserResponse = await getUser();
-  if (!getUserResponse) {
-    // console.log("겟유저 리턴값은:", getUserResponse);
+  // const getUserResponse = await getUser();
+  // if (!getUserResponse) {
+  //   // console.log("겟유저 리턴값은:", getUserResponse);
 
-    alert("로그인한 유저만 좋아요를 누를 수 있습니다.");
-    return;
-  }
+  //   alert("로그인한 유저만 좋아요를 누를 수 있습니다.");
+  //   return;
+  // }
+  // toast.error("로그인한 유저만 좋아요를 누를 수 있습니다.");
+  // return;
 
   const newIsLike = !currentIsLike;
   console.log("🔍 API 요청 - 현재 상태:", currentIsLike, "→ 새로운 상태:", newIsLike);

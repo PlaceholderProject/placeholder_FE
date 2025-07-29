@@ -1,4 +1,5 @@
 "use client";
+import { showConfirmToast } from "@/components/common/ConfirmDialog";
 import { BASE_URL } from "@/constants/baseURL";
 import { useDeleteReply } from "@/hooks/useReply";
 import { RootState } from "@/stores/store";
@@ -7,8 +8,9 @@ import { transformCreatedDate } from "@/utils/ReplyDateFormat";
 import Image from "next/image";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import { toast } from "sonner";
 
-const NestedReplyItem = ({ nestedReply, meetupId, handleReplyUpdate }: { nestedReply: Reply; meetupId: string | string[]; handleReplyUpdate: (replyId: number) => void }) => {
+const NestedReplyItem = ({ nestedReply, meetupId, handleReplyUpdate }: { nestedReply: Reply; meetupId: number; handleReplyUpdate: (replyId: number) => void }) => {
   const user = useSelector((state: RootState) => state.user.user);
   const deleteReplyMutation = useDeleteReply(meetupId);
 
@@ -16,10 +18,19 @@ const NestedReplyItem = ({ nestedReply, meetupId, handleReplyUpdate }: { nestedR
   const [isEditMode, setIsEditMode] = useState(false);
 
   const handleReplyDelete = async (replyId: number) => {
-    if (confirm("정말로 답글을 삭제하시겠습니까?")) {
-      await deleteReplyMutation.mutate(replyId);
-      alert("정상적으로 삭제되었습니다.");
-    }
+    showConfirmToast({
+      message: "정말로 답글을 삭제하시겠습니까?",
+      confirmText: "삭제",
+      cancelText: "취소",
+      onConfirm: async () => {
+        try {
+          await deleteReplyMutation.mutateAsync(replyId);
+          toast.success("정상적으로 삭제되었습니다.");
+        } catch {
+          toast.error("삭제 중 문제가 발생했습니다.");
+        }
+      },
+    });
   };
 
   const handleTextchange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {

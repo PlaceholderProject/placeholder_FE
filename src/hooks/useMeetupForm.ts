@@ -1,5 +1,6 @@
 import { Meetup } from "@/types/meetupType";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export const useMeetupForm = (mode: "create" | "edit", previousData?: Meetup) => {
   //상태들 : 제출, 글자수, 체크박스, 미리보기
@@ -65,7 +66,7 @@ export const useMeetupForm = (mode: "create" | "edit", previousData?: Meetup) =>
         const inputStartDate = new Date(startDate); // ← startDate를 직접 변환
         inputStartDate.setHours(0, 0, 0, 0);
         if (inputStartDate < now) {
-          alert("모임 시작일은 이미 지난 날짜로 설정할 수 없습니다.");
+          toast.error("모임 시작일은 이미 지난 날짜로 설정할 수 없습니다.");
           return false;
         }
       }
@@ -75,7 +76,7 @@ export const useMeetupForm = (mode: "create" | "edit", previousData?: Meetup) =>
         const inputEndDate = new Date(endDate);
         inputEndDate.setHours(0, 0, 0, 0);
         if (inputEndDate < now) {
-          alert("모임 종료일은 이미 지난 날짜로 설정할 수 없습니다.");
+          toast.error("모임 종료일은 이미 지난 날짜로 설정할 수 없습니다.");
           return false;
         }
       }
@@ -84,13 +85,13 @@ export const useMeetupForm = (mode: "create" | "edit", previousData?: Meetup) =>
       const inputAdEndDate = new Date(adEndDate);
       inputAdEndDate.setHours(0, 0, 0, 0);
       if (inputAdEndDate < now) {
-        alert("광고 종료일은 이미 지난 날짜로 설정할 수 없습니다.");
+        toast.error("광고 종료일은 이미 지난 날짜로 설정할 수 없습니다.");
         return false;
       }
 
       // 시작일-종료일 비교 (둘 다 있을 때만)
       if (startDate && endDate && new Date(endDate) < new Date(startDate)) {
-        alert("모임 종료일은 시작일보다 빠르게 설정할 수 없습니다.");
+        toast.error("모임 종료일은 시작일보다 빠르게 설정할 수 없습니다.");
         return false;
       }
       return true;
@@ -115,12 +116,12 @@ export const useMeetupForm = (mode: "create" | "edit", previousData?: Meetup) =>
         }
 
         if (previousStartDate && previousStartDate < now && +inputStartDate !== +previousStartDate) {
-          alert("이미 시작된 모임의 시작일은 수정할 수 없습니다.");
+          toast.error("이미 시작된 모임의 시작일은 수정할 수 없습니다.");
           return false;
         }
 
         if (previousStartDate && +inputStartDate !== +previousStartDate && inputStartDate < now) {
-          alert("모임 시작일은 오늘보다 이전으로 설정할 수 없습니다.");
+          toast.error("모임 시작일은 오늘보다 이전으로 설정할 수 없습니다.");
           return false;
         }
       }
@@ -136,12 +137,12 @@ export const useMeetupForm = (mode: "create" | "edit", previousData?: Meetup) =>
         }
 
         if (previousEndDate && previousEndDate < now && inputEndDate < now) {
-          alert("이미 종료된 모임의 종료일은 지난 날짜로 설정할 수 없습니다.");
+          toast.error("이미 종료된 모임의 종료일은 지난 날짜로 설정할 수 없습니다.");
           return false;
         }
 
         if (previousEndDate && previousEndDate >= now && inputEndDate < now) {
-          alert("모임 종료일은 지난 날짜로 설정할 수 없습니다.");
+          toast.error("모임 종료일은 지난 날짜로 설정할 수 없습니다.");
           return false;
         }
       }
@@ -153,13 +154,13 @@ export const useMeetupForm = (mode: "create" | "edit", previousData?: Meetup) =>
       previousAdEndDate.setHours(0, 0, 0, 0);
 
       if (+inputAdEndDate !== +previousAdEndDate && inputAdEndDate < now) {
-        alert("광고 종료일은 지난 날짜로 설정할 수 없습니다.");
+        toast.error("광고 종료일은 지난 날짜로 설정할 수 없습니다.");
         return false;
       }
 
       // 시작일-종료일 비교
       if (startDate && endDate && new Date(endDate) < new Date(startDate)) {
-        alert("모임 종료일은 시작일보다 빠르게 설정할 수 없습니다.");
+        toast.error("모임 종료일은 시작일보다 빠르게 설정할 수 없습니다.");
         return false;
       }
 
