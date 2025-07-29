@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://static.place-holder.site/sitemap.xml
