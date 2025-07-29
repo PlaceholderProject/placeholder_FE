@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import { toast } from "sonner";
 
 // create-reply
-export const createReply = async (newReply: newReplyProps, meetupId: string | string[]) => {
+export const createReply = async (newReply: newReplyProps, meetupId: number) => {
   const accessToken = Cookies.get("accessToken");
   try {
     const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}/comment`, {
@@ -64,7 +64,7 @@ export const createNestedReply = async (newReply: newReplyProps, replyId: number
 };
 
 // read reply
-export const getReply = async (meetupId: string | string[]) => {
+export const getReply = async (meetupId: number) => {
   try {
     const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}/comment`, {
       method: "GET",

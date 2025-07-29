@@ -1,10 +1,15 @@
 import { useCancelProposal } from "@/hooks/useProposal";
 import { useModal } from "@/hooks/useModal";
 import { SentProposal } from "@/types/proposalType";
+import { useParams } from "next/navigation";
 
 const ProposalCancellationContent = ({ proposal }: { proposal: SentProposal }) => {
   const { closeModal } = useModal();
-  const cancelMutation = useCancelProposal(proposal.meetupId);
+  const { meetupId } = useParams();
+
+  const meetupNumberId = Number(meetupId);
+
+  const cancelMutation = useCancelProposal(meetupNumberId);
 
   const handleProposalCancel = () => {
     cancelMutation.mutate(proposal.id);
