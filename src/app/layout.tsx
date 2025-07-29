@@ -9,8 +9,10 @@ import ModalContainer from "@/components/modals/ModalContainer";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "Placeholder",
-  description: "지도를 이용한 모임 웹 사이트",
+  title: "Placeholder - 모두의 모임 플랫폼",
+  description: "당신만의 모임을 만들고, 함께할 사람을 찾아보세요.",
+  keywords: "모임, 만남, 동호회, 프론트엔드 프로젝트, 커뮤니티",
+  authors: [{ name: "Team Placeholder" }],
   icons: {
     icon: "/favicon.png",
   },
