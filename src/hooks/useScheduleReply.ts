@@ -17,6 +17,7 @@ export const useCreateScheduleReply = (scheduleId: number) => {
     mutationFn: (data: newReplyProps) => createScheduleReply(data, scheduleId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["scheduleReply", scheduleId] });
+      queryClient.invalidateQueries({ queryKey: ["schedule", scheduleId] });
     },
   });
 };
@@ -28,6 +29,7 @@ export const useCreateScheduleNestedReply = (replyId: number, scheduleId: number
     mutationFn: (data: newReplyProps) => createScheduleNestedReply(data, replyId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["scheduleReply", scheduleId] });
+      queryClient.invalidateQueries({ queryKey: ["schedule", scheduleId] });
     },
   });
 };
@@ -50,6 +52,7 @@ export const useDeleteScheduleReply = (scheduleId: number) => {
     mutationFn: (replyId: number) => deleteScheduleReply(replyId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["scheduleReply", scheduleId] });
+      queryClient.invalidateQueries({ queryKey: ["schedule", scheduleId] });
     },
   });
 };

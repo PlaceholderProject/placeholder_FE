@@ -7,7 +7,9 @@ const ProposalCancellationContent = ({ proposal }: { proposal: SentProposal }) =
   const { closeModal } = useModal();
   const { meetupId } = useParams();
 
-  const cancelMutation = useCancelProposal(Number(meetupId));
+  const meetupNumberId = Number(meetupId);
+
+  const cancelMutation = useCancelProposal(meetupNumberId);
 
   const handleProposalCancel = () => {
     cancelMutation.mutate(proposal.id);

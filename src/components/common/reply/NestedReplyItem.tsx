@@ -10,7 +10,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
 
-const NestedReplyItem = ({ nestedReply, meetupId, handleReplyUpdate }: { nestedReply: Reply; meetupId: string | string[]; handleReplyUpdate: (replyId: number) => void }) => {
+const NestedReplyItem = ({ nestedReply, meetupId, handleReplyUpdate }: { nestedReply: Reply; meetupId: number; handleReplyUpdate: (replyId: number) => void }) => {
   const user = useSelector((state: RootState) => state.user.user);
   const deleteReplyMutation = useDeleteReply(meetupId);
 
