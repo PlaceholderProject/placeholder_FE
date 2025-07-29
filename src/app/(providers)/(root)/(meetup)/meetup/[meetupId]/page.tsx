@@ -4,8 +4,8 @@ import ScheduleArea from "@/components/schedule/ScheduleArea";
 import { notFound } from "next/navigation";
 import React from "react";
 
-const MeetupPage = async ({ params }: { params: Promise<{ meetupId: string }> }) => {
-  const { meetupId } = await params;
+const MeetupPage = ({ params }: { params: { meetupId: string } }) => {
+  const { meetupId } = params;
 
   const meetupIdNum = Number(meetupId);
   if (isNaN(meetupIdNum) || meetupIdNum <= 0) {
