@@ -13,9 +13,7 @@ const ReplyArea: React.FC = () => {
   const scheduleNumberId = Number(scheduleId);
 
   const { data: meetupDetail, isLoading } = useMeetupDetail(meetupNumberId, { enabled: true });
-  const { data: schedule } = useScheduleDetail(Number(scheduleId));
-
-  console.log("schedule", schedule);
+  const { data: schedule } = useScheduleDetail(scheduleNumberId);
 
   if (isLoading) return <div>로딩중</div>;
 
