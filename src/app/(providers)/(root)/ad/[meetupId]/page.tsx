@@ -3,9 +3,9 @@ import ReplyArea from "@/components/common/reply/ReplyArea";
 import AdArea from "@/components/ad/AdArea";
 import { getMeetupByIdApi } from "@/services/meetup.service";
 
-export async function generateMetadata({ params }: { params: { meetupId: string } }): Promise<Metadata> {
-  const meetupId = Number(params.meetupId);
-  const meetup = await getMeetupByIdApi(meetupId);
+export async function generateMetadata({ params }: { params: Promise<{ meetupId: string }> }): Promise<Metadata> {
+  const { meetupId } = await params;
+  const meetup = await getMeetupByIdApi(Number(meetupId));
 
   return {
     title: meetup.adTitle ?? "Placeholder - 광고 상세",
