@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import AdSignboard from "./AdSignboard";
 import AdOrganizer from "./AdOrganizer";

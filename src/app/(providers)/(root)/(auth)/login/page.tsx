@@ -2,7 +2,14 @@ import Login from "@/components/auth/Login";
 import Image from "next/image";
 import React from "react";
 
-const page = () => {
+export const metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
+const LoginPage = () => {
   return (
     <div className="flex min-h-[calc(100vh-12rem)] flex-row md:min-h-[calc(100vh-7.5rem)]">
       <div className="w-full md:w-[50%]">
@@ -15,4 +22,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default LoginPage;

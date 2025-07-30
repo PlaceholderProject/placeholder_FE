@@ -1,8 +1,15 @@
 import React from "react";
 import NotificationArea from "@/components/notification/NotificationArea";
 
-const page = () => {
+export const metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
+const NotificationPage = () => {
   return <NotificationArea />;
 };
 
-export default page;
+export default NotificationPage;
