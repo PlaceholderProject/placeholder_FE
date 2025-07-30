@@ -1,7 +1,4 @@
-"use client";
-
 import React from "react";
-import { useParams } from "next/navigation";
 import MeetupForm from "@/components/meetup/MeetupForm";
 
 export const metadata = {
@@ -11,8 +8,8 @@ export const metadata = {
   },
 };
 
-const MeetupEditPage = () => {
-  const { meetupId } = useParams<{ meetupId: string }>();
+const MeetupEditPage = async ({ params }: { params: Promise<{ meetupId: string }> }) => {
+  const { meetupId } = await params;
   return (
     <>
       <MeetupForm mode="edit" meetupId={parseInt(meetupId, 10)} />

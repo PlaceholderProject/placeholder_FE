@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import MeetupForm from "@/components/meetup/MeetupForm";
 
