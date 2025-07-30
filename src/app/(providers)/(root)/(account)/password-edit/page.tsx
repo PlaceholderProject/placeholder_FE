@@ -1,7 +1,14 @@
 import PasswordEdit from "@/components/account/PasswordEdit";
 import React from "react";
 
-const page = () => {
+export const metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
+const PasswordEditPage = () => {
   return (
     <div>
       <PasswordEdit />
@@ -9,4 +16,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default PasswordEditPage;

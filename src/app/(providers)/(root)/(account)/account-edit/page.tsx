@@ -1,7 +1,14 @@
 import AccountEdit from "@/components/account/AccountEdit";
 import React from "react";
 
-const page = () => {
+export const metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
+const AccountEditPage = () => {
   return (
     <div>
       <AccountEdit />
@@ -9,4 +16,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default AccountEditPage;

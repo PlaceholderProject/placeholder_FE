@@ -2,7 +2,14 @@ import Signup from "@/components/auth/Signup";
 import Image from "next/image";
 import React from "react";
 
-const page = () => {
+export const metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
+const SignupPage = () => {
   return (
     <div className="flex h-[calc(100vh-12rem)] flex-row md:h-[calc(100vh-7.5rem)]">
       <div className="relative hidden w-[50%] md:block">
@@ -17,4 +24,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default SignupPage;

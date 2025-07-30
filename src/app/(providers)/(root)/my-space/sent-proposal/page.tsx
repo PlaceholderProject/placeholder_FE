@@ -1,7 +1,14 @@
 import SentProposals from "@/components/my-space/sent-proposal/SentProposals";
 import React from "react";
 
-const page = () => {
+export const metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
+const SentProposalPage = () => {
   return (
     <div>
       <SentProposals />
@@ -9,4 +16,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default SentProposalPage;
