@@ -1,7 +1,14 @@
 import Account from "@/components/account/Account";
 import React from "react";
 
-const page = () => {
+export const metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
+const AccountPage = () => {
   return (
     <div>
       <Account />
@@ -9,4 +16,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default AccountPage;

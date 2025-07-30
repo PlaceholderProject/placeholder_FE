@@ -1,7 +1,14 @@
 import AccountDelete from "@/components/account/AccountDelete";
 import React from "react";
 
-const page = () => {
+export const metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
+const AccountDeletePage = () => {
   return (
     <div>
       <AccountDelete />
@@ -9,4 +16,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default AccountDeletePage;
