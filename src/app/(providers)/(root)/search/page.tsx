@@ -2,7 +2,7 @@ import SearchForm from "@/components/search/SearchForm";
 import SearchedResultArea from "@/components/search/SearchedResultArea";
 import React from "react";
 
-const page = () => {
+const SearchPage = () => {
   return (
     <div>
       <SearchForm />
@@ -11,4 +11,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default SearchPage;
