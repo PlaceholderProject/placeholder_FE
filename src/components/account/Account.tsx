@@ -41,15 +41,15 @@ const Account = () => {
             <span className="font-semibold">계정정보</span>
             <span>{user.email}</span>
           </div>
-          <Link href="/account-edit" className="flex h-[4.5rem] w-full items-center justify-between rounded-xl bg-secondary-dark px-[2rem] shadow-md">
+          <Link href="/account/edit" className="flex h-[4.5rem] w-full items-center justify-between rounded-xl bg-secondary-dark px-[2rem] shadow-md">
             <span className="font-semibold">회원 정보 수정</span>
             <FaChevronRight size={16} />
           </Link>
-          <Link href="/password-edit" className="flex h-[4.5rem] w-full items-center justify-between rounded-xl bg-secondary-dark px-[2rem] shadow-md">
+          <Link href="/account/password-edit" className="flex h-[4.5rem] w-full items-center justify-between rounded-xl bg-secondary-dark px-[2rem] shadow-md">
             <span className="font-semibold">비밀번호 수정</span>
             <FaChevronRight size={16} />
           </Link>
-          <Link href="/account-delete" className="flex h-[4.5rem] w-full items-center justify-between rounded-xl bg-secondary-dark px-[2rem] shadow-md">
+          <Link href="/account/delete" className="flex h-[4.5rem] w-full items-center justify-between rounded-xl bg-secondary-dark px-[2rem] shadow-md">
             <span className="font-semibold">회원탈퇴</span>
             <FaChevronRight size={16} />
           </Link>

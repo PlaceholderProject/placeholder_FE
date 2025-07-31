@@ -66,7 +66,7 @@ const AdDetail = ({ adData, userNickname }: AdDetailProps) => {
               <div className="hidden md:block md:w-[7rem]">
                 {isAuthorized && (
                   <div className="flex w-[7rem] justify-between">
-                    <Link className="text-lg text-gray-dark" href={`/meetup-edit/${adData.id}`}>
+                    <Link className="text-lg text-gray-dark" href={`/meetup/edit/${adData.id}`}>
                       수정
                     </Link>
                     <span className="text-lg text-gray-dark"> | </span>
