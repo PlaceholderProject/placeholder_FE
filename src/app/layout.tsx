@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
-  themeColor: "#006B8B",
+  metadataBase: new URL("https://place-holder.site"),
   openGraph: {
     title: "Placeholder - 모두의 모임 플랫폼",
     description: "당신만의 모임을 만들고, 함께할 사람을 찾아보세요.",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     siteName: "Placeholder",
     images: [
       {
-        url: "/logo.png", // 1200x630 권장
+        url: "/logo.png",
         width: 1200,
         height: 630,
         alt: "Placeholder 이미지",
