@@ -2,12 +2,12 @@ import Signup from "@/components/auth/Signup";
 import Image from "next/image";
 import React from "react";
 
-// export const metadata = {
-//   robots: {
-//     index: false,
-//     follow: false,
-//   },
-// };
+export const metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 const SignupPage = () => {
   return (
