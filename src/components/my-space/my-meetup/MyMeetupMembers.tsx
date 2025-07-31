@@ -26,10 +26,10 @@ const MyMeetupMembers: React.FC<MyMeetupMembersProps> = ({ meetupId }) => {
   //강퇴 핸들러를 내부에서 구현
   const handleKickMember = (memberId: number) => {
     // ⭐️ 확인 후 삭제
-    const confirmed = window.confirm("정말 이 멤버를 강퇴하시겠습니까?");
-    if (confirmed) {
-      deleteMutation.mutate(memberId);
-    }
+    // const confirmed = window.confirm("정말 이 멤버를 강퇴하시겠습니까?");
+    // if (confirmed) {
+    //   deleteMutation.mutate(memberId);
+    // }
 
     // ⭐️ confirm 커스텀
     showConfirmToast({

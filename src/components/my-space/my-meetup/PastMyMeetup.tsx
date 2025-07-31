@@ -14,6 +14,7 @@ import MemberOutContainer from "./MemberOutContainer";
 import MySpaceListItem from "../MySpaceListItem";
 import { toast } from "sonner";
 import { showConfirmToast } from "@/components/common/ConfirmDialog";
+import Spinner from "@/components/common/Spinner";
 
 const PastMyMeetup = () => {
   const deleteMutation = useMemberDelete();
@@ -153,6 +154,8 @@ const PastMyMeetup = () => {
   } = useQuery({
     queryKey: ["myMeetups", "ended"],
     queryFn: () => getMyMeetupsApi("ended", page, SIZE_LIMIT),
+    staleTime: 1000 * 60 * 5,
+    retry: 1,
   });
 
   const totalPages = Math.ceil((myMeetupsData?.total ?? 0) / SIZE_LIMIT);
@@ -170,7 +173,7 @@ const PastMyMeetup = () => {
   const startPage = (currentGroup - 1) * BUTTONS_PER_GROUP + 1;
   const endPage = Math.min(currentGroup * BUTTONS_PER_GROUP, totalPages);
 
-  if (isPending) return <div>로딩 중...</div>;
+  if (isPending) return <Spinner isLoading={isPending} />;
   if (isError) return <div> 에러 발생: {error.message}</div>;
   if (!myMeetupsData || myMeetupsData.result.length === 0) return <p className="mt-[6rem] flex justify-center">지난 내 모임이 없습니다.</p>;
 

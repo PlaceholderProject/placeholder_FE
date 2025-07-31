@@ -14,6 +14,7 @@ import { MyMeetupMember, MyMeetupMembersResponse } from "@/types/myMeetupMemberT
 import MySpaceListItem from "../MySpaceListItem";
 import { toast } from "sonner";
 import { showConfirmToast } from "@/components/common/ConfirmDialog";
+import Spinner from "@/components/common/Spinner";
 
 // 기존 타입 import 추가 (파일 상단에서 import 해야 함)
 // import { MyMeetupMember, MyMeetupMembersResponse } from "@/types/meetupType";
@@ -122,14 +123,6 @@ const CurrentMyMeetup = () => {
         }
       },
     });
-
-    const myMemberId = await getMyMemberId(meetupId);
-    if (myMemberId) {
-      console.log("퇴장 실행 - 멤버 ID:", myMemberId);
-      deleteMutation.mutate(myMemberId);
-    } else {
-      toast.error("모임 퇴장 중 오류가 발생했습니다.");
-    }
   };
 
   // 페이지네이션 핸들러들
@@ -163,6 +156,8 @@ const CurrentMyMeetup = () => {
   } = useQuery({
     queryKey: ["myMeetups", "ongoing", page],
     queryFn: () => getMyMeetupsApi("ongoing", page, SIZE_LIMIT),
+    staleTime: 1000 * 60 * 5,
+    retry: 1,
   });
 
   const totalPages = Math.ceil((myMeetupsData?.total ?? 0) / SIZE_LIMIT);
@@ -180,7 +175,7 @@ const CurrentMyMeetup = () => {
   const startPage = (currentGroup - 1) * BUTTONS_PER_GROUP + 1;
   const endPage = Math.min(currentGroup * BUTTONS_PER_GROUP, totalPages);
 
-  if (isPending) return <div>로딩중...</div>;
+  if (isPending) return <Spinner isLoading={isPending} />;
   if (isError) return <div>에러 : {error.message}</div>;
   if (!myMeetupsData || myMeetupsData.result.length === 0) return <p className="mt-[6rem] flex justify-center">현재 내 모임이 없습니다.</p>;
 
