@@ -2,12 +2,7 @@ User-agent: *
 Allow: /ad/
 Disallow: /my-space/
 Disallow: /account/
-Disallow: /account-edit/
-Disallow: /account-delete/
-Disallow: /password-edit/
 Disallow: /meetup/
-Disallow: /meetup-create/
-Disallow: /meetup-edit/
 Disallow: /login/
 Disallow: /signup/
 Disallow: /notification/
