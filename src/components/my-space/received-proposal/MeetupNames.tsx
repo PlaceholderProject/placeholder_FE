@@ -1,5 +1,6 @@
 "use client";
 
+import Spinner from "@/components/common/Spinner";
 import { useOrganizedMeetups } from "@/hooks/useProposal";
 import { setSelectedMeetupId } from "@/stores/proposalSlice";
 import { RootState } from "@/stores/store";
@@ -19,7 +20,8 @@ const MeetupNames = () => {
     }
   }, [organizedMeetups, dispatch, selectedMeetupId]);
 
-  if (isLoading) return <p>로딩 중...</p>;
+  //  if (isLoading) return <p>로딩 중...</p>;
+  if (isLoading) return <Spinner isLoading={isLoading} />; // 텍스트 대신 스피너
   if (isError) return <p>에러 발생: {error.message}</p>;
   if (!organizedMeetups || organizedMeetups.length === 0) return null;
 
