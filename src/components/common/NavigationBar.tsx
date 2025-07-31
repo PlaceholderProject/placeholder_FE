@@ -22,10 +22,10 @@ const NavigationBar = () => {
       isActive: pathname.startsWith("/my-space"),
     },
     {
-      href: "/meetup-create",
+      href: "/meetup/create",
       icon: FaPlus,
       label: "모임 만들기",
-      isActive: pathname === "/meetup-create",
+      isActive: pathname === "/meetup/create",
     },
     {
       href: "/account",

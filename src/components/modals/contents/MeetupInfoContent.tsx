@@ -42,7 +42,7 @@ const MeetupInfoContent = ({ meetupData, isOrganizer, meetupId }: MeetupInfoCont
   });
 
   const handleEdit = () => {
-    router.push(`/meetup-edit/${meetupId}`);
+    router.push(`/meetup/edit/${meetupId}`);
     closeModal();
   };
 

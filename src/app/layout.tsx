@@ -16,6 +16,32 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.png",
   },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  metadataBase: new URL("https://place-holder.site"),
+  openGraph: {
+    title: "Placeholder - 모두의 모임 플랫폼",
+    description: "당신만의 모임을 만들고, 함께할 사람을 찾아보세요.",
+    url: "https://place-holder.site",
+    siteName: "Placeholder",
+    images: [
+      {
+        url: "/logo.png",
+        width: 1200,
+        height: 630,
+        alt: "Placeholder 이미지",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Placeholder - 모두의 모임 플랫폼",
+    description: "당신만의 모임을 만들고, 함께할 사람을 찾아보세요.",
+    images: ["/logo.png"],
+  },
 };
 
 const pretendard = localFont({
