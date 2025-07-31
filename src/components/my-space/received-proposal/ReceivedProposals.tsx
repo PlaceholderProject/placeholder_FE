@@ -8,6 +8,7 @@ import { ReceivedProposal } from "@/types/proposalType";
 import { useEffect, useState } from "react";
 import PaginationButtons from "../PaginationButtons";
 import { PROPOSALS_BUTTONS_PER_GROUP, PROPOSALS_SIZE_LIMIT } from "@/constants/pagination";
+import Spinner from "@/components/common/Spinner";
 
 const ReceivedProposals = () => {
   const selectedMeetupId = useSelector((state: RootState) => state.proposal.selectedMeeupId);
@@ -44,7 +45,7 @@ const ReceivedProposals = () => {
     setPage(nextGroupStartPage);
   };
 
-  if (isLoading) return <p>로딩 중...</p>;
+  if (isLoading) return <Spinner isLoading={isLoading} />;
   if (isError) return <p>에러 발생: {error.message}</p>;
 
   // const receivedProposals = data?.filter((proposal: ReceivedProposal) => proposal.status === "pending");

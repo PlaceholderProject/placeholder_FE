@@ -22,7 +22,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // 비로그인 : 인증 필요한 페이지 접근 시 로그인 페이지로 리다이렉트
-  const protectedPaths = ["/account", "/account-delete", "/account-edit", "/password-edit", "/meetup", "/meetup-create", "/meetup-edit", "/my-space", "/notification"];
+  const protectedPaths = ["/account", "/account/delete", "/account/edit", "/account/password-edit", "/meetup", "/meetup/create", "/meetup/edit", "/my-space", "/notification"];
   const isProtected = protectedPaths.some(path => path === pathname || pathname.startsWith(`${path}/`));
 
   if (!accessToken && isProtected) {
@@ -30,9 +30,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // meetup-edit 방장 외 접근 막고 ad/MeetupId로 리다이렉트하기
-  if (pathname.startsWith("/meetup-edit")) {
-    console.log(">>> meetup-edit 경로 감지:", pathname);
+  // meetup/edit 방장 외 접근 막고 ad/MeetupId로 리다이렉트하기
+  if (pathname.startsWith("/meetup/edit")) {
+    console.log(">>> meetup/edit 경로 감지:", pathname);
     try {
       // 경로에서 meetupId 추출
       console.log(">>>>>권한 체크 시작");
@@ -87,13 +87,8 @@ export const config = {
     "/login", // 👈 로그인 페이지도 미들웨어가 실행되도록 추가
     "/signup", // 👈 회원가입 페이지도 추가
     "/account",
-    "/account-delete",
-    "/account-edit",
-    "/password-edit",
+    "/account/:path*",
     "/meetup/:path*",
-    "/meetup-create",
-    "/meetup-edit",
-    "/meetup-edit/:path*",
     "/my-space/:path*",
     "/notification",
   ],

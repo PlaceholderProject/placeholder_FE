@@ -7,6 +7,7 @@ import { getMyAdsApi } from "@/services/my.space.service";
 import { BUTTONS_PER_GROUP, SIZE_LIMIT } from "@/constants/pagination";
 import PaginationButtons from "../PaginationButtons";
 import MySpaceListItem from "../MySpaceListItem";
+import Spinner from "@/components/common/Spinner";
 
 const PastMyAd = () => {
   const [page, setPage] = useState(1);
@@ -43,6 +44,8 @@ const PastMyAd = () => {
   } = useQuery({
     queryKey: ["myAds", "ended"],
     queryFn: () => getMyAdsApi("ended", page, SIZE_LIMIT),
+    staleTime: 1000 * 60 * 5,
+    retry: 1,
   });
 
   const totalPages = Math.ceil((myAdsData?.total ?? 0) / SIZE_LIMIT);
@@ -60,7 +63,7 @@ const PastMyAd = () => {
   const startPage = (currentGroup - 1) * BUTTONS_PER_GROUP + 1;
   const endPage = Math.min(currentGroup * BUTTONS_PER_GROUP, totalPages);
 
-  if (isPending) return <div>로딩중..</div>;
+  if (isPending) return <Spinner isLoading={isPending} />;
   if (isError) return <div>에러: {error.message}</div>;
   if (!myAdsData || myAdsData.result.length === 0) return <p className="mt-[6rem] flex justify-center">지난 내 광고가 없습니다.</p>;
 
