@@ -5,12 +5,5 @@
     "app/**/*.{js,ts,tsx}": {
       "maxDuration": 30
     }
-  },
-  "redirects": [
-    {
-      "source": "/sitemap.xml",
-      "destination": "https://static.place-holder.site/sitemap.xml",
-      "permanent": true
-    }
-  ]
+  }
 }

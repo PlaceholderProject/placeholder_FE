@@ -1,12 +1,12 @@
 import AccountEdit from "@/components/account/AccountEdit";
 import React from "react";
 
-export const metadata = {
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+// export const metadata = {
+//   robots: {
+//     index: false,
+//     follow: false,
+//   },
+// };
 
 const AccountEditPage = () => {
   return (
