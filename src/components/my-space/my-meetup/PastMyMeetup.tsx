@@ -112,7 +112,7 @@ const PastMyMeetup = () => {
             await deleteMutation.mutateAsync(myMemberId);
           }
           toast.success("정상적으로 퇴장되었습니다.");
-        } catch (_error) {
+        } catch {
           toast.error("퇴장 중 문제가 발생했습니다.");
         }
       },

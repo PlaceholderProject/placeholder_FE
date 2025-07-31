@@ -43,7 +43,7 @@ const MeetupMembersContent = ({ meetupId, meetupName }: MeetupMembersContentProp
         try {
           await deleteMutation.mutateAsync(memberId);
           toast.success(`'${memberNickname}' 님을 강퇴했습니다.`);
-        } catch (_error) {
+        } catch {
           toast.error("강퇴 처리 중 문제가 발생했습니다.");
         }
       },

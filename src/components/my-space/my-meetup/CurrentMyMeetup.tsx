@@ -118,7 +118,7 @@ const CurrentMyMeetup = () => {
             toast.error("모임 퇴장 중 오류가 발생했습니다.");
           }
           toast.success("퇴장했습니다.");
-        } catch (_error) {
+        } catch {
           toast.error("퇴장 중 문제가 발생했습니다.");
         }
       },
