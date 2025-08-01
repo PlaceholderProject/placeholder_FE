@@ -112,9 +112,9 @@
 
 |     이름     |    포지션    | 담당 주요 기능                                          |               GitHub                |
 |:----------:|:---------:|:--------------------------------------------------|:-----------------------------------:|
-| **Jayden** | Front-end | 좋아요, 검색, 카카오맵, 스케줄(생성/수정/상세), 각종 모달, 알림, 네비게이션 바  | [GitHub](https://github.com/Jayden) |
-| **Julia**  | Front-end | 모임(생성/수정), 메인 피드(정렬/필터), My Space(내 모임/광고), 랜덤 추천 | [GitHub](https://github.com/Julia)  |
-|  **Eve**   | Front-end | 인증(로그인/회원가입), 계정 관리, 댓글, 신청서(Proposal), 헤더        |  [GitHub](https://github.com/Eve)   |
+| **Jayden** | Front-end | 좋아요, 검색, 카카오맵, 스케줄(생성/수정/상세), 모달, 알림, 네비게이션 바  | [GitHub](https://github.com/Jayden) |
+| **Julia**  | Front-end | 모임(생성/수정), 메인 피드(정렬/필터), 내 공간 | [GitHub](https://github.com/Julia)  |
+|  **Eve**   | Front-end | 인증(로그인/회원가입), 계정 관리, 댓글, 신청서, 헤더        |  [GitHub](https://github.com/Eve)   |
 | **Ronnie** | Back-end  | Django Ninja REST API 서버 전체 구축 및 API 문서화          | [GitHub](https://github.com/Ronnie) |
 
 <br>
