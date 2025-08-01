@@ -9,6 +9,7 @@ import { useSchedules } from "@/hooks/useSchedule";
 import { Schedule } from "@/types/scheduleType";
 import ScheduleNumber from "@/components/schedule/ScheduleNumber";
 import Loading from "@/components/common/Loading";
+import Spinner from "../common/Spinner";
 
 // 컴포넌트 Props 타입 정의
 interface KakaoMapsProps {
@@ -101,7 +102,8 @@ const KakaoMaps: React.FC<KakaoMapsProps> = ({ meetupId }) => {
 
   // 데이터 로딩 및 에러 상태 처리
   if (isPending) {
-    return <Loading />;
+    // return <Loading />;
+    return <Spinner isLoading={isPending} />;
   }
   if (dataError) {
     return <div className="flex h-full w-full items-center justify-center bg-red-100">스케줄 정보를 가져올 수 없습니다.</div>;
