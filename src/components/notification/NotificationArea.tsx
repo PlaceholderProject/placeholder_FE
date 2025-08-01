@@ -3,7 +3,6 @@
 import React from "react";
 import NotificationItem from "@/components/notification/NotificationItem";
 import { useNotificationList } from "@/hooks/useNotification";
-import Loading from "@/components/common/Loading";
 import Spinner from "../common/Spinner";
 
 const NotificationArea = () => {

@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import ScheduleItem from "@/components/schedule/ScheduleItem";
 import { FaPlus } from "react-icons/fa";
-import Loading from "@/components/common/Loading";
 import Spinner from "../common/Spinner";
 
 const ScheduleArea = ({ meetupId }: { meetupId: number }) => {

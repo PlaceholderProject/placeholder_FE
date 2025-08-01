@@ -8,7 +8,6 @@ import { Map, MapMarker, useKakaoLoader } from "react-kakao-maps-sdk";
 import { useSchedules } from "@/hooks/useSchedule";
 import { Schedule } from "@/types/scheduleType";
 import ScheduleNumber from "@/components/schedule/ScheduleNumber";
-import Loading from "@/components/common/Loading";
 import Spinner from "../common/Spinner";
 
 // 컴포넌트 Props 타입 정의
