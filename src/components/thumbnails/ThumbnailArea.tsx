@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef } from "react";
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import ThumbnailItem from "./ThumbnailItem";
 import { getHeadhuntingsApi } from "@/services/thumbnails.service";
 import { Meetup } from "@/types/meetupType";
@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
 import { SkeletonTheme } from "react-loading-skeleton";
 import ThumbnailSkeleton from "@/components/thumbnails/ThumbnailSkeleton";
+import Spinner from "../common/Spinner";
 
 const ThumbnailArea = () => {
   // 이제 리덕스에서 정렬 타입 가져옴
@@ -67,13 +68,12 @@ const ThumbnailArea = () => {
     },
   });
 
-  const queryClient = useQueryClient();
-
-  useEffect(() => {
-    // 쿼리키 변경시 자동으로 데이터 다시 가져오지만 명시적으로 캐시 초기화할 수도 잇다
-
-    queryClient.resetQueries({ queryKey: getQueryKey() });
-  }, [sortType, place, category, isFilterActive, queryClient]);
+  // 요청 두번 보내므로 주석처리
+  // const queryClient = useQueryClient();
+  // useEffect(() => {
+  //   // 쿼리키 변경시 자동으로 데이터 다시 가져오지만 명시적으로 캐시 초기화할 수도 잇다
+  //   queryClient.resetQueries({ queryKey: getQueryKey() });
+  // }, [sortType, place, category, isFilterActive, queryClient]);
 
   // 관찰 대상 요소ref
   const observerRef = useRef<HTMLDivElement>(null);
@@ -192,7 +192,7 @@ const ThumbnailArea = () => {
           {/* 관찰대상요소 */}
 
           <div ref={observerRef} className="col-span-full flex h-10 items-center justify-center">
-            {isFetchingNextPage && "데이터 불러오는 중..."}
+            {isFetchingNextPage && <Spinner isLoading={isFetchingNextPage} />}
           </div>
         </div>
       </div>
