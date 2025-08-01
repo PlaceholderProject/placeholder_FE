@@ -6,6 +6,7 @@ import SentProposalItem from "./SentProposalItem";
 import { SentProposal } from "@/types/proposalType";
 import { PROPOSALS_BUTTONS_PER_GROUP, PROPOSALS_SIZE_LIMIT } from "@/constants/pagination";
 import PaginationButtons from "../PaginationButtons";
+import Spinner from "@/components/common/Spinner";
 
 const SentProposals = () => {
   const [page, setPage] = useState(1);
@@ -38,7 +39,7 @@ const SentProposals = () => {
     setPage(nextGroupStartPage);
   };
 
-  if (isLoading) return <div>로딩중</div>;
+  if (isLoading) return <Spinner isLoading={isLoading} />;
 
   if (!sentProposals || sentProposals.length === 0) {
     return <p className="mt-24 flex justify-center">보낸 신청서가 없습니다.</p>;
