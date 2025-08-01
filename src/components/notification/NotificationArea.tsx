@@ -3,12 +3,15 @@
 import React from "react";
 import NotificationItem from "@/components/notification/NotificationItem";
 import { useNotificationList } from "@/hooks/useNotification";
-import Loading from "@/components/common/Loading";
+import Spinner from "../common/Spinner";
 
 const NotificationArea = () => {
   const { data: notifications, isPending, error } = useNotificationList();
 
-  if (isPending) return <Loading />;
+  if (isPending) {
+    // return <Loading />;
+    return <Spinner isLoading={isPending} />;
+  }
   if (error) return <div className="p-8 text-center text-error">Error</div>;
 
   return (
