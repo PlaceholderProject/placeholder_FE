@@ -8,18 +8,7 @@ import { RootState } from "@/stores/store";
 import { BASE_URL } from "@/constants/baseURL";
 
 const Account = () => {
-  // const [profileImage, setProfileImage] = useState<string>("");
-
   const user = useSelector((state: RootState) => state.user.user);
-
-  // useEffect(() => {
-  //   if (user.profileImage) {
-  //     const imagePath = user.profileImage.startsWith("http") ? user.profileImage : `${BASE_URL}${user.profileImage}`;
-  //     setProfileImage(imagePath);
-  //   } else {
-  //     setProfileImage("/profile.png");
-  //   }
-  // }, [user]);
 
   const imagePath = user.profileImage ? (user.profileImage.startsWith("http") ? user.profileImage : `${BASE_URL}/${user.profileImage}`) : "/profile.png";
 
