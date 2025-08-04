@@ -5,7 +5,7 @@ import Image from "next/image";
 export default function NotFound() {
   return (
     <div className="relative flex min-h-[calc(100vh-12rem)] flex-col items-center justify-center overflow-hidden bg-[#f9f9f9] p-4 text-center md:min-h-[calc(100vh-13.5rem)]">
-      <div className="pointer-events-none absolute select-none text-[30vw] font-extrabold text-gray-300 opacity-20 lg:text-[20vw]">404</div>
+      <div className="pointer-events-none absolute select-none text-[30vw] font-extrabold text-gray-300 opacity-20 md:text-[20vw]">404</div>
 
       <div className="relative z-10 max-w-md">
         <Image src="/smallLogoAlternative.svg" alt="Logo" className="mx-auto mb-6 h-56 w-56" />
