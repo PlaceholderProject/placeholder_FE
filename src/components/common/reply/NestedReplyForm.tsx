@@ -1,4 +1,4 @@
-"use client";
+// src/components/common/reply/NestedReplyForm.tsx
 
 import { useCreateNestedReply } from "@/hooks/useReply";
 import React, { Dispatch, SetStateAction, useRef, useState } from "react";
@@ -7,16 +7,19 @@ import { RootState } from "@/stores/store";
 import { Reply } from "@/types/replyType";
 import { resetReply } from "@/stores/replySlice";
 import SubmitLoader from "../SubmitLoader";
+import { useCreateScheduleNestedReply } from "@/hooks/useScheduleReply";
 
 const NestedReplyForm = ({
   rootReply,
   meetupId,
+  scheduleId,
   isVisiableNestedReplyForm,
   setIsVisiableNestedReplyForm,
   setIsVisiableNestedReply,
 }: {
   rootReply: Reply;
   meetupId: number;
+  scheduleId?: number;
   isVisiableNestedReplyForm: boolean;
   setIsVisiableNestedReplyForm: Dispatch<SetStateAction<boolean>>;
   setIsVisiableNestedReply: Dispatch<SetStateAction<boolean>>;
@@ -29,7 +32,8 @@ const NestedReplyForm = ({
 
   const dispatch = useDispatch();
 
-  const createNestedReplyMutation = useCreateNestedReply(nestedReply.id ? nestedReply.id : rootReply.id, meetupId);
+  const createNestedReplyMutation = useCreateNestedReply(nestedReply.id || rootReply.id, Number(meetupId));
+  const createScheduleNestedReplyMutation = useCreateScheduleNestedReply(nestedReply.id || rootReply.id, Number(scheduleId));
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleContentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -42,20 +46,29 @@ const NestedReplyForm = ({
   const handleNestedReplySubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (content.trim().length === 0) return;
-    if (rootReply.id) {
-      await createNestedReplyMutation.mutateAsync({ text: content });
-    }
 
     if (isSubmitting) return;
     setIsSubmitting(true);
-    // 🔍 개발 환경에서만 지연 시간 추가
-    if (process.env.NODE_ENV === "development") {
-      await new Promise(resolve => setTimeout(resolve, 2000)); // 2초 지연
-    }
 
-    setIsVisiableNestedReply(true);
-    setContent("");
-    setIsSubmitting(false);
+    try {
+      if (scheduleId) {
+        await createScheduleNestedReplyMutation.mutateAsync({ text: content });
+      } else {
+        await createNestedReplyMutation.mutateAsync({ text: content });
+      }
+
+      // 🔍 개발 환경에서만 지연 시간 추가
+      if (process.env.NODE_ENV === "development") {
+        await new Promise(resolve => setTimeout(resolve, 2000)); // 2초 지연
+      }
+
+      setIsVisiableNestedReply(true);
+      setContent("");
+    } catch (error) {
+      console.error("답글 작성 실패:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleNestedReplyForm = () => {

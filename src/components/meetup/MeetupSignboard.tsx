@@ -47,17 +47,17 @@ const MeetupSignboard = ({ meetupId }: MeetupSignboardProps) => {
   if (!meetupData) return <div className="h-11 bg-orange-300">모임 데이터를 찾을 수 없습니다</div>;
 
   return (
-    <div className="relative flex h-16 items-center justify-between bg-[#FBFFA9] px-4 text-black lg:mt-9 lg:rounded-[50px]">
+    <div className="relative flex h-16 items-center justify-between gap-2 bg-[#FBFFA9] px-4 text-black md:mt-9 md:rounded-[50px]">
       {/* 좌측 멤버 버튼 */}
-      <button onClick={handleMembersModalToggle} className="rounded-full p-2 transition-colors hover:bg-white" aria-label="모임 멤버 보기">
+      <button onClick={handleMembersModalToggle} className="flex-shrink-0 rounded-full p-2 transition-colors hover:bg-white" aria-label="모임 멤버 보기">
         <FaUserFriends size={24} className="text-black" />
       </button>
 
       {/* 중앙 모임 제목 */}
-      <h1 className="absolute left-1/2 -translate-x-1/2 transform text-xl font-bold">{meetupData.name}</h1>
+      <h1 className="min-w-0 flex-1 truncate text-center text-xl font-bold">{meetupData.name}</h1>
 
       {/* 우측 정보 버튼 */}
-      <button onClick={handleInfoModalToggle} className="rounded-full p-2 transition-colors hover:bg-white" aria-label="모임 정보 보기">
+      <button onClick={handleInfoModalToggle} className="flex-shrink-0 rounded-full p-2 transition-colors hover:bg-white" aria-label="모임 정보 보기">
         <FaInfoCircle size={24} />
       </button>
     </div>
