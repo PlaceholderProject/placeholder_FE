@@ -1,14 +1,14 @@
 import ScheduleForm from "@/components/schedule/ScheduleForm";
 
 interface EditSchedulePageProps {
-  params: {
+  params: Promise<{
     meetupId: string;
     scheduleId: string;
-  };
+  }>;
 }
 
-const EditSchedulePage = ({ params }: EditSchedulePageProps) => {
-  const { meetupId, scheduleId } = params;
+const EditSchedulePage = async ({ params }: EditSchedulePageProps) => {
+  const { meetupId, scheduleId } = await params;
 
   const meetupIdNum = Number(meetupId);
   const scheduleIdNum = Number(scheduleId);

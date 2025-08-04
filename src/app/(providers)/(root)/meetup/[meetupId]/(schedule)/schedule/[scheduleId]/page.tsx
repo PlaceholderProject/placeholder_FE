@@ -1,8 +1,8 @@
 import ScheduleDetail from "@/components/schedule/ScheduleDetail";
 import ReplyArea from "@/components/common/reply/ReplyArea";
 
-const ScheduleDetailPage = ({ params }: { params: { scheduleId: string; meetupId: string } }) => {
-  const { scheduleId, meetupId } = params;
+const ScheduleDetailPage = async ({ params }: { params: Promise<{ scheduleId: string; meetupId: string }> }) => {
+  const { scheduleId, meetupId } = await params;
   const scheduleIdNum = Number(scheduleId);
   const meetupIdNum = Number(meetupId);
 

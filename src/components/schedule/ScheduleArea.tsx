@@ -16,7 +16,6 @@ const ScheduleArea = ({ meetupId }: { meetupId: number }) => {
   }, [router, meetupId]);
 
   if (isPending) {
-    // return <Loading />;
     return <Spinner isLoading={isPending} />;
   }
   if (error) return <div>Error: {error.message}</div>;
