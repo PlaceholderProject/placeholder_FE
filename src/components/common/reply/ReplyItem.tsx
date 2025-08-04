@@ -143,6 +143,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId, sche
           <NestedReplyForm
             rootReply={reply}
             meetupId={meetupId}
+            scheduleId={scheduleId}
             setIsVisiableNestedReplyForm={setIsVisiableNestedReplyForm}
             isVisiableNestedReplyForm={isVisiableNestedReplyForm}
             setIsVisiableNestedReply={setIsVisiableNestedReply}

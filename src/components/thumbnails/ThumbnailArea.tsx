@@ -114,15 +114,18 @@ const ThumbnailArea = () => {
   if (isPending)
     return (
       <SkeletonTheme baseColor="#E8E8E8" highlightColor="#D9D9D9">
-        <div className="mx-auto flex w-[34rem]">
-          <div className="mx-[1rem] my-[0.1rem] grid grid-cols-2 gap-[3.5rem]">
-            {Array.from({ length: 10 }).map((_, index) => (
-              <ThumbnailSkeleton key={index} />
+        <div className="mx-auto w-[34rem] md:w-full md:max-w-[80rem]">
+          <div className="my-[0.1rem] grid grid-cols-2 gap-x-[17%] md:grid-cols-4 md:justify-items-center md:gap-x-[1px]">
+            {Array.from({ length: 8 }).map((_, index) => (
+              <div key={index} className="w-[14.2rem] pb-[1rem] pt-[0.4rem] md:w-[150px]">
+                <ThumbnailSkeleton />
+              </div>
             ))}
           </div>
         </div>
       </SkeletonTheme>
     );
+
   if (isError) return <div>에러 발생</div>;
 
   // 가져올 때 이미 소트한 뒤로 서버에서 보내주니까 sortedThumbnails로 네이밍
