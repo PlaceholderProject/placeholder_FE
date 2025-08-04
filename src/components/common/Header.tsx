@@ -122,7 +122,7 @@ const Header = () => {
               </Link>
             </div>
           )}
-          <div className="hidden md:block">
+          <div className="hidden items-center md:flex">
             <HamburgerMenu />
           </div>
         </div>

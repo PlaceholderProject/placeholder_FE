@@ -20,15 +20,15 @@ const MeetupPage = async ({ params }: { params: Promise<{ meetupId: string }> })
   }
 
   return (
-    <div className="-mb-[6rem] flex h-[calc(100vh-6rem)] h-[calc(100vh-7.5rem)] flex-col">
+    <div className="-mb-[6rem] flex h-[calc(100vh-6rem)] flex-col md:h-[calc(100vh-7.5rem)]">
       <div className="md:hidden">
         <MeetupSignboard meetupId={meetupIdNum} />
       </div>
-      <div className="flex-1 overflow-hidden md:flex md:flex-row">
-        <div className="h-[400px] md:h-full md:w-1/2">
+      <div className="flex-1 overflow-hidden md:flex md:flex-row md:p-8">
+        <div className="h-[400px] overflow-hidden md:h-full md:w-2/5 md:rounded-3xl">
           <KakaoMaps meetupId={meetupIdNum} />
         </div>
-        <div className="flex-1 overflow-y-auto md:mx-8 md:flex md:w-1/2 md:flex-col">
+        <div className="flex-1 overflow-y-auto md:flex md:w-3/5 md:flex-col md:pl-8">
           <div className="hidden md:block">
             <MeetupSignboard meetupId={meetupIdNum} />
           </div>
