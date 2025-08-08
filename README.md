@@ -114,7 +114,7 @@
 |:----------:|:---------:|:--------------------------------------------|:-----------------------------------------------------------------------:|
 | **Jayden** | Front-end | 검색, 카카오맵, 스케줄(생성/수정/상세), 각종 모달, 알림, 네비게이션 바 |                   [GitHub](https://github.com/SNGCHN)                   |
 | **Julia**  | Front-end | 모임(생성/수정), 메인 피드(정렬/필터/좋아요), 내 공간           |                   [GitHub](https://github.com/JJQKR)                    |
-|  **Eve**   | Front-end | 인증(로그인/회원가입), 계정 관리, 댓글, 신청서, 헤더, SEO       |                 [GitHub](https://github.com/osoon9295)                  |
+|  **Eve**   | Front-end | 인증(로그인/회원가입), 계정 관리, 댓글, 신청서관리, 헤더, SEO       |                 [GitHub](https://github.com/osoon9295)                  |
 | **Ronnie** | Back-end  | Django Ninja REST API 서버 전체 구축 및 API 문서화    | [GitHub](https://github.com/orgs/PlaceholderProject/people/JoonyeolDev) |
 
 <br>
