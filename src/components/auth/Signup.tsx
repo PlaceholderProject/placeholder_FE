@@ -126,7 +126,7 @@ const Signup = () => {
       return;
     }
     if (!PASSWORD_REGULAR_EXPRESSION.test(password)) {
-      toast.error("비밀번호는 숫자 1개, 특수문자 1개를 포함하여 6~15자리 사이여야 합니다.");
+      toast.error("비밀번호는 숫자 1개, 특수문자 1개, 알파벳 1개를 포함하여 6~15자리 사이여야 합니다. 대소문자 주의");
       return;
     }
     if (nickname.length < 2 || nickname.length > 8) {

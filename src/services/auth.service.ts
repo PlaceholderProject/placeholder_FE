@@ -61,7 +61,7 @@ export const checkNickname = async (nickname: string) => {
   }
 };
 
-// login
+// 로그인페이지 : 로그인
 export const login = async ({ email, password }: LoginProps) => {
   try {
     const response = await fetch(`${BASE_URL}/api/v1/auth/login`, {
@@ -127,7 +127,7 @@ export const refreshToken = async () => {
   }
 };
 
-// recheck password
+// 비밀번호수정페이지, 회원탈퇴페이지 : 비밀번호 재확인
 export const recheckPassword = async (password: string) => {
   const accessToken = Cookies.get("accessToken");
   try {
@@ -155,7 +155,7 @@ export const recheckPassword = async (password: string) => {
   }
 };
 
-// reset password
+// 비밀번호수정페이지 : 비밀번호 재설정
 export const resetPassword = async (password: string) => {
   const accessToken = Cookies.get("accessToken");
   try {
