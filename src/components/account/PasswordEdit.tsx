@@ -75,7 +75,7 @@ const PasswordEdit = () => {
     const response = await resetPassword(password);
     if (response) {
       toast.success("비밀번호가 변경되었습니다.");
-      router.replace("/");
+      router.replace("/account");
     }
   };
 
