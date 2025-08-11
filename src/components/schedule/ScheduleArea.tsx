@@ -16,7 +16,6 @@ const ScheduleArea = ({ meetupId }: { meetupId: number }) => {
   }, [router, meetupId]);
 
   if (isPending) {
-    // return <Loading />;
     return <Spinner isLoading={isPending} />;
   }
   if (error) return <div>Error: {error.message}</div>;
@@ -43,7 +42,7 @@ const ScheduleArea = ({ meetupId }: { meetupId: number }) => {
           ))}
           <button
             onClick={handleCreateClick}
-            className="absolute bottom-4 left-1/2 flex h-14 w-14 -translate-x-1/2 transform items-center justify-center rounded-full bg-primary text-2xl text-white shadow-lg transition-transform hover:scale-105 lg:h-16 lg:w-16"
+            className="absolute bottom-4 left-1/2 flex h-14 w-14 -translate-x-1/2 transform items-center justify-center rounded-full bg-primary text-2xl text-white shadow-lg transition-transform hover:scale-105 md:h-16 md:w-16"
             aria-label="스케줄 추가"
           >
             <FaPlus />

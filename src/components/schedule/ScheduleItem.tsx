@@ -15,7 +15,7 @@ const ScheduleItem = ({ schedule, number }: { schedule: Schedule; number: number
   }, [router, schedule.meetupId, schedule.id]);
 
   return (
-    <div className="flex flex-col rounded-lg border bg-white p-4 shadow-sm lg:bg-white">
+    <div className="flex flex-col rounded-lg border bg-white p-4 shadow-sm md:bg-white">
       <div className="flex items-start">
         <ScheduleNumber number={number} />
 

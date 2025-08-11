@@ -10,13 +10,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
 import { setIsAuthenticated } from "@/stores/authSlice";
 import { setHasUnreadNotifications } from "@/stores/notificationSlice";
-import { logout } from "@/stores/userSlice";
+import { logout, setUser } from "@/stores/userSlice";
 import { useQueryClient } from "@tanstack/react-query";
 import HamburgerMenu from "@/components/common/HamburgerMenu";
 import { useNotificationList } from "@/hooks/useNotification";
 import { resetSelectedMeetupId } from "@/stores/proposalSlice";
 import { getUser } from "@/services/user.service";
-import { setUser } from "@/stores/userSlice";
 import { toast } from "sonner";
 
 const Header = () => {
@@ -124,7 +123,7 @@ const Header = () => {
               </Link>
             </div>
           )}
-          <div className="hidden lg:block">
+          <div className="hidden items-center md:flex">
             <HamburgerMenu />
           </div>
         </div>

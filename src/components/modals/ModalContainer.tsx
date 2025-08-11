@@ -24,7 +24,7 @@ const getModalContainerStyles = (modalType: ModalType): string => {
       return `${baseStyles} max-w-lg`;
     case "MEETUP_INFO":
       // 모바일에서는 rounded-2xl, PC(lg)에서는 rounded-[2.7rem]으로 반응형 radius 적용
-      return `w-full max-w-lg rounded-2xl lg:rounded-[2.7rem] p-6 lg:px-12 lg:py-10`;
+      return `w-full max-w-lg rounded-2xl md:rounded-[2.7rem] p-6 md:px-12 md:py-10`;
     case "MEETUP_MEMBERS":
     case "MEMBER_DELETE":
       return `${baseStyles} max-w-md`;
