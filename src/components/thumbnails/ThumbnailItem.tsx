@@ -75,7 +75,7 @@ const ThumbnailItem = ({ thumbnail, userNickname }: { thumbnail: Meetup; userNic
     if (thumbnail.isPublic === true) {
       return (
         <Link href={`/ad/${thumbnail.id}`} className="relative mx-auto block h-[14.2rem] w-[14.2rem] items-center justify-center md:h-[150px] md:w-[150px]">
-          <Image src={thumbnailImageUrl} alt="thumbnailImage" fill sizes="width=14.2rem, height=14.2rem" className="rounded-[2rem] object-cover" loading="lazy" />
+          <Image unoptimized={true} src={thumbnailImageUrl} alt="thumbnailImage" fill sizes="width=14.2rem, height=14.2rem" className="rounded-[2rem] object-cover" loading="lazy" />
 
           {userNickname === thumbnail.organizer.nickname && (
             <div className="absolute left-3 top-3 flex h-[2.2rem] w-[2.2rem] place-content-center items-center rounded-full bg-primary bg-opacity-70 text-[1.6rem] text-secondary-dark text-opacity-70">
@@ -121,7 +121,7 @@ const ThumbnailItem = ({ thumbnail, userNickname }: { thumbnail: Meetup; userNic
           {/* {thumbnail.image &&
             (thumbnail.isPublic === true ? (
               <Link href={`/ad/${thumbnail.id}`} className="relative mx-auto block h-[14.2rem] w-[14.2rem] items-center justify-center md:h-[150px] md:w-[150px]">
-                <Image src={thumbnailImageUrl} alt="thumbnailImage" fill sizes="width=14.2rem, height=14.2rem" className="rounded-[2rem] object-cover" loading="lazy" />
+                <Image unoptimized={true} src={thumbnailImageUrl} alt="thumbnailImage" fill sizes="width=14.2rem, height=14.2rem" className="rounded-[2rem] object-cover" loading="lazy" />
 
                 {userNickname === thumbnail.organizer.nickname && (
                   <div className="absolute left-3 top-3 flex h-[2.2rem] w-[2.2rem] place-content-center items-center rounded-full bg-primary bg-opacity-70 text-[1.6rem] text-secondary-dark text-opacity-70">
@@ -144,7 +144,7 @@ const ThumbnailItem = ({ thumbnail, userNickname }: { thumbnail: Meetup; userNic
               {/* 작성자 */}
               <div className="flex items-center gap-[0.2rem]">
                 <div className="relative flex h-[1.8rem] w-[1.8rem] flex-shrink-0 text-sm">
-                  <Image src={profileImageSource} fill alt="작성자 프로필 이미지" className="rounded-full object-cover" />
+                  <Image unoptimized={true} src={profileImageSource} fill alt="작성자 프로필 이미지" className="rounded-full object-cover" />
                 </div>
                 <div className="text-sm font-medium">{thumbnail.organizer.nickname}</div>
               </div>

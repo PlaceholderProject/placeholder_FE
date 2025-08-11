@@ -231,7 +231,7 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
                     className="flex h-48 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-4 transition-colors hover:border-gray-400"
                   >
                     {imagePreview ? (
-                      <Image src={imagePreview} alt="미리보기" fill style={{ objectFit: "cover" }} className="rounded-lg" />
+                      <Image unoptimized={true} src={imagePreview} alt="미리보기" fill style={{ objectFit: "cover" }} className="rounded-lg" />
                     ) : (
                       <div className="text-center text-gray-500">클릭하여 이미지 선택</div>
                     )}

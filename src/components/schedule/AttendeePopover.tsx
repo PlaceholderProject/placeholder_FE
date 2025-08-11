@@ -39,7 +39,7 @@ const AttendeePopover = ({ participants }: AttendeePopoverProps) => {
     <div className="relative" ref={popoverRef}>
       <button onClick={() => setIsOpen(!isOpen)} className="flex cursor-pointer items-center space-x-2 text-gray-700 hover:text-gray-900">
         <div className="h-8 w-8 flex-shrink-0 overflow-hidden rounded-full bg-gray-200">
-          <Image src={getS3ImageURL(participants[0].image)} alt={participants[0].nickname} width={32} height={32} className="h-full w-full object-cover" />
+          <Image unoptimized={true} src={getS3ImageURL(participants[0].image)} alt={participants[0].nickname} width={32} height={32} className="h-full w-full object-cover" />
         </div>
         <span>{displayAttendee}</span>
       </button>
@@ -51,7 +51,7 @@ const AttendeePopover = ({ participants }: AttendeePopoverProps) => {
               {participants.map((participant, index) => (
                 <div key={index} className="flex items-center px-3 py-2 hover:bg-gray-100">
                   <div className="mr-3 h-8 w-8 flex-shrink-0 overflow-hidden rounded-full bg-gray-200">
-                    <Image src={getS3ImageURL(participant.image)} alt={participant.nickname} width={32} height={32} className="h-full w-full object-cover" />
+                    <Image unoptimized={true} src={getS3ImageURL(participant.image)} alt={participant.nickname} width={32} height={32} className="h-full w-full object-cover" />
                   </div>
                   <span className="text-sm text-gray-700">{participant.nickname}</span>
                 </div>

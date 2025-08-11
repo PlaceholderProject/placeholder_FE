@@ -42,7 +42,7 @@ const AdOrganizer = ({ adData }: { adData: Meetup }) => {
     <>
       <div className="space-x-[0.4rem]0 flex items-center md:space-x-[1rem]">
         <div className="relative h-[30px] w-[30px] overflow-hidden rounded-full md:h-[60px] md:w-[60px]">
-          <Image src={imageSource} alt="방장 프사" width={30} height={30} style={{ width: "100%", height: "100%", objectFit: "cover" }} unoptimized={true} />
+          <Image unoptimized={true} src={imageSource} alt="방장 프사" width={30} height={30} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
         </div>
         <div className="text-base md:text-xl">{adData.organizer.nickname}</div>
       </div>
