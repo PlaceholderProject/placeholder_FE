@@ -1,7 +1,6 @@
 "use client";
 
-import { getSearchedAd } from "@/services/search.service";
-import { setSearchedAds, setSearchField, setTotal } from "@/stores/searchSlice";
+import { setSearchField } from "@/stores/searchSlice";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
@@ -30,11 +29,8 @@ const SearchForm = () => {
       toast.error("검색어를 입력해주세요.");
       return;
     }
-    const result = await getSearchedAd(range, keyword, 1);
 
-    dispatch(setSearchedAds(result?.proposals));
     dispatch(setSearchField({ range, keyword }));
-    dispatch(setTotal(result?.total));
 
     router.push("/search");
   };

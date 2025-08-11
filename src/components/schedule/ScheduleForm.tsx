@@ -131,13 +131,13 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
     <>
       {isSubmitting && <SubmitLoader isLoading={isSubmitting} />}
 
-      <div className="p-4 lg:p-8">
+      <div className="p-4 md:p-8">
         <form onSubmit={handleSubmit} className="mx-auto max-w-4xl">
           <div className="mb-6 flex justify-center">
             <ScheduleNumber number={1} />
           </div>
 
-          <div className="lg:grid lg:grid-cols-2 lg:gap-12">
+          <div className="md:grid md:grid-cols-2 md:gap-12">
             <div className="space-y-6">
               <div>
                 <label htmlFor="place" className="mb-2 block text-base font-bold">
@@ -244,7 +244,7 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
                 </div>
               </div>
             </div>
-            <div className="mt-6 space-y-6 lg:mt-0">
+            <div className="mt-6 space-y-6 md:mt-0">
               <div>
                 <label className="mb-2 block text-base font-bold">참석자 등록하기</label>
                 <MemberSelector meetupId={meetupId} selectedMember={formData.participant} onMemberSelect={handleMemberSelect} />
