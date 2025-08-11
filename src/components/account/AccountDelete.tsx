@@ -1,11 +1,11 @@
 "use client";
 
 import { RootState } from "@/stores/store";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PasswordRecheck from "../auth/PasswordRecheck";
 import Link from "next/link";
-import { setIsAuthenticated } from "@/stores/authSlice";
+import { setIsAuthenticated, setIsPasswordRechecked } from "@/stores/authSlice";
 import Cookies from "js-cookie";
 import { useDeleteUser } from "@/hooks/useUser";
 import { toast } from "sonner";
@@ -17,6 +17,10 @@ const AccountDelete = () => {
   const deleteUserMutation = useDeleteUser();
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setIsPasswordRechecked(false));
+  }, []);
 
   const handleDeleteUserButton = async () => {
     try {

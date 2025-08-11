@@ -1,15 +1,16 @@
 "use client";
 
 import { PASSWORD_REGULAR_EXPRESSION } from "@/constants/regularExpressionConstants";
-import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import PasswordRecheck from "../auth/PasswordRecheck";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/stores/store";
 import { resetPassword } from "@/services/auth.service";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { setIsPasswordRechecked } from "@/stores/authSlice";
+import Link from "next/link";
 
 const PasswordEdit = () => {
   const [password, setPassword] = useState("");
@@ -20,7 +21,12 @@ const PasswordEdit = () => {
   const [passwordConfirmWarning, setPasswordConfirmWarning] = useState("");
 
   const router = useRouter();
+  const dispatch = useDispatch();
   const isPasswordRechecked = useSelector((state: RootState) => state.auth.isPasswordRechecked);
+
+  useEffect(() => {
+    dispatch(setIsPasswordRechecked(false));
+  }, []);
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!PASSWORD_REGULAR_EXPRESSION.test(event.target.value)) {
@@ -127,44 +133,6 @@ const PasswordEdit = () => {
             </div>
           </form>
         )}
-        {/* <form onSubmit={handlePasswordEditFormSubmit} className="flex flex-col justify-center gap-[1.5rem] p-[2rem]">
-          <div className="relative flex flex-col">
-            <label htmlFor="password" className="text-lg font-semibold">
-              새 비밀번호
-            </label>
-            <input
-              type={isVisivlePassword ? "text" : "password"}
-              value={password}
-              onChange={handlePasswordChange}
-              className="h-[4rem] w-[24rem] rounded-[1rem] border-[0.1rem] border-gray-medium px-[1rem]"
-            />
-            <button type="button" onClick={handleTogglePassword} className="absolute right-[1.3rem] top-[3.2rem] text-[2.3rem]">
-              {isVisivlePassword ? <FaEyeSlash /> : <FaEye />}
-            </button>
-            {passwordWarning && <p className="mt-[0.3rem] w-[24rem] text-sm text-warning">{passwordWarning}</p>}
-          </div>
-          <div className="relative flex flex-col">
-            <label htmlFor="passwordConfirm" className="text-lg font-semibold">
-              새 비밀번호 확인
-            </label>
-            <input
-              type={isVisivlePassworConfirm ? "text" : "password"}
-              value={passwordConfirm}
-              onChange={handlePasswordConfirmChange}
-              className="h-[4rem] w-[24rem] rounded-[1rem] border-[0.1rem] border-gray-medium px-[1rem]"
-            />
-            <button type="button" onClick={handleTogglePasswordConfirm} className="absolute right-[1.3rem] top-[3.2rem] text-[2.3rem]">
-              {isVisivlePassworConfirm ? <FaEyeSlash /> : <FaEye />}
-            </button>
-            {passwordConfirmWarning && <p className="mt-[0.3rem] w-[24rem] text-sm text-warning">{passwordConfirmWarning}</p>}
-          </div>
-          <div className="flex flex-col gap-[0.8rem]">
-            <button className="flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] bg-secondary-dark text-lg">변경하기</button>
-            <Link href="/account">
-              <div className="flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] bg-gray-light text-lg">취소하기</div>
-            </Link>
-          </div>
-        </form> */}
       </div>
     </div>
   );

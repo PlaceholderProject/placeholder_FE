@@ -141,7 +141,6 @@ export const recheckPassword = async (password: string) => {
     });
 
     if (response.ok) {
-      toast.success("비밀번호가 일치합니다.");
       return true;
     }
 
@@ -174,7 +173,6 @@ export const resetPassword = async (password: string) => {
       const { access, refresh } = await response.json();
       Cookies.set("accessToken", access, { expires: 1, secure: true, sameSite: "Strict" });
       Cookies.set("refreshToken", refresh, { expires: 7, secure: true, sameSite: "Strict" });
-      toast.success("비밀번호를 재설정했습니다.");
       return { access, refresh };
     }
 
