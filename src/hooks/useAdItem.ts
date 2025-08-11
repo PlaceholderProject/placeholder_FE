@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Meetup } from "@/types/meetupType";
 import { getMeetupByIdApi } from "@/services/meetup.service";
 
-export const useAdItem = (id: number) => {
+export const useAdItem = (id: number, initialData?: Meetup) => {
   const {
     data: adData,
     error,
@@ -10,6 +10,8 @@ export const useAdItem = (id: number) => {
   } = useQuery<Meetup, Error>({
     queryKey: ["ad", id],
     queryFn: () => getMeetupByIdApi(id),
+    initialData,
+    staleTime: 1000 * 60 * 5,
   });
 
   return {
