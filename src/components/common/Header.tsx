@@ -17,6 +17,7 @@ import { useNotificationList } from "@/hooks/useNotification";
 import { resetSelectedMeetupId } from "@/stores/proposalSlice";
 import { getUser } from "@/services/user.service";
 import { setUser } from "@/stores/userSlice";
+import { toast } from "sonner";
 
 const Header = () => {
   const hasUnreadNotifications = useSelector((state: RootState) => state.notification.hasUnread);
@@ -52,8 +53,8 @@ const Header = () => {
       queryClient.invalidateQueries({ queryKey: ["sentProposals"] });
 
       queryClient.clear();
-
       router.replace("/");
+      toast.success("로그아웃되었습니다.");
     } catch (error) {
       console.error("로그아웃 중 오류:", error);
     }
