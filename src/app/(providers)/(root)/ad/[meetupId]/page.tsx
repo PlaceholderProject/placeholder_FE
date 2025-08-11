@@ -31,13 +31,26 @@ export async function generateMetadata({ params }: { params: Promise<{ meetupId:
   };
 }
 
-const AdPage = () => {
+// const AdPage = () => {
+//   return (
+//     <div>
+//       <AdArea />
+//       <ReplyArea />
+//     </div>
+//   );
+// };
+
+const AdPage = async ({ params }: { params: Promise<{ meetupId: string }> }) => {
+  const { meetupId } = await params;
+  const initialData = await getMeetupByIdApi(Number(meetupId));
+
   return (
-    <div>
-      <AdArea />
-      <ReplyArea />
-    </div>
+    <>
+      <div>
+        <AdArea initialData={initialData} meetupId={Number(meetupId)} />
+        <ReplyArea />
+      </div>
+    </>
   );
 };
-
 export default AdPage;
