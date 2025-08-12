@@ -25,6 +25,8 @@ const Signup = () => {
   const [nicknameWarning, setNicknameWarning] = useState("");
   const [bioTextLength, setBioTextLength] = useState(0);
   const [bioWarning, setBioWarning] = useState("");
+  const [checkedEmail, setCheckedEmail] = useState("");
+  const [checkedNickname, setCheckedNickname] = useState("");
 
   const router = useRouter();
 
@@ -78,12 +80,20 @@ const Signup = () => {
 
   const handleCheckEmail = async () => {
     const isCheckEmail = await checkEmail(email);
-    if (isCheckEmail) dispatch(setIsCheckedEmail(isCheckEmail));
+    console.log("isCheckEmail", isCheckEmail);
+    if (isCheckEmail) {
+      setCheckedEmail(email);
+      dispatch(setIsCheckedEmail(isCheckEmail));
+    }
   };
 
   const handleCheckNickname = async () => {
     const isCheckNickname = await checkNickname(nickname);
-    if (isCheckNickname) dispatch(setIsCheckedNickname(isCheckNickname));
+    console.log("isCheckNickname", isCheckNickname);
+    if (isCheckNickname) {
+      setCheckedNickname(nickname);
+      dispatch(setIsCheckedNickname(isCheckNickname));
+    }
   };
 
   const handleTogglePassword = () => {
@@ -131,6 +141,18 @@ const Signup = () => {
     }
     if (nickname.length < 2 || nickname.length > 8) {
       toast.error("닉네임은 최소 2자 최대 8자까지 가능합니다.");
+      return;
+    }
+    if (checkedEmail !== email) {
+      console.log("checkedEmail", checkedEmail);
+      console.log("email", email);
+      toast.error("이메일을 중복확인해주세요.");
+      return;
+    }
+    if (checkedNickname !== nickname) {
+      console.log("checkedNickname", checkedNickname);
+      console.log("nickname", nickname);
+      toast.error("닉네임을 중복확인해주세요.");
       return;
     }
 
