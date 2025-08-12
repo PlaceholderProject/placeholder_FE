@@ -26,7 +26,7 @@ const PasswordEdit = () => {
 
   useEffect(() => {
     dispatch(setIsPasswordRechecked(false));
-  }, []);
+  }, [dispatch]);
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!PASSWORD_REGULAR_EXPRESSION.test(event.target.value)) {

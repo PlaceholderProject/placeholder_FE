@@ -21,7 +21,7 @@ const AccountDelete = () => {
 
   useEffect(() => {
     dispatch(setIsPasswordRechecked(false));
-  }, []);
+  }, [dispatch]);
 
   const handleDeleteUserButton = async () => {
     try {
