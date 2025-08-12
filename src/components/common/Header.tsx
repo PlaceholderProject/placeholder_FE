@@ -7,10 +7,10 @@ import { useCallback, useEffect } from "react";
 import { FaRegBell } from "react-icons/fa6";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/stores/store";
+import { persistor, RootState } from "@/stores/store";
 import { setIsAuthenticated } from "@/stores/authSlice";
 import { setHasUnreadNotifications } from "@/stores/notificationSlice";
-import { logout, setUser } from "@/stores/userSlice";
+import { setUser } from "@/stores/userSlice";
 import { useQueryClient } from "@tanstack/react-query";
 import HamburgerMenu from "@/components/common/HamburgerMenu";
 import { useNotificationList } from "@/hooks/useNotification";
@@ -37,15 +37,13 @@ const Header = () => {
 
   const handleLogout = useCallback(async () => {
     try {
-      localStorage.removeItem("persist:user");
-
       Cookies.remove("accessToken");
       Cookies.remove("refreshToken");
 
-      dispatch(logout());
       dispatch(setIsAuthenticated(false));
       dispatch(setHasUnreadNotifications(false));
       dispatch(resetSelectedMeetupId());
+      persistor.purge();
 
       queryClient.invalidateQueries({ queryKey: ["myMeetups", "organizer"] });
       queryClient.invalidateQueries({ queryKey: ["receivedProposals"] });
