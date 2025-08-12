@@ -278,7 +278,7 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
 
       // 이미지 업로드 처리
       let imageUrl = mode === "edit" ? previousMeetupData?.image || "" : "";
-
+      console.log("----1111이미지패스 찍자", imageUrl);
       // ---1--- 이미지 있으면 (s3에 업로드)
       if (imageRef?.current?.files?.[0]) {
         const imageFile = imageRef.current.files[0]; //
@@ -300,6 +300,7 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
         // console.log("🎯 presigned Content-Type:", presignedData.fields["Content-Type"]);
         // s3업로드 함수 실행으로 업로드 하고 imageUrl 받아오기
         imageUrl = await s3Upload.mutateAsync({ file: imageFile, presignedData });
+        console.log("----222이미지패스 찍자", imageUrl);
       }
 
       if (mode === "create") {
@@ -328,6 +329,8 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
         // ---3--- 모임 생성 (이미 업로드되고 받아온 이미지 url포함, 이건 유저 폼제출 이!!후!!에 유저 모르게 일어나는 과정임)
 
         await createMutation.mutateAsync({ data: newMeetup, imageUrl });
+        console.log("----1111 생성이미지패스 찍자", imageUrl);
+
         toast.success("모임 생성에 성공했습니다!");
         console.log("생성할 새모임 데이터:", newMeetup);
         // queryClient.invalidateQueries({ queryKey: ["meetups"] });
