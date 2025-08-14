@@ -2,7 +2,7 @@
 
 import { PASSWORD_REGULAR_EXPRESSION } from "@/constants/regularExpressionConstants";
 import { useCreateUser } from "@/hooks/useUser";
-import { checkEmail, checkNickname } from "@/services/auth.service";
+import { checkEmail, checkNickname, login } from "@/services/auth.service";
 import { setIsCheckedEmail, setIsCheckedNickname } from "@/stores/authSlice";
 import { RootState } from "@/stores/store";
 import Link from "next/link";
@@ -167,8 +167,12 @@ const Signup = () => {
       const result = await createUserMutation.mutateAsync(newUser);
 
       if (result) {
+        await login({ email, password });
+
         toast.success(`${newUser.nickname}님 회원가입을 축하드립니다.`);
-        router.replace("/login");
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 2000);
       }
     } catch (error) {
       console.error(error);

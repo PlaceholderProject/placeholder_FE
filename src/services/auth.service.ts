@@ -83,9 +83,8 @@ export const login = async ({ email, password }: LoginProps) => {
 
       return { access, refresh };
     }
-    const errorData = await response.json();
-    const errorMessage = errorData?.detail || "알 수 없는 오류가 발생했습니다.";
-    toast.error(errorMessage);
+
+    toast.error("아이디 또는 비밀번호가 올바르지 않습니다.");
 
     return false;
   } catch (error) {
