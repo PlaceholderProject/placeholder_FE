@@ -17,13 +17,18 @@ const Signup = () => {
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [nickname, setNickname] = useState("");
   const [bio, setBio] = useState("");
+
   const [isVisivlePassword, setIsVisivlePassword] = useState(false);
   const [isVisivlePassworConfirm, setIsVisivlePasswordConfirm] = useState(false);
+
+  const [emailWarning, setEmailWarning] = useState("");
+  const [emailWarningColor, setEmailWarningColor] = useState("");
   const [passwordWarning, setPasswordWarning] = useState("");
   const [passwordConfirmWarning, setPasswordConfirmWarning] = useState("");
   const [nicknameWarning, setNicknameWarning] = useState("");
-  const [bioTextLength, setBioTextLength] = useState(0);
   const [bioWarning, setBioWarning] = useState("");
+
+  const [bioTextLength, setBioTextLength] = useState(0);
   const [checkedEmail, setCheckedEmail] = useState("");
   const [checkedNickname, setCheckedNickname] = useState("");
 
@@ -80,6 +85,11 @@ const Signup = () => {
     if (isCheckEmail) {
       setCheckedEmail(email);
       dispatch(setIsCheckedEmail(isCheckEmail));
+      setEmailWarning("✓ 사용 가능한 이메일");
+      setEmailWarningColor("text-primary");
+    } else {
+      setEmailWarning("✕ 사용할 수 없는 이메일입니다.");
+      setEmailWarningColor("text-warning");
     }
   };
 
@@ -189,6 +199,7 @@ const Signup = () => {
                 중복확인
               </button>
             </div>
+            {emailWarning && <p className={`mt-[0.3rem] w-[24rem] text-sm ${emailWarningColor}`}>{emailWarning}</p>}
           </div>
           <div className="relative flex flex-col">
             <label htmlFor="password" className="text-lg font-semibold">
