@@ -2,11 +2,10 @@
 
 import { PASSWORD_REGULAR_EXPRESSION } from "@/constants/regularExpressionConstants";
 import { useCreateUser } from "@/hooks/useUser";
-import { checkEmail, checkNickname } from "@/services/auth.service";
+import { checkEmail, checkNickname, login } from "@/services/auth.service";
 import { setIsCheckedEmail, setIsCheckedNickname } from "@/stores/authSlice";
 import { RootState } from "@/stores/store";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,15 +17,20 @@ const Signup = () => {
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [nickname, setNickname] = useState("");
   const [bio, setBio] = useState("");
+
   const [isVisivlePassword, setIsVisivlePassword] = useState(false);
   const [isVisivlePassworConfirm, setIsVisivlePasswordConfirm] = useState(false);
+
+  const [emailWarning, setEmailWarning] = useState("");
+  const [emailWarningColor, setEmailWarningColor] = useState("");
   const [passwordWarning, setPasswordWarning] = useState("");
   const [passwordConfirmWarning, setPasswordConfirmWarning] = useState("");
   const [nicknameWarning, setNicknameWarning] = useState("");
-  const [bioTextLength, setBioTextLength] = useState(0);
   const [bioWarning, setBioWarning] = useState("");
 
-  const router = useRouter();
+  const [bioTextLength, setBioTextLength] = useState(0);
+  const [checkedEmail, setCheckedEmail] = useState("");
+  const [checkedNickname, setCheckedNickname] = useState("");
 
   const dispatch = useDispatch();
   const { isCheckedEmail, isCheckedNickname } = useSelector((state: RootState) => state.auth);
@@ -78,12 +82,23 @@ const Signup = () => {
 
   const handleCheckEmail = async () => {
     const isCheckEmail = await checkEmail(email);
-    if (isCheckEmail) dispatch(setIsCheckedEmail(isCheckEmail));
+    if (isCheckEmail) {
+      setCheckedEmail(email);
+      dispatch(setIsCheckedEmail(isCheckEmail));
+      setEmailWarning("✓ 사용 가능한 이메일");
+      setEmailWarningColor("text-primary");
+    } else {
+      setEmailWarning("✕ 사용할 수 없는 이메일입니다.");
+      setEmailWarningColor("text-warning");
+    }
   };
 
   const handleCheckNickname = async () => {
     const isCheckNickname = await checkNickname(nickname);
-    if (isCheckNickname) dispatch(setIsCheckedNickname(isCheckNickname));
+    if (isCheckNickname) {
+      setCheckedNickname(nickname);
+      dispatch(setIsCheckedNickname(isCheckNickname));
+    }
   };
 
   const handleTogglePassword = () => {
@@ -126,11 +141,23 @@ const Signup = () => {
       return;
     }
     if (!PASSWORD_REGULAR_EXPRESSION.test(password)) {
-      toast.error("비밀번호는 숫자 1개, 특수문자 1개를 포함하여 6~15자리 사이여야 합니다.");
+      toast.error("비밀번호는 숫자 1개, 특수문자 1개, 알파벳 1개를 포함하여 6~15자리 사이여야 합니다. 대소문자 주의");
       return;
     }
     if (nickname.length < 2 || nickname.length > 8) {
       toast.error("닉네임은 최소 2자 최대 8자까지 가능합니다.");
+      return;
+    }
+    if (checkedEmail !== email) {
+      console.log("checkedEmail", checkedEmail);
+      console.log("email", email);
+      toast.error("이메일을 중복확인해주세요.");
+      return;
+    }
+    if (checkedNickname !== nickname) {
+      console.log("checkedNickname", checkedNickname);
+      console.log("nickname", nickname);
+      toast.error("닉네임을 중복확인해주세요.");
       return;
     }
 
@@ -145,8 +172,12 @@ const Signup = () => {
       const result = await createUserMutation.mutateAsync(newUser);
 
       if (result) {
+        await login({ email, password });
+
         toast.success(`${newUser.nickname}님 회원가입을 축하드립니다.`);
-        router.replace("/login");
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 2000);
       }
     } catch (error) {
       console.error(error);
@@ -168,6 +199,7 @@ const Signup = () => {
                 중복확인
               </button>
             </div>
+            {emailWarning && <p className={`mt-[0.3rem] w-[24rem] text-sm ${emailWarningColor}`}>{emailWarning}</p>}
           </div>
           <div className="relative flex flex-col">
             <label htmlFor="password" className="text-lg font-semibold">

@@ -61,7 +61,7 @@ export const checkNickname = async (nickname: string) => {
   }
 };
 
-// login
+// 로그인페이지 : 로그인
 export const login = async ({ email, password }: LoginProps) => {
   try {
     const response = await fetch(`${BASE_URL}/api/v1/auth/login`, {
@@ -83,9 +83,8 @@ export const login = async ({ email, password }: LoginProps) => {
 
       return { access, refresh };
     }
-    const errorData = await response.json();
-    const errorMessage = errorData?.detail || "알 수 없는 오류가 발생했습니다.";
-    toast.error(errorMessage);
+
+    toast.error("아이디 또는 비밀번호가 올바르지 않습니다.");
 
     return false;
   } catch (error) {
@@ -127,7 +126,7 @@ export const refreshToken = async () => {
   }
 };
 
-// recheck password
+// 비밀번호수정페이지, 회원탈퇴페이지 : 비밀번호 재확인
 export const recheckPassword = async (password: string) => {
   const accessToken = Cookies.get("accessToken");
   try {
@@ -141,7 +140,6 @@ export const recheckPassword = async (password: string) => {
     });
 
     if (response.ok) {
-      toast.success("비밀번호가 일치합니다.");
       return true;
     }
 
@@ -155,7 +153,7 @@ export const recheckPassword = async (password: string) => {
   }
 };
 
-// reset password
+// 비밀번호수정페이지 : 비밀번호 재설정
 export const resetPassword = async (password: string) => {
   const accessToken = Cookies.get("accessToken");
   try {
@@ -174,7 +172,6 @@ export const resetPassword = async (password: string) => {
       const { access, refresh } = await response.json();
       Cookies.set("accessToken", access, { expires: 1, secure: true, sameSite: "Strict" });
       Cookies.set("refreshToken", refresh, { expires: 7, secure: true, sameSite: "Strict" });
-      toast.success("비밀번호를 재설정했습니다.");
       return { access, refresh };
     }
 

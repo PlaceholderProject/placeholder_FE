@@ -7,15 +7,16 @@ import { useCallback, useEffect } from "react";
 import { FaRegBell } from "react-icons/fa6";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/stores/store";
+import { persistor, RootState } from "@/stores/store";
 import { setIsAuthenticated } from "@/stores/authSlice";
 import { setHasUnreadNotifications } from "@/stores/notificationSlice";
-import { logout, setUser } from "@/stores/userSlice";
+import { setUser } from "@/stores/userSlice";
 import { useQueryClient } from "@tanstack/react-query";
 import HamburgerMenu from "@/components/common/HamburgerMenu";
 import { useNotificationList } from "@/hooks/useNotification";
 import { resetSelectedMeetupId } from "@/stores/proposalSlice";
 import { getUser } from "@/services/user.service";
+import { toast } from "sonner";
 
 const Header = () => {
   const hasUnreadNotifications = useSelector((state: RootState) => state.notification.hasUnread);
@@ -36,23 +37,21 @@ const Header = () => {
 
   const handleLogout = useCallback(async () => {
     try {
-      localStorage.removeItem("persist:user");
-
       Cookies.remove("accessToken");
       Cookies.remove("refreshToken");
 
-      dispatch(logout());
       dispatch(setIsAuthenticated(false));
       dispatch(setHasUnreadNotifications(false));
       dispatch(resetSelectedMeetupId());
+      persistor.purge();
 
       queryClient.invalidateQueries({ queryKey: ["myMeetups", "organizer"] });
       queryClient.invalidateQueries({ queryKey: ["receivedProposals"] });
       queryClient.invalidateQueries({ queryKey: ["sentProposals"] });
 
       queryClient.clear();
-
       router.replace("/");
+      toast.success("로그아웃되었습니다.");
     } catch (error) {
       console.error("로그아웃 중 오류:", error);
     }
