@@ -6,7 +6,6 @@ import { checkEmail, checkNickname, login } from "@/services/auth.service";
 import { setIsCheckedEmail, setIsCheckedNickname } from "@/stores/authSlice";
 import { RootState } from "@/stores/store";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,8 +26,6 @@ const Signup = () => {
   const [bioWarning, setBioWarning] = useState("");
   const [checkedEmail, setCheckedEmail] = useState("");
   const [checkedNickname, setCheckedNickname] = useState("");
-
-  const router = useRouter();
 
   const dispatch = useDispatch();
   const { isCheckedEmail, isCheckedNickname } = useSelector((state: RootState) => state.auth);
@@ -80,7 +77,6 @@ const Signup = () => {
 
   const handleCheckEmail = async () => {
     const isCheckEmail = await checkEmail(email);
-    console.log("isCheckEmail", isCheckEmail);
     if (isCheckEmail) {
       setCheckedEmail(email);
       dispatch(setIsCheckedEmail(isCheckEmail));
@@ -89,7 +85,6 @@ const Signup = () => {
 
   const handleCheckNickname = async () => {
     const isCheckNickname = await checkNickname(nickname);
-    console.log("isCheckNickname", isCheckNickname);
     if (isCheckNickname) {
       setCheckedNickname(nickname);
       dispatch(setIsCheckedNickname(isCheckNickname));
