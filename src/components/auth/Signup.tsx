@@ -61,7 +61,8 @@ const Signup = () => {
   };
 
   const handleNicknameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value.length > 8) {
+    const nicknameLength = event.target.value.length;
+    if (nicknameLength > 8 || nicknameLength < 2) {
       setNicknameWarning("닉네임은 최소 2자 최대 8자까지 가능합니다.");
     } else {
       setNicknameWarning("");
