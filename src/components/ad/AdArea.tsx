@@ -5,21 +5,22 @@ import AdSignboard from "./AdSignboard";
 import AdOrganizer from "./AdOrganizer";
 import AdDetail from "./AdDetail";
 import AdButton from "./AdButton";
-import { useParams } from "next/navigation";
+// import { useParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
 import { useAdItem } from "@/hooks/useAdItem";
 import AdLikeContainer from "./AdLikeContainer";
-import Spinner from "@/components/common/Spinner";
+import { Meetup } from "@/types/meetupType";
+import Spinner from "../common/Spinner";
 
-const AdArea = () => {
-  const { meetupId } = useParams();
-  const meetupIdNum = Number(meetupId);
+const AdArea = ({ initialData, meetupId }: { initialData: Meetup; meetupId: number }) => {
+  // const { meetupId } = useParams();
+  // const meetupIdNum = Number(meetupId);
   const user = useSelector((state: RootState) => state.user.user);
   const userNickname = user?.nickname || "";
 
   // 통합해서 adData가져오기
-  const { adData, error, isPending } = useAdItem(meetupIdNum);
+  const { adData, error, isPending } = useAdItem(meetupId, initialData);
   if (error) return <div>에러 발생: {error.message}</div>;
   if (isPending) {
     return <Spinner isLoading={isPending} />;
@@ -42,9 +43,9 @@ const AdArea = () => {
         <AdOrganizer adData={adData} />
         <AdLikeContainer id={adData.id} initialIsLike={adData.isLike} initialLikeCount={adData.likeCount} />
       </div>
-
       <AdDetail adData={adData} userNickname={userNickname} />
-      <AdButton meetupId={meetupIdNum} />
+      <AdButton meetupId={meetupId} />
+      ``
     </div>
   );
 };

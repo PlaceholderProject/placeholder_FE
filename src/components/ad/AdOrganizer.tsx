@@ -11,6 +11,7 @@ const AdOrganizer = ({ adData }: { adData: Meetup }) => {
   useEffect(() => {
     if (adData && adData.organizer && adData.organizer.image) {
       const profileImageUrl = adData?.organizer.image.startsWith("http") ? adData.organizer.image : `${BASE_URL}/${adData.organizer.image}`;
+      console.log("광고 페이지 방장 이미지 url", profileImageUrl);
 
       const imgElement = document.createElement("img");
       imgElement.onload = () => {
