@@ -1,22 +1,27 @@
 "use client";
 
-import { RootState } from "@/stores/store";
-import React, { useState } from "react";
+import { persistor, RootState } from "@/stores/store";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PasswordRecheck from "../auth/PasswordRecheck";
 import Link from "next/link";
-import { setIsAuthenticated } from "@/stores/authSlice";
+import { setIsAuthenticated, setIsPasswordRechecked } from "@/stores/authSlice";
 import Cookies from "js-cookie";
 import { useDeleteUser } from "@/hooks/useUser";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const AccountDelete = () => {
-  const [isDeletedAccount, setIsDeletedAccount] = useState(false);
   const isPasswordRechecked = useSelector((state: RootState) => state.auth.isPasswordRechecked);
 
+  const router = useRouter();
   const deleteUserMutation = useDeleteUser();
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setIsPasswordRechecked(false));
+  }, [dispatch]);
 
   const handleDeleteUserButton = async () => {
     try {
@@ -24,7 +29,9 @@ const AccountDelete = () => {
       Cookies.remove("accessToken");
       Cookies.remove("refreshToken");
       dispatch(setIsAuthenticated(false));
-      setIsDeletedAccount(true);
+      persistor.purge();
+      router.replace("/");
+      toast.success("탈퇴되었습니다.");
     } catch {
       toast.error("회원탈퇴 중 오류가 발생했습니다.");
     }
@@ -37,13 +44,6 @@ const AccountDelete = () => {
         {!isPasswordRechecked ? (
           <div className="absolute inset-5 z-50 flex items-center justify-center bg-[#f9f9f9]">
             <PasswordRecheck />
-          </div>
-        ) : isDeletedAccount ? (
-          <div className="flex flex-col items-center">
-            <p className="my-[5rem] text-lg font-semibold">탈퇴되었습니다.</p>
-            <Link href="/" className="flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] bg-secondary-dark text-lg">
-              메인페이지로 이동하기
-            </Link>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center">

@@ -35,6 +35,7 @@ const PasswordRecheck = () => {
 
     const response = await recheckPassword(password);
     if (response) {
+      toast.success("비밀번호가 일치합니다.");
       dispatch(setIsPasswordRechecked(!isPasswordRechecked));
     }
   };
@@ -60,7 +61,7 @@ const PasswordRecheck = () => {
           </button>
         </div>
         <div className="flex flex-col gap-[0.8rem]">
-          <button type="submit" className="text-l h-[4rem] w-[24rem] rounded-[1rem] bg-secondary-dark">
+          <button type="submit" className="h-[4rem] w-[24rem] rounded-[1rem] bg-secondary-dark text-lg">
             입력완료
           </button>
           <Link href="/account">
