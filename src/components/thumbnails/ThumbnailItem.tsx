@@ -12,9 +12,11 @@ import { FaCrown } from "react-icons/fa6";
 
 // id 였는데 썸네일 객체를 직접 전달하도록 수정
 // 구조분해할당, 타입지정
-const ThumbnailItem = ({ thumbnail, userNickname }: { thumbnail: Meetup; userNickname: string | null }) => {
+const ThumbnailItem = ({ thumbnail, userNickname, priority }: { thumbnail: Meetup; userNickname: string | null; priority: boolean }) => {
   const [profileImageSource, setProfileImageSource] = useState("/profile.png");
   const thumbnailImageUrl = thumbnail.image?.startsWith("http") ? thumbnail.image : `${BASE_URL}/${thumbnail.image}`;
+
+  console.log(`ThumbnailItem ${thumbnail.id} 렌더링 확인⭐️`);
 
   useEffect(() => {
     // console.log("==베이스유알엘:", BASE_URL);
@@ -73,9 +75,10 @@ const ThumbnailItem = ({ thumbnail, userNickname }: { thumbnail: Meetup; userNic
     if (!thumbnail.image) return null;
 
     if (thumbnail.isPublic === true) {
+      console.log("클로드야 이거야", thumbnail.image);
       return (
         <Link href={`/ad/${thumbnail.id}`} className="relative mx-auto block h-[14.2rem] w-[14.2rem] items-center justify-center md:h-[150px] md:w-[150px]">
-          <Image unoptimized={true} src={thumbnailImageUrl} alt="thumbnailImage" fill sizes="width=14.2rem, height=14.2rem" className="rounded-[2rem] object-cover" loading="lazy" />
+          <Image unoptimized={false} src={thumbnailImageUrl} alt="thumbnailImage" fill sizes="width=14.2rem, height=14.2rem" className="rounded-[2rem] object-cover" loading="lazy" />
 
           {userNickname === thumbnail.organizer.nickname && (
             <div className="absolute left-3 top-3 flex h-[2.2rem] w-[2.2rem] place-content-center items-center rounded-full bg-primary bg-opacity-70 text-[1.6rem] text-secondary-dark text-opacity-70">
@@ -121,7 +124,7 @@ const ThumbnailItem = ({ thumbnail, userNickname }: { thumbnail: Meetup; userNic
           {/* {thumbnail.image &&
             (thumbnail.isPublic === true ? (
               <Link href={`/ad/${thumbnail.id}`} className="relative mx-auto block h-[14.2rem] w-[14.2rem] items-center justify-center md:h-[150px] md:w-[150px]">
-                <Image unoptimized={true} src={thumbnailImageUrl} alt="thumbnailImage" fill sizes="width=14.2rem, height=14.2rem" className="rounded-[2rem] object-cover" loading="lazy" />
+                <Image unoptimized={false} src={thumbnailImageUrl} alt="thumbnailImage" fill sizes="width=14.2rem, height=14.2rem" className="rounded-[2rem] object-cover" loading="lazy" />
 
                 {userNickname === thumbnail.organizer.nickname && (
                   <div className="absolute left-3 top-3 flex h-[2.2rem] w-[2.2rem] place-content-center items-center rounded-full bg-primary bg-opacity-70 text-[1.6rem] text-secondary-dark text-opacity-70">
@@ -144,7 +147,7 @@ const ThumbnailItem = ({ thumbnail, userNickname }: { thumbnail: Meetup; userNic
               {/* 작성자 */}
               <div className="flex items-center gap-[0.2rem]">
                 <div className="relative flex h-[1.8rem] w-[1.8rem] flex-shrink-0 text-sm">
-                  <Image unoptimized={true} src={profileImageSource} fill alt="작성자 프로필 이미지" className="rounded-full object-cover" />
+                  <Image unoptimized={false} src={profileImageSource} fill alt="작성자 프로필 이미지" className="rounded-full object-cover" />
                 </div>
                 <div className="text-sm font-medium">{thumbnail.organizer.nickname}</div>
               </div>
