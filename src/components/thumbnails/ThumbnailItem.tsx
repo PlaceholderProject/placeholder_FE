@@ -78,7 +78,16 @@ const ThumbnailItem = ({ thumbnail, userNickname, priority }: { thumbnail: Meetu
       console.log("클로드야 이거야", thumbnail.image);
       return (
         <Link href={`/ad/${thumbnail.id}`} className="relative mx-auto block h-[14.2rem] w-[14.2rem] items-center justify-center md:h-[150px] md:w-[150px]">
-          <Image unoptimized={false} src={thumbnailImageUrl} alt="thumbnailImage" fill sizes="width=14.2rem, height=14.2rem" className="rounded-[2rem] object-cover" loading="lazy" />
+          <Image
+            // priority={priority}
+            loading={priority ? undefined : "lazy"}
+            unoptimized={false}
+            src={thumbnailImageUrl}
+            alt="thumbnailImage"
+            fill
+            sizes="width=14.2rem, height=14.2rem"
+            className="rounded-[2rem] object-cover"
+          />
 
           {userNickname === thumbnail.organizer.nickname && (
             <div className="absolute left-3 top-3 flex h-[2.2rem] w-[2.2rem] place-content-center items-center rounded-full bg-primary bg-opacity-70 text-[1.6rem] text-secondary-dark text-opacity-70">
