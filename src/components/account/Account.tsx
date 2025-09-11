@@ -18,7 +18,7 @@ const Account = () => {
       <div className="flex min-h-[54rem] w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] border-gray-medium py-[3rem] md:max-w-[80rem]">
         <div className="flex w-full flex-col items-center justify-center gap-[1rem]">
           <div className="relative h-[15rem] w-[15rem] overflow-hidden rounded-full">
-            <Image src={imagePath} alt="프로필 이미지" fill className="object-cover" />
+            <Image unoptimized={true} src={imagePath} alt="프로필 이미지" fill className="object-cover" />
           </div>
           <div className="text-lg">
             🎉 <span className="font-semibold">{user.nickname}</span>님, 환영합니다.

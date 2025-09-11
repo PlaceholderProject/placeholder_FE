@@ -113,7 +113,7 @@ const MyMeetupMembers: React.FC<MyMeetupMembersProps> = ({ meetupId }) => {
             <div>{member.role == "organizer" ? <span className="ml-[0.5rem]">👑</span> : <span className="ml-[0.5rem]"> </span>}</div>
             {/* mebmer.id래요 언제 생성되심? : {member.id} */}
             <div className="relative mx-auto flex h-[1.8rem] w-[1.8rem] items-center bg-purple-100">
-              <Image src={userImageSource} alt="내 모임 회원 프로필 이미지" sizes="width=18rem, height=18rem" fill className="rounded-full bg-yellow-200 object-cover" />
+              <Image unoptimized={true} src={userImageSource} alt="내 모임 회원 프로필 이미지" sizes="width=18rem, height=18rem" fill className="rounded-full bg-yellow-200 object-cover" />
             </div>
             <div>{member.user?.nickname}</div>
             {/* 모임아이디 : {member.meetupId} */}

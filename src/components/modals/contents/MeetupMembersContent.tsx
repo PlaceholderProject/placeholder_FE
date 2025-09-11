@@ -70,7 +70,7 @@ const MeetupMembersContent = ({ meetupId, meetupName }: MeetupMembersContentProp
                 <div className="flex flex-1 items-center gap-3">
                   {member.role === "organizer" && <span className="text-xl">👑</span>}
                   <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-full bg-gray-200">
-                    <Image src={getImageURL(member.user.image)} alt={member.user.nickname} fill className="object-cover" />
+                    <Image unoptimized={true} src={getImageURL(member.user.image)} alt={member.user.nickname} fill className="object-cover" />
                   </div>
                   <span className="font-semibold">{member.user.nickname}</span>
                 </div>

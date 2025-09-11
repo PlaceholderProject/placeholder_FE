@@ -20,7 +20,7 @@ const ThumbnailArea = () => {
   const place = useSelector((state: RootState) => state.filter.place);
   const category = useSelector((state: RootState) => state.filter.category);
   const isFilterActive = useSelector((state: RootState) => state.filter.isFilterActive);
-
+  console.log("ThumbnailArea 렌더링⭐️⭐️⭐️⭐️⭐️⭐️");
   const getQueryKey = () => {
     const baseQueryKey = ["headhuntings", sortType];
     if (isFilterActive) {
@@ -178,7 +178,7 @@ const ThumbnailArea = () => {
           {allThumbnails.map((thumbnail: Meetup, index: number) => {
             return (
               <div key={`${thumbnail.id}-${index}`} className="w-[14.2rem] pb-[1rem] pt-[0.4rem] md:w-[150px]">
-                <ThumbnailItem thumbnail={thumbnail} userNickname={userNickname} />
+                <ThumbnailItem thumbnail={thumbnail} userNickname={userNickname} priority={index === 0} />
                 {/* <ThumbnailItem thumbnail={thumbnail} /> */}
               </div>
             );

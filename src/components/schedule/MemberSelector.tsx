@@ -22,7 +22,7 @@ const MemberSelector = ({ meetupId, selectedMember, onMemberSelect }: MemberSele
             <div key={participant.id} className="flex items-center">
               <div className="mr-2 flex h-8 w-8 items-center justify-center rounded-full bg-gray-200">
                 {participant.user.image ? (
-                  <Image src={getS3ImageURL(participant.user.image)} alt={participant.user.nickname} width={32} height={32} className="h-full w-full rounded-full object-cover" />
+                  <Image unoptimized={true} src={getS3ImageURL(participant.user.image)} alt={participant.user.nickname} width={32} height={32} className="h-full w-full rounded-full object-cover" />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center text-gray-500">{participant.user.nickname.charAt(0)}</div>
                 )}

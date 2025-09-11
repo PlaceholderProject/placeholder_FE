@@ -34,7 +34,7 @@ const AdDetail = ({ adData, userNickname }: AdDetailProps) => {
     <>
       <div className="mt-[1em] w-full space-y-[0.2rem] md:max-w-[90rem]">
         <div className="mx-auto flex justify-center">
-          <Image src={imageUrl} alt="모임 광고글 이미지" width={321} height={209} className="mx-auto w-[95%] object-cover md:max-w-[80rem]" />
+          <Image unoptimized={true} src={imageUrl} alt="모임 광고글 이미지" width={321} height={209} className="mx-auto w-[95%] object-cover md:max-w-[80rem]" />
         </div>
         <div className="relative mx-auto w-[95%] md:max-w-[80rem]">
           <div className="ml-[1.5rem] mr-[1.5rem] mt-[2rem]">

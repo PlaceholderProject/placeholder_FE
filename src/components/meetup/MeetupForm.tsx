@@ -392,7 +392,8 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
       {isSubmitting && <SubmitLoader isLoading={isSubmitting} />}
       <div className="mx-auto my-[5rem] w-[32rem] rounded-[1rem] border-[0.1rem] border-gray-medium p-[3rem] md:w-full md:max-w-[100rem]">
         <div className="place-items-center">
-          <h1 className="mb-[4rem] text-center text-3xl font-semibold">{mode === "create" ? "모임 생성하기" : "모임 수정하기"}</h1>
+          <h1 className="text-center text-3xl font-semibold">{mode === "create" ? "모임 생성하기" : "모임 수정하기"}</h1>
+          <p className="font-sm mb-[4rem] text-warning">모든 폼은 필수 입력 사항입니다.</p>
           <form onSubmit={handleMeetupFormSubmit}>
             <div className="grid md:grid-cols-2 md:gap-x-[7rem]">
               <div className="좌측영역">

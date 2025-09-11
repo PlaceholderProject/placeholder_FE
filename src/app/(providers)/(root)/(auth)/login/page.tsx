@@ -16,7 +16,7 @@ const LoginPage = () => {
         <Login />
       </div>
       <div className="relative hidden w-[50%] md:block">
-        <Image src="/loginImage.png" alt="로그인사진" fill={true} style={{ objectFit: "cover" }}></Image>
+        <Image unoptimized={true} src="/loginImage.png" alt="로그인사진" fill={true} style={{ objectFit: "cover" }}></Image>
       </div>
     </div>
   );

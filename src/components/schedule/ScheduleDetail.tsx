@@ -125,7 +125,7 @@ const ScheduleDetail = ({ scheduleId, meetupId }: { scheduleId: number; meetupId
           {imagePreview ? (
             <div className="relative w-full max-w-md">
               <div className="aspect-square overflow-hidden rounded-md">
-                <Image src={imagePreview} alt="스케줄 이미지" width={400} height={400} className="h-full w-full object-cover" />
+                <Image unoptimized={true} src={imagePreview} alt="스케줄 이미지" width={400} height={400} className="h-full w-full object-cover" />
               </div>
               {isEditingImage && (
                 <button onClick={handleRemoveImage} className="absolute right-2 top-2 rounded-full bg-red-500 p-1 text-sm text-white hover:bg-red-600">

@@ -168,7 +168,7 @@ const AccountEdit = () => {
           <form onSubmit={handleAccountEditFormSubmit} className="flex flex-col justify-center gap-[1.5rem] p-[2rem]">
             <div className="relative flex items-center justify-center">
               <div className="relative h-[15rem] w-[15rem] overflow-hidden rounded-full">
-                <Image src={profileImage ? profileImage : "/profile.png"} alt="프로필 이미지" fill className="object-cover" />
+                <Image unoptimized={true} src={profileImage ? profileImage : "/profile.png"} alt="프로필 이미지" fill className="object-cover" />
               </div>
               <label htmlFor="profileImage" className="absolute bottom-0 right-20 flex h-[3rem] w-[3rem] cursor-pointer items-center justify-center rounded-full bg-primary text-2xl text-white">
                 <FaCog />

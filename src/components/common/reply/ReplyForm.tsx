@@ -70,7 +70,7 @@ const ReplyForm = () => {
           <div className="flex w-full flex-col items-center justify-center gap-[1rem] rounded-[1rem] border-[0.1rem] border-gray-medium bg-white p-[1.5rem]">
             <div className="flex w-full flex-row items-center gap-[0.5rem]">
               <div className="relative h-[2rem] w-[2rem] overflow-hidden rounded-full">
-                <Image src={profileImage || "/profile.png"} alt="프로필 이미지" fill className="object-cover" />
+                <Image unoptimized={true} src={profileImage || "/profile.png"} alt="프로필 이미지" fill className="object-cover" />
               </div>
               <span>{user.nickname && `${user.nickname} ✨`}</span>
             </div>
