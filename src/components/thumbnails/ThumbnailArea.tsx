@@ -20,7 +20,6 @@ const ThumbnailArea = () => {
   const place = useSelector((state: RootState) => state.filter.place);
   const category = useSelector((state: RootState) => state.filter.category);
   const isFilterActive = useSelector((state: RootState) => state.filter.isFilterActive);
-  console.log("ThumbnailArea 렌더링⭐️⭐️⭐️⭐️⭐️⭐️");
   const getQueryKey = () => {
     const baseQueryKey = ["headhuntings", sortType];
     if (isFilterActive) {
