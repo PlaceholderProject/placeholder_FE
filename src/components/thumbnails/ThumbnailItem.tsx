@@ -18,20 +18,20 @@ const ThumbnailItem = ({ thumbnail, userNickname, priority }: { thumbnail: Meetu
 
   console.log(`ThumbnailItem ${thumbnail.id} 렌더링 확인⭐️`);
 
-  useEffect(() => {
-    // console.log("==베이스유알엘:", BASE_URL);
-    // console.log("===thumbnail.image:", thumbnail.image);
-    console.log("=======⭐️최종 썸넬 URL:", thumbnailImageUrl);
+  // useEffect(() => {
+  //   // console.log("==베이스유알엘:", BASE_URL);
+  //   // console.log("===thumbnail.image:", thumbnail.image);
+  //   console.log("=======⭐️최종 썸넬 URL:", thumbnailImageUrl);
 
-    // 직접 fetch로 테스트
-    fetch(thumbnailImageUrl)
-      .then(response => {
-        console.log("==페치로 테스트 이미지 응답:", response.status);
-      })
-      .catch(error => {
-        console.error("===이미지 fetch 에러:", error);
-      });
-  }, [thumbnailImageUrl]);
+  //   // 직접 fetch로 테스트
+  //   fetch(thumbnailImageUrl)
+  //     .then(response => {
+  //       console.log("==페치로 테스트 이미지 응답:", response.status);
+  //     })
+  //     .catch(error => {
+  //       console.error("===이미지 fetch 에러:", error);
+  //     });
+  // }, [thumbnailImageUrl]);
 
   useEffect(() => {
     // 프로필 이미지가 없으면 기본 이미지 사용
@@ -75,17 +75,17 @@ const ThumbnailItem = ({ thumbnail, userNickname, priority }: { thumbnail: Meetu
     if (!thumbnail.image) return null;
 
     if (thumbnail.isPublic === true) {
-      console.log("클로드야 이거야", thumbnail.image);
       return (
         <Link href={`/ad/${thumbnail.id}`} className="relative mx-auto block h-[14.2rem] w-[14.2rem] items-center justify-center md:h-[150px] md:w-[150px]">
           <Image
-            // priority={priority}
+            priority={priority}
             loading={priority ? undefined : "lazy"}
             unoptimized={false}
             src={thumbnailImageUrl}
             alt="thumbnailImage"
             fill
-            sizes="width=14.2rem, height=14.2rem"
+            // sizes="width=14.2rem, height=14.2rem"
+            sizes="(max-width: 768px) 14.2rem, 150px"
             className="rounded-[2rem] object-cover"
           />
 
@@ -156,7 +156,7 @@ const ThumbnailItem = ({ thumbnail, userNickname, priority }: { thumbnail: Meetu
               {/* 작성자 */}
               <div className="flex items-center gap-[0.2rem]">
                 <div className="relative flex h-[1.8rem] w-[1.8rem] flex-shrink-0 text-sm">
-                  <Image unoptimized={false} src={profileImageSource} fill alt="작성자 프로필 이미지" className="rounded-full object-cover" />
+                  <Image sizes="(max-width: 768px) 1.8rem, 19.8px" unoptimized={false} src={profileImageSource} fill alt="작성자 프로필 이미지" className="rounded-full object-cover" />
                 </div>
                 <div className="text-sm font-medium">{thumbnail.organizer.nickname}</div>
               </div>

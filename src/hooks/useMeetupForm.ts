@@ -13,6 +13,11 @@ export const useMeetupForm = (mode: "create" | "edit", previousData?: Meetup) =>
   const [isEndedAtNull, setIsEndedAtNull] = useState(false);
   const [previewImage, setPreviewImage] = useState("/meetup_default_image.png");
 
+  console.log("유즈밋업폼훅 startedAtNull", isStartedAtNull);
+
+  useEffect(() => {
+    console.log("유즈밋업폼 유즈이펙트 startedAtNull", isStartedAtNull);
+  }, [isStartedAtNull]);
   useEffect(() => {
     if (mode === "edit" && previousData) {
       setNameLength(previousData.name?.length || 0);

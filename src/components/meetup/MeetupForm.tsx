@@ -9,6 +9,7 @@ import SubmitLoader from "../common/SubmitLoader";
 import { useMeetupForm } from "@/hooks/useMeetupForm";
 import { useCreateMeetup, useEditMeetup, useMeetupDetail, useGetPresignedUrl, useS3Upload } from "@/hooks/useMeetupApi";
 import { toast } from "sonner";
+import { useRenderCount } from "@/hooks/useRenderCount";
 
 // displayName 추가
 const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
@@ -42,7 +43,6 @@ const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
 );
 LabeledInput.displayName = "LabeledInput";
 
-// displayName 추가
 const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({ id, name, label, options, required = true, className, labelClassName, containerClassName, defaultValue }, ref) => {
   return (
     <>
@@ -71,6 +71,7 @@ interface MeetupFormProps {
 }
 
 const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
+  useRenderCount("MeetupForm");
   const router = useRouter();
 
   // api 훅
@@ -105,6 +106,8 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
   const isPublicRef = useRef<HTMLInputElement>(null);
   const categoryRef = useRef<HTMLSelectElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
+
+  console.log("108번째줄 nameRef", nameRef);
 
   // 제출 상태 로컬 관리
   // const [isSubmitting, setIsSubmitting] = useState(false);

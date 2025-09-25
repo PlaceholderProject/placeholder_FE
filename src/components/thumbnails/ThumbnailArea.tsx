@@ -177,7 +177,7 @@ const ThumbnailArea = () => {
           {allThumbnails.map((thumbnail: Meetup, index: number) => {
             return (
               <div key={`${thumbnail.id}-${index}`} className="w-[14.2rem] pb-[1rem] pt-[0.4rem] md:w-[150px]">
-                <ThumbnailItem thumbnail={thumbnail} userNickname={userNickname} priority={index === 0} />
+                <ThumbnailItem thumbnail={thumbnail} userNickname={userNickname} priority={index === 0 || index === 1 || index === 2 || index === 3} />
                 {/* <ThumbnailItem thumbnail={thumbnail} /> */}
               </div>
             );
