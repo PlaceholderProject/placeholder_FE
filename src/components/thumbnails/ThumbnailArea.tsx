@@ -67,6 +67,8 @@ const ThumbnailArea = () => {
       }
       return undefined;
     },
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 5,
   });
 
   // 요청 두번 보내므로 주석처리
