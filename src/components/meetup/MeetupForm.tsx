@@ -3,7 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { FileType, LabeledInputProps, LabeledSelectProps, Meetup, NewMeetup } from "@/types/meetupType";
 import { MAX_AD_TITLE_LENGTH, MAX_DESCRIPTION_LENGTH, MAX_NAME_LENGTH, MAX_PLACE_LENGTH } from "@/constants/meetup";
 import SubmitLoader from "../common/SubmitLoader";
@@ -114,7 +114,7 @@ interface MeetupFormProps {
   useRHF?: boolean; // RHF 사용 여부를 결정하는 prop
 }
 
-const MeetupForm = ({ mode, meetupId, useRHF = false }: MeetupFormProps) => {
+const MeetupForm = ({ mode, meetupId, useRHF = true }: MeetupFormProps) => {
   // 성능 측정
   const performanceData = usePerformanceMonitor(`MeetupForm-${useRHF ? "RHF" : "Original"}`);
   useRenderCount(`MeetupForm-${useRHF ? "RHF" : "Original"}`);
@@ -140,7 +140,7 @@ const MeetupForm = ({ mode, meetupId, useRHF = false }: MeetupFormProps) => {
   // ===========================================
   const rhfMethods = useForm<FormData>({
     defaultValues: {
-      name: "",
+      name: mode === "edit" ? previousMeetupData.name || "" : "",
       placeDescription: "",
       adTitle: "",
       description: "",
@@ -157,21 +157,23 @@ const MeetupForm = ({ mode, meetupId, useRHF = false }: MeetupFormProps) => {
 
   const {
     register,
-    watch,
     handleSubmit: rhfHandleSubmit,
     formState: { isSubmitting: rhfIsSubmitting },
+    control,
   } = rhfMethods;
 
-  // watch로 글자수 계산 (선택적 리렌더링)
-  const watchedName = useRHF ? watch("name") : "";
-  const watchedPlace = useRHF ? watch("placeDescription") : "";
-  const watchedAdTitle = useRHF ? watch("adTitle") : "";
-  const watchedDescription = useRHF ? watch("description") : "";
+  // watch로 글자수 계산(선택적 리렌더링)
+  // 무조건 Hook 호출
+  const watchedName = useWatch({ control, name: "name" });
+  const watchedPlace = useWatch({ control, name: "placeDescription" });
+  const watchedAdTitle = useWatch({ control, name: "adTitle" });
+  const watchedDescription = useWatch({ control, name: "description" });
 
-  const rhfNameLength = watchedName?.length || 0;
-  const rhfPlaceLength = watchedPlace?.length || 0;
-  const rhfAdTitleLength = watchedAdTitle?.length || 0;
-  const rhfDescriptionLength = watchedDescription?.length || 0;
+  // RHF 모드일 때만 값 사용, 아니면 빈 문자열로 무시
+  const rhfNameLength = useRHF ? watchedName?.length || 0 : 0;
+  const rhfPlaceLength = useRHF ? watchedPlace?.length || 0 : 0;
+  const rhfAdTitleLength = useRHF ? watchedAdTitle?.length || 0 : 0;
+  const rhfDescriptionLength = useRHF ? watchedDescription?.length || 0 : 0;
 
   // ===========================================
   // 기존 방식 (조건부 사용)
@@ -378,7 +380,7 @@ const MeetupForm = ({ mode, meetupId, useRHF = false }: MeetupFormProps) => {
                 </div>
 
                 {/* 모임 이름 */}
-                <div>
+                {/* <div>
                   <div className="my-[0.5rem] flex flex-col gap-2">
                     <label className="text-lg font-semibold">모임 이름</label>
                     <input
@@ -393,6 +395,28 @@ const MeetupForm = ({ mode, meetupId, useRHF = false }: MeetupFormProps) => {
                   <span className="text-sm text-gray-dark">
                     {currentNameLength <= MAX_NAME_LENGTH ? currentNameLength : MAX_NAME_LENGTH} / {MAX_NAME_LENGTH} 자
                   </span>
+                  {currentNameLength >= MAX_NAME_LENGTH && <p className="text-sm text-warning">모임 이름은 최대 {MAX_NAME_LENGTH}자까지 입력할 수 있습니다.</p>}
+                </div> */}
+
+                {/* 모임 이름 */}
+                <div>
+                  <div className="my-[0.5rem] flex flex-col gap-2">
+                    <label className="text-lg font-semibold">모임 이름</label>
+                    <input
+                      {...(useRHF ? register("name") : {})}
+                      ref={!useRHF ? nameRef : undefined}
+                      defaultValue={mode === "edit" ? previousMeetupData?.name : undefined}
+                      onChange={!useRHF ? handleNameLengthChange : undefined}
+                      maxLength={MAX_NAME_LENGTH}
+                      className="h-[4rem] w-full items-center rounded-[1rem] border-[0.1rem] border-gray-light px-[0.5rem] text-start text-base"
+                    />
+                  </div>
+
+                  {/* 글자 수 표시 */}
+                  <span className="text-sm text-gray-dark">
+                    {currentNameLength <= MAX_NAME_LENGTH ? currentNameLength : MAX_NAME_LENGTH} / {MAX_NAME_LENGTH} 자
+                  </span>
+
                   {currentNameLength >= MAX_NAME_LENGTH && <p className="text-sm text-warning">모임 이름은 최대 {MAX_NAME_LENGTH}자까지 입력할 수 있습니다.</p>}
                 </div>
 

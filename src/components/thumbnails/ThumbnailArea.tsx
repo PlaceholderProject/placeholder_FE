@@ -20,6 +20,8 @@ const ThumbnailArea = () => {
   const place = useSelector((state: RootState) => state.filter.place);
   const category = useSelector((state: RootState) => state.filter.category);
   const isFilterActive = useSelector((state: RootState) => state.filter.isFilterActive);
+
+  // 메인 데이터 가져오는데 쿼리키 설정을 동적으로 해야지
   const getQueryKey = () => {
     const baseQueryKey = ["headhuntings", sortType];
     if (isFilterActive) {
@@ -34,7 +36,7 @@ const ThumbnailArea = () => {
     return baseQueryKey;
   };
 
-  // 무한스크롤 탠스택쿼리
+  // 무한스크롤,  탠스택쿼리
   const {
     data: headhuntingsData,
     fetchNextPage,

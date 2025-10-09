@@ -45,7 +45,6 @@ const AdArea = ({ initialData, meetupId }: { initialData: Meetup; meetupId: numb
       </div>
       <AdDetail adData={adData} userNickname={userNickname} />
       <AdButton meetupId={meetupId} />
-      ``
     </div>
   );
 };
