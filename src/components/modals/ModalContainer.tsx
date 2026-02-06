@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { type ReactElement, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
 import { closeModal } from "@/stores/modalSlice";
@@ -33,7 +33,7 @@ const getModalContainerStyles = (modalType: ModalType): string => {
   }
 };
 
-const renderModalContent = (modalType: ModalType, modalData: ModalData): JSX.Element | null => {
+const renderModalContent = (modalType: ModalType, modalData: ModalData): ReactElement | null => {
   switch (modalType) {
     case "AD_DELETE":
       return <AdDeleteContent meetupId={modalData.meetupId!} />;

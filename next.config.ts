@@ -2,10 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    // domains는 deprecated되었으므로 제거..하려 했으나
-    // 호환성을 위해 domains도 유지
-
-    domains: ["localhost", "placeholder-prod.s3.amazonaws.com"],
     remotePatterns: [
       {
         protocol: "http",
@@ -13,11 +9,10 @@ const nextConfig: NextConfig = {
         port: "8000",
         pathname: "/media/profile_images/**",
       },
-      // 프로덕션 환경을 위한 도메인도 추가하는 것이 좋습니다
       {
         protocol: "https",
-        hostname: "your-production-domain.com",
-        pathname: "/media/profile_images/**",
+        hostname: "placeholder-prod.s3.amazonaws.com",
+        pathname: "/**",
       },
     ],
   },
@@ -27,13 +22,11 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: false, // 타입 에러 무시하지 않음
   },
 
-  // ESLint 설정
-  eslint: {
-    ignoreDuringBuilds: false, // 빌드 시 ESLint 에러 무시하지 않음
-  },
-
   // Next.js 15에서 변경된 설정 (experimental에서 최상위로 이동)
   serverExternalPackages: [], // 필요시 외부 패키지 추가
+
+  // Next.js 16에서 Turbopack이 기본값이므로 명시해 webpack 커스텀과 충돌 경고를 해소
+  turbopack: {},
 
   // 빌드 최적화
   compiler: {
