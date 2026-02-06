@@ -1,5 +1,28 @@
 @import "tailwindcss";
-@config "../../tailwind.config.ts";
+
+@theme {
+  --text-xs: 1rem;
+  --text-sm: 1.2rem;
+  --text-base: 1.4rem;
+  --text-lg: 1.6rem;
+  --text-xl: 1.8rem;
+  --text-2xl: 2rem;
+  --text-3xl: 2.6rem;
+  --text-4xl: 3rem;
+
+  --breakpoint-md: 769px;
+  --breakpoint-lg: 1024px;
+
+  --color-primary: #006b8b;
+  --color-secondary-dark: #fbffa9;
+  --color-secondary-light: #feffec;
+  --color-gray-dark: #868282;
+  --color-gray-medium: #d9d9d9;
+  --color-gray-light: #e8e8e8;
+  --color-error: #f9617a;
+  --color-warning: #f9617a;
+  --color-dimmer-900: #17171980;
+}
 
 html {
   color: #013a4b;
