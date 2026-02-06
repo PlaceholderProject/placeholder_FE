@@ -5,7 +5,7 @@ export interface Meetup {
   };
   isLike: boolean;
   likeCount: number;
-  id: number; // 24.01.07 ThumbnailArea에 광고 아이템 하나씩 띄우는데 타입 필요해서 추가함
+  id: number;
   name: string;
   description: string;
   place: string;
@@ -48,8 +48,8 @@ export interface LabeledInputProps {
   id: string;
   name: string;
   label: string;
-  type?: string; // 인풋 타입 (기본값: "text")
-  placeholder?: string; // 선택적 placeholder
+  type?: string;
+  placeholder?: string;
   value?: string | number | readonly string[] | undefined;
   defaultValue?: string;
   minlength?: string;
