@@ -12,8 +12,6 @@ const AdLikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerP
 
   const likeMutation = useMutation({
     mutationFn: () => toggleLikeApi(id, initialIsLike ?? false),
-
-    //낙관적 업데이트
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["ad", id] });
       const previousAdData = queryClient.getQueryData<Meetup>(["ad", id]);
@@ -30,14 +28,10 @@ const AdLikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerP
 
       return { previousAdData };
     },
-
-    //에러발생 롤백
     onError: (error, variables, context) => {
       if (context?.previousAdData) {
         queryClient.setQueryData(["ad", id], context.previousAdData);
       }
-
-      // 401 제외 에러메시지는 임시 처리했음!
       const isAuthError = error.message.includes("User not authenticated") || error.message.includes("401") || error.message.includes("Unauthorized");
 
       if (isAuthError) {
@@ -45,8 +39,6 @@ const AdLikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerP
         console.error("좋아요 처리 중 오류가 발생했습니다", error.message);
       }
     },
-
-    // 성공시 쿼리무효화
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ad", id] });
     },
@@ -63,13 +55,6 @@ const AdLikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerP
 
   return (
     <LikeItem isLike={initialIsLike} likeCount={initialLikeCount} onToggle={handleToggleLike} isPending={likeMutation.isPending} />
-
-    // <div className="flex items-center">
-    //   <div className="flex">
-    //     <IoMdHeart className="h-[1.5rem] w-[1.5rem] text-primary md:h-[20px] md:w-[20px]" />
-    //   </div>
-    //   <div className="text-sm md:text-[18px]">likeCount</div>
-    // </div>
   );
 };
 

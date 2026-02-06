@@ -13,7 +13,7 @@ const ProposalCancellationContent = ({ proposal }: { proposal: SentProposal }) =
 
   const handleProposalCancel = () => {
     cancelMutation.mutate(proposal.id);
-    closeModal(); // 성공 시 모달 닫기
+    closeModal();
   };
 
   return (

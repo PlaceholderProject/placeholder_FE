@@ -3,16 +3,12 @@ import { createUser, getUser, editUser, deleteUser } from "@/services/user.servi
 import { NewUserProps } from "@/types/authType";
 import { EditedUserProps, User } from "@/types/userType";
 import { toast } from "sonner";
-
-// 사용자 정보 가져오기
 export const useUser = () => {
   return useQuery({
     queryKey: ["user"],
     queryFn: () => getUser(),
   });
 };
-
-// 회원가입
 export const useCreateUser = () => {
   return useMutation<number | undefined, Error, NewUserProps>({
     mutationFn: (newUser: NewUserProps) => createUser(newUser),
@@ -22,8 +18,6 @@ export const useCreateUser = () => {
     },
   });
 };
-
-// 사용자 정보 수정
 export const useEditUser = () => {
   const queryClient = useQueryClient();
 
@@ -38,8 +32,6 @@ export const useEditUser = () => {
     },
   });
 };
-
-// 사용자 삭제 (탈퇴)
 export const useDeleteUser = () => {
   const queryClient = useQueryClient();
 

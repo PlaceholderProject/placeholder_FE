@@ -14,15 +14,11 @@ const AdNonModal = ({ meetupId }: { meetupId: number }) => {
   const pathname = usePathname();
   const { openModal } = useModal();
   const isAdNonModalOpen = useSelector((state: RootState) => state.nonModal.isAdNonModalOpen);
-
-  // 페이지 이동 감지하고 모달 상태 초기회ㅏ
   useEffect(() => {
     return () => {
       dispatch(closeAdNonModal());
     };
   }, [dispatch, pathname]);
-
-  // 논모달 토글 상태변화 감지용
   React.useEffect(() => {
   }, [isAdNonModalOpen]);
 
@@ -47,7 +43,7 @@ const AdNonModal = ({ meetupId }: { meetupId: number }) => {
 
           <button type="button" onClick={handleCloseButtonClick}>
             삭제
-            {/* 이걸 클릭하면 isAdDeleModalOpen 상태가 토글되어야 함 */}
+            {}
           </button>
         </div>
       )}

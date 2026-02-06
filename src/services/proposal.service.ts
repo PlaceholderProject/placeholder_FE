@@ -1,8 +1,6 @@
 import { BASE_URL } from "@/constants/baseURL";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
-
-// 광고 페이지 : 신청서 생성
 export const createProposal = async (proposalText: string, meetupId: number) => {
   const accessToken = Cookies.get("accessToken");
   try {
@@ -35,8 +33,6 @@ export const createProposal = async (proposalText: string, meetupId: number) => 
     return;
   }
 };
-
-// 받은 신청서 페이지 : 내가 방장인 모임 목록 가져오기
 export const getOrganizedMeetups = async () => {
   const accessToken = Cookies.get("accessToken");
 
@@ -65,16 +61,12 @@ export const getOrganizedMeetups = async () => {
     return [];
   }
 };
-
-// 받은 신청서 페이지 : 받은 신청서 가져오기
 export const getReceivedProposals = async (meetupId: number, page: number) => {
   const accessToken = Cookies.get("accessToken");
   if (!accessToken) return { proposals: [], total: 0 };
   const size = 5;
 
   try {
-    // 임시 수정
-    // const response = await fetch(`${BASE_URL}/api/v1/user/me/proposal/received?meetupId=${meetupId}&page=${page}&size=${size}&status=pending`, {
     const response = await fetch(`${BASE_URL}/api/v1/user/me/meetup/${meetupId}/proposal?page=${page}&size=${size}&status=pending`, {
       method: "GET",
       headers: {
@@ -95,8 +87,6 @@ export const getReceivedProposals = async (meetupId: number, page: number) => {
     return { proposals: [], total: 0 };
   }
 };
-
-// 받은 신청서 페이지 : 신청서 수락하기
 export const acceptProposal = async (proposalId: number) => {
   const accessToken = Cookies.get("accessToken");
 
@@ -120,8 +110,6 @@ export const acceptProposal = async (proposalId: number) => {
     console.error("신청서 수락을 실패했습니다:", error);
   }
 };
-
-// 받은 신청서 페이지 : 신청서 거절하기
 export const refuseProposal = async (proposalId: number) => {
   const accessToken = Cookies.get("accessToken");
 
@@ -145,8 +133,6 @@ export const refuseProposal = async (proposalId: number) => {
     console.error("신청서 거절을 실패했습니다:", error);
   }
 };
-
-// 보낸 신청서 페이지 : 보낸 신청서 가져오기
 export const getSentProposal = async (page: number) => {
   const accessToken = Cookies.get("accessToken");
   if (!accessToken) return { proposals: [], total: 0 };
@@ -177,8 +163,6 @@ export const getSentProposal = async (page: number) => {
     return { proposals: [], total: 0 };
   }
 };
-
-// 보낸신청서페이지 : 신청서 취소
 export const cancelProposal = async (proposalId: number) => {
   const accessToken = Cookies.get("accessToken");
   try {
@@ -193,12 +177,10 @@ export const cancelProposal = async (proposalId: number) => {
       const errorResult = await response.json();
       throw new Error(errorResult.detail || "신청서 취소에 실패했습니다.");
     }
-
-    // 응답 본문 확인
     const contentLength = response.headers.get("content-length");
     if (!contentLength || parseInt(contentLength) === 0) {
       console.warn("서버에서 빈 응답을 반환했습니다.");
-      return { message: "Proposal canceled successfully." }; // 기본 메시지
+      return { message: "Proposal canceled successfully." };
     }
 
     const data = await response.json();
@@ -207,8 +189,6 @@ export const cancelProposal = async (proposalId: number) => {
     console.error("신청서 취소 중 오류", error);
   }
 };
-
-// 보낸신청서페이지 : 신청서 숨기기
 export const hideProposal = async (proposalId: number) => {
   const accessToken = Cookies.get("accessToken");
   try {
@@ -223,18 +203,11 @@ export const hideProposal = async (proposalId: number) => {
       const error = await response.json();
       throw new Error(error.detail || "알 수 없는 오류");
     }
-
-    // if (response) {
-    //   return;
-    // }
-    // const result = await response.json();
     return;
   } catch (error) {
     console.error("신청서 숨기기를 실패했습니다:", error);
   }
 };
-
-// 광고페이지 : 나의 신청서 상태
 export const getMyProposalStatus = async (meetupId: number) => {
   const accessToken = Cookies.get("accessToken");
   if (!accessToken) return null;

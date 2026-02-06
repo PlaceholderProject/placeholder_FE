@@ -2,8 +2,6 @@ import { BASE_URL } from "@/constants/baseURL";
 import { newReplyProps } from "@/types/replyType";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
-
-// 스케줄 댓글 생성
 export const createScheduleReply = async (newReply: newReplyProps, scheduleId: number) => {
   const accessToken = Cookies.get("accessToken");
   try {
@@ -29,8 +27,6 @@ export const createScheduleReply = async (newReply: newReplyProps, scheduleId: n
     return;
   }
 };
-
-// 스케줄 댓글에 답글 생성
 export const createScheduleNestedReply = async (newReply: newReplyProps, replyId: number) => {
   const accessToken = Cookies.get("accessToken");
   try {
@@ -56,8 +52,6 @@ export const createScheduleNestedReply = async (newReply: newReplyProps, replyId
     return;
   }
 };
-
-// 스케줄 댓글 목록 조회
 export const getScheduleReply = async (scheduleId: number) => {
   const accessToken = Cookies.get("accessToken");
   try {
@@ -82,8 +76,6 @@ export const getScheduleReply = async (scheduleId: number) => {
     return null;
   }
 };
-
-// 스케줄 댓글 수정
 export const updateScheduleReply = async (text: string, replyId: number) => {
   const accessToken = Cookies.get("accessToken");
   try {
@@ -109,8 +101,6 @@ export const updateScheduleReply = async (text: string, replyId: number) => {
     return null;
   }
 };
-
-// 스케줄 댓글 삭제
 export const deleteScheduleReply = async (replyId: number) => {
   const accessToken = Cookies.get("accessToken");
   try {

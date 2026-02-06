@@ -2,8 +2,6 @@ import { BASE_URL } from "@/constants/baseURL";
 import { LoginProps } from "@/types/authType";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
-
-// 회원가입페이지 : 이메일 중복확인
 export const checkEmail = async (email: string) => {
   try {
     const response = await fetch(`${BASE_URL}/api/v1/auth/email`, {
@@ -32,8 +30,6 @@ export const checkEmail = async (email: string) => {
     return false;
   }
 };
-
-// 회원가입페이지, 회원정보수정페이지 : 닉네임 중복확인
 export const checkNickname = async (nickname: string) => {
   try {
     const response = await fetch(`${BASE_URL}/api/v1/auth/nickname`, {
@@ -60,8 +56,6 @@ export const checkNickname = async (nickname: string) => {
     return false;
   }
 };
-
-// 로그인페이지 : 로그인
 export const login = async ({ email, password }: LoginProps) => {
   try {
     const response = await fetch(`${BASE_URL}/api/v1/auth/login`, {
@@ -93,10 +87,8 @@ export const login = async ({ email, password }: LoginProps) => {
     return false;
   }
 };
-
-// refreshToken
 export const refreshToken = async () => {
-  const refreshToken = Cookies.get("refreshToken"); // 쿠키에서 refresh 토큰 가져오기
+  const refreshToken = Cookies.get("refreshToken");
   if (!refreshToken) {
     console.error("refressToken이 없습니다. 다시 로그인 해주세요.");
     toast.error("다시 로그인해주세요.");
@@ -125,8 +117,6 @@ export const refreshToken = async () => {
     return null;
   }
 };
-
-// 비밀번호수정페이지, 회원탈퇴페이지 : 비밀번호 재확인
 export const recheckPassword = async (password: string) => {
   const accessToken = Cookies.get("accessToken");
   try {
@@ -152,8 +142,6 @@ export const recheckPassword = async (password: string) => {
     return false;
   }
 };
-
-// 비밀번호수정페이지 : 비밀번호 재설정
 export const resetPassword = async (password: string) => {
   const accessToken = Cookies.get("accessToken");
   try {

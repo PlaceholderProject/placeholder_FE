@@ -19,8 +19,6 @@ const ScheduleThreeDotsMenu = ({ scheduleId, meetupId }: ScheduleThreeDotsMenuPr
   const router = useRouter();
 
   const deleteScheduleMutation = useDeleteSchedule(meetupId);
-
-  // 메뉴 외부 클릭 감지
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {

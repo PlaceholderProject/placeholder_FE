@@ -1,4 +1,3 @@
-// src/components/common/reply/NestedReplyForm.tsx
 
 import { useCreateNestedReply } from "@/hooks/useReply";
 import React, { Dispatch, SetStateAction, useRef, useState } from "react";
@@ -56,10 +55,8 @@ const NestedReplyForm = ({
       } else {
         await createNestedReplyMutation.mutateAsync({ text: content });
       }
-
-      // 🔍 개발 환경에서만 지연 시간 추가
       if (process.env.NODE_ENV === "development") {
-        await new Promise(resolve => setTimeout(resolve, 2000)); // 2초 지연
+        await new Promise(resolve => setTimeout(resolve, 2000));
       }
 
       setIsVisiableNestedReply(true);

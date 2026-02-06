@@ -25,7 +25,7 @@ const AccountDelete = () => {
 
   const handleDeleteUserButton = async () => {
     try {
-      await deleteUserMutation.mutateAsync(); // ✅ 비동기 호출
+      await deleteUserMutation.mutateAsync();
       Cookies.remove("accessToken");
       Cookies.remove("refreshToken");
       dispatch(setIsAuthenticated(false));

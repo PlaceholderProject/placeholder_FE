@@ -9,7 +9,6 @@ const NotificationArea = () => {
   const { data: notifications, isPending, error } = useNotificationList();
 
   if (isPending) {
-    // return <Loading />;
     return <Spinner isLoading={isPending} />;
   }
   if (error) return <div className="p-8 text-center text-error">Error</div>;

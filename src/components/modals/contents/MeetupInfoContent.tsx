@@ -69,8 +69,6 @@ const MeetupInfoContent = ({ meetupData, isOrganizer, meetupId }: MeetupInfoCont
           endedAt: meetupData.endedAt,
         })
       : "미정";
-
-  // 날짜 포맷팅 함수
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "미정";
     return dateString.substring(0, 10);
@@ -83,33 +81,33 @@ const MeetupInfoContent = ({ meetupData, isOrganizer, meetupId }: MeetupInfoCont
       </div>
 
       <div className="grid grid-cols-[8rem_1fr] items-center gap-x-4 gap-y-5 text-base">
-        {/* Label */}
+        {}
         <span className="font-semibold text-gray-500">모임 장소</span>
-        {/* Value */}
+        {}
         <span className="font-medium">{meetupData.place}</span>
 
-        {/* Label */}
+        {}
         <span className="font-semibold text-gray-500">모임 날짜</span>
-        {/* Value */}
+        {}
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-md bg-gray-100 px-2 py-1 text-sm font-medium">{formatDate(meetupData.startedAt)}</span>
           <span>~</span>
           <span className="rounded-md bg-gray-100 px-2 py-1 text-sm font-medium">{formatDate(meetupData.endedAt)}</span>
         </div>
 
-        {/* Label */}
+        {}
         <span className="font-semibold text-gray-500">모임 기간</span>
-        {/* Value */}
+        {}
         <span className="font-medium text-primary">{duration}</span>
 
-        {/* Label */}
+        {}
         <span className="font-semibold text-gray-500">참여 인원</span>
-        {/* Value */}
+        {}
         <span className="font-medium">{meetupData.likeCount || 0} 명</span>
 
-        {/* Label */}
+        {}
         <span className="self-start pt-1 font-semibold text-gray-500">메모</span>
-        {/* Value */}
+        {}
         <p className="min-h-[6rem] rounded-lg bg-secondary-light p-3 text-sm">{meetupData.description || "메모가 없습니다."}</p>
       </div>
 

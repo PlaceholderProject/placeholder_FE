@@ -3,11 +3,6 @@ import { MoonLoader } from "react-spinners";
 
 interface SpinnerProps {
   isLoading: boolean;
-  // loaderColor: string;
-  // loaderSize: number;
-  // overlayColor: string;
-  // overlayOpacity: number;
-  // zIndex: number;
   message?: string;
 }
 

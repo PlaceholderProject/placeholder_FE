@@ -1,8 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createNestedReply, createReply, deleteReply, editReply, getReply } from "@/services/reply.service"; // 파일 경로는 상황에 맞게 수정
+import { createNestedReply, createReply, deleteReply, editReply, getReply } from "@/services/reply.service";
 import { newReplyProps } from "@/types/replyType";
-
-// 댓글 목록 조회
 export const useReplyList = (meetupId: number, options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ["replyList", meetupId],
@@ -10,8 +8,6 @@ export const useReplyList = (meetupId: number, options?: { enabled?: boolean }) 
     enabled: options?.enabled,
   });
 };
-
-// 댓글 생성
 export const useCreateReply = (meetupId: number) => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -22,8 +18,6 @@ export const useCreateReply = (meetupId: number) => {
     },
   });
 };
-
-// 답글 생성
 export const useCreateNestedReply = (replyId: number, meetupId: number) => {
   const queryClient = useQueryClient();
 
@@ -35,8 +29,6 @@ export const useCreateNestedReply = (replyId: number, meetupId: number) => {
     },
   });
 };
-
-// 댓글 수정
 export const useEditReply = (meetupId: number) => {
   const queryClient = useQueryClient();
 
@@ -47,8 +39,6 @@ export const useEditReply = (meetupId: number) => {
     },
   });
 };
-
-// 댓글 삭제
 export const useDeleteReply = (meetupId: number) => {
   const queryClient = useQueryClient();
 

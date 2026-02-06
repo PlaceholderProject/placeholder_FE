@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export const useMeetupForm = (mode: "create" | "edit", previousData?: Meetup) => {
-  //상태들 : 제출, 글자수, 체크박스, 미리보기
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [nameLength, setNameLength] = useState(0);
   const [placeLength, setPlaceLength] = useState(0);
@@ -27,8 +26,6 @@ export const useMeetupForm = (mode: "create" | "edit", previousData?: Meetup) =>
       }
     }
   }, [mode, previousData]);
-
-  //핸들러들 : 글자수, 미리보기
   const handleNameLengthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNameLength(event.target.value.length);
   };
@@ -48,29 +45,19 @@ export const useMeetupForm = (mode: "create" | "edit", previousData?: Meetup) =>
       setPreviewImage(previewFileUrl);
     }
   };
-
-  //유효성검사
   const meetupValidateDates = (startDate: string | null, endDate: string | null, adEndDate: string): boolean => {
-    //create mode
     const validateCreateDates = (startDate: string | null, endDate: string | null, adEndDate: string): boolean => {
-      // 사용자 입력값 미정이면 실행X, 즉 잇을 때만 실행하자
-      // const inputDate = new Date(date); date 파라미터로 받은 값을 변환
-      // inputDate.setHours(0, 0, 0, 0);
 
-      const now = new Date(); //이제 각 날짜별로 직접 변환
+      const now = new Date();
       now.setHours(0, 0, 0, 0);
-
-      // 시작일 검사
       if (startDate) {
-        const inputStartDate = new Date(startDate); // ← startDate를 직접 변환
+        const inputStartDate = new Date(startDate);
         inputStartDate.setHours(0, 0, 0, 0);
         if (inputStartDate < now) {
           toast.error("모임 시작일은 이미 지난 날짜로 설정할 수 없습니다.");
           return false;
         }
       }
-
-      //종료일 검사
       if (endDate) {
         const inputEndDate = new Date(endDate);
         inputEndDate.setHours(0, 0, 0, 0);
@@ -79,16 +66,12 @@ export const useMeetupForm = (mode: "create" | "edit", previousData?: Meetup) =>
           return false;
         }
       }
-
-      //광고 종료일 검사
       const inputAdEndDate = new Date(adEndDate);
       inputAdEndDate.setHours(0, 0, 0, 0);
       if (inputAdEndDate < now) {
         toast.error("광고 종료일은 이미 지난 날짜로 설정할 수 없습니다.");
         return false;
       }
-
-      // 시작일-종료일 비교 (둘 다 있을 때만)
       if (startDate && endDate && new Date(endDate) < new Date(startDate)) {
         toast.error("모임 종료일은 시작일보다 빠르게 설정할 수 없습니다.");
         return false;
@@ -96,15 +79,11 @@ export const useMeetupForm = (mode: "create" | "edit", previousData?: Meetup) =>
       return true;
     };
 
-    //edit mode
-
     const validateEditDates = (startDate: string | null, endDate: string | null, adEndDate: string, previousData?: Meetup): boolean => {
       if (!previousData) return false;
 
       const now = new Date();
       now.setHours(0, 0, 0, 0);
-
-      // 시작일 검증
       if (startDate) {
         const inputStartDate = new Date(startDate);
         inputStartDate.setHours(0, 0, 0, 0);
@@ -124,8 +103,6 @@ export const useMeetupForm = (mode: "create" | "edit", previousData?: Meetup) =>
           return false;
         }
       }
-
-      // 종료일 검증
       if (endDate) {
         const inputEndDate = new Date(endDate);
         inputEndDate.setHours(0, 0, 0, 0);
@@ -145,8 +122,6 @@ export const useMeetupForm = (mode: "create" | "edit", previousData?: Meetup) =>
           return false;
         }
       }
-
-      // 광고 종료일 검증
       const inputAdEndDate = new Date(adEndDate);
       inputAdEndDate.setHours(0, 0, 0, 0);
       const previousAdEndDate = new Date(previousData.adEndedAt);
@@ -156,8 +131,6 @@ export const useMeetupForm = (mode: "create" | "edit", previousData?: Meetup) =>
         toast.error("광고 종료일은 지난 날짜로 설정할 수 없습니다.");
         return false;
       }
-
-      // 시작일-종료일 비교
       if (startDate && endDate && new Date(endDate) < new Date(startDate)) {
         toast.error("모임 종료일은 시작일보다 빠르게 설정할 수 없습니다.");
         return false;
@@ -174,11 +147,8 @@ export const useMeetupForm = (mode: "create" | "edit", previousData?: Meetup) =>
   };
 
   return {
-    // 상태들
     formStates: { nameLength, placeLength, descriptionLength, adTitleLength, isStartedAtNull, setIsStartedAtNull, isEndedAtNull, setIsEndedAtNull, previewImage, isSubmitting, setIsSubmitting },
-    // 핸들러들
     handlers: { handleNameLengthChange, handlePlaceLengthChange, handleAdTitleLengthChange, handleDescriptionLengthChange, handlePreviewImageChange },
-    // 유효성 검사
     validateDates: meetupValidateDates,
   };
 };

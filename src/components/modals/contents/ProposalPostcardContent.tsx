@@ -31,12 +31,11 @@ const ProposalPostcardContent = ({ meetupId }: { meetupId: number }) => {
     setIsSubmitting(true);
 
     try {
-      // 🔍 개발 환경에서만 지연 시간 추가
       if (process.env.NODE_ENV === "development") {
-        await new Promise(resolve => setTimeout(resolve, 2000)); // 2초 지연
+        await new Promise(resolve => setTimeout(resolve, 2000));
       }
       proposalMutation.mutate(proposalText);
-      closeModal(); // 성공 시 모달 닫기
+      closeModal();
     } catch (error) {
       console.error("신청서 제출 실패:", error);
     } finally {

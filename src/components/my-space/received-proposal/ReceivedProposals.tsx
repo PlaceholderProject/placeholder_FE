@@ -48,8 +48,6 @@ const ReceivedProposals = () => {
   if (isLoading) return <Spinner isLoading={isLoading} />;
   if (isError) return <p>에러 발생: {error.message}</p>;
 
-  // const receivedProposals = data?.filter((proposal: ReceivedProposal) => proposal.status === "pending");
-
   if (!receivedProposals || receivedProposals.length === 0) {
     return <p className="mt-24 flex justify-center">받은 신청서가 없습니다.</p>;
   }

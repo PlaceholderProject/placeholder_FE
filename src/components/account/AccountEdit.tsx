@@ -67,7 +67,7 @@ const AccountEdit = () => {
     const file = event.target.files?.[0];
     if (file) {
       const objectUrl = URL.createObjectURL(file);
-      setProfileImage(objectUrl); // Blob URL을 React 상태에 설정
+      setProfileImage(objectUrl);
     }
   };
 
@@ -123,14 +123,14 @@ const AccountEdit = () => {
     let resizedFile: File | null = null;
 
     if (file) {
-      const resizedBlob = await resizeImage(file, 300, 300); // 예: 최대 300x300
+      const resizedBlob = await resizeImage(file, 300, 300);
       resizedFile = new File([resizedBlob], file.name, { type: file.type });
     }
 
     const editedUser = {
       nickname,
       bio,
-      profileImage: resizedFile, // 리사이징된 파일 사용
+      profileImage: resizedFile,
     };
 
     try {
@@ -178,7 +178,7 @@ const AccountEdit = () => {
                   accept="image/*"
                   ref={fileInputRef}
                   onChange={handleProfileImageChange}
-                  className="hidden" // 숨김 처리
+                  className="hidden"
                 />
               </label>
             </div>

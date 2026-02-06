@@ -19,22 +19,10 @@ interface MeetupMembersContentProps {
 const MeetupMembersContent = ({ meetupId, meetupName }: MeetupMembersContentProps) => {
   const { closeModal } = useModal();
   const { data: members, isPending, error } = useMeetupMembers(meetupId);
-
-  // 강퇴 기능을 위한 훅과 현재 유저 정보 가져오기
   const deleteMutation = useMemberDelete();
   const currentUser = useSelector((state: RootState) => state.user.user);
-
-  // 현재 유저가 방장인지 확인
   const isCurrentUserOrganizer = members?.find(m => m.user.nickname === currentUser.nickname)?.role === "organizer";
-
-  // 강퇴 버튼 클릭 핸들러
   const handleKickOut = (memberId: number, memberNickname: string) => {
-    // ⭐️ 확인 후 삭제
-    // if (window.confirm(`정말로 '${memberNickname}' 님을 강퇴하시겠습니까?`)) {
-    //   deleteMutation.mutate(memberId);
-    // }
-
-    // ⭐️ confirm 커스텀
     showConfirmToast({
       message: `정말로 '${memberNickname}' 님을 강퇴하시겠습니까?`,
       confirmText: "강퇴",

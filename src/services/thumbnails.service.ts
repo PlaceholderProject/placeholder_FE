@@ -1,14 +1,6 @@
 import { BASE_URL } from "@/constants/baseURL";
 import { TypePurposeType, TypeRegionType, SortType } from "@/types/meetupType";
 import Cookies from "js-cookie";
-
-// --TODO--
-// meeups, ads, thumbnails
-// id 해당 meetup or ad or thumbnail,
-// 가져오는 함수들 다른 service.ts에 같은 url, 다른 이름으로 중복 로직 있음
-
-// meetups(headhuntings) 광고글 전부 가져오는 api
-// sortType을 기본 파라미터로 받아 정렬되고 있음
 export const getHeadhuntingsApi = async ({ sortType, place, category }: { sortType: SortType; place?: TypeRegionType; category?: TypePurposeType }, page: number = 1, size: number = 10) => {
   const token = Cookies.get("accessToken");
   const queryParams = new URLSearchParams();
@@ -25,15 +17,9 @@ export const getHeadhuntingsApi = async ({ sortType, place, category }: { sortTy
     url = url + `&category=${category}`;
   }
 
-  // 헤더 객체를 로그인 여부 조건부로 구성하기
-  // 새삼 헤더도 객체지..
-  // headers: {}임. 당연함.
-
   const headers: HeadersInit = {
     "Content-Type": "application/json",
   };
-
-  //토큰 있을 때만 헤더 추가
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
@@ -41,9 +27,6 @@ export const getHeadhuntingsApi = async ({ sortType, place, category }: { sortTy
   const response = await fetch(url, {
     method: "GET",
     headers,
-    // headers: {
-    //   Authorization: `Bearer ${token}`,
-    // },
   });
 
   if (!response.ok) {
@@ -52,16 +35,11 @@ export const getHeadhuntingsApi = async ({ sortType, place, category }: { sortTy
   const headhuntingsData = await response.json();
   return headhuntingsData;
 };
-
-// (headhuntingItem) 광고글 하나 데이터 가져오기 api
 export const getHeadhuntingItemApi = async (thumbnailId: number) => {
   const token = Cookies.get("accessToken");
-  // 헤더 객체를 조건부로 구성
   const headers: HeadersInit = {
     "Content-Type": "application/json",
   };
-
-  // 토큰이 있을 때만 Authorization 헤더 추가
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }

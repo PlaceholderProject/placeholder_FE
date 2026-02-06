@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Participant } from "@/types/scheduleType";
 import Image from "next/image";
-import { getS3ImageURL } from "@/utils/getImageURL"; // ✅ getImageURL → getS3ImageURL 변경
+import { getS3ImageURL } from "@/utils/getImageURL";
 
 interface AttendeePopoverProps {
   participants: Participant[];
@@ -12,8 +12,6 @@ interface AttendeePopoverProps {
 const AttendeePopover = ({ participants }: AttendeePopoverProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
-
-  // 외부 클릭 감지하여 팝오버 닫기
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
@@ -26,13 +24,9 @@ const AttendeePopover = ({ participants }: AttendeePopoverProps) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
-  // 참가자가 없는 경우
   if (!participants || participants.length === 0) {
     return <div className="text-gray-500">참석자 없음</div>;
   }
-
-  // 참석자 정보 표시 텍스트 생성
   const displayAttendee = participants.length === 1 ? participants[0].nickname : `${participants[0].nickname} 외 ${participants.length - 1}인 참석`;
 
   return (

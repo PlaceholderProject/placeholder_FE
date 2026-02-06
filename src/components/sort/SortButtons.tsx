@@ -9,18 +9,7 @@ const SortButtons = ({ currentSort, handleSortChange }: { currentSort: SortType;
   ];
   return (
     <>
-      {/* <div className="">
-        <button className={`${currentSort === "like" ? "px-[1rem] text-base" : "text-base text-gray-medium"}`} onClick={() => handleSortChange("like")}>
-          🔥 인기 모집
-        </button>
-        <button className={`${currentSort === "latest" ? "text-base" : "text-base text-[#BDBDBD]"}`} onClick={() => handleSortChange("latest")}>
-          ✨ 최신 모집
-        </button>
-        <button className={`${currentSort === "deadline" ? "text-base" : "text-base text-[#BDBDBD]"}`} onClick={() => handleSortChange("deadline")}>
-          {" "}
-          ⏰ 마감 임박 모집
-        </button>
-      </div> */}
+      {}
 
       <div>
         {sortButtonsArray.map(({ type, label }) => (

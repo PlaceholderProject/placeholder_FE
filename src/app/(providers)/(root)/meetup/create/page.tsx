@@ -7,8 +7,6 @@ export const metadata = {
     follow: false,
   },
 };
-
-// 위에 providers폴더는? 그 위에 app 폴더 안의 page 파일은?
 const MeetupCreatePage = () => {
   return (
     <div>

@@ -16,36 +16,22 @@ import { toast } from "sonner";
 import { showConfirmToast } from "@/components/common/ConfirmDialog";
 import Spinner from "@/components/common/Spinner";
 
-// 기존 타입 import 추가 (파일 상단에서 import 해야 함)
-// import { MyMeetupMember, MyMeetupMembersResponse } from "@/types/meetupType";
-
 const CurrentMyMeetup = () => {
-  // 삭제 로직을 조부모가 통합적으로 관리하는데 그걸 커스텀훅으로 뻈습니다
   const deleteMutation = useMemberDelete();
-
-  // 현재 사용자 정보 가져오기 (닉넴으로 식별하려고)
   const { data: currentUserData } = useQuery({
     queryKey: ["currentUser"],
     queryFn: () => getUser(),
   });
-
-  // 내 memberId 찾기
   const getMyMemberId = async (meetupId: number) => {
     try {
       const membersData = await getMyMeetupMembersApi(meetupId);
-
-      // API 응답 구조 파악을 위한 콘솔 로그
       if (membersData?.result) {
         if (membersData.result[0]) {
           if (membersData.result[0].user) {
           }
         }
       }
-
-      // 타입 단언을 사용하여 안전하게 접근
       const typedMembersData = membersData as MyMeetupMembersResponse;
-
-      // 현 유저 닉넴으로 멤버 찾기
       const myMember = typedMembersData?.result?.find((member: MyMeetupMember) => {
         return member.user?.nickname === currentUserData?.nickname;
       });
@@ -65,18 +51,11 @@ const CurrentMyMeetup = () => {
       return null;
     }
   };
-
-  // 스스로 퇴장 핸들러
   const handleSelfLeave = async (meetupId: number) => {
     if (!currentUserData?.nickname) {
       toast.error("사용자 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
       return;
     }
-    // ⭐️ 확인 후 삭제
-    // const confirmed = window.confirm("정말 이 모임에서 퇴장하시겠습니까?");
-    // if (!confirmed) return;
-
-    // ⭐️ confirm 커스텀
     showConfirmToast({
       message: "정말 이 모임에서 퇴장하시겠습니까?",
       confirmText: "퇴장",
@@ -96,26 +75,18 @@ const CurrentMyMeetup = () => {
       },
     });
   };
-
-  // 페이지네이션 핸들러들
   const [page, setPage] = useState(1);
   const handlePageButtonClick = (newPage: number) => {
     setPage(newPage);
   };
-
-  // 이전/이후 그룹 버튼 핸들러
   const handlePreviousGroupButtonClick = () => {
-    // 현재 그룹의 첫 페이지 계산
     const currentGroup = Math.ceil(page / BUTTONS_PER_GROUP);
-    // 이전 그룹의 마지막 페이지로 이동
     const previousGroupLastPage = (currentGroup - 1) * BUTTONS_PER_GROUP;
     setPage(previousGroupLastPage);
   };
 
   const handleNextGroupButtonClick = () => {
-    // 현재 그룹의 마지막 페이지 계산
     const currentGroup = Math.ceil(page / BUTTONS_PER_GROUP);
-    // 다음 그룹의 첫 페이지로 이동
     const nextGroupFirstPage = currentGroup * BUTTONS_PER_GROUP + 1;
     setPage(nextGroupFirstPage);
   };
@@ -133,17 +104,9 @@ const CurrentMyMeetup = () => {
   });
 
   const totalPages = Math.ceil((myMeetupsData?.total ?? 0) / SIZE_LIMIT);
-
-  // 현재 페이지가 속한 그룹 계산
   const currentGroup = Math.ceil(page / BUTTONS_PER_GROUP);
-
-  // 이전 그룹 존재 여부
   const hasPreviousGroup = currentGroup > 1;
-
-  // 다음 그룹 존재 여부
   const hasNextGroup = currentGroup * BUTTONS_PER_GROUP < totalPages;
-
-  // 현재 그룹에 표시할 페이지 버튼 범위 계산
   const startPage = (currentGroup - 1) * BUTTONS_PER_GROUP + 1;
   const endPage = Math.min(currentGroup * BUTTONS_PER_GROUP, totalPages);
 
@@ -173,7 +136,7 @@ const CurrentMyMeetup = () => {
         onPreviousGroupButtonClick={handlePreviousGroupButtonClick}
         onNextGroupButtonClick={handleNextGroupButtonClick}
       />
-      {/* <MemberDeleteModal onKickMember={handleKickMember} isPending={deleteMutation.isPending} /> */}
+      {}
     </>
   );
 };

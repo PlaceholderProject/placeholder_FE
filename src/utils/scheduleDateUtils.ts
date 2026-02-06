@@ -1,10 +1,5 @@
-/**
- * 날짜 및 시간을 한국 형식(YYYY.MM.DD HH:MM)으로 포맷팅하는 함수
- * @param dateTimeString
- * @returns YYYY.MM.DD HH:MM
- */
+
 export function formatDateTime(dateTimeString: string): string {
-  // 문자열을 Date 객체로 변환
   const date = new Date(dateTimeString);
 
   const year = date.getFullYear();

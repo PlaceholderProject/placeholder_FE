@@ -1,7 +1,5 @@
 import { BASE_URL } from "@/constants/baseURL";
 import Cookies from "js-cookie";
-
-// Presigned URL 응답 객체 타입 정의
 export interface PresignedUrlData {
   url: string;
   fields: {
@@ -16,12 +14,7 @@ export interface PresignedUrlData {
   };
 }
 
-/**
- * 백엔드 서버에 Pre-signed URL을 요청하는 함수
- * @param fileTypes - 요청할 파일 타입의 배열 (e.g., ['image/png', 'image/jpeg'])
- * @param target - URL을 요청할 대상 ('user' | 'schedule' | 'meetup')
- * @returns Pre-signed URL 데이터 배열
- */
+
 export const getPresignedUrls = async (fileTypes: string[], target: "user" | "schedule" | "meetup"): Promise<PresignedUrlData[]> => {
   const accessToken = Cookies.get("accessToken");
   if (!accessToken) {
@@ -44,19 +37,14 @@ export const getPresignedUrls = async (fileTypes: string[], target: "user" | "sc
       throw new Error(errorData.detail || "Presigned URL을 받아오는데 실패했습니다.");
     }
     const data = await response.json();
-    return data.result; // data.result 배열 전체를 반환
+    return data.result;
   } catch (error) {
     console.error("getPresignedUrls 함수 에러:", error);
     throw error;
   }
 };
 
-/**
- * 발급받은 Pre-signed URL을 사용해 S3에 이미지를 업로드하는 함수
- * @param url - S3로 업로드할 URL
- * @param fields - S3 업로드에 필요한 필드 값들
- * @param file - 업로드할 파일
- */
+
 export const uploadImageToS3 = async (url: string, fields: PresignedUrlData["fields"], file: File) => {
   const formData = new FormData();
 

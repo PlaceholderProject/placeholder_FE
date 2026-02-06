@@ -20,8 +20,6 @@ const ScheduleNumber: React.FC<ScheduleNumberProps> = ({ number, isMapMarker = f
       {number}
     </div>
   );
-
-  // 맵 마커로 사용될 때
   if (isMapMarker && position) {
     return (
       <CustomOverlayMap position={position} xAnchor={0.5} yAnchor={1}>
@@ -35,8 +33,6 @@ const ScheduleNumber: React.FC<ScheduleNumberProps> = ({ number, isMapMarker = f
       </CustomOverlayMap>
     );
   }
-
-  // 일반적인 용도로 사용될 때
   return NumberCircle;
 };
 

@@ -19,10 +19,6 @@ const FilterArea = () => {
     dispatch(setFilterType(newFilterType));
   };
 
-  // const handleResetFilter = () => {
-  //   dispatch(resetFilter());
-  // };
-
   return (
     <>
       <div className="mx-auto flex w-[34rem] min-w-[32rem] justify-center justify-items-center bg-gray-medium py-[0.5rem] md:w-[95%] md:max-w-[80rem]">
@@ -35,11 +31,7 @@ const FilterArea = () => {
             {label}
           </button>
         ))}
-        {/* {isFilterActive && (
-        <button className="px-4 py-2 text-red-600 hover:text-red-800" onClick={handleResetFilter}>
-          필터 초기화
-        </button>
-      )} */}
+        {}
       </div>
       <div className="mb-[1rem] bg-gray-50 p-[1rem]">
         {isPlaceMenuOpen && <PlaceButtons />}

@@ -1,4 +1,3 @@
-// src/services/schedule.service.ts
 
 import { Schedule, SchedulePayload } from "@/types/scheduleType";
 import { BASE_URL } from "@/constants/baseURL";
@@ -7,8 +6,6 @@ import Cookies from "js-cookie";
 interface ScheduleResponse {
   result: Schedule[];
 }
-
-//스케줄 리스트 가져오기
 export const getSchedules = async (meetupId: number): Promise<Schedule[]> => {
   const token = Cookies.get("accessToken");
 
@@ -26,8 +23,6 @@ export const getSchedules = async (meetupId: number): Promise<Schedule[]> => {
 
 export const createSchedule = async (meetupId: number, payload: SchedulePayload): Promise<Schedule> => {
   const token = Cookies.get("accessToken");
-
-  // 스케줄 생성
   try {
     const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}/schedule`, {
       method: "POST",
@@ -50,8 +45,6 @@ export const createSchedule = async (meetupId: number, payload: SchedulePayload)
     throw error;
   }
 };
-
-// 단일 스케줄 가져오기
 export const getSchedule = async (scheduleId: number): Promise<Schedule> => {
   const token = Cookies.get("accessToken");
 
@@ -65,8 +58,6 @@ export const getSchedule = async (scheduleId: number): Promise<Schedule> => {
   if (!response.ok) throw new Error("스케줄 조회 실패");
   return response.json();
 };
-
-// 스케줄 수정
 export const updateSchedule = async (scheduleId: number, payload: SchedulePayload): Promise<Schedule> => {
   const token = Cookies.get("accessToken");
 
@@ -92,8 +83,6 @@ export const updateSchedule = async (scheduleId: number, payload: SchedulePayloa
     throw error;
   }
 };
-
-// 스케줄 삭제
 export const deleteSchedule = async (scheduleId: number): Promise<void> => {
   const token = Cookies.get("accessToken");
 

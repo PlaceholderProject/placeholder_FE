@@ -4,8 +4,6 @@ import { refreshToken } from "./auth.service";
 import { EditedUserProps, PresignedUrlProps, User } from "@/types/userType";
 import { NewUserProps } from "@/types/authType";
 import { toast } from "sonner";
-
-// create user
 export const createUser = async (newUser: NewUserProps): Promise<number | undefined> => {
   try {
     const response = await fetch(`${BASE_URL}/api/v1/user`, {
@@ -30,8 +28,6 @@ export const createUser = async (newUser: NewUserProps): Promise<number | undefi
     return;
   }
 };
-
-// get user
 export const getUser = async (retryCount: number = 0): Promise<User | null> => {
   const accessToken = Cookies.get("accessToken");
 
@@ -46,8 +42,8 @@ export const getUser = async (retryCount: number = 0): Promise<User | null> => {
 
     if (!response.ok) {
       if (response.status === 401 && retryCount < 3) {
-        await refreshToken(); // 토큰 갱신
-        return getUser(retryCount + 1); // 데이터 다시 요청
+        await refreshToken();
+        return getUser(retryCount + 1);
       }
       return null;
     }
@@ -58,17 +54,12 @@ export const getUser = async (retryCount: number = 0): Promise<User | null> => {
     return null;
   }
 };
-
-// edit-user
 export const editUser = async (editedUser: EditedUserProps, retryCount: number = 0): Promise<User | null> => {
   const accessToken = Cookies.get("accessToken");
   if (!accessToken) return null;
 
   let profileImageUrl = "";
-
-  // 이미지 업로드 처리
   if (editedUser.profileImage) {
-    // 1. presigned 정보 요청
     const filetype = editedUser.profileImage.type;
     const response = await fetch(`${BASE_URL}/api/v1/user/presigned-url?filetype=${encodeURIComponent(filetype)}`, {
       headers: {
@@ -77,11 +68,9 @@ export const editUser = async (editedUser: EditedUserProps, retryCount: number =
     });
 
     if (!response.ok) throw new Error("presigned URL 요청 실패");
-    const presignedResult = (await response.json()).result[0]; // 첫 presigned entry
+    const presignedResult = (await response.json()).result[0];
     profileImageUrl = await uploadToS3WithForm(editedUser.profileImage, presignedResult);
   }
-
-  // 2. 최종 유저 정보 전달
   const payload = {
     nickname: editedUser.nickname,
     bio: editedUser.bio,
@@ -112,8 +101,6 @@ export const editUser = async (editedUser: EditedUserProps, retryCount: number =
     return null;
   }
 };
-
-// delete-user
 export const deleteUser = async () => {
   try {
     const accessToken = Cookies.get("accessToken");
@@ -123,16 +110,13 @@ export const deleteUser = async () => {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-
-    // 응답 본문 확인
     const contentLength = response.headers.get("content-length");
     if (!contentLength || parseInt(contentLength) === 0) {
       console.warn("서버에서 빈 응답을 반환했습니다.");
-      return { message: "User delete successfully." }; // 기본 메시지
+      return { message: "User delete successfully." };
     }
 
     toast.success("탈퇴되었습니다.");
-    // JSON 형식으로 파싱
     const data = await response.json();
     return data;
   } catch (error) {
@@ -143,13 +127,9 @@ export const deleteUser = async () => {
 const uploadToS3WithForm = async (file: File, presignedData: PresignedUrlProps) => {
   const { url, fields } = presignedData;
   const formData = new FormData();
-
-  // presigned 필드들 모두 form에 append
   Object.entries(fields).forEach(([key, value]) => {
     formData.append(key, value as string);
   });
-
-  // 마지막에 실제 파일을 넣어야 함
   formData.append("file", file);
 
   const response = await fetch(url, {
@@ -160,7 +140,5 @@ const uploadToS3WithForm = async (file: File, presignedData: PresignedUrlProps) 
   if (!response.ok) {
     throw new Error("S3 업로드 실패");
   }
-
-  // 업로드 성공 시 S3 경로는: `${url}${fields.key}`
   return `${url}${fields.key}`;
 };

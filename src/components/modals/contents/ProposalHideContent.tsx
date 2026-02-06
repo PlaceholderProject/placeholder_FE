@@ -8,7 +8,7 @@ const ProposalHideContent = ({ proposal }: { proposal: SentProposal }) => {
 
   const handleProposalHide = () => {
     hideMutation.mutate(proposal.id);
-    closeModal(); // 작업 완료 후 모달 닫기
+    closeModal();
   };
 
   return (

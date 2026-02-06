@@ -18,22 +18,8 @@ const AdOrganizer = ({ adData }: { adData: Meetup }) => {
       imgElement.onerror = () => {
         setImageSource("/profile.png");
       };
-      imgElement.src = profileImageUrl; // 이 부분이 누락되어 있었음
+      imgElement.src = profileImageUrl;
     }
-
-    // --TO DO--
-    // 클린업 함수 및 let imgElement상단 선언 필요
-    // return () => {
-    //   if (imgElement) {
-    //     imgElement.onload = null;
-    //     imgElement.onerror = null;
-    //     imgElement.src = "";
-    //     imgElement = null;
-    //   }
-    // };
-
-    // --TO DO--
-    // 이미지 경로 validate 함수 따로 만들어서 빼기!!!!
   }, [adData]);
 
   return (
@@ -44,10 +30,7 @@ const AdOrganizer = ({ adData }: { adData: Meetup }) => {
         </div>
         <div className="text-base md:text-xl">{adData.organizer.nickname}</div>
       </div>
-      {/* 
-        <div className="flex items-center justify-center">
-          <AdLike />
-        </div> */}
+      { }
     </>
   );
 };

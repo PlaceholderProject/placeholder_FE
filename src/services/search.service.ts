@@ -1,7 +1,5 @@
 import { BASE_URL } from "@/constants/baseURL";
 import { toast } from "sonner";
-
-// 메인 페이지, 검색결과 페이지 : 검색어 제출
 export const getSearchedAd = async (range: string, keyword: string, page: number) => {
   const size = 10;
   try {

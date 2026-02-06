@@ -2,8 +2,6 @@ import { BASE_URL } from "@/constants/baseURL";
 import { newReplyProps } from "@/types/replyType";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
-
-// create-reply
 export const createReply = async (newReply: newReplyProps, meetupId: number) => {
   const accessToken = Cookies.get("accessToken");
   try {
@@ -31,8 +29,6 @@ export const createReply = async (newReply: newReplyProps, meetupId: number) => 
     return;
   }
 };
-
-// create-nested-reply
 export const createNestedReply = async (newReply: newReplyProps, replyId: number) => {
   const accessToken = Cookies.get("accessToken");
   try {
@@ -60,8 +56,6 @@ export const createNestedReply = async (newReply: newReplyProps, replyId: number
     return;
   }
 };
-
-// read reply
 export const getReply = async (meetupId: number) => {
   try {
     const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}/comment`, {
@@ -81,8 +75,6 @@ export const getReply = async (meetupId: number) => {
     return null;
   }
 };
-
-// update-reply
 export const editReply = async (text: string, replyId: number) => {
   try {
     const accessToken = Cookies.get("accessToken");
@@ -108,8 +100,6 @@ export const editReply = async (text: string, replyId: number) => {
     return null;
   }
 };
-
-// delete-reply
 export const deleteReply = async (replyId: number) => {
   try {
     const accessToken = Cookies.get("accessToken");
@@ -119,15 +109,12 @@ export const deleteReply = async (replyId: number) => {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-
-    // 응답 본문 확인
     const contentLength = response.headers.get("content-length");
     if (!contentLength || parseInt(contentLength) === 0) {
-      return { message: "User delete successfully." }; // 기본 메시지
+      return { message: "User delete successfully." };
     }
 
     toast.success("댓글이 삭제되었습니다.");
-    // JSON 형식으로 파싱
     const data = await response.json();
     return data;
   } catch (error) {

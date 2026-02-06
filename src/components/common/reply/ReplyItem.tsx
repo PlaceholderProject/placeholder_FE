@@ -87,7 +87,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId, sche
 
   return (
     <div className="flex flex-col items-start gap-[1rem]">
-      {/* 1️⃣ 댓글 정보 */}
+      {}
       <div className="flex w-full justify-between">
         <div className="flex flex-row items-center gap-[0.5rem]">
           <div className="relative h-[2.5rem] w-[2.5rem] overflow-hidden rounded-full">
@@ -118,11 +118,11 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId, sche
           )
         ) : null}
       </div>
-      {/* 2️⃣ 댓글 내용 */}
+      {}
       {isEditMode ? <textarea value={text} onChange={handleTextchange} className="mx-[3rem] my-[1rem] w-[90%] rounded-[1rem] p-[1rem]" /> : <div className="w-full px-[3rem]">{reply.text}</div>}
-      {/* 3️⃣ 답글 영역 */}
+      {}
       <div className="flex w-full flex-col items-start gap-[0.5rem] pl-[3rem]">
-        {/* 3-1. 답글 더보기 & 접기 */}
+        {}
         {nestedReplies.length > 0 &&
           (isVisiableNestedReply ? (
             <div className="flex w-full flex-col items-start gap-[1rem]">
@@ -138,7 +138,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId, sche
               ---- 답글 {nestedReplies.length}개 더 보기
             </button>
           ))}
-        {/* 3-2. 답글 폼 */}
+        {}
         {isVisiableNestedReplyForm ? (
           <NestedReplyForm
             rootReply={reply}

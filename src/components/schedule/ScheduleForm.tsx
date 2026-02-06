@@ -72,8 +72,6 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
   const handleAddressSearch = useCallback(() => {
     openModal("POSTCODE", { onCompletePostcode: handleCompletePostcode });
   }, [openModal, handleCompletePostcode]);
-
-  // ... (handleSubmit 등 나머지 코드는 이전과 동일)
   const imageUploadMutation = useImageUpload();
   const createMutation = useCreateSchedule(meetupId);
   const updateMutation = useUpdateSchedule(scheduleId || 0);

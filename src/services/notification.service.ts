@@ -1,8 +1,6 @@
 import Cookies from "js-cookie";
 import { BASE_URL } from "@/constants/baseURL";
 import { Notification, NotificationResponse } from "@/types/NotificationType";
-
-// 알림 목록 가져오기
 export const getNotifications = async (): Promise<Notification[]> => {
   const token = Cookies.get("accessToken");
 
@@ -20,8 +18,6 @@ export const getNotifications = async (): Promise<Notification[]> => {
   const data: NotificationResponse = await response.json();
   return data.result;
 };
-
-// 알림 읽음 여부
 export const markNotificationAsRead = async (notificationId: number): Promise<void> => {
   const token = Cookies.get("accessToken");
 

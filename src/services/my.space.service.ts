@@ -1,8 +1,6 @@
 import { BASE_URL } from "@/constants/baseURL";
 import { MyAdsResponse, MyMeetupsResponse } from "@/types/mySpaceType";
 import Cookies from "js-cookie";
-
-// 내모임 조회 공통 로직 재사용
 export const getMyMeetupsApi = async (status: string, page: number, size: number): Promise<MyMeetupsResponse> => {
   const token = Cookies.get("accessToken");
   try {
@@ -32,28 +30,6 @@ export const getMyMeetupsApi = async (status: string, page: number, size: number
     throw error;
   }
 };
-
-// 우선 가져오는 기본 로직 있고
-// 가져 오는 순간에 ongoing인지 ended인지 상태를 param으로 넣어서 가져옴
-// ongoing의 isCurrent = true
-// ended의 isCurrent = false
-// 근데 가져온뒤에 시간이 지나면 걔가 ongoing에서 ended로 변하고
-// 그걸 프론트에서 확인해서 컴포넌ㅌ트를 변경해줘야 함?
-// 엥 그냥 도니ㅡㄴ데??????
-
-// 현재 모임
-// --TO DO-- param 동적으로 넣어줘야됨
-// export const getOngoingMyMeetupsApi = async () => {
-//   return getMyMeetupsApi();
-// };
-
-// 과거 모임
-// --TO DO-- param 동적으로 넣어줘야됨
-// export const getEndedMyMeetupsApi = async () => {
-//   return getMyMeetupsApi("ended", "1", "10");
-// };
-
-// 내광고 공통로직
 export const getMyAdsApi = async (status: string, page: number, size: number): Promise<MyAdsResponse> => {
   const token = Cookies.get("accessToken");
 
@@ -81,18 +57,6 @@ export const getMyAdsApi = async (status: string, page: number, size: number): P
     throw error;
   }
 };
-
-// // 현광고
-// export const getOngoingMyAdsApi = async () => {
-//   return getMyAds("ongoing");
-// };
-
-// // 지난광고
-// export const getEndedMyAdsApi = async () => {
-//   return getMyAds("ended");
-// };
-
-// 모임 멤버 가져오기 Api
 export const getMyMeetupMembersApi = async (meetupId: number | undefined) => {
   if (!meetupId) {
     throw new Error("meetupId is required");
@@ -111,8 +75,6 @@ export const getMyMeetupMembersApi = async (meetupId: number | undefined) => {
     throw new Error("내 모임 멤버 조회에 실패.");
   }
 
-  // 👇 실제 API 응답 구조 확인
-
   const myMeetupMembersData = await response.json();
   if (myMeetupMembersData.result && myMeetupMembersData.result[0]) {
   }
@@ -120,8 +82,6 @@ export const getMyMeetupMembersApi = async (meetupId: number | undefined) => {
   }
   return myMeetupMembersData;
 };
-
-//모임 멤버 삭제하기 Api
 export const deleteMeetupMemberApi = async (member_id: number) => {
   const token = Cookies.get("accessToken");
   const response = await fetch(`${BASE_URL}/api/v1/member/${member_id}`, {

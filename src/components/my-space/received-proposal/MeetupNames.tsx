@@ -19,9 +19,7 @@ const MeetupNames = () => {
       dispatch(setSelectedMeetupId(organizedMeetups[0].id));
     }
   }, [organizedMeetups, dispatch, selectedMeetupId]);
-
-  //  if (isLoading) return <p>로딩 중...</p>;
-  if (isLoading) return <Spinner isLoading={isLoading} />; // 텍스트 대신 스피너
+  if (isLoading) return <Spinner isLoading={isLoading} />;
   if (isError) return <p>에러 발생: {error.message}</p>;
   if (!organizedMeetups || organizedMeetups.length === 0) return null;
 

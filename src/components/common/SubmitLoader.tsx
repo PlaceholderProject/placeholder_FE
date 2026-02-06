@@ -3,11 +3,6 @@ import { RiseLoader } from "react-spinners";
 
 interface SubmitLoaderProps {
   isLoading: boolean;
-  // loaderColor: string;
-  // loaderSize: number;
-  // overlayColor: string;
-  // overlayOpacity: number;
-  // zIndex: number;
   message?: string;
 }
 

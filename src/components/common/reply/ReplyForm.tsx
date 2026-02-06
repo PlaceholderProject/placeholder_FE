@@ -53,9 +53,8 @@ const ReplyForm = () => {
 
     if (isSubmitting) return;
     setIsSubmitting(true);
-    // 🔍 개발 환경에서만 지연 시간 추가
     if (process.env.NODE_ENV === "development") {
-      await new Promise(resolve => setTimeout(resolve, 2000)); // 2초 지연
+      await new Promise(resolve => setTimeout(resolve, 2000));
     }
     setIsSubmitting(false);
     setContent("");

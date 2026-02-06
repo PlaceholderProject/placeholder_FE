@@ -9,8 +9,6 @@ import SubmitLoader from "../common/SubmitLoader";
 import { useMeetupForm } from "@/hooks/useMeetupForm";
 import { useCreateMeetup, useEditMeetup, useMeetupDetail, useGetPresignedUrl, useS3Upload } from "@/hooks/useMeetupApi";
 import { toast } from "sonner";
-
-// displayName 추가
 const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
   ({ defaultChecked, id, name, label, type, placeholder, value, defaultValue, disabled, required, checked, onChange, maxLength, className, labelClassName, containerClassName }, ref) => {
     return (
@@ -41,8 +39,6 @@ const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
   },
 );
 LabeledInput.displayName = "LabeledInput";
-
-// displayName 추가
 const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({ id, name, label, options, required = true, className, labelClassName, containerClassName, defaultValue }, ref) => {
   return (
     <>
@@ -72,8 +68,6 @@ interface MeetupFormProps {
 
 const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
   const router = useRouter();
-
-  // api 훅
   const {
     data: previousMeetupData,
     isPending,
@@ -85,15 +79,11 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
   const editMutation = useEditMeetup();
   const getPresignedUrl = useGetPresignedUrl();
   const s3Upload = useS3Upload();
-
-  // 폼 로직 훅
   const { formStates, handlers, validateDates } = useMeetupForm(mode, previousMeetupData);
   const { isSubmitting, setIsSubmitting, nameLength, placeLength, adTitleLength, descriptionLength, isStartedAtNull, setIsStartedAtNull, isEndedAtNull, setIsEndedAtNull, previewImage } = formStates;
   const { handleNameLengthChange, handlePlaceLengthChange, handleAdTitleLengthChange, handleDescriptionLengthChange, handlePreviewImageChange } = handlers;
-
-  // Ref (컴포넌트 자체에서 관리)
-  const organizerNicknameRef = useRef<HTMLInputElement>(null); // ✨이게 MeetupEditForm에는 없음
-  const organizerProfileImageRef = useRef<HTMLInputElement>(null); // ✨이게 MeetupEditForm에는 없음
+  const organizerNicknameRef = useRef<HTMLInputElement>(null);
+  const organizerProfileImageRef = useRef<HTMLInputElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
   const startedAtRef = useRef<HTMLInputElement>(null);
   const endedAtRef = useRef<HTMLInputElement>(null);
@@ -105,98 +95,16 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
   const isPublicRef = useRef<HTMLInputElement>(null);
   const categoryRef = useRef<HTMLSelectElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
-
-  // 제출 상태 로컬 관리
-  // const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // 2️⃣ s3에 직접 이미지 업로드 함수
-  // const meetupUploadToS3 = async (file: File, meetupPresignedData: S3PresignedItem) => {
-  //   const formData = new FormData();
-  //   Object.keys(meetupPresignedData.fields).forEach(key => {
-  //     const typedKey = key as keyof S3PresignedField;
-  //     formData.append(key, meetupPresignedData.fields[typedKey]);
-  //   });
-
-  //   formData.append("file", file);
-
-  //   try {
-  //     const response = await fetch(meetupPresignedData.url, {
-  //       method: "POST",
-  //       body: formData,
-  //     });
-  //     if (!response.ok) {
-  //       const errorText = await response.text();
-  //       console.error("S3 오류 내용:", errorText);
-  //       throw new Error(`s3 업로드 실패:, ${response.status} ${errorText}`);
-  //     }
-  //     // 업로드된 파일의 URL 생성
-  //     const uploadedFileUrl = `${meetupPresignedData.url}${meetupPresignedData.fields.key}`;
-  //     return uploadedFileUrl;
-  //   } catch (error) {
-  //     console.error("💥 업로드 중 오류:", error);
-  //     throw error;
-  //   }
-  // };
-
-  // 글자수 관리 위한 스테이트
-  // const [nameLength, setNameLength] = useState(0);
-  // const [placeLength, setPlaceLength] = useState(0);
-  // const [adTitleLength, setAdTitleLength] = useState(0);
-  // const [descriptionLength, setDescriptionLength] = useState(0);
-  // const handleNameLengthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setNameLength(event.target.value.length);
-  // };
-  // const handlePlaceLengthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setPlaceLength(event.target.value.length);
-  // };
-  // const handleAdTitleLengthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setAdTitleLength(event.target.value.length);
-  // };
-  // const handleDescriptionLengthChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-  //   setDescriptionLength(event.target.value.length);
-  // };
-
-  // 체크 박스 상태 관리 위한 스테이트
-  // const [isStartedAtNull, setIsStartedAtNull] = useState(false);
-  // const [isEndedAtNull, setIsEndedAtNull] = useState(false);
-
-  // 미리보기 스테이트
-  // const [previewImage, setPreviewImage] = useState("/meetup_default_image.png");
-
-  // 셀렉트 옵션 배열
   const categoryOptions = ["운동", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
   const placeOptions = ["서울", "경기", "인천", "강원", "대전", "세종", "충남", "충북", "부산", "울산", "경남", "경북", "대구", "광주", "전남", "전북", "제주", "전국", "미정"];
 
-  // 미리보기 이미지, 미정 여부 설정
-  //  ✨이게 MeetupForm에는 없음
-
   useEffect(() => {
     if (mode === "edit" && previousMeetupData) {
-      // if (previousMeetupData?.image) {
-      //   const previewImageUrl = `${previousMeetupData.image}`;
-      // }
 
       setIsStartedAtNull(previousMeetupData.startedAt === null);
       setIsEndedAtNull(previousMeetupData.endedAt === null);
     }
   }, [mode, previousMeetupData, setIsStartedAtNull, setIsEndedAtNull]);
-
-  // 생성 useMutation은 최상단에 위치시키라고 함
-  //  ✨이게 MeetupEditForm에는 없음
-  // const createMutation = useMutation({
-  //   mutationFn: ({ meetupData, imageUrl }: { meetupData: NewMeetup; imageUrl: string }) => createMeetupApi(meetupData, imageUrl),
-  // });
-
-  // 미리보기 이미지 변경 핸들 함수
-  // const handlePreviewImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (event.target.files && event.target.files[0]) {
-  //     const previewFile = event.target.files[0];
-  //     const previewFileUrl = URL.createObjectURL(previewFile);
-  //     setPreviewImage(previewFileUrl);
-  //   }
-  // };
-
-  // async 함수로 변경한 모임 생성 제출 함수
   const handleMeetupFormSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (isSubmitting) {
@@ -204,96 +112,24 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
     }
     setIsSubmitting(true);
 
-    // 모든 날짜가 오늘보다 과거인지 유효성 검사
-    // const now = new Date();
-    // now.setHours(0, 0, 0, 0);
-
-    // 필드 이름 케이스별로 가져오기
-    // const getDateFieldName = (fieldName: string): string => {
-    //   switch (fieldName) {
-    //     case "startedAt":
-    //       return "모임 시작일";
-    //     case "endedAt":
-    //       return "모임 종료일";
-    //     case "adEndedAt":
-    //       return "광고 종료일";
-    //     default:
-    //       return fieldName;
-    //   }
-    // };
-
-    // 통과(true)인지 걸리는지(false) 불리언 값 리턴하는 유효성 검사 함수
-    // 날짜와 필드네임을 받는데
-    // 그게 엄청 아래에서 실제 실행될 때 값으로 들어옴
-    // const createMeetUpValidateDate = (date: string | null, fieldName: string): boolean => {
-    //   // 사용자 입력값 미정이면 true (통과)
-    //   if (!date) {
-    //     return true;
-    //   }
-
-    //   const inputDate = new Date(date);
-    //   inputDate.setHours(0, 0, 0, 0);
-
-    //   // 사용자 입력 날짜값이 오늘보다 이전이면 false(걸림)
-    //   // if (inputDate !== null && inputDate < now) {
-    //   //   alert(`${getDateFieldName(fieldName)}은 이미 지난 날짜로 설정할 수 없습니다.`);
-    //   //   return false;
-    //   // }
-
-    //   // 모임 시작날짜와 모임 종료 날짜 비교
-    //   if (endDate !== null && startDate !== null) {
-    //     const endDateObject = new Date(endDate);
-    //     const startDateObject = new Date(startDate);
-    //     if (endDateObject < startDateObject) {
-    //       alert("모임 종료일은 시작일보다 빠르게 설정할 수 없습니다.");
-    //       return false;
-    //     }
-    //   }
-
-    //   return true;
-    // };
-
-    // 폼 제출전, 유효성 검사 에 함수 실행해보고 통과 못하면 제출 전에 리턴으로 탈출
-    // if (!createMeetUpValidateDate(startDate, "startedAt") || !createMeetUpValidateDate(endDate, "endedAt") || !createMeetUpValidateDate(adEndDate, "adEndedAt")) {
-    //   return;
-    // }
-
     try {
-      // 인풋 필드에서 날짜값 가져옴
       const startDate = isStartedAtNull ? null : startedAtRef.current?.value || null;
       const endDate = isEndedAtNull ? null : endedAtRef.current?.value || null;
       const adEndDate = adEndedAtRef.current?.value || "";
-
-      //날짜 유효성 검사
       if (!validateDates(startDate, endDate, adEndDate)) {
         return;
       }
-
-      // 이미지 업로드 처리
       let imageUrl = mode === "edit" ? previousMeetupData?.image || "" : "";
-      // ---1--- 이미지 있으면 (s3에 업로드)
       if (imageRef?.current?.files?.[0]) {
-        const imageFile = imageRef.current.files[0]; //
-        // const fileType = typeof(imageFile).toString()
-        //위처럼 이렇게 쓰면 오브젝트 반환함 (File 객체니까sssss)
-
-        // ✅ 파일 타입 정확히 가져오기
+        const imageFile = imageRef.current.files[0];
         const fileType = imageFile.type as FileType;
-
-        // presigned URL 요청
-        // const presignedResponse: S3PresignedResponse = await getMeetupPresignedUrl(fileType);
-        // const presignedData: S3PresignedItem = presignedResponse.result[0];
 
         const presignedResponse = await getPresignedUrl.mutateAsync(fileType);
         const presignedData = presignedResponse.result[0];
-
-        // presigned 데이터의 Content-Type 확인
-        // s3업로드 함수 실행으로 업로드 하고 imageUrl 받아오기
         imageUrl = await s3Upload.mutateAsync({ file: imageFile, presignedData });
       }
 
       if (mode === "create") {
-        // ---2--- 모임 데이터 생성 (폼데이터X)
         const newMeetup: NewMeetup = {
           organizer: {
             nickname: organizerNicknameRef.current?.value || "",
@@ -309,18 +145,14 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
           adEndedAt: adEndDate,
           isPublic: !isPublicRef.current?.checked,
           category: categoryRef.current?.value || "",
-          // image: imageRef.current?.value || "",
           isLike: false,
           likeCount: 0,
           createdAt: "",
           commentCount: 0,
         };
-        // ---3--- 모임 생성 (이미 업로드되고 받아온 이미지 url포함, 이건 유저 폼제출 이!!후!!에 유저 모르게 일어나는 과정임)
 
         await createMutation.mutateAsync({ data: newMeetup, imageUrl });
         toast.success("모임 생성에 성공했습니다!");
-        // queryClient.invalidateQueries({ queryKey: ["meetups"] });
-        // queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
       } else {
         if (!previousMeetupData) return;
         const editedMeetup: Meetup = {
@@ -329,16 +161,12 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
           description: descriptionRef.current?.value || "",
           place: placeRef.current?.value || "",
           placeDescription: placeDescriptionRef.current?.value || "",
-          // startedAt: isStartedAtNull ? null : startedAtRef.current?.value || null,
           startedAt: startDate,
           endedAt: endDate,
-          // endedAt: isEndedAtNull ? null : endedAtRef.current?.value || null,
           adTitle: adTitleRef.current?.value || "",
-          // adEndedAt: adEndedAtRef.current?.value || "",
           adEndedAt: adEndDate,
           isPublic: !isPublicRef.current?.checked,
           category: categoryRef.current?.value || "",
-          // image: imageRef.current?.value || "",
         };
         await editMutation.mutateAsync({ data: editedMeetup, imageUrl, meetupId: meetupId! });
         toast.success("모임 수정에 성공했습니다!");
@@ -350,26 +178,7 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
     } finally {
       setIsSubmitting(false);
     }
-
-    // const meetupFormData = new FormData();
-    // meetupFormData.append("payload", JSON.stringify(newMeetup));
-
-    // if (imageRef.current?.files?.[0]) {
-    //   meetupFormData.append("image", imageRef.current.files[0]);
-    // }
-
-    // try {
-    //   await createMutation.mutateAsync({ meetupData: newMeetup, imageUrl: imageUrl });
-    //   queryClient.invalidateQueries({ queryKey: ["meetups"] });
-    //   queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
-    //   alert("모임 생성에 성공했습니다!");
-    //   router.push("/");
-    // } catch (error) {
-    //   console.error(error);
-    // }
   };
-
-  // 로딩 상태 처리
   if (mode === "edit" && isPending) return <p>로딩 중...</p>;
   if (mode === "edit" && isError) return <p>모임 데이터 로드 에러 발생</p>;
 
@@ -436,7 +245,6 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
                     id="startedAtUndecided"
                     name="startedAtUndecided"
                     label="미정"
-                    // defaultChecked={mode === "edit" ? previousMeetupData.isStartedAtNull : false}
                     checked={isStartedAtNull}
                     type="checkbox"
                     onChange={event => {
@@ -467,7 +275,6 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
                     id="endedAtUndecided"
                     name="endedAtUndecided"
                     label="미정"
-                    // defaultChecked={mode === "edit" ? previousMeetupData.isEndedAtNull : false}
                     checked={isEndedAtNull}
                     type="checkbox"
                     onChange={event => {
@@ -600,7 +407,7 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
                     className="sr-only"
                   />
 
-                  {/* 커스텀 버튼 */}
+                  { }
                   <div className="flex-cols-2 flex items-center justify-between text-center">
                     <label className="my-[0.5rem] text-lg font-semibold">대표 이미지</label>
                     <label htmlFor="image" className="h-[2.2rem] w-[8rem] cursor-pointer items-center rounded-[1rem] bg-gray-medium py-[0.2rem] text-sm">
@@ -612,7 +419,7 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
                     <Image
                       src={previewImage}
                       alt="preview image"
-                      fill={previewImage !== "/meetup_default_image.png"} // 업로드된 이미지일 때만 fill
+                      fill={previewImage !== "/meetup_default_image.png"}
                       width={previewImage === "/meetup_default_image.png" ? 50 : undefined}
                       height={previewImage === "/meetup_default_image.png" ? 50 : undefined}
                       style={{

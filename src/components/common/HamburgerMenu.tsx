@@ -16,8 +16,6 @@ const HamburgerMenu = () => {
         setMenuOpen(false);
       }
     };
-
-    // ESC 키로 메뉴 닫기
     const handleEscKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setMenuOpen(false);
@@ -27,7 +25,6 @@ const HamburgerMenu = () => {
     if (menuOpen) {
       document.addEventListener("mousedown", handleClickOutside);
       document.addEventListener("keydown", handleEscKey);
-      // 메뉴가 열렸을 때 스크롤 방지
       document.body.style.overflow = "hidden";
     }
 
@@ -66,27 +63,27 @@ const HamburgerMenu = () => {
 
   return (
     <>
-      {/* 햄버거 메뉴 버튼 */}
+      {}
       <button onClick={() => setMenuOpen(!menuOpen)} className="text-2xl text-white transition-colors hover:text-gray-200">
         <FaBars />
       </button>
 
-      {/* 오버레이 배경 */}
+      {}
       {menuOpen && <div className="fixed inset-0 z-40 bg-black bg-opacity-50 transition-opacity duration-300" onClick={() => setMenuOpen(false)} />}
 
-      {/* 사이드바 메뉴 */}
+      {}
       <div
         ref={menuRef}
         className={`fixed right-0 top-0 z-50 h-full w-80 transform bg-white shadow-xl transition-transform duration-300 ease-in-out ${menuOpen ? "translate-x-0" : "translate-x-full"}`}
       >
-        {/* 헤더 */}
+        {}
         <div className="flex items-center justify-between border-b p-6">
           <button onClick={() => setMenuOpen(false)} className="text-gray-500 transition-colors hover:text-gray-700">
             <FaTimes size={20} />
           </button>
         </div>
 
-        {/* 메뉴 아이템들 */}
+        {}
         <nav className="mt-6">
           {navItems.map(item => {
             const IconComponent = item.icon;

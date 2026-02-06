@@ -6,10 +6,10 @@ const ScheduleDetailSkeleton = () => {
   return (
     <div className="flex flex-col items-center space-y-[1.6rem] p-[1.6rem]">
       <div className="w-full rounded-md p-[1.6rem]">
-        {/* Header */}
+        {}
         <div className="mb-[1.6rem] flex items-center justify-between">
           <div className="flex items-center">
-            {/* Schedule Number */}
+            {}
             <div className="mr-[1.2rem]">
               <Skeleton circle height="4rem" width="4rem" />
             </div>
@@ -21,7 +21,7 @@ const ScheduleDetailSkeleton = () => {
           </div>
         </div>
 
-        {/* Image Area */}
+        {}
         <div className="flex w-full flex-col items-center justify-center">
           <div className="w-full max-w-[40rem]">
             <div className="aspect-square overflow-hidden rounded-md">
@@ -30,15 +30,15 @@ const ScheduleDetailSkeleton = () => {
           </div>
         </div>
 
-        {/* Footer */}
+        {}
         <div className="mt-[1.6rem] flex w-full items-center justify-between">
-          {/* Attendee */}
+          {}
           <div className="flex items-center gap-[0.8rem]">
             <Skeleton circle height="3.2rem" width="3.2rem" />
             <Skeleton height="1.6rem" width="6rem" />
           </div>
 
-          {/* Button */}
+          {}
           <Skeleton height="3.2rem" width="8rem" style={{ borderRadius: "0.375rem" }} />
         </div>
       </div>

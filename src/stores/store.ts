@@ -13,8 +13,6 @@ import replyReducer from "./replySlice";
 import proposalReducer from "./proposalSlice";
 import searchReducer from "./searchSlice";
 import memberOutReducer from "./memberOutSlice";
-
-// redux-persist 설정
 const persistConfig = {
   key: "user",
   storage,
@@ -39,7 +37,6 @@ export const store = configureStore({
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: {
-        // 'modal/openModal' 액션과 non-serializable 값 검사무시
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER, "modal/openModal"],
         ignoredPaths: ["modal.modalData.onCompletePostcode"],
       },

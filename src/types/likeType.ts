@@ -1,6 +1,4 @@
 import { Meetup } from "./meetupType";
-
-// API 응답 페이지 데이터 타입
 export interface PageData {
   result: Meetup[];
   total: number;
@@ -21,8 +19,3 @@ export interface LikeContainerProps {
   initialIsLike: boolean;
   initialLikeCount: number;
 }
-
-// export interface LikeContainerProps {
-//   id: number;
-//   // type?: "headhungting";
-// }
