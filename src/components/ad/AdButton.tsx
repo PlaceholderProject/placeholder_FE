@@ -32,7 +32,6 @@ const AdButton = ({ meetupId }: { meetupId: number }) => {
   };
 
   if (proposal) {
-    console.log("신청서 상태", proposal.status);
   }
 
   return (

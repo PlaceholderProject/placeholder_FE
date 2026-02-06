@@ -16,9 +16,6 @@ const SentProposalItem = ({ proposal }: { proposal: SentProposal }) => {
   const handleProposalHide = () => {
     openModal("PROPOSAL_HIDE", { proposal });
   };
-
-  console.log(proposal);
-
   return (
     <div className="flex flex-col items-center justify-between gap-[0.5rem] rounded-[1rem] bg-secondary-light p-[1.5rem] shadow-md">
       <div className="flex w-full flex-row items-center justify-between">

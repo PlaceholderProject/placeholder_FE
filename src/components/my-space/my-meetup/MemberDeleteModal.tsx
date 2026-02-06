@@ -23,8 +23,6 @@
 //   const selectedMeetupId = useSelector((state: RootState) => state.modal.selectedMeetupId);
 
 //   useEffect(() => {
-//     console.log("멤버모달 열렸니?", isMemberDeleteModalOpen);
-//     console.log("받은 게 아니라 선택된 meetupId:", selectedMeetupId);
 //   }, [isMemberDeleteModalOpen, selectedMeetupId]);
 
 //   // 배경 누르면 모달 닫히는 그거인듯

@@ -35,19 +35,9 @@ const CurrentMyMeetup = () => {
       const membersData = await getMyMeetupMembersApi(meetupId);
 
       // API 응답 구조 파악을 위한 콘솔 로그
-      console.log("=== API 응답 전체 구조 ===");
-      console.log("전체 응답:", membersData);
-      console.log("응답 타입:", typeof membersData);
-      console.log("응답의 키들:", Object.keys(membersData || {}));
-
       if (membersData?.result) {
-        console.log("result 배열 길이:", membersData.result.length);
-        console.log("첫 번째 멤버 구조:", membersData.result[0]);
         if (membersData.result[0]) {
-          console.log("첫 번째 멤버의 키들:", Object.keys(membersData.result[0]));
-          console.log("user 객체 구조:", membersData.result[0].user);
           if (membersData.result[0].user) {
-            console.log("user 객체의 키들:", Object.keys(membersData.result[0].user));
           }
         }
       }
@@ -57,26 +47,13 @@ const CurrentMyMeetup = () => {
 
       // 현 유저 닉넴으로 멤버 찾기
       const myMember = typedMembersData?.result?.find((member: MyMeetupMember) => {
-        console.log("비교 중인 멤버 닉네임:", member.user?.nickname);
         return member.user?.nickname === currentUserData?.nickname;
       });
 
       if (!myMember) {
         console.error("=== 내 멤버 정보를 찾을 수 없습니다 ===");
-        console.log("찾고 있는 닉네임:", currentUserData?.nickname);
-        console.log(
-          "전체 멤버들의 닉네임:",
-          typedMembersData?.result?.map(m => m.user?.nickname),
-        );
-        console.log("전체 멤버 데이터:", typedMembersData);
         return null;
       }
-
-      console.log("=== 멤버 찾기 성공 ===");
-      console.log("찾고 있는 닉네임:", currentUserData?.nickname);
-      console.log("찾은 멤버 ID:", myMember.id);
-      console.log("찾은 멤버 전체 정보:", myMember);
-
       return myMember.id;
     } catch (error) {
       console.error("=== 멤버 조회 실패 ===");
@@ -106,13 +83,8 @@ const CurrentMyMeetup = () => {
       cancelText: "취소",
       onConfirm: async () => {
         try {
-          console.log("=== 퇴장 프로세스 시작 ===");
-          console.log("모임 ID:", meetupId);
-          console.log("현재 사용자 닉네임:", currentUserData.nickname);
-
           const myMemberId = await getMyMemberId(meetupId);
           if (myMemberId) {
-            console.log("퇴장 실행 - 멤버 ID:", myMemberId);
             deleteMutation.mutate(myMemberId);
           } else {
             toast.error("모임 퇴장 중 오류가 발생했습니다.");

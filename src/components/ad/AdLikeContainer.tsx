@@ -41,7 +41,6 @@ const AdLikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerP
       const isAuthError = error.message.includes("User not authenticated") || error.message.includes("401") || error.message.includes("Unauthorized");
 
       if (isAuthError) {
-        console.log("🦾인증 필요 기능");
       } else {
         console.error("좋아요 처리 중 오류가 발생했습니다", error.message);
       }
@@ -59,8 +58,6 @@ const AdLikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerP
       toast.error("로그인한 유저만 좋아요를 누를 수 있습니다.");
       return;
     }
-    console.log("좋아요 토글 시작");
-
     likeMutation.mutate();
   };
 

@@ -17,14 +17,9 @@ const ThumbnailItem = ({ thumbnail, userNickname }: { thumbnail: Meetup; userNic
   const thumbnailImageUrl = thumbnail.image?.startsWith("http") ? thumbnail.image : `${BASE_URL}/${thumbnail.image}`;
 
   useEffect(() => {
-    // console.log("==베이스유알엘:", BASE_URL);
-    // console.log("===thumbnail.image:", thumbnail.image);
-    console.log("=======⭐️최종 썸넬 URL:", thumbnailImageUrl);
-
     // 직접 fetch로 테스트
     fetch(thumbnailImageUrl)
       .then(response => {
-        console.log("==페치로 테스트 이미지 응답:", response.status);
       })
       .catch(error => {
         console.error("===이미지 fetch 에러:", error);
@@ -35,14 +30,11 @@ const ThumbnailItem = ({ thumbnail, userNickname }: { thumbnail: Meetup; userNic
     // 프로필 이미지가 없으면 기본 이미지 사용
     if (!thumbnail?.organizer.image) {
       setProfileImageSource("/profile.png");
-      console.log("===🟣프로필 이미지 없다고 유즈이펙트???:", profileImageSource);
       return;
     }
 
     // 메인 작성자 프사 이미지
     const profileImageUrl = thumbnail.organizer.image?.startsWith("http") ? thumbnail.organizer.image : `${BASE_URL}/${thumbnail.organizer.image}`;
-    console.log("===🟣프로필 이미지 있으면 작성자 프사 URL", profileImageUrl);
-
     // HTMLImageElement를 사용하여 이미지 존재 여부 확인
     const imgElement = document.createElement("img");
 

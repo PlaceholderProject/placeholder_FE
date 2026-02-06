@@ -31,9 +31,6 @@ export const getPresignedUrls = async (fileTypes: string[], target: "user" | "sc
   const fileTypeParam = encodeURIComponent(fileTypes.join(","));
   const path = `api/v1/${target}/presigned-url`;
   const requestUrl = `${BASE_URL}/${path}?filetype=${fileTypeParam}`;
-
-  console.log("Presigned URL 요청 주소:", requestUrl);
-
   try {
     const response = await fetch(requestUrl, {
       headers: {

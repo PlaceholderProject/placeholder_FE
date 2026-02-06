@@ -10,9 +10,6 @@ const ReplyList = ({ meetupId, scheduleId }: { meetupId: number; scheduleId?: nu
   const { data: scheduleReply, isPending } = useScheduleReply(Number(scheduleId), {
     enabled: !!scheduleId,
   });
-
-  console.log("scheduleReply", scheduleReply);
-
   const replyData = scheduleReply ? scheduleReply : meetupReply;
   const loading = scheduleId ? isPending : isLoading;
 

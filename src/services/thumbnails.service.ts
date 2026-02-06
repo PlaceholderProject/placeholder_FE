@@ -50,10 +50,6 @@ export const getHeadhuntingsApi = async ({ sortType, place, category }: { sortTy
     throw new Error("광고글 목록 가져오기 실패");
   }
   const headhuntingsData = await response.json();
-  console.log(`🙀API 호출 경로: ${url}`);
-  console.log("🙀API 전체 응답 데이터:", headhuntingsData);
-  console.log("🙀응답 데이터 개수:", headhuntingsData.result?.length);
-
   return headhuntingsData;
 };
 
@@ -80,8 +76,6 @@ export const getHeadhuntingItemApi = async (thumbnailId: number) => {
   }
 
   const headhuntingItemData = await response.json();
-
-  // console.log("아이템 하나 데이터:", headhuntingItemData);
 
   return await headhuntingItemData;
 };

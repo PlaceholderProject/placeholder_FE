@@ -37,7 +37,6 @@ export const useImageUpload = () => {
       return uploadedFileKeys; // ['user/xxxx.png', 'user/yyyy.jpg'] 와 같은 배열이 반환됨
     },
     onSuccess: data => {
-      console.log("모든 이미지 업로드 성공. S3 Keys:", data);
       // 이 곳에서 업로드 성공 후 로직을 추가할 수 있습니다. (예: 폼 상태 업데이트)
     },
     onError: error => {

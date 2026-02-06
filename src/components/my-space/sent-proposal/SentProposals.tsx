@@ -12,9 +12,6 @@ const SentProposals = () => {
   const [page, setPage] = useState(1);
 
   const { data, isLoading } = useSentProposal(page);
-
-  console.log(data);
-
   const sentProposals = data ? data.proposals : [];
   const total = data ? data.total : 0;
 

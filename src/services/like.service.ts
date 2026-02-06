@@ -23,7 +23,6 @@ export const toggleLikeApi = async (thumbnailId: number, currentIsLike: boolean)
   // 로그인하지 않은 유저는 좋아요 눌러도 소용없게
   // const getUserResponse = await getUser();
   // if (!getUserResponse) {
-  //   // console.log("겟유저 리턴값은:", getUserResponse);
 
   //   alert("로그인한 유저만 좋아요를 누를 수 있습니다.");
   //   return;
@@ -32,8 +31,6 @@ export const toggleLikeApi = async (thumbnailId: number, currentIsLike: boolean)
   // return;
 
   const newIsLike = !currentIsLike;
-  console.log("🔍 API 요청 - 현재 상태:", currentIsLike, "→ 새로운 상태:", newIsLike);
-
   const response = await fetch(`${BASE_URL}/api/v1/meetup/${thumbnailId}/like`, {
     method: "POST",
     headers: {
@@ -44,9 +41,6 @@ export const toggleLikeApi = async (thumbnailId: number, currentIsLike: boolean)
       isLike: newIsLike,
     }),
   });
-  // console.log("🔍 서버 응답 스테이터스:", response.status);
-  // console.log("🔍 서버 응답 헤더:", response.headers);
-  // console.log("🔍 Content-Length:", response.headers.get("content-length"));
   if (!response.ok) {
     throw new Error(`좋아요 토글 실패: ${response.status}`);
   }
@@ -57,12 +51,9 @@ export const toggleLikeApi = async (thumbnailId: number, currentIsLike: boolean)
   if (contentLength && contentLength !== "0") {
     try {
       responseData = await response.json();
-      console.log("🔍 서버 응답 데이터:", responseData);
     } catch (error) {
-      console.log("🔍 JSON 파싱 실패 (응답이 JSON이 아님):", error);
     }
   } else {
-    console.log("🔍 서버 응답 바디 없음 (content-length: 0)");
   }
 
   // 현재는 서버에서 데이터를 안 보내주므로 성공 신호만 반환
