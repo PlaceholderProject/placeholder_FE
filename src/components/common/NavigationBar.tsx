@@ -51,7 +51,7 @@ const NavigationBar = () => {
             <Link
               key={item.href}
               href={item.href}
-              className={`rem:1.4 flex flex-col items-center rounded-lg p-2 transition-colors ${item.isActive ? "text-[#006B8B]" : "text-gray-500 hover:text-gray-700"}`}
+              className={`rem:1.4 flex flex-col items-center rounded-lg p-2 transition-colors ${item.isActive ? "text-primary" : "text-gray-500 hover:text-gray-700"}`}
             >
               <IconComponent size={24} />
               <span className="mt-1 text-xs">{item.label}</span>

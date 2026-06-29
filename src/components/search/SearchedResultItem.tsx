@@ -54,7 +54,7 @@ const SearchedResultItem = ({ ad }: { ad: SearchedType }) => {
       </div>
       <div className="flex flex-row justify-between">
         <div className="text-gray-dark flex items-end">{renderOrganizer()}</div>
-        <div className="flex flex-col items-end text-[#006B8B]">
+        <div className="text-primary flex flex-col items-end">
           <div>{ad.adEndedAt} 까지 모집</div>
           <div className="flex flex-row items-center gap-[0.5rem]">
             <FaRegCalendarAlt />

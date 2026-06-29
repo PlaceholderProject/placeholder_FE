@@ -22,11 +22,35 @@ const config: Config = {
         lg: { min: "1024px" }, // PC (1024px 이상), 추후 사용 가능성
       },
       colors: {
-        primary: "#006B8B",
+        primary: {
+          DEFAULT: "#6e3bff",
+          foreground: "#ffffff",
+          soft: "#ecebff",
+          "soft-foreground": "#3a1da8",
+        },
         secondary: {
           dark: "#FBFFA9",
           light: "#FEFFEC",
         },
+        background: "#f7f6f2",
+        foreground: "#16150f",
+        card: {
+          DEFAULT: "#ffffff",
+          foreground: "#16150f",
+        },
+        muted: {
+          DEFAULT: "#efeee9",
+          foreground: "#79766c",
+        },
+        accent: {
+          DEFAULT: "#cdfb45",
+          foreground: "#1c2607",
+        },
+        destructive: {
+          DEFAULT: "#e23a52",
+          foreground: "#ffffff",
+        },
+        border: "rgba(22, 21, 15, 0.09)",
         gray: {
           dark: "#868282",
           medium: "#D9D9D9",

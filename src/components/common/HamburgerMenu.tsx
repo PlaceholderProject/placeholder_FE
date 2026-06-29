@@ -95,7 +95,7 @@ const HamburgerMenu = () => {
                 key={item.href}
                 href={item.href}
                 onClick={handleMenuItemClick}
-                className={`flex items-center px-6 py-4 text-base transition-colors ${item.isActive ? "bg-blue-50 text-[#006B8B]" : "text-gray-700 hover:border-gray-300 hover:bg-gray-50"}`}
+                className={`flex items-center px-6 py-4 text-base transition-colors ${item.isActive ? "text-primary bg-blue-50" : "text-gray-700 hover:border-gray-300 hover:bg-gray-50"}`}
               >
                 <IconComponent className="mr-3" size={20} />
                 {item.label}
