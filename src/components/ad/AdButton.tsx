@@ -31,10 +31,6 @@ const AdButton = ({ meetupId }: { meetupId: number }) => {
     }
   };
 
-  if (proposal) {
-    console.log("신청서 상태", proposal.status);
-  }
-
   return (
     <div className="flex w-full justify-center">
       <div className="my-[2rem] w-[90%] max-w-[80rem]">

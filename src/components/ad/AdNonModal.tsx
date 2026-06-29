@@ -22,19 +22,12 @@ const AdNonModal = ({ meetupId }: { meetupId: number }) => {
     };
   }, [dispatch, pathname]);
 
-  // 논모달 토글 상태변화 감지용
-  React.useEffect(() => {
-    // console.log("논모달 상태 업데이트됨:", isAdNonModalOpen);
-  }, [isAdNonModalOpen]);
-
   const handleThreeDotsClick = () => {
     dispatch(toggleAdNonModal());
-    // console.log(isAdNonModalOpen);
   };
 
   const handleCloseButtonClick = () => {
     openModal("AD_DELETE", { meetupId });
-    // console.log(isAdDeleteModalOpen);
   };
 
   return (

@@ -22,7 +22,6 @@ const AdDetail = ({ adData, userNickname }: AdDetailProps) => {
   useEffect(() => {
     const isMatch = organizerNickname === userNickname;
     setIsAuthorized(isMatch);
-    console.log(`유즈 이펙트 안 : 방장 닉넴=${organizerNickname}. 유저 닉넴=${userNickname}, 같니?: ${isMatch}`);
   }, [adData, userNickname, organizerNickname]);
 
   const startedAt = adData.startedAt;

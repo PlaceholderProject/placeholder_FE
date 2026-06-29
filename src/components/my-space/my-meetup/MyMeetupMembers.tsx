@@ -80,7 +80,6 @@ const MyMeetupMembers: React.FC<MyMeetupMembersProps> = ({ meetupId }) => {
       setUserImages(imageMap);
     }
   }, [myMeetupMembersData]);
-  // console.log(`프로필이미지url:, ${userImages}`);
 
   //myMeetupmembersData를 넣으려고 했더니 선언 전에 쓰려고 했대..
   // use 커스텀훅으로 빼야한다 AdOrganizer 처럼..

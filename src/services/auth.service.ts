@@ -113,8 +113,9 @@ export const refreshToken = async () => {
     });
 
     if (!response.ok) {
-      console.error("refressToken이 없습니다. 다시 로그인 해주세요.");
+      console.error("토큰 갱신 실패. 다시 로그인 해주세요.");
       toast.error("다시 로그인해주세요.");
+      return null;
     }
 
     const { access, refresh } = await response.json();

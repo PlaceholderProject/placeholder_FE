@@ -16,18 +16,10 @@ const ThumbnailItem = ({ thumbnail, userNickname, priority }: { thumbnail: Meetu
   const [profileImageSource, setProfileImageSource] = useState("/profile.png");
   const thumbnailImageUrl = thumbnail.image?.startsWith("http") ? thumbnail.image : `${BASE_URL}/${thumbnail.image}`;
 
-  console.log(`ThumbnailItem ${thumbnail.id} 렌더링 확인⭐️`);
-
   useEffect(() => {
-    // console.log("==베이스유알엘:", BASE_URL);
-    // console.log("===thumbnail.image:", thumbnail.image);
-    console.log("=======⭐️최종 썸넬 URL:", thumbnailImageUrl);
-
     // 직접 fetch로 테스트
     fetch(thumbnailImageUrl)
-      .then(response => {
-        console.log("==페치로 테스트 이미지 응답:", response.status);
-      })
+      .then(() => {})
       .catch(error => {
         console.error("===이미지 fetch 에러:", error);
       });
@@ -37,13 +29,11 @@ const ThumbnailItem = ({ thumbnail, userNickname, priority }: { thumbnail: Meetu
     // 프로필 이미지가 없으면 기본 이미지 사용
     if (!thumbnail?.organizer.image) {
       setProfileImageSource("/profile.png");
-      console.log("===🟣프로필 이미지 없다고 유즈이펙트???:", profileImageSource);
       return;
     }
 
     // 메인 작성자 프사 이미지
     const profileImageUrl = thumbnail.organizer.image?.startsWith("http") ? thumbnail.organizer.image : `${BASE_URL}/${thumbnail.organizer.image}`;
-    console.log("===🟣프로필 이미지 있으면 작성자 프사 URL", profileImageUrl);
 
     // HTMLImageElement를 사용하여 이미지 존재 여부 확인
     const imgElement = document.createElement("img");
@@ -75,7 +65,6 @@ const ThumbnailItem = ({ thumbnail, userNickname, priority }: { thumbnail: Meetu
     if (!thumbnail.image) return null;
 
     if (thumbnail.isPublic === true) {
-      console.log("클로드야 이거야", thumbnail.image);
       return (
         <Link href={`/ad/${thumbnail.id}`} className="relative mx-auto block h-[14.2rem] w-[14.2rem] items-center justify-center md:h-[150px] md:w-[150px]">
           <Image
