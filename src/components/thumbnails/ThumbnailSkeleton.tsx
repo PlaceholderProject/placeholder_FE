@@ -5,7 +5,7 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
 const ThumbnailItemSkeleton = () => (
-  <div className="w-full pb-[1rem] pt-[0.4rem]">
+  <div className="w-full pt-[0.4rem] pb-[1rem]">
     <Skeleton className="h-[14.2rem] w-full md:h-[150px]" borderRadius="2rem" />
     <div className="mt-[1rem] w-full space-y-[0.5rem]">
       <div className="flex items-center justify-between">

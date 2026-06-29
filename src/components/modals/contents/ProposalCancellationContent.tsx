@@ -21,10 +21,10 @@ const ProposalCancellationContent = ({ proposal }: { proposal: SentProposal }) =
       <h1 className="text-lg font-bold">{proposal.meetup_ad_title}</h1>
       <p>신청을 취소할까요?</p>
       <div className="flex w-full flex-col gap-[1rem]">
-        <button onClick={closeModal} className="h-[4rem] rounded-[1rem] bg-gray-light">
+        <button onClick={closeModal} className="bg-gray-light h-[4rem] rounded-[1rem]">
           아니요
         </button>
-        <button onClick={handleProposalCancel} disabled={cancelMutation.isPending} className="h-[4rem] rounded-[1rem] bg-secondary-dark">
+        <button onClick={handleProposalCancel} disabled={cancelMutation.isPending} className="bg-secondary-dark h-[4rem] rounded-[1rem]">
           {cancelMutation.isPending ? "취소 중..." : "네"}
         </button>
       </div>

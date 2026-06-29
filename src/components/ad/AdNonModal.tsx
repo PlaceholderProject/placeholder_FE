@@ -43,7 +43,7 @@ const AdNonModal = ({ meetupId }: { meetupId: number }) => {
         <BsThreeDotsVertical onClick={handleThreeDotsClick} />
       </button>
       {isAdNonModalOpen && (
-        <div className="absolute bottom-[10rem] right-[3.4rem] z-10 flex h-[6rem] w-[6rem] flex-col items-center justify-center rounded-[0.5rem] bg-white shadow-md">
+        <div className="absolute right-[3.4rem] bottom-[10rem] z-10 flex h-[6rem] w-[6rem] flex-col items-center justify-center rounded-[0.5rem] bg-white shadow-md">
           <div>
             <Link href={`/meetup/edit/${meetupId}`}>수정</Link>
           </div>

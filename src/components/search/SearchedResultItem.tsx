@@ -48,12 +48,12 @@ const SearchedResultItem = ({ ad }: { ad: SearchedType }) => {
   };
 
   return (
-    <div className="flex w-[95%] flex-col justify-between border-gray-medium py-[1rem] md:max-w-[111rem]">
+    <div className="border-gray-medium flex w-[95%] flex-col justify-between py-[1rem] md:max-w-[111rem]">
       <div className="text-lg">
         <Link href={`/ad/${ad.id}`}>{renderTitle()}</Link>
       </div>
       <div className="flex flex-row justify-between">
-        <div className="flex items-end text-gray-dark">{renderOrganizer()}</div>
+        <div className="text-gray-dark flex items-end">{renderOrganizer()}</div>
         <div className="flex flex-col items-end text-[#006B8B]">
           <div>{ad.adEndedAt} 까지 모집</div>
           <div className="flex flex-row items-center gap-[0.5rem]">

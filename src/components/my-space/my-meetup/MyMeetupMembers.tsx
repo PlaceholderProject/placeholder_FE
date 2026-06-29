@@ -109,7 +109,7 @@ const MyMeetupMembers: React.FC<MyMeetupMembersProps> = ({ meetupId }) => {
       {myMeetupMembersData.result.map((member: MyMeetupMember) => {
         const userImageSource = userImages[member.user?.id || 0] || "/profile.png";
         return (
-          <div key={member.id} className="mx-[1rem] my-[1rem] grid grid-cols-[10%_15%_60%_15%] items-center border-b-[0.1rem] border-gray-medium pb-[0.8rem] text-base last:border-b-0">
+          <div key={member.id} className="border-gray-medium mx-[1rem] my-[1rem] grid grid-cols-[10%_15%_60%_15%] items-center border-b-[0.1rem] pb-[0.8rem] text-base last:border-b-0">
             <div>{member.role == "organizer" ? <span className="ml-[0.5rem]">👑</span> : <span className="ml-[0.5rem]"> </span>}</div>
             {/* mebmer.id래요 언제 생성되심? : {member.id} */}
             <div className="relative mx-auto flex h-[1.8rem] w-[1.8rem] items-center bg-purple-100">

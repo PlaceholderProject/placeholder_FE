@@ -36,7 +36,7 @@ const NotificationItem = ({ id, message, url, is_read, created_at }: Notificatio
       </div>
 
       {/* 시간(Timestamp)을 오른쪽으로 이동시켜 가독성 향상 */}
-      {created_at && <div className="ml-auto whitespace-nowrap pl-3 text-sm text-gray-400">{formattedDate}</div>}
+      {created_at && <div className="ml-auto pl-3 text-sm whitespace-nowrap text-gray-400">{formattedDate}</div>}
     </div>
   );
 };

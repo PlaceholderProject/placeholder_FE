@@ -45,7 +45,7 @@ const AttendeePopover = ({ participants }: AttendeePopoverProps) => {
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 top-full z-10 mt-2 w-56 rounded-md bg-white p-2 shadow-lg">
+        <div className="absolute top-full left-0 z-10 mt-2 w-56 rounded-md bg-white p-2 shadow-lg">
           <div className="py-1">
             <div className="max-h-60 overflow-y-auto">
               {participants.map((participant, index) => (

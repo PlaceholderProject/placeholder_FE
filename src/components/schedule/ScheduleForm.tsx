@@ -151,7 +151,7 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
                   onChange={handleChange}
                   required
                   placeholder="모임 장소명을 입력하세요"
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="focus:border-primary focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-1 focus:outline-none"
                 />
               </div>
 
@@ -168,9 +168,9 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
                     readOnly
                     placeholder="클릭하여 우편 입력 창 열기"
                     onClick={handleAddressSearch}
-                    className="flex-1 cursor-pointer rounded-md border border-gray-300 bg-gray-50 px-3 py-2 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                    className="focus:border-primary focus:ring-primary flex-1 cursor-pointer rounded-md border border-gray-300 bg-gray-50 px-3 py-2 focus:ring-1 focus:outline-none"
                   />
-                  <button type="button" onClick={handleAddressSearch} className="rounded-md bg-primary p-3 text-white transition-colors hover:bg-opacity-80">
+                  <button type="button" onClick={handleAddressSearch} className="bg-primary hover:bg-opacity-80 rounded-md p-3 text-white transition-colors">
                     <FaSearch />
                   </button>
                 </div>
@@ -188,7 +188,7 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
                     value={formData.date}
                     onChange={handleChange}
                     required
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                    className="focus:border-primary focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-1 focus:outline-none"
                   />
                 </div>
                 <div className="flex-1">
@@ -202,7 +202,7 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
                     value={formData.time}
                     onChange={handleChange}
                     required
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                    className="focus:border-primary focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-1 focus:outline-none"
                   />
                 </div>
               </div>
@@ -218,7 +218,7 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
                   onChange={handleChange}
                   rows={5}
                   placeholder="스케줄에 대한 추가 정보를 입력하세요"
-                  className="w-full rounded-md border border-gray-300 bg-secondary-light px-3 py-2 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="bg-secondary-light focus:border-primary focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-1 focus:outline-none"
                 />
               </div>
 
@@ -237,7 +237,7 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
                     )}
                   </label>
                   {imagePreview && (
-                    <button type="button" onClick={handleImageRemove} className="absolute right-2 top-2 rounded-full bg-red-500 px-2 py-1 text-sm text-white hover:bg-red-600">
+                    <button type="button" onClick={handleImageRemove} className="absolute top-2 right-2 rounded-full bg-red-500 px-2 py-1 text-sm text-white hover:bg-red-600">
                       ✕
                     </button>
                   )}
@@ -255,7 +255,7 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full rounded-md bg-primary px-4 py-3 text-lg font-bold text-white transition-colors hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="bg-primary hover:bg-opacity-80 focus:ring-primary w-full rounded-md px-4 py-3 text-lg font-bold text-white transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isSubmitting ? "처리 중..." : mode === "create" ? "스케줄 등록" : "스케줄 수정"}
             </button>

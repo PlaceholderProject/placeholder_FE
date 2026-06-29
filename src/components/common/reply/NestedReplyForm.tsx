@@ -83,7 +83,7 @@ const NestedReplyForm = ({
 
       <div className="flex w-full justify-center">
         <form onSubmit={handleNestedReplySubmit} className="flex w-[80%] flex-col gap-[0.5rem] md:max-w-[80rem]">
-          <div className="flex w-full flex-col items-center justify-center gap-[1rem] rounded-[1rem] border-[0.1rem] border-gray-medium bg-white p-[1.5rem]">
+          <div className="border-gray-medium flex w-full flex-col items-center justify-center gap-[1rem] rounded-[1rem] border-[0.1rem] bg-white p-[1.5rem]">
             <div className="justify-betwee flex w-full text-sm">@ {nestedReply.user.nickname ? nestedReply.user.nickname : rootReply.user.nickname}</div>
             <textarea
               ref={textareaRef}
@@ -97,10 +97,10 @@ const NestedReplyForm = ({
           <div className="flex justify-between">
             <span className="text-sm">{content.length}/ 300</span>
             <span className="flex gap-2">
-              <button type="button" onClick={handleNestedReplyForm} className="h-[2.5rem] w-[6rem] rounded-[0.5rem] bg-gray-medium text-sm">
+              <button type="button" onClick={handleNestedReplyForm} className="bg-gray-medium h-[2.5rem] w-[6rem] rounded-[0.5rem] text-sm">
                 닫기
               </button>
-              <button type="submit" className="h-[2.5rem] w-[6rem] rounded-[0.5rem] bg-secondary-dark text-sm">
+              <button type="submit" className="bg-secondary-dark h-[2.5rem] w-[6rem] rounded-[0.5rem] text-sm">
                 등록
               </button>
             </span>

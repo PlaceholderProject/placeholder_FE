@@ -79,7 +79,7 @@ const MeetupInfoContent = ({ meetupData, isOrganizer, meetupId }: MeetupInfoCont
   return (
     <div className="w-full text-gray-800">
       <div className="mb-8 text-center">
-        <h2 className="text-2xl font-bold text-primary md:text-3xl">{meetupData.name}</h2>
+        <h2 className="text-primary text-2xl font-bold md:text-3xl">{meetupData.name}</h2>
       </div>
 
       <div className="grid grid-cols-[8rem_1fr] items-center gap-x-4 gap-y-5 text-base">
@@ -100,7 +100,7 @@ const MeetupInfoContent = ({ meetupData, isOrganizer, meetupId }: MeetupInfoCont
         {/* Label */}
         <span className="font-semibold text-gray-500">모임 기간</span>
         {/* Value */}
-        <span className="font-medium text-primary">{duration}</span>
+        <span className="text-primary font-medium">{duration}</span>
 
         {/* Label */}
         <span className="font-semibold text-gray-500">참여 인원</span>
@@ -110,15 +110,15 @@ const MeetupInfoContent = ({ meetupData, isOrganizer, meetupId }: MeetupInfoCont
         {/* Label */}
         <span className="self-start pt-1 font-semibold text-gray-500">메모</span>
         {/* Value */}
-        <p className="min-h-[6rem] rounded-lg bg-secondary-light p-3 text-sm">{meetupData.description || "메모가 없습니다."}</p>
+        <p className="bg-secondary-light min-h-[6rem] rounded-lg p-3 text-sm">{meetupData.description || "메모가 없습니다."}</p>
       </div>
 
       {isOrganizer && (
         <div className="mt-8 grid grid-cols-2 gap-3">
-          <button onClick={handleEdit} className="w-full rounded-lg bg-primary py-3 font-bold text-white transition hover:bg-opacity-80">
+          <button onClick={handleEdit} className="bg-primary hover:bg-opacity-80 w-full rounded-lg py-3 font-bold text-white transition">
             수정하기
           </button>
-          <button onClick={handleDelete} disabled={deleteMutation.isPending} className="w-full rounded-lg bg-error py-3 font-bold text-white transition hover:bg-opacity-80 disabled:opacity-50">
+          <button onClick={handleDelete} disabled={deleteMutation.isPending} className="bg-error hover:bg-opacity-80 w-full rounded-lg py-3 font-bold text-white transition disabled:opacity-50">
             {deleteMutation.isPending ? "삭제 중..." : "모임 삭제하기"}
           </button>
         </div>

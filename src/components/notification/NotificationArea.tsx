@@ -12,7 +12,7 @@ const NotificationArea = () => {
     // return <Loading />;
     return <Spinner isLoading={isPending} />;
   }
-  if (error) return <div className="p-8 text-center text-error">Error</div>;
+  if (error) return <div className="text-error p-8 text-center">Error</div>;
 
   return (
     <div className="px-4 pb-8 md:bg-gray-50 md:px-0 md:py-12">

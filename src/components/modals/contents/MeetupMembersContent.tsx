@@ -60,7 +60,7 @@ const MeetupMembersContent = ({ meetupId, meetupName }: MeetupMembersContentProp
         {isPending ? (
           <div className="py-4 text-center">멤버 정보를 불러오는 중...</div>
         ) : error ? (
-          <div className="py-4 text-center text-error">멤버 정보를 불러오는데 실패했습니다.</div>
+          <div className="text-error py-4 text-center">멤버 정보를 불러오는데 실패했습니다.</div>
         ) : !members || members.length === 0 ? (
           <div className="py-4 text-center">모임에 등록된 멤버가 없습니다.</div>
         ) : (
@@ -79,7 +79,7 @@ const MeetupMembersContent = ({ meetupId, meetupName }: MeetupMembersContentProp
                   <button
                     onClick={() => handleKickOut(member.id, member.user.nickname)}
                     disabled={deleteMutation.isPending}
-                    className="rounded-md bg-error px-3 py-1 text-sm font-bold text-white transition hover:bg-opacity-80 disabled:opacity-50"
+                    className="bg-error hover:bg-opacity-80 rounded-md px-3 py-1 text-sm font-bold text-white transition disabled:opacity-50"
                   >
                     강퇴
                   </button>

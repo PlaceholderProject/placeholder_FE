@@ -90,7 +90,7 @@ const ThumbnailItem = ({ thumbnail, userNickname, priority }: { thumbnail: Meetu
           />
 
           {userNickname === thumbnail.organizer.nickname && (
-            <div className="absolute left-3 top-3 flex h-[2.2rem] w-[2.2rem] place-content-center items-center rounded-full bg-primary bg-opacity-70 text-[1.6rem] text-secondary-dark text-opacity-70">
+            <div className="bg-primary bg-opacity-70 text-secondary-dark text-opacity-70 absolute top-3 left-3 flex h-[2.2rem] w-[2.2rem] place-content-center items-center rounded-full text-[1.6rem]">
               <FaCrown />
               {/* <LuCrown /> */}
             </div>
@@ -103,11 +103,11 @@ const ThumbnailItem = ({ thumbnail, userNickname, priority }: { thumbnail: Meetu
           {userNickname === thumbnail.organizer.nickname ? (
             <div>
               <Link href={`/ad/${thumbnail.id}`} className="relative mx-auto block h-[14.2rem] w-[14.2rem] items-center justify-center md:h-[150px] md:w-[150px]">
-                <div className="mx-auto flex h-[14.2rem] w-[14.2rem] items-center justify-center rounded-[2rem] bg-gray-medium text-opacity-20 md:h-[150px] md:w-[150px]">
-                  <FaLock className="h-[4rem] w-[4rem] text-gray-dark" />
+                <div className="bg-gray-medium text-opacity-20 mx-auto flex h-[14.2rem] w-[14.2rem] items-center justify-center rounded-[2rem] md:h-[150px] md:w-[150px]">
+                  <FaLock className="text-gray-dark h-[4rem] w-[4rem]" />
                 </div>
                 {userNickname === thumbnail.organizer.nickname && (
-                  <div className="absolute left-3 top-3 flex h-[2.2rem] w-[2.2rem] place-content-center items-center rounded-full bg-primary bg-opacity-70 text-[1.6rem] text-secondary-dark text-opacity-70">
+                  <div className="bg-primary bg-opacity-70 text-secondary-dark text-opacity-70 absolute top-3 left-3 flex h-[2.2rem] w-[2.2rem] place-content-center items-center rounded-full text-[1.6rem]">
                     <FaCrown />
                     {/* <LuCrown /> */}
                   </div>
@@ -116,8 +116,8 @@ const ThumbnailItem = ({ thumbnail, userNickname, priority }: { thumbnail: Meetu
             </div>
           ) : (
             <div>
-              <div className="mx-auto flex h-[14.2rem] w-[14.2rem] items-center justify-center rounded-[2rem] bg-gray-medium text-opacity-20 md:h-[150px] md:w-[150px]">
-                <FaLock className="h-[4rem] w-[4rem] text-gray-dark" />
+              <div className="bg-gray-medium text-opacity-20 mx-auto flex h-[14.2rem] w-[14.2rem] items-center justify-center rounded-[2rem] md:h-[150px] md:w-[150px]">
+                <FaLock className="text-gray-dark h-[4rem] w-[4rem]" />
               </div>
             </div>
           )}
@@ -168,7 +168,7 @@ const ThumbnailItem = ({ thumbnail, userNickname, priority }: { thumbnail: Meetu
             </div>
 
             <div className="w-[14.2rem] text-sm font-semibold">
-              <h3 className="line-clamp-2 break-words leading-tight">
+              <h3 className="line-clamp-2 leading-tight break-words">
                 <span className="whitespace-nowrap">[{thumbnail.place}]</span>
                 {thumbnail.adTitle}
               </h3>

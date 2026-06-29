@@ -29,7 +29,7 @@ const ScheduleArea = ({ meetupId }: { meetupId: number }) => {
           <p className="text-gray-500">버튼을 눌러 스케줄을 등록해보세요</p>
           <button
             onClick={handleCreateClick}
-            className="flex h-20 w-20 items-center justify-center rounded-full bg-primary text-3xl text-white shadow-lg transition-transform hover:scale-105"
+            className="bg-primary flex h-20 w-20 items-center justify-center rounded-full text-3xl text-white shadow-lg transition-transform hover:scale-105"
             aria-label="스케줄 추가"
           >
             <FaPlus />
@@ -42,7 +42,7 @@ const ScheduleArea = ({ meetupId }: { meetupId: number }) => {
           ))}
           <button
             onClick={handleCreateClick}
-            className="absolute bottom-4 left-1/2 flex h-14 w-14 -translate-x-1/2 transform items-center justify-center rounded-full bg-primary text-2xl text-white shadow-lg transition-transform hover:scale-105 md:h-16 md:w-16"
+            className="bg-primary absolute bottom-4 left-1/2 flex h-14 w-14 -translate-x-1/2 transform items-center justify-center rounded-full text-2xl text-white shadow-lg transition-transform hover:scale-105 md:h-16 md:w-16"
             aria-label="스케줄 추가"
           >
             <FaPlus />

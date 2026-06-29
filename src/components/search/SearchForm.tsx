@@ -39,7 +39,7 @@ const SearchForm = () => {
     <div className="flex items-center justify-center md:h-[20rem]">
       <form
         onSubmit={handleKeywordSubmit}
-        className="flex h-[7.7rem] w-full flex-col items-center justify-center gap-[1rem] bg-secondary-dark md:mx-[2rem] md:h-[15rem] md:max-w-[80rem] md:rounded-[2rem] md:shadow-md"
+        className="bg-secondary-dark flex h-[7.7rem] w-full flex-col items-center justify-center gap-[1rem] md:mx-[2rem] md:h-[15rem] md:max-w-[80rem] md:rounded-[2rem] md:shadow-md"
       >
         <div className="hidden text-2xl font-medium md:block">모임 검색하기</div>
         <div className="flex gap-[1.5rem]">
@@ -55,9 +55,9 @@ const SearchForm = () => {
               type="search"
               onChange={handleKeyword}
               value={keyword}
-              className="h-[3.5rem] w-[24rem] rounded-full pl-[1.5rem] pr-[4rem] shadow-sm [appearance:textfield] focus:outline-none md:w-[35rem] [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-cancel-button]:appearance-none"
+              className="h-[3.5rem] w-[24rem] [appearance:textfield] rounded-full pr-[4rem] pl-[1.5rem] shadow-sm focus:outline-none md:w-[35rem] [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-cancel-button]:appearance-none"
             />
-            <button type="submit" className="absolute right-[1.5rem] top-[0.8rem] text-[1.8rem] text-gray-dark">
+            <button type="submit" className="text-gray-dark absolute top-[0.8rem] right-[1.5rem] text-[1.8rem]">
               <FaSearch />
             </button>
           </div>

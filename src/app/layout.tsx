@@ -62,7 +62,7 @@ export default function RootLayout({
         <ReduxProvider>
           <QueryProvider>
             <Header />
-            <main className="pb-[6rem] pt-[6rem] md:pb-[0rem] md:pt-[7.5rem]">{children}</main>
+            <main className="pt-[6rem] pb-[6rem] md:pt-[7.5rem] md:pb-[0rem]">{children}</main>
             <ModalContainer />
             <NavigationBar />
             <Toaster position="top-center" />

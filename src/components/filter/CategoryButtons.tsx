@@ -25,7 +25,7 @@ const CategoryButtons = () => {
           <button
             key={categoryItem}
             onClick={() => handleCategorySelect(categoryItem)}
-            className={`m-[0.3rem] rounded-[5rem] border-[0.1rem] border-primary px-[2rem] py-[0.5rem] text-base ${category === categoryItem ? "text-bold bg-primary text-gray-light" : ""}`}
+            className={`border-primary m-[0.3rem] rounded-[5rem] border-[0.1rem] px-[2rem] py-[0.5rem] text-base ${category === categoryItem ? "text-bold bg-primary text-gray-light" : ""}`}
           >
             {categoryItem}
           </button>

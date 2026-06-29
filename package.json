@@ -29,6 +29,7 @@
     "sonner": "^2.0.6"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "4",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
     "@types/react": "^18",
@@ -43,7 +44,7 @@
     "postcss": "^8",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.6.11",
-    "tailwindcss": "^3.4.1",
+    "tailwindcss": "4",
     "typescript": "^5.7.2"
   }
 }

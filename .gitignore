@@ -38,3 +38,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Figma Make 리디자인 레퍼런스 목업 (빌드 대상 아님)
+/Redesign Project Mockup

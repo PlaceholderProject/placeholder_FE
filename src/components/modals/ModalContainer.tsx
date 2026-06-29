@@ -93,9 +93,9 @@ const ModalContainer = () => {
   if (!isOpen || !modalType) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-20 p-4 backdrop-blur-sm backdrop-filter" onClick={handleOverlayClick}>
+    <div className="bg-opacity-20 fixed inset-0 z-50 flex items-center justify-center bg-black p-4 backdrop-blur-sm backdrop-filter" onClick={handleOverlayClick}>
       <div className={`relative max-h-[90vh] overflow-y-auto bg-white shadow-xl ${getModalContainerStyles(modalType)}`} onClick={e => e.stopPropagation()}>
-        <button onClick={() => dispatch(closeModal())} className="absolute right-6 top-6 z-10 text-gray-400 hover:text-gray-800" aria-label="Close modal">
+        <button onClick={() => dispatch(closeModal())} className="absolute top-6 right-6 z-10 text-gray-400 hover:text-gray-800" aria-label="Close modal">
           <FaTimes size={24} />
         </button>
 

@@ -15,17 +15,17 @@ const ProposalHideContent = ({ proposal }: { proposal: SentProposal }) => {
     <div className="flex w-[90%] flex-col items-center gap-[1.5rem]">
       <h2 className="text-lg font-bold">{proposal.meetup_ad_title}</h2>
       <p>신청서를 숨길까요?</p>
-      <div className="flex w-full flex-col items-center text-gray-dark">
+      <div className="text-gray-dark flex w-full flex-col items-center">
         <div>신청은 유지됩니다.</div>
         <div className="flex items-center justify-center">
-          취소를 원하시면 &nbsp; <span className="h-fil rounded-[0.5rem] bg-warning px-[0.5rem] py-[0.2rem] text-sm font-bold text-white">취소</span>를 눌러주세요.
+          취소를 원하시면 &nbsp; <span className="h-fil bg-warning rounded-[0.5rem] px-[0.5rem] py-[0.2rem] text-sm font-bold text-white">취소</span>를 눌러주세요.
         </div>
       </div>
       <div className="flex w-full flex-col gap-[1rem]">
-        <button onClick={closeModal} className="h-[4rem] rounded-[1rem] bg-gray-light">
+        <button onClick={closeModal} className="bg-gray-light h-[4rem] rounded-[1rem]">
           아니요
         </button>
-        <button onClick={handleProposalHide} className="h-[4rem] rounded-[1rem] bg-secondary-dark">
+        <button onClick={handleProposalHide} className="bg-secondary-dark h-[4rem] rounded-[1rem]">
           숨기기
         </button>
       </div>

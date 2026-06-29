@@ -43,7 +43,7 @@ const AdDeleteContent = ({ meetupId }: { meetupId: number }) => {
       삭제 버튼을 클릭하면
       <br />
       광고글이 영구적으로 사라집니다.
-      <button onClick={handleDeleteClick} type="button" disabled={deleteMutation.isPending} className="h-[2rem] w-full rounded-[0.5rem] bg-warning text-xs font-bold text-white">
+      <button onClick={handleDeleteClick} type="button" disabled={deleteMutation.isPending} className="bg-warning h-[2rem] w-full rounded-[0.5rem] text-xs font-bold text-white">
         {deleteMutation.isPending ? "삭제 중..." : "삭제"}
       </button>
     </div>

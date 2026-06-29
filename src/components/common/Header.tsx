@@ -88,7 +88,7 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-50 flex h-[6rem] items-center justify-center bg-primary md:h-[7.5rem]">
+    <header className="bg-primary fixed top-0 right-0 left-0 z-50 flex h-[6rem] items-center justify-center md:h-[7.5rem]">
       <div className="flex w-[95%] justify-between">
         <Link href="/">
           <Image unoptimized={true} src="/smallLogo.png" alt="작은 로고" width={30} height={30} priority className="block transition-all duration-300 md:hidden" />
@@ -102,22 +102,22 @@ const Header = () => {
                 🍋 <span className="font-bold">{user.nickname}</span> 님 안녕하세요!
               </p>
               <div className="relative flex items-center">
-                <button onClick={handleNotificationPage} className="text-[2.3rem] text-gray-light">
+                <button onClick={handleNotificationPage} className="text-gray-light text-[2.3rem]">
                   <FaRegBell />
-                  {hasUnreadNotifications && <div className="absolute right-0 top-0 h-[0.8rem] w-[0.8rem] rounded-full bg-error md:h-[1rem] md:w-[1rem]"></div>}
+                  {hasUnreadNotifications && <div className="bg-error absolute top-0 right-0 h-[0.8rem] w-[0.8rem] rounded-full md:h-[1rem] md:w-[1rem]"></div>}
                 </button>
               </div>
-              <button onClick={handleLogout} className="h-[2.3rem] w-[7rem] rounded-[0.3rem] bg-secondary-light font-semibold leading-none md:h-[2.6rem] md:w-[11rem] md:rounded-[0.6rem]">
+              <button onClick={handleLogout} className="bg-secondary-light h-[2.3rem] w-[7rem] rounded-[0.3rem] leading-none font-semibold md:h-[2.6rem] md:w-[11rem] md:rounded-[0.6rem]">
                 로그아웃
               </button>
             </div>
           ) : (
             <div className="flex gap-[2rem]">
               <Link href="/login">
-                <button className="h-[2.3rem] w-[7rem] rounded-[0.3rem] bg-secondary-light font-semibold md:h-[2.6rem] md:w-[11rem] md:rounded-[0.6rem]">로그인</button>
+                <button className="bg-secondary-light h-[2.3rem] w-[7rem] rounded-[0.3rem] font-semibold md:h-[2.6rem] md:w-[11rem] md:rounded-[0.6rem]">로그인</button>
               </Link>
               <Link href="/signup">
-                <button className="h-[2.3rem] w-[7rem] rounded-[0.3rem] bg-secondary-light font-semibold md:h-[2.6rem] md:w-[11rem] md:rounded-[0.6rem]">회원가입</button>
+                <button className="bg-secondary-light h-[2.3rem] w-[7rem] rounded-[0.3rem] font-semibold md:h-[2.6rem] md:w-[11rem] md:rounded-[0.6rem]">회원가입</button>
               </Link>
             </div>
           )}

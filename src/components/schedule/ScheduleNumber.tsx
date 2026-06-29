@@ -26,11 +26,11 @@ const ScheduleNumber: React.FC<ScheduleNumberProps> = ({ number, isMapMarker = f
     return (
       <CustomOverlayMap position={position} xAnchor={0.5} yAnchor={1}>
         <div className="flex flex-col items-center">
-          {label && <div className="mb-1 inline-block bg-primary px-2 py-0.5 text-sm font-bold text-white">{label}</div>}
+          {label && <div className="bg-primary mb-1 inline-block px-2 py-0.5 text-sm font-bold text-white">{label}</div>}
           <div className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-4 border-[#006B8B] bg-white text-sm font-bold text-[#006B8B] shadow-lg" onClick={onClick}>
             {number}
           </div>
-          <div className="h-0 w-0 border-l-2 border-r-2 border-t-4 border-l-transparent border-r-transparent border-t-[#006B8B]"></div>
+          <div className="h-0 w-0 border-t-4 border-r-2 border-l-2 border-t-[#006B8B] border-r-transparent border-l-transparent"></div>
         </div>
       </CustomOverlayMap>
     );

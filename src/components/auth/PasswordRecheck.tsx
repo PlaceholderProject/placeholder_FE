@@ -54,18 +54,18 @@ const PasswordRecheck = () => {
             value={password}
             onChange={handlePasswordChange}
             placeholder="비밀번호를 입력해주세요."
-            className="h-[4rem] w-[24rem] rounded-[1rem] border-[0.1rem] border-gray-medium pl-[1rem] pr-[5rem]"
+            className="border-gray-medium h-[4rem] w-[24rem] rounded-[1rem] border-[0.1rem] pr-[5rem] pl-[1rem]"
           />
-          <button type="button" onClick={handleTogglePassword} className="absolute right-[1.3rem] top-[0.8rem] text-[2.3rem]">
+          <button type="button" onClick={handleTogglePassword} className="absolute top-[0.8rem] right-[1.3rem] text-[2.3rem]">
             {isVisivlePassword ? <FaEyeSlash /> : <FaEye />}
           </button>
         </div>
         <div className="flex flex-col gap-[0.8rem]">
-          <button type="submit" className="h-[4rem] w-[24rem] rounded-[1rem] bg-secondary-dark text-lg">
+          <button type="submit" className="bg-secondary-dark h-[4rem] w-[24rem] rounded-[1rem] text-lg">
             입력완료
           </button>
           <Link href="/account">
-            <div className="flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] bg-gray-light text-lg">돌아가기</div>
+            <div className="bg-gray-light flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] text-lg">돌아가기</div>
           </Link>
         </div>
       </form>

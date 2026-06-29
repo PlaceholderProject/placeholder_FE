@@ -54,13 +54,13 @@ const ProposalPostcardContent = ({ meetupId }: { meetupId: number }) => {
             <label htmlFor="proposal" className="mb-[0.3rem] text-lg">
               방장에게 할말
             </label>
-            <input type="text" id="proposal" value={proposalText} onChange={handleProposalText} className="h-[4rem] rounded-[1rem] border-[0.1rem] border-gray-medium px-[1rem]" />
-            {messageWarning && <p className="mt-[0.3rem] w-[24rem] text-sm text-warning">{messageWarning}</p>}
+            <input type="text" id="proposal" value={proposalText} onChange={handleProposalText} className="border-gray-medium h-[4rem] rounded-[1rem] border-[0.1rem] px-[1rem]" />
+            {messageWarning && <p className="text-warning mt-[0.3rem] w-[24rem] text-sm">{messageWarning}</p>}
             <div className="flex w-full justify-end">
               <p className="mt-[0.3rem] text-sm">{bioTextLength}/40</p>
             </div>
           </div>
-          <button type="submit" disabled={proposalMutation.isPending} className="flex h-[4rem] items-center justify-center rounded-[1rem] bg-secondary-dark text-lg">
+          <button type="submit" disabled={proposalMutation.isPending} className="bg-secondary-dark flex h-[4rem] items-center justify-center rounded-[1rem] text-lg">
             {isSubmitting ? "처리 중..." : "신청하기"}
           </button>
         </form>

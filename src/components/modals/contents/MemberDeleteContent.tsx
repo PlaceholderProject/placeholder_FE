@@ -30,7 +30,7 @@ const MemberDeleteContent: React.FC = () => {
 
   return (
     <div className="mx-auto w-full max-w-md">
-      <h2 className="mx-auto mb-[1.5rem] mt-[2rem] w-[22rem] truncate text-center text-lg font-bold">{meetupName}</h2>
+      <h2 className="mx-auto mt-[2rem] mb-[1.5rem] w-[22rem] truncate text-center text-lg font-bold">{meetupName}</h2>
 
       {/* <MemberDeleteModal meetupId={meetupId} /> */}
       {/* 무한재귀 제거 */}

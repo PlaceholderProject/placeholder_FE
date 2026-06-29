@@ -14,7 +14,7 @@ interface SubmitLoaderProps {
 const SubmitLoader = ({ isLoading }: SubmitLoaderProps) => {
   if (!isLoading) return null;
   return (
-    <div className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-50`}>
+    <div className={`bg-opacity-50 fixed inset-0 z-50 flex flex-col items-center justify-center bg-black`}>
       <RiseLoader color="#FBFFA9" size={15} />
     </div>
   );

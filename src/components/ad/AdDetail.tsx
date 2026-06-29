@@ -37,7 +37,7 @@ const AdDetail = ({ adData, userNickname }: AdDetailProps) => {
           <Image unoptimized={true} src={imageUrl} alt="모임 광고글 이미지" width={321} height={209} className="mx-auto w-[95%] object-cover md:max-w-[80rem]" />
         </div>
         <div className="relative mx-auto w-[95%] md:max-w-[80rem]">
-          <div className="ml-[1.5rem] mr-[1.5rem] mt-[2rem]">
+          <div className="mt-[2rem] mr-[1.5rem] ml-[1.5rem]">
             <div className="md:grid md:grid-cols-[90%_10%]">
               <div className="grid grid-cols-[25%_75%] items-center text-left md:grid-cols-[15%_45%]">
                 <div className="text-lg">모임이름</div>
@@ -51,8 +51,8 @@ const AdDetail = ({ adData, userNickname }: AdDetailProps) => {
                 </div>
                 <div className="text-lg">모임날짜</div>
                 <div className="flex items-center justify-between text-sm">
-                  <div className="flex h-[2rem] w-[8rem] items-center justify-center rounded-[0.5rem] bg-gray-medium text-center">{startedAt === null ? "미정" : startedAt.substring(0, 10)}</div>~
-                  <div className="flex h-[2rem] w-[8rem] items-center justify-center rounded-[0.5rem] bg-gray-medium text-center">{endedAt === null ? "미정" : endedAt.substring(0, 10)}</div>
+                  <div className="bg-gray-medium flex h-[2rem] w-[8rem] items-center justify-center rounded-[0.5rem] text-center">{startedAt === null ? "미정" : startedAt.substring(0, 10)}</div>~
+                  <div className="bg-gray-medium flex h-[2rem] w-[8rem] items-center justify-center rounded-[0.5rem] text-center">{endedAt === null ? "미정" : endedAt.substring(0, 10)}</div>
                   <div>
                     {startedAt && endedAt
                       ? calculateDays({
@@ -66,11 +66,11 @@ const AdDetail = ({ adData, userNickname }: AdDetailProps) => {
               <div className="hidden md:block md:w-[7rem]">
                 {isAuthorized && (
                   <div className="flex w-[7rem] justify-between">
-                    <Link className="text-lg text-gray-dark" href={`/meetup/edit/${adData.id}`}>
+                    <Link className="text-gray-dark text-lg" href={`/meetup/edit/${adData.id}`}>
                       수정
                     </Link>
-                    <span className="text-lg text-gray-dark"> | </span>
-                    <button className="text-lg text-gray-dark" type="button" onClick={() => openModal("AD_DELETE", { meetupId: adData.id })}>
+                    <span className="text-gray-dark text-lg"> | </span>
+                    <button className="text-gray-dark text-lg" type="button" onClick={() => openModal("AD_DELETE", { meetupId: adData.id })}>
                       삭제
                     </button>
                   </div>

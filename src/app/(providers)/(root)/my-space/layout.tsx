@@ -61,7 +61,7 @@ const MySpaceLayout = ({ children }: { children: React.ReactNode }) => {
               </Link>
             </div>
           </div>
-          <div className="flex w-full min-w-[32rem] flex-col border-t-[0.1rem] border-gray-medium">
+          <div className="border-gray-medium flex w-full min-w-[32rem] flex-col border-t-[0.1rem]">
             <div className="mx-auto w-[56%] md:max-w-[80rem]">{children}</div>
           </div>
         </div>
