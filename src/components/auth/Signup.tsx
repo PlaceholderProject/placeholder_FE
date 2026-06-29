@@ -182,91 +182,120 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <h2 className="mb-[2rem] text-3xl font-semibold">회원가입</h2>
-      <div className="border-gray-medium flex h-full w-[80%] min-w-[30rem] flex-col items-center justify-center rounded-[1.5rem] border-[0.1rem] py-10">
-        <form onSubmit={handleSignupFormSubmit} className="flex flex-col items-center justify-center gap-[1.2rem] p-[2rem]">
-          <div className="relative flex flex-col">
-            <label htmlFor="email" className="text-lg font-semibold">
+    <div className="flex flex-col items-center justify-center px-[1.5rem] py-[4rem]">
+      <div className="border-border bg-card w-full max-w-[36rem] rounded-[2rem] border p-[2.5rem] shadow-sm">
+        <div className="mb-[2rem] text-center">
+          <h2 className="text-2xl font-bold">함께 시작해볼까요?</h2>
+          <p className="text-muted-foreground mt-[0.4rem] text-sm">몇 가지만 입력하면 끝나요</p>
+        </div>
+        <form onSubmit={handleSignupFormSubmit} className="flex flex-col gap-[1.2rem]">
+          <div className="flex flex-col gap-[0.5rem]">
+            <label htmlFor="email" className="text-sm font-semibold">
               이메일 주소
             </label>
-            <div>
-              <input type="email" value={email} onChange={handleEmailChange} className="border-gray-medium h-[4rem] w-[18rem] rounded-l-[1rem] border-[0.1rem] px-[1rem]" />
-              <button type="button" onClick={handleCheckEmail} className="border-gray-medium bg-gray-light hover:bg-gray-medium h-[4rem] w-[6rem] rounded-r-[1rem] border-y-[0.1rem] border-r-[0.1rem]">
-                중복확인
-              </button>
-            </div>
-            {emailWarning && <p className={`mt-[0.3rem] w-[24rem] text-sm ${emailWarningColor}`}>{emailWarning}</p>}
-          </div>
-          <div className="relative flex flex-col">
-            <label htmlFor="password" className="text-lg font-semibold">
-              비밀번호
-            </label>
-            <input
-              type={isVisivlePassword ? "text" : "password"}
-              value={password}
-              onChange={handlePasswordChange}
-              className="border-gray-medium h-[4rem] w-[24rem] rounded-[1rem] border-[0.1rem] pr-[5rem] pl-[1rem]"
-            />
-            <button type="button" onClick={handleTogglePassword} className="absolute top-[3.2rem] right-[1.3rem] text-[2.3rem]">
-              {isVisivlePassword ? <FaEyeSlash /> : <FaEye />}
-            </button>
-            {passwordWarning && <p className="text-warning mt-[0.3rem] w-[24rem] text-sm">{passwordWarning}</p>}
-          </div>
-          <div className="relative flex flex-col">
-            <label htmlFor="passwordConfirm" className="text-lg font-semibold">
-              비밀번호 확인
-            </label>
-            <input
-              type={isVisivlePassworConfirm ? "text" : "password"}
-              value={passwordConfirm}
-              onChange={handlePasswordConfirmChange}
-              className="border-gray-medium h-[4rem] w-[24rem] rounded-[1rem] border-[0.1rem] pr-[5rem] pl-[1rem]"
-            />
-            <button type="button" onClick={handleTogglePasswordConfirm} className="absolute top-[3.2rem] right-[1.3rem] text-[2.3rem]">
-              {isVisivlePassworConfirm ? <FaEyeSlash /> : <FaEye />}
-            </button>
-            {passwordConfirmWarning && <p className="text-warning mt-[0.3rem] w-[24rem] text-sm">{passwordConfirmWarning}</p>}
-          </div>
-          <div className="flex flex-col">
-            <label htmlFor="nickname" className="text-lg font-semibold">
-              닉네임
-            </label>
-            <div>
-              <input type="text" value={nickname} onChange={handleNicknameChange} className="border-gray-medium h-[4rem] w-[18rem] rounded-l-[1rem] border-[0.1rem] px-[1rem]" />
+            <div className="flex gap-[0.6rem]">
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={handleEmailChange}
+                className="border-border focus:border-primary h-[4rem] flex-1 rounded-[1rem] border bg-white px-[1rem] transition-colors outline-none"
+              />
               <button
                 type="button"
-                onClick={handleCheckNickname}
-                className="border-gray-medium bg-gray-light hover:bg-gray-medium h-[4rem] w-[6rem] rounded-r-[1rem] border-y-[0.1rem] border-r-[0.1rem]"
+                onClick={handleCheckEmail}
+                className="bg-primary-soft text-primary hover:bg-primary-soft/70 h-[4rem] w-[6rem] shrink-0 rounded-[1rem] text-sm font-medium transition-colors"
               >
                 중복확인
               </button>
             </div>
-            {nicknameWarning && <p className="text-warning mt-[0.3rem] w-[24rem] text-sm">{nicknameWarning}</p>}
+            {emailWarning && <p className={`mt-[0.3rem] text-sm ${emailWarningColor}`}>{emailWarning}</p>}
           </div>
-          <div className="flex flex-col">
-            <label htmlFor="bio" className="text-lg font-semibold">
+
+          <div className="flex flex-col gap-[0.5rem]">
+            <label htmlFor="password" className="text-sm font-semibold">
+              비밀번호
+            </label>
+            <div className="border-border focus-within:border-primary relative flex items-center rounded-[1rem] border bg-white transition-colors">
+              <input id="password" type={isVisivlePassword ? "text" : "password"} value={password} onChange={handlePasswordChange} className="h-[4rem] w-full bg-transparent px-[1rem] outline-none" />
+              <button type="button" onClick={handleTogglePassword} className="text-muted-foreground hover:text-foreground mr-[1rem] shrink-0 text-[1.9rem] transition-colors">
+                {isVisivlePassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
+            {passwordWarning && <p className="text-warning mt-[0.3rem] text-sm">{passwordWarning}</p>}
+          </div>
+
+          <div className="flex flex-col gap-[0.5rem]">
+            <label htmlFor="passwordConfirm" className="text-sm font-semibold">
+              비밀번호 확인
+            </label>
+            <div className="border-border focus-within:border-primary relative flex items-center rounded-[1rem] border bg-white transition-colors">
+              <input
+                id="passwordConfirm"
+                type={isVisivlePassworConfirm ? "text" : "password"}
+                value={passwordConfirm}
+                onChange={handlePasswordConfirmChange}
+                className="h-[4rem] w-full bg-transparent px-[1rem] outline-none"
+              />
+              <button type="button" onClick={handleTogglePasswordConfirm} className="text-muted-foreground hover:text-foreground mr-[1rem] shrink-0 text-[1.9rem] transition-colors">
+                {isVisivlePassworConfirm ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
+            {passwordConfirmWarning && <p className="text-warning mt-[0.3rem] text-sm">{passwordConfirmWarning}</p>}
+          </div>
+
+          <div className="flex flex-col gap-[0.5rem]">
+            <label htmlFor="nickname" className="text-sm font-semibold">
+              닉네임
+            </label>
+            <div className="flex gap-[0.6rem]">
+              <input
+                id="nickname"
+                type="text"
+                value={nickname}
+                onChange={handleNicknameChange}
+                className="border-border focus:border-primary h-[4rem] flex-1 rounded-[1rem] border bg-white px-[1rem] transition-colors outline-none"
+              />
+              <button
+                type="button"
+                onClick={handleCheckNickname}
+                className="bg-primary-soft text-primary hover:bg-primary-soft/70 h-[4rem] w-[6rem] shrink-0 rounded-[1rem] text-sm font-medium transition-colors"
+              >
+                중복확인
+              </button>
+            </div>
+            {nicknameWarning && <p className="text-warning mt-[0.3rem] text-sm">{nicknameWarning}</p>}
+          </div>
+
+          <div className="flex flex-col gap-[0.5rem]">
+            <label htmlFor="bio" className="text-sm font-semibold">
               자기소개
             </label>
             <textarea
+              id="bio"
               value={bio}
               onChange={handleBioChange}
               placeholder="함께할 모임원을 위해 간단한 자기소개를 작성해주세요."
-              className="border-gray-medium h-[7rem] w-[24rem] rounded-[1rem] border-[0.1rem] p-[1rem]"
+              className="border-border focus:border-primary h-[7rem] w-full resize-none rounded-[1rem] border bg-white p-[1rem] transition-colors outline-none"
             />
-            {bioWarning && <p className="text-warning mt-[0.3rem] w-[24rem] text-sm">{bioWarning}</p>}
+            {bioWarning && <p className="text-warning mt-[0.3rem] text-sm">{bioWarning}</p>}
             <div className="flex w-full justify-end">
-              <p className="mt-[0.3rem] text-sm">{bioTextLength}/40</p>
+              <p className="text-muted-foreground text-sm">{bioTextLength}/40</p>
             </div>
           </div>
-          <div className="flex flex-col gap-[0.8rem]">
-            <button type="submit" disabled={createUserMutation.isPending} className="bg-secondary-dark flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] text-lg">
-              회원가입
-            </button>
-            <Link href="/login">
-              <div className="bg-gray-light flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] text-lg">로그인하러 가기</div>
-            </Link>
-          </div>
+
+          <button
+            type="submit"
+            disabled={createUserMutation.isPending}
+            className="bg-primary text-primary-foreground mt-[0.5rem] flex h-[4rem] w-full items-center justify-center rounded-[1rem] text-lg font-semibold transition hover:opacity-90 disabled:opacity-60"
+          >
+            회원가입
+          </button>
+          <Link href="/login">
+            <div className="border-primary text-primary hover:bg-primary-soft flex h-[4rem] w-full items-center justify-center rounded-[1rem] border text-lg font-semibold transition-colors">
+              로그인하러 가기
+            </div>
+          </Link>
         </form>
       </div>
     </div>

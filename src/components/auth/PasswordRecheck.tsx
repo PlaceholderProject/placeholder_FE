@@ -41,34 +41,41 @@ const PasswordRecheck = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={handlePasswordRecheckFormSubmit} className="flex w-full flex-col items-center gap-[3rem]">
-        <h1 className="text-lg font-bold">비밀번호 재확인</h1>
-        <div className="flex flex-col items-center">
-          <div>회원정보 보호를 위해</div>
-          <div>비밀번호를 다시 한 번 확인합니다.</div>
-        </div>
-        <div className="relative flex flex-col">
-          <input
-            type={isVisivlePassword ? "text" : "password"}
-            value={password}
-            onChange={handlePasswordChange}
-            placeholder="비밀번호를 입력해주세요."
-            className="border-gray-medium h-[4rem] w-[24rem] rounded-[1rem] border-[0.1rem] pr-[5rem] pl-[1rem]"
-          />
-          <button type="button" onClick={handleTogglePassword} className="absolute top-[0.8rem] right-[1.3rem] text-[2.3rem]">
-            {isVisivlePassword ? <FaEyeSlash /> : <FaEye />}
-          </button>
-        </div>
-        <div className="flex flex-col gap-[0.8rem]">
-          <button type="submit" className="bg-secondary-dark h-[4rem] w-[24rem] rounded-[1rem] text-lg">
-            입력완료
-          </button>
-          <Link href="/account">
-            <div className="bg-gray-light flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] text-lg">돌아가기</div>
-          </Link>
-        </div>
-      </form>
+    <div className="flex flex-col items-center justify-center px-[1.5rem] py-[4rem]">
+      <div className="border-border bg-card w-full max-w-[36rem] rounded-[2rem] border p-[2.5rem] shadow-sm">
+        <form onSubmit={handlePasswordRecheckFormSubmit} className="flex w-full flex-col items-center gap-[2rem]">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold">비밀번호 재확인</h1>
+            <p className="text-muted-foreground mt-[0.6rem] text-sm">
+              회원정보 보호를 위해
+              <br />
+              비밀번호를 다시 한 번 확인합니다.
+            </p>
+          </div>
+          <div className="border-border focus-within:border-primary relative flex w-full items-center rounded-[1rem] border bg-white transition-colors">
+            <input
+              type={isVisivlePassword ? "text" : "password"}
+              value={password}
+              onChange={handlePasswordChange}
+              placeholder="비밀번호를 입력해주세요."
+              className="h-[4rem] w-full bg-transparent px-[1rem] outline-none"
+            />
+            <button type="button" onClick={handleTogglePassword} className="text-muted-foreground hover:text-foreground mr-[1rem] shrink-0 text-[1.9rem] transition-colors">
+              {isVisivlePassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          </div>
+          <div className="flex w-full flex-col gap-[0.8rem]">
+            <button type="submit" className="bg-primary text-primary-foreground h-[4rem] w-full rounded-[1rem] text-lg font-semibold transition hover:opacity-90">
+              입력완료
+            </button>
+            <Link href="/account">
+              <div className="border-primary text-primary hover:bg-primary-soft flex h-[4rem] w-full items-center justify-center rounded-[1rem] border text-lg font-semibold transition-colors">
+                돌아가기
+              </div>
+            </Link>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
