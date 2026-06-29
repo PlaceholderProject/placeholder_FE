@@ -80,8 +80,8 @@ const HamburgerMenu = () => {
         className={`fixed top-0 right-0 z-50 h-full w-80 transform bg-white shadow-xl transition-transform duration-300 ease-in-out ${menuOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         {/* 헤더 */}
-        <div className="flex items-center justify-between border-b p-6">
-          <button onClick={() => setMenuOpen(false)} className="text-gray-500 transition-colors hover:text-gray-700">
+        <div className="border-border flex items-center justify-between border-b p-6">
+          <button onClick={() => setMenuOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors">
             <FaTimes size={20} />
           </button>
         </div>
@@ -95,7 +95,7 @@ const HamburgerMenu = () => {
                 key={item.href}
                 href={item.href}
                 onClick={handleMenuItemClick}
-                className={`flex items-center px-6 py-4 text-base transition-colors ${item.isActive ? "text-primary bg-blue-50" : "text-gray-700 hover:border-gray-300 hover:bg-gray-50"}`}
+                className={`flex items-center px-6 py-4 text-base transition-colors ${item.isActive ? "text-primary bg-primary-soft" : "text-foreground hover:bg-muted"}`}
               >
                 <IconComponent className="mr-3" size={20} />
                 {item.label}

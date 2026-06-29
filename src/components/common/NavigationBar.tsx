@@ -43,7 +43,7 @@ const NavigationBar = () => {
   };
 
   return (
-    <nav className="fixed right-0 bottom-0 left-0 z-50 border-t border-gray-200 bg-[#FEFFEC] md:hidden">
+    <nav className="border-border bg-background/90 fixed right-0 bottom-0 left-0 z-50 border-t backdrop-blur-xl md:hidden">
       <div className="flex items-center justify-around py-2">
         {navItems.map(item => {
           const IconComponent = item.icon;
@@ -51,7 +51,7 @@ const NavigationBar = () => {
             <Link
               key={item.href}
               href={item.href}
-              className={`rem:1.4 flex flex-col items-center rounded-lg p-2 transition-colors ${item.isActive ? "text-primary" : "text-gray-500 hover:text-gray-700"}`}
+              className={`rem:1.4 flex flex-col items-center rounded-lg p-2 transition-colors ${item.isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
             >
               <IconComponent size={24} />
               <span className="mt-1 text-xs">{item.label}</span>
@@ -59,7 +59,7 @@ const NavigationBar = () => {
           );
         })}
 
-        <button onClick={handleScrollToTop} className="flex flex-col items-center rounded-lg p-2 text-gray-500 transition-colors hover:text-gray-700">
+        <button onClick={handleScrollToTop} className="text-muted-foreground hover:text-foreground flex flex-col items-center rounded-lg p-2 transition-colors">
           <FaArrowUp size={24} />
           <span className="mt-1 text-xs">맨 위로</span>
         </button>

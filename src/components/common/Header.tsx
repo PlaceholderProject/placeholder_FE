@@ -102,22 +102,22 @@ const Header = () => {
                 🍋 <span className="font-bold">{user.nickname}</span> 님 안녕하세요!
               </p>
               <div className="relative flex items-center">
-                <button onClick={handleNotificationPage} className="text-gray-light text-[2.3rem]">
+                <button onClick={handleNotificationPage} className="text-[2.3rem] text-white transition-colors hover:text-white/80">
                   <FaRegBell />
-                  {hasUnreadNotifications && <div className="bg-error absolute top-0 right-0 h-[0.8rem] w-[0.8rem] rounded-full md:h-[1rem] md:w-[1rem]"></div>}
+                  {hasUnreadNotifications && <div className="bg-accent absolute top-0 right-0 h-[0.8rem] w-[0.8rem] rounded-full md:h-[1rem] md:w-[1rem]"></div>}
                 </button>
               </div>
-              <button onClick={handleLogout} className="bg-secondary-light h-[2.3rem] w-[7rem] rounded-[0.3rem] leading-none font-semibold md:h-[2.6rem] md:w-[11rem] md:rounded-[0.6rem]">
+              <button onClick={handleLogout} className="text-primary h-[2.3rem] w-[7rem] rounded-full bg-white leading-none font-semibold transition hover:bg-white/90 md:h-[2.6rem] md:w-[11rem]">
                 로그아웃
               </button>
             </div>
           ) : (
             <div className="flex gap-[2rem]">
               <Link href="/login">
-                <button className="bg-secondary-light h-[2.3rem] w-[7rem] rounded-[0.3rem] font-semibold md:h-[2.6rem] md:w-[11rem] md:rounded-[0.6rem]">로그인</button>
+                <button className="text-primary h-[2.3rem] w-[7rem] rounded-full bg-white font-semibold transition hover:bg-white/90 md:h-[2.6rem] md:w-[11rem]">로그인</button>
               </Link>
               <Link href="/signup">
-                <button className="bg-secondary-light h-[2.3rem] w-[7rem] rounded-[0.3rem] font-semibold md:h-[2.6rem] md:w-[11rem] md:rounded-[0.6rem]">회원가입</button>
+                <button className="text-primary h-[2.3rem] w-[7rem] rounded-full bg-white font-semibold transition hover:bg-white/90 md:h-[2.6rem] md:w-[11rem]">회원가입</button>
               </Link>
             </div>
           )}
