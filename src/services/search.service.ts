@@ -30,8 +30,7 @@ export const getSearchedAd = async (range: string, keyword: string, page: number
       proposals: data.result,
       total: data.total,
     };
-  } catch (error) {
-    console.log(error);
+  } catch {
     toast.error("신청서를 보내는 도중 오류가 발생했습니다. 다시 시도해주세요.");
     return;
   }

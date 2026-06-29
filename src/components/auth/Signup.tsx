@@ -150,14 +150,10 @@ const Signup = () => {
       return;
     }
     if (checkedEmail !== email) {
-      console.log("checkedEmail", checkedEmail);
-      console.log("email", email);
       toast.error("이메일을 중복확인해주세요.");
       return;
     }
     if (checkedNickname !== nickname) {
-      console.log("checkedNickname", checkedNickname);
-      console.log("nickname", nickname);
       toast.error("닉네임을 중복확인해주세요.");
       return;
     }

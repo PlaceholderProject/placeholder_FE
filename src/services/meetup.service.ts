@@ -8,7 +8,6 @@ import { FileType, Meetup, NewMeetup, S3PresignedResponse } from "@/types/meetup
 //   const token = Cookies.get("accessToken");
 
 //   //FormDAta 내용 확인
-//   // console.log("FormData 페이로드:", JSON.parse(meetupFormData.get("payload") as string));
 //   const response = await fetch(`${BASE_URL}/api/v1/meetup`, {
 //     method: "POST",
 //     headers: {
@@ -21,19 +20,15 @@ import { FileType, Meetup, NewMeetup, S3PresignedResponse } from "@/types/meetup
 //   if (!response.ok) {
 //     const errorText = await response.text();
 //     await refreshToken();
-//     console.log(errorText);
 //     throw new Error("모임 생성 실패");
 //   }
 //   const responseDataToCheck = await response.json();
-//   console.log("서버 응답 데이터 확인:", responseDataToCheck);
 //   return await responseDataToCheck;
 // };
 
 // 1️⃣ presigned URL 생성 주세요 api
 export const getMeetupPresignedUrl = async (filetype: FileType): Promise<S3PresignedResponse> => {
   const token = Cookies.get("accessToken");
-  // 디버깅: 실제 요청하는 filetype 확인
-  console.log("🎯 요청할 filetype:", filetype);
   const response = await fetch(`${BASE_URL}/api/v1/meetup/presigned-url?filetype=${filetype}`, {
     method: "GET",
     headers: {
@@ -42,13 +37,10 @@ export const getMeetupPresignedUrl = async (filetype: FileType): Promise<S3Presi
     },
   });
   if (!response.ok) {
-    const errorText = await response.text();
     await refreshToken();
-    console.log(errorText);
-    throw new Error("Presigned URL ㅇ청 실패");
+    throw new Error("Presigned URL 요청 실패");
   }
   const data: S3PresignedResponse = await response.json();
-  console.log("🟣🟣🟣프리사인드 응답:", data);
 
   return data;
 };
@@ -105,26 +97,17 @@ export const getMeetupByIdApi = async (meetupId: number) => {
     headers,
   });
 
-  const url = `${BASE_URL}/api/v1/meetup/${meetupId}`;
-  console.log(`⚛️⚛️⚛️모임 가져오는 url ${url}`);
-
   if (!response.ok) {
     console.error("가져오기 실패: ", response.status, response.statusText);
     throw new Error("해당 id 모임 가져오기 실패");
   }
 
   const meetupByIdData = await response.json();
-  console.log("해당 id 모임 가져오기 성공", meetupByIdData);
-  // console.log("json()하지 않은 해당 id 모임: ", response);
-  // console.log("가져온 해당 id 모임:", meetupByIdData.json());
   // 아니 왜 콘솔에 .json() 넣으면 브라우저 에러 나는 것?
   // 안 그러다기???????????????
 
   // // 🫠🫠🫠🫠🫠🫠🫠🫠🫠 이거는 필요 없고 onSuccess에서 하면 됨 되는거야 마는거야 🫠🫠🫠🫠🫠🫠🫠 아마 안됨
   // setPreviewImage(`${meetupByIdData.image}`);
-
-  // console.log("가져온 데이터: ", meetupByIdData);
-  // console.log("meetupId 타입 뭐야?", typeof meetupByIdData.id);
 
   return meetupByIdData;
 };
@@ -143,7 +126,7 @@ export const getMeetupByIdApi = async (meetupId: number) => {
 
 //   // 🚨🚨🚨🚨🚨서버 응답 형태 확인용 지금 date랑 checkbox 인풋만 수정이 안되거든요🚨🚨🚨🚨🚨
 //   const responseData = await response.json();
-//   console.log("모임 수정 서버 응답:", responseData);
+//   return responseData;
 //   return responseData;
 // };
 
