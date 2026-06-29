@@ -36,7 +36,7 @@ const AdArea = ({ initialData, meetupId }: { initialData: Meetup; meetupId: numb
     //     <AdButton meetupId={meetupIdNum} />
     //   </div>
     // </div>
-    <div className="flex min-w-[32rem] flex-col items-center justify-center space-y-[0.5rem]">
+    <div className="mx-auto flex min-w-[32rem] flex-col items-center justify-center space-y-[0.5rem] pb-[2rem]">
       <AdSignboard adData={adData} />
       <div className="flex w-[95%] justify-between py-[1rem] md:max-w-[80rem]">
         <AdOrganizer adData={adData} />
@@ -44,7 +44,6 @@ const AdArea = ({ initialData, meetupId }: { initialData: Meetup; meetupId: numb
       </div>
       <AdDetail adData={adData} userNickname={userNickname} />
       <AdButton meetupId={meetupId} />
-      ``
     </div>
   );
 };

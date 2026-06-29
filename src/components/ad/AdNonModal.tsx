@@ -36,12 +36,14 @@ const AdNonModal = ({ meetupId }: { meetupId: number }) => {
         <BsThreeDotsVertical onClick={handleThreeDotsClick} />
       </button>
       {isAdNonModalOpen && (
-        <div className="absolute right-[3.4rem] bottom-[10rem] z-10 flex h-[6rem] w-[6rem] flex-col items-center justify-center rounded-[0.5rem] bg-white shadow-md">
+        <div className="border-border absolute right-[3.4rem] bottom-[10rem] z-10 flex h-[6rem] w-[6rem] flex-col items-center justify-center gap-[0.5rem] rounded-[0.8rem] border bg-white shadow-md">
           <div>
-            <Link href={`/meetup/edit/${meetupId}`}>수정</Link>
+            <Link href={`/meetup/edit/${meetupId}`} className="hover:text-primary transition-colors">
+              수정
+            </Link>
           </div>
 
-          <button type="button" onClick={handleCloseButtonClick}>
+          <button type="button" onClick={handleCloseButtonClick} className="hover:text-destructive transition-colors">
             삭제
             {/* 이걸 클릭하면 isAdDeleModalOpen 상태가 토글되어야 함 */}
           </button>

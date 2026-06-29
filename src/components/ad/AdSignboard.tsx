@@ -15,15 +15,11 @@ const AdSignboard = ({ adData }: { adData: Meetup }) => {
         </div>
       </div>
     </> */}
-      <div className="border-gray-medium w-full flex-col border-b-[0.1rem] md:mt-[2rem] md:grid md:grid-cols-2 md:pb-[1rem]">
-        <div className="mx-auto flex w-[95%] py-[1rem] text-lg md:max-w-[90rem] md:py-[0.5rem] md:text-[18px]">{adData.adTitle}</div>
-        <div className="text-gray-medium mx-auto flex w-[95%] justify-end py-[0.5rem] text-xs md:max-w-[90rem] md:py-0 md:pt-[0.6rem] md:text-[16px]">
-          {adData.adEndedAt?.substring(0, 10)}까지 모집
+      <div className="border-border w-full flex-col border-b md:mt-[2rem] md:grid md:grid-cols-2 md:items-center md:pb-[1rem]">
+        <div className="mx-auto flex w-[95%] py-[1rem] text-lg font-semibold md:max-w-[90rem] md:py-[0.5rem] md:text-[18px]">{adData.adTitle}</div>
+        <div className="mx-auto flex w-[95%] justify-end py-[0.5rem] md:max-w-[90rem] md:py-0">
+          <span className="bg-accent text-accent-foreground rounded-full px-[0.9rem] py-[0.3rem] text-xs font-medium">{adData.adEndedAt?.substring(0, 10)}까지 모집</span>
         </div>
-        {/* <div className="flex w-[95%] justify-between md:block">
-          {adData.adTitle}
-          {adData.adEndedAt?.substring(0, 10)}까지 모집
-        </div> */}
       </div>
     </>
   );

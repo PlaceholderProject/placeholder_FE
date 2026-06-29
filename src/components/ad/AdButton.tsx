@@ -35,36 +35,42 @@ const AdButton = ({ meetupId }: { meetupId: number }) => {
     <div className="flex w-full justify-center">
       <div className="my-[2rem] w-[90%] max-w-[80rem]">
         {user.nickname === adData?.organizer.nickname ? (
-          <Link href={`/meetup/${meetupId}`} className="bg-primary flex h-[3.5rem] w-full items-center justify-center rounded-[0.5rem] text-white">
+          <Link href={`/meetup/${meetupId}`} className="bg-primary text-primary-foreground flex h-[3.5rem] w-full items-center justify-center rounded-full font-semibold transition hover:opacity-90">
             입장하기
           </Link>
         ) : proposal ? (
           proposal.status === "pending" ? (
             <div className="flex w-full flex-row gap-[1rem]">
-              <button onClick={handleCancellationModal} className="bg-warning flex h-[3.5rem] w-full items-center justify-center rounded-[0.5rem] text-white">
+              <button
+                onClick={handleCancellationModal}
+                className="bg-destructive text-destructive-foreground flex h-[3.5rem] w-full items-center justify-center rounded-full font-semibold transition hover:opacity-90"
+              >
                 취소하기
               </button>
-              <div className="bg-gray-light flex h-[3.5rem] w-full items-center justify-center rounded-[0.5rem]">수락 대기 중</div>
+              <div className="bg-muted text-muted-foreground flex h-[3.5rem] w-full items-center justify-center rounded-full">수락 대기 중</div>
             </div>
           ) : proposal.status === "acceptance" ? (
             <div className="flex w-full flex-row gap-[1rem]">
-              <div className="bg-gray-light flex h-[3.5rem] w-full items-center justify-center rounded-[0.5rem]">수락 완료</div>
-              <Link href={`/meetup/${meetupId}`} className="bg-primary flex h-[3.5rem] w-full items-center justify-center rounded-[0.5rem] text-white">
+              <div className="bg-muted text-muted-foreground flex h-[3.5rem] w-full items-center justify-center rounded-full">수락 완료</div>
+              <Link
+                href={`/meetup/${meetupId}`}
+                className="bg-primary text-primary-foreground flex h-[3.5rem] w-full items-center justify-center rounded-full font-semibold transition hover:opacity-90"
+              >
                 입장하기
               </Link>
             </div>
           ) : (
             <div className="flex w-full flex-row gap-[1rem]">
-              <div className="bg-gray-light flex h-[3.5rem] w-full items-center justify-center rounded-[0.5rem]">거절됨</div>
-              <div className="bg-gray-light flex h-[3.5rem] w-full items-center justify-center rounded-[0.5rem]">입장하기</div>
+              <div className="bg-muted text-muted-foreground flex h-[3.5rem] w-full items-center justify-center rounded-full">거절됨</div>
+              <div className="bg-muted text-muted-foreground flex h-[3.5rem] w-full items-center justify-center rounded-full">입장하기</div>
             </div>
           )
         ) : (
           <div className="flex w-full flex-row gap-[1rem]">
-            <button onClick={handleProposalModal} className="bg-secondary-dark h-[3.5rem] w-full rounded-[0.5rem]">
+            <button onClick={handleProposalModal} className="bg-primary text-primary-foreground h-[3.5rem] w-full rounded-full font-semibold transition hover:opacity-90">
               신청하기
             </button>
-            <div className="bg-gray-light flex h-[3.5rem] w-full items-center justify-center rounded-[0.5rem]">입장하기</div>
+            <div className="bg-muted text-muted-foreground flex h-[3.5rem] w-full items-center justify-center rounded-full">입장하기</div>
           </div>
         )}
       </div>
