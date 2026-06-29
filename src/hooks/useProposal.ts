@@ -106,7 +106,7 @@ export const useCancelProposal = (meetupId: number) => {
       toast.success("신청서가 성공적으로 취소되었습니다.");
       // 필요하면 캐시 무효화
       queryClient.invalidateQueries({ queryKey: ["status", meetupId] });
-      queryClient.invalidateQueries({ queryKey: ["myMeetups", "organizer", "ongoing"] });
+      queryClient.invalidateQueries({ queryKey: ["myMeetups", "organizer"] });
       queryClient.invalidateQueries({ queryKey: ["sentProposals"] });
       queryClient.invalidateQueries({ queryKey: ["receivedProposals", meetupId] });
     },

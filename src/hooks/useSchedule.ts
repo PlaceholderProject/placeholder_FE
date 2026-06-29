@@ -49,7 +49,7 @@ export const useUpdateSchedule = (scheduleId: number) => {
   return useMutation({
     mutationFn: ({ scheduleId, payload }: { scheduleId: number; payload: SchedulePayload }) => updateSchedule(scheduleId, payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["schedules", scheduleId] });
+      queryClient.invalidateQueries({ queryKey: ["schedules"] });
       queryClient.invalidateQueries({ queryKey: ["schedule", scheduleId] });
     },
   });
