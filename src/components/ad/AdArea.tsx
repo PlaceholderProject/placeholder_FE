@@ -26,7 +26,6 @@ const AdArea = ({ initialData, meetupId }: { initialData: Meetup; meetupId: numb
     return <Spinner isLoading={isPending} />;
   }
   if (!adData) return <div>데이터를 찾을 수 없습니다.</div>;
-  console.log("광고 애드데이터:", adData);
 
   return (
     // <div className="mx-auto w-[95%] min-w-[32rem] md:max-w-[90rem]">

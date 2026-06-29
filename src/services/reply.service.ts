@@ -26,8 +26,7 @@ export const createReply = async (newReply: newReplyProps, meetupId: number) => 
     toast.success("댓글이 등록되었습니다.");
 
     return result;
-  } catch (error) {
-    console.log(error);
+  } catch {
     toast.error("댓글을 등록하지 못했습니다. 다시 시도해주세요.");
     return;
   }
@@ -56,8 +55,7 @@ export const createNestedReply = async (newReply: newReplyProps, replyId: number
     toast.success("답글이 등록되었습니다.");
 
     return result;
-  } catch (error) {
-    console.log(error);
+  } catch {
     toast.error("답글을 등록하지 못했습니다. 다시 시도해주세요.");
     return;
   }

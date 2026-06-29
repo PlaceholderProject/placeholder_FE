@@ -131,7 +131,6 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
   //     }
   //     // 업로드된 파일의 URL 생성
   //     const uploadedFileUrl = `${meetupPresignedData.url}${meetupPresignedData.fields.key}`;
-  //     console.log("업로드 성공 URL", uploadedFileUrl);
   //     return uploadedFileUrl;
   //   } catch (error) {
   //     console.error("💥 업로드 중 오류:", error);
@@ -175,7 +174,6 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
     if (mode === "edit" && previousMeetupData) {
       // if (previousMeetupData?.image) {
       //   const previewImageUrl = `${previousMeetupData.image}`;
-      //   console.log("미리보기 설정되는 이미지 URL: ", previewImageUrl);
       // }
 
       setIsStartedAtNull(previousMeetupData.startedAt === null);
@@ -247,9 +245,6 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
     //     const endDateObject = new Date(endDate);
     //     const startDateObject = new Date(startDate);
     //     if (endDateObject < startDateObject) {
-    //       console.log("시작일 타입:", typeof startDate);
-    //       console.log("종료일 타입", typeof endDate);
-    //       console.log("시작일 오브젝트 타입", typeof startDateObject);
     //       alert("모임 종료일은 시작일보다 빠르게 설정할 수 없습니다.");
     //       return false;
     //     }
@@ -260,8 +255,6 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
 
     // 폼 제출전, 유효성 검사 에 함수 실행해보고 통과 못하면 제출 전에 리턴으로 탈출
     // if (!createMeetUpValidateDate(startDate, "startedAt") || !createMeetUpValidateDate(endDate, "endedAt") || !createMeetUpValidateDate(adEndDate, "adEndedAt")) {
-    //   console.log("유효성 함수 실행은 됨");
-    //   console.log("설정된 모임 시작일, 모임 종료일, 광고 종료일:", startDate, endDate, adEndDate);
     //   return;
     // }
 
@@ -278,7 +271,6 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
 
       // 이미지 업로드 처리
       let imageUrl = mode === "edit" ? previousMeetupData?.image || "" : "";
-      console.log("----1111이미지패스 찍자", imageUrl);
       // ---1--- 이미지 있으면 (s3에 업로드)
       if (imageRef?.current?.files?.[0]) {
         const imageFile = imageRef.current.files[0]; //
@@ -287,7 +279,6 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
 
         // ✅ 파일 타입 정확히 가져오기
         const fileType = imageFile.type as FileType;
-        // console.log("🎯 파일 타입 확인:", fileType);
 
         // presigned URL 요청
         // const presignedResponse: S3PresignedResponse = await getMeetupPresignedUrl(fileType);
@@ -297,10 +288,8 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
         const presignedData = presignedResponse.result[0];
 
         // presigned 데이터의 Content-Type 확인
-        // console.log("🎯 presigned Content-Type:", presignedData.fields["Content-Type"]);
         // s3업로드 함수 실행으로 업로드 하고 imageUrl 받아오기
         imageUrl = await s3Upload.mutateAsync({ file: imageFile, presignedData });
-        console.log("----222이미지패스 찍자", imageUrl);
       }
 
       if (mode === "create") {
@@ -329,10 +318,8 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
         // ---3--- 모임 생성 (이미 업로드되고 받아온 이미지 url포함, 이건 유저 폼제출 이!!후!!에 유저 모르게 일어나는 과정임)
 
         await createMutation.mutateAsync({ data: newMeetup, imageUrl });
-        console.log("----1111 생성이미지패스 찍자", imageUrl);
 
         toast.success("모임 생성에 성공했습니다!");
-        console.log("생성할 새모임 데이터:", newMeetup);
         // queryClient.invalidateQueries({ queryKey: ["meetups"] });
         // queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
       } else {

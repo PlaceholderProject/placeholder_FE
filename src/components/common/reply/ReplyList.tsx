@@ -11,8 +11,6 @@ const ReplyList = ({ meetupId, scheduleId }: { meetupId: number; scheduleId?: nu
     enabled: !!scheduleId,
   });
 
-  console.log("scheduleReply", scheduleReply);
-
   const replyData = scheduleReply ? scheduleReply : meetupReply;
   const loading = scheduleId ? isPending : isLoading;
 

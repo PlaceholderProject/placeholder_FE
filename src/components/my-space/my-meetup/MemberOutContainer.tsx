@@ -58,24 +58,13 @@ const MemberOutContainer: React.FC<MemberOutContainerProps> = ({ meetupId, isOrg
   //   // event.preventDefault();
   //   // 근데 Link 안에서 밖으로 빼니까 전파 안 일어남
 
-  //   console.log("====1. 버튼 클릭 시작====");
-  //   console.log("클릭된 meetupId:", meetupId);
-
   //   //모달 토글
   //   dispatch(setSelectedMeetupId(meetupId));
-  //   console.log("==2. setSelectedMeetupId 디스패치 했어==");
   //   dispatch(toggleMemberDeleteModal());
-  //   console.log("===3. toggleMemberDeleteModal 디스패치 햇어==");
-  //   console.log("===4. 버튼 클릭 우선 끝===");
-  //   console.log("멤버모달 열렸니?", isMemberDeleteModalOpen);
   // };
   //모달 토글
   // dispatch(setSelectedMeetupId(meetupId));
-  // console.log("==2. setSelectedMeetupId 디스패치 했어==");
   // dispatch(toggleMemberDeleteModal());
-  // console.log("===3. toggleMemberDeleteModal 디스패치 햇어==");
-  // console.log("===4. 버튼 클릭 우선 끝===");
-  // console.log("멤버모달 열렸니?", isMemberDeleteModalOpen);
 
   // 새로운 모달 시스템의 openModal 함수를 사용하여 모달을 엽니다.
   // 이전 코드의 dispatch 로직을 이 한 줄로 대체합니다.
