@@ -39,25 +39,26 @@ const SearchForm = () => {
     <div className="flex items-center justify-center md:h-[20rem]">
       <form
         onSubmit={handleKeywordSubmit}
-        className="bg-secondary-dark flex h-[7.7rem] w-full flex-col items-center justify-center gap-[1rem] md:mx-[2rem] md:h-[15rem] md:max-w-[80rem] md:rounded-[2rem] md:shadow-md"
+        className="bg-card border-border flex h-[7.7rem] w-full flex-col items-center justify-center gap-[1rem] border-b md:mx-[2rem] md:h-[15rem] md:max-w-[80rem] md:rounded-[2rem] md:border md:shadow-sm"
       >
         <div className="hidden text-2xl font-medium md:block">모임 검색하기</div>
         <div className="flex gap-[1.5rem]">
-          <div className="flex h-[3.5rem] cursor-pointer justify-center rounded-full bg-white px-[1rem] py-[0.5rem] shadow-sm">
-            <select onChange={handleRange} className="cursor-pointer border-none outline-none">
+          <div className="border-border flex h-[3.5rem] cursor-pointer justify-center rounded-full border bg-white px-[1rem] py-[0.5rem]">
+            <select onChange={handleRange} className="cursor-pointer border-none bg-transparent outline-none">
               <option value="ad_title">제목</option>
               <option value="organizer">작성자</option>
               <option value="description">내용</option>
             </select>
           </div>
-          <div className="relative">
+          <div className="border-border focus-within:border-primary relative flex items-center rounded-full border bg-white transition-colors">
             <input
               type="search"
               onChange={handleKeyword}
               value={keyword}
-              className="h-[3.5rem] w-[24rem] [appearance:textfield] rounded-full pr-[4rem] pl-[1.5rem] shadow-sm focus:outline-none md:w-[35rem] [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-cancel-button]:appearance-none"
+              placeholder="모임, 관심사, 지역을 검색해보세요"
+              className="h-[3.5rem] w-[24rem] [appearance:textfield] rounded-full bg-transparent pr-[4rem] pl-[1.5rem] focus:outline-none md:w-[35rem] [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-cancel-button]:appearance-none"
             />
-            <button type="submit" className="text-gray-dark absolute top-[0.8rem] right-[1.5rem] text-[1.8rem]">
+            <button type="submit" className="text-muted-foreground hover:text-primary absolute top-[0.8rem] right-[1.5rem] text-[1.8rem] transition-colors">
               <FaSearch />
             </button>
           </div>

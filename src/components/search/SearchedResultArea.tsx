@@ -36,32 +36,36 @@ const SearchedResultArea = () => {
   }
 
   return (
-    <div className="border-gray-mediu my-[4rem] border-t-[0.1rem]">
-      <ul>
+    <div className="mx-auto my-[4rem] w-[34rem] md:w-full md:max-w-[80rem]">
+      <ul className="grid grid-cols-2 gap-[1.2rem] md:grid-cols-4">
         {searchedAds.map((ad: SearchedType) => (
-          <li key={ad.id} className="flex justify-center border-b-[0.1rem]">
+          <li key={ad.id}>
             <SearchedResultItem ad={ad} />
           </li>
         ))}
       </ul>
-      <div className="mt-6 flex items-center justify-center gap-2">
+      <div className="mt-[3rem] flex items-center justify-center gap-[0.6rem]">
         {/* 이전 그룹 버튼 */}
         {startPage > 1 && (
-          <button onClick={() => setPage(startPage - 1)} className="rounded border bg-gray-200 px-2 py-1">
+          <button onClick={() => setPage(startPage - 1)} className="bg-muted text-muted-foreground hover:bg-muted/70 rounded-full px-[1rem] py-[0.5rem] text-sm transition">
             이전
           </button>
         )}
 
         {/* 페이지 번호 버튼들 */}
         {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map(p => (
-          <button key={p} onClick={() => setPage(p)} className={`rounded border px-3 py-1 text-sm font-medium ${page === p ? "bg-blue-500 text-white" : "bg-gray-200"}`}>
+          <button
+            key={p}
+            onClick={() => setPage(p)}
+            className={`rounded-full px-[1.2rem] py-[0.5rem] text-sm font-medium transition ${page === p ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70"}`}
+          >
             {p}
           </button>
         ))}
 
         {/* 다음 그룹 버튼 */}
         {endPage < totalPages && (
-          <button onClick={() => setPage(endPage + 1)} className="rounded border bg-gray-200 px-2 py-1">
+          <button onClick={() => setPage(endPage + 1)} className="bg-muted text-muted-foreground hover:bg-muted/70 rounded-full px-[1rem] py-[0.5rem] text-sm transition">
             다음
           </button>
         )}
