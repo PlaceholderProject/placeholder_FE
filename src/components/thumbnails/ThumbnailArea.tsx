@@ -113,11 +113,9 @@ const ThumbnailArea = () => {
     return (
       <SkeletonTheme baseColor="#E8E8E8" highlightColor="#D9D9D9">
         <div className="mx-auto w-[34rem] md:w-full md:max-w-[80rem]">
-          <div className="my-[0.1rem] grid grid-cols-2 gap-x-[17%] md:grid-cols-4 md:justify-items-center md:gap-x-[1px]">
+          <div className="grid grid-cols-2 gap-[1.2rem] py-[0.4rem] md:grid-cols-4">
             {Array.from({ length: 8 }).map((_, index) => (
-              <div key={index} className="w-[14.2rem] pt-[0.4rem] pb-[1rem] md:w-[150px]">
-                <ThumbnailSkeleton />
-              </div>
+              <ThumbnailSkeleton key={index} />
             ))}
           </div>
         </div>
@@ -170,14 +168,9 @@ const ThumbnailArea = () => {
   return (
     <>
       <div className="mx-auto w-[34rem] md:w-full md:max-w-[80rem]">
-        <div className="my-[0.1rem] grid grid-cols-2 gap-x-[17%] md:grid-cols-4 md:justify-items-center md:gap-x-[1px]">
+        <div className="grid grid-cols-2 gap-[1.2rem] py-[0.4rem] md:grid-cols-4">
           {allThumbnails.map((thumbnail: Meetup, index: number) => {
-            return (
-              <div key={`${thumbnail.id}-${index}`} className="w-[14.2rem] pt-[0.4rem] pb-[1rem] md:w-[150px]">
-                <ThumbnailItem thumbnail={thumbnail} userNickname={userNickname} priority={index === 0} />
-                {/* <ThumbnailItem thumbnail={thumbnail} /> */}
-              </div>
-            );
+            return <ThumbnailItem key={`${thumbnail.id}-${index}`} thumbnail={thumbnail} userNickname={userNickname} priority={index === 0} />;
           })}
           {/* 더 불러오기 */}
           {/* {hasNextPage && (

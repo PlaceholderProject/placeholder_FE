@@ -57,150 +57,96 @@ const ThumbnailItem = ({ thumbnail, userNickname, priority }: { thumbnail: Meetu
     };
   }, [thumbnail?.organizer.image]);
 
-  // if (isPending) return <div>로딩중</div>;
-  // if (isError) return <div>에러발생</div>;
   if (!thumbnail) return null;
 
-  const renderThumbnailItem = () => {
-    if (!thumbnail.image) return null;
+  const isOwner = userNickname === thumbnail.organizer.nickname;
 
-    if (thumbnail.isPublic === true) {
+  // 왕관(방장) 뱃지
+  const crownBadge = isOwner && (
+    <div className="bg-primary text-primary-foreground absolute top-3 left-3 z-10 flex h-[2.2rem] w-[2.2rem] place-content-center items-center rounded-full text-[1.4rem] shadow-sm">
+      <FaCrown />
+    </div>
+  );
+
+  // 카드 이미지 영역 (공개/비공개 분기)
+  const renderImageArea = () => {
+    if (thumbnail.isPublic === true && thumbnail.image) {
       return (
-        <Link href={`/ad/${thumbnail.id}`} className="relative mx-auto block h-[14.2rem] w-[14.2rem] items-center justify-center md:h-[150px] md:w-[150px]">
+        <Link href={`/ad/${thumbnail.id}`} className="group/img relative block h-full w-full">
           <Image
-            // priority={priority}
             loading={priority ? undefined : "lazy"}
             unoptimized={false}
             src={thumbnailImageUrl}
             alt="thumbnailImage"
             fill
-            sizes="width=14.2rem, height=14.2rem"
-            className="rounded-[2rem] object-cover"
+            sizes="(max-width: 768px) 50vw, 200px"
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
-
-          {userNickname === thumbnail.organizer.nickname && (
-            <div className="bg-primary bg-opacity-70 text-secondary-dark text-opacity-70 absolute top-3 left-3 flex h-[2.2rem] w-[2.2rem] place-content-center items-center rounded-full text-[1.6rem]">
-              <FaCrown />
-              {/* <LuCrown /> */}
-            </div>
-          )}
+          {crownBadge}
         </Link>
       );
-    } else {
+    }
+
+    // 비공개: 방장이면 링크 유지, 아니면 잠금 박스만
+    const lockBox = (
+      <div className="bg-muted flex h-full w-full items-center justify-center">
+        <FaLock className="text-muted-foreground h-[4rem] w-[4rem]" />
+      </div>
+    );
+
+    if (isOwner) {
       return (
-        <>
-          {userNickname === thumbnail.organizer.nickname ? (
-            <div>
-              <Link href={`/ad/${thumbnail.id}`} className="relative mx-auto block h-[14.2rem] w-[14.2rem] items-center justify-center md:h-[150px] md:w-[150px]">
-                <div className="bg-gray-medium text-opacity-20 mx-auto flex h-[14.2rem] w-[14.2rem] items-center justify-center rounded-[2rem] md:h-[150px] md:w-[150px]">
-                  <FaLock className="text-gray-dark h-[4rem] w-[4rem]" />
-                </div>
-                {userNickname === thumbnail.organizer.nickname && (
-                  <div className="bg-primary bg-opacity-70 text-secondary-dark text-opacity-70 absolute top-3 left-3 flex h-[2.2rem] w-[2.2rem] place-content-center items-center rounded-full text-[1.6rem]">
-                    <FaCrown />
-                    {/* <LuCrown /> */}
-                  </div>
-                )}
-              </Link>
-            </div>
-          ) : (
-            <div>
-              <div className="bg-gray-medium text-opacity-20 mx-auto flex h-[14.2rem] w-[14.2rem] items-center justify-center rounded-[2rem] md:h-[150px] md:w-[150px]">
-                <FaLock className="text-gray-dark h-[4rem] w-[4rem]" />
-              </div>
-            </div>
-          )}
-        </>
+        <Link href={`/ad/${thumbnail.id}`} className="relative block h-full w-full">
+          {lockBox}
+          {crownBadge}
+        </Link>
       );
     }
+
+    return lockBox;
   };
 
   return (
-    <>
-      <div className="my-[1rem] rounded-lg">
-        <div className={thumbnail.isPublic === false ? "text-gray-dark opacity-90" : ""}>
-          {/* {thumbnail.image &&
-            (thumbnail.isPublic === true ? (
-              <Link href={`/ad/${thumbnail.id}`} className="relative mx-auto block h-[14.2rem] w-[14.2rem] items-center justify-center md:h-[150px] md:w-[150px]">
-                <Image unoptimized={false} src={thumbnailImageUrl} alt="thumbnailImage" fill sizes="width=14.2rem, height=14.2rem" className="rounded-[2rem] object-cover" loading="lazy" />
+    <article className="group bg-card border-border hover:border-primary/30 flex flex-col overflow-hidden rounded-[1.6rem] border transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(22,21,15,0.35)]">
+      {/* 이미지 영역 */}
+      <div className="bg-muted relative aspect-square w-full overflow-hidden">
+        {renderImageArea()}
+        {/* 모집 마감일 pill */}
+        {thumbnail.adEndedAt && (
+          <span className="bg-background/90 text-foreground absolute top-3 right-3 z-10 rounded-full px-[0.7rem] py-[0.2rem] text-xs font-medium backdrop-blur">
+            ~{thumbnail.adEndedAt.substring(5, 10)}
+          </span>
+        )}
+      </div>
 
-                {userNickname === thumbnail.organizer.nickname && (
-                  <div className="absolute left-3 top-3 flex h-[2.2rem] w-[2.2rem] place-content-center items-center rounded-full bg-primary bg-opacity-70 text-[1.6rem] text-secondary-dark text-opacity-70">
-                    <FaCrown />
-                  </div>
-                )}
-              </Link>
-            ) : (
-              <div className="mx-auto flex h-[14.2rem] w-[14.2rem] items-center justify-center rounded-[2rem] bg-gray-medium text-opacity-20 md:h-[150px] md:w-[150px]">
-                <FaLock className="h-[4rem] w-[4rem] text-gray-dark" />
-              </div>
-            ))} */}
+      {/* 콘텐츠 영역 */}
+      <div className="flex flex-1 flex-col gap-[0.6rem] p-[1.1rem]">
+        <h3 className="line-clamp-2 text-sm leading-snug font-semibold break-words">
+          <span className="text-primary whitespace-nowrap">[{thumbnail.place}]</span> {thumbnail.adTitle}
+        </h3>
 
-          {renderThumbnailItem()}
+        <div className="text-muted-foreground flex items-center gap-[0.4rem] text-xs">
+          <FaRegCalendarAlt className="shrink-0" />
+          <span className="truncate">
+            {thumbnail.startedAt === null ? "미정" : thumbnail.startedAt.substring(0, 10)} ~ {thumbnail.endedAt === null ? "미정" : thumbnail.endedAt.substring(0, 10)}
+          </span>
+        </div>
 
-          {/* 콘텐츠 */}
-          <div className="mt-[1rem] w-full space-y-[0.5rem]">
-            {/* 프로필 & 좋아요 */}
-            <div className="flex items-center justify-between">
-              {/* 작성자 */}
-              <div className="flex items-center gap-[0.2rem]">
-                <div className="relative flex h-[1.8rem] w-[1.8rem] flex-shrink-0 text-sm">
-                  <Image unoptimized={false} src={profileImageSource} fill alt="작성자 프로필 이미지" className="rounded-full object-cover" />
-                </div>
-                <div className="text-sm font-medium">{thumbnail.organizer.nickname}</div>
-              </div>
-
-              {/* 좋아요 */}
-              <div className="pointer-events-auto flex-shrink-0">
-                <LikeContainer id={thumbnail.id} initialIsLike={thumbnail.isLike} initialLikeCount={thumbnail.likeCount} />
-              </div>
+        {/* 작성자 & 좋아요 */}
+        <div className="border-border mt-auto flex items-center justify-between border-t pt-[0.7rem]">
+          <div className="flex min-w-0 items-center gap-[0.4rem]">
+            <div className="relative h-[2rem] w-[2rem] flex-shrink-0">
+              <Image unoptimized={false} src={profileImageSource} fill alt="작성자 프로필 이미지" className="rounded-full object-cover" />
             </div>
+            <div className="text-muted-foreground truncate text-sm">{thumbnail.organizer.nickname}</div>
+          </div>
 
-            <div className="w-[14.2rem] text-sm font-semibold">
-              <h3 className="line-clamp-2 leading-tight break-words">
-                <span className="whitespace-nowrap">[{thumbnail.place}]</span>
-                {thumbnail.adTitle}
-              </h3>
-            </div>
-
-            {/* <div className="flex-warp flex w-[14.2rem] gap-1 text-sm font-semibold">
-              <div
-                style={{
-                  textIndent: "-3rem", // 첫 줄을 왼쪽으로 3rem 당김
-                  paddingLeft: "3rem", // 전체를 오른쪽으로 3rem 밀어서 상쇄
-                }}
-                className="line-clamp-2 min-w-0 flex-shrink-0 leading-tight"
-              >
-                <span>[{thumbnail.place}]</span> <span>{thumbnail.adTitle}</span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-[auto_1fr] gap-1">
-              <span>[{thumbnail.place}]</span>
-              <span className="line-clamp-2 min-w-0 break-words leading-tight">{thumbnail.adTitle}</span>
-            </div> */}
-
-            <div className="text-xs">
-              <div className="flex justify-start space-x-[0.1rem]">
-                <FaRegCalendarAlt className="mt-[0.2rem] h-[1.05rem] w-[1.2rem]" />
-                <div className="">
-                  {thumbnail.startedAt === null ? "미정" : thumbnail.startedAt.substring(0, 10)} ~ {thumbnail.endedAt === null ? "미정" : thumbnail.endedAt.substring(0, 10)}
-                </div>
-                {/* <span>
-                {thumbnail.startedAt && thumbnail.endedAt
-                  ? calculateDays({
-                      startedAt: thumbnail.startedAt,
-                      endedAt: thumbnail.endedAt,
-                    })
-                  : ""}
-              </span> */}
-              </div>
-              <span className="">{thumbnail.adEndedAt?.substring(0, 10)}까지 모집</span>
-            </div>
+          <div className="pointer-events-auto flex-shrink-0">
+            <LikeContainer id={thumbnail.id} initialIsLike={thumbnail.isLike} initialLikeCount={thumbnail.likeCount} />
           </div>
         </div>
       </div>
-    </>
+    </article>
   );
 };
 
