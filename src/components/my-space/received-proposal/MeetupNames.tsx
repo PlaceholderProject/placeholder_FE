@@ -26,13 +26,15 @@ const MeetupNames = () => {
   if (!organizedMeetups || organizedMeetups.length === 0) return null;
 
   return (
-    <div className="flex flex-col items-center">
-      <ul className="my-[3rem] flex h-fit w-[90%] flex-wrap items-center gap-2 md:max-w-[80rem]">
+    <div>
+      <ul className="mb-[1.4rem] flex h-fit flex-wrap items-center gap-[0.7rem]">
         {organizedMeetups.map((meetup: OrganizedMeetup) => (
           <li
             key={meetup.id}
             onClick={() => dispatch(setSelectedMeetupId(meetup.id))}
-            className={`border-primary w-fit cursor-pointer rounded-full border-[0.1rem] px-4 py-1 whitespace-nowrap ${selectedMeetupId === meetup.id ? "bg-primary text-white" : ""}`}
+            className={`border-border w-fit cursor-pointer rounded-full border px-[1.2rem] py-[0.65rem] text-sm font-semibold whitespace-nowrap transition-colors ${
+              selectedMeetupId === meetup.id ? "bg-primary text-primary-foreground border-transparent" : "bg-card text-muted-foreground hover:text-foreground"
+            }`}
           >
             {meetup.name}
           </li>

@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import RoleIcon from "../my-meetup/RoleIcon";
 import { useQuery } from "@tanstack/react-query";
 import { getMyAdsApi } from "@/services/my.space.service";
 import { BUTTONS_PER_GROUP, SIZE_LIMIT } from "@/constants/pagination";
 import PaginationButtons from "../PaginationButtons";
 import MySpaceListItem from "../MySpaceListItem";
 import Spinner from "@/components/common/Spinner";
+import { LuMegaphone } from "react-icons/lu";
 
 const PastMyAd = () => {
   const [page, setPage] = useState(1);
@@ -65,16 +65,29 @@ const PastMyAd = () => {
 
   if (isPending) return <Spinner isLoading={isPending} />;
   if (isError) return <div>에러: {error.message}</div>;
-  if (!myAdsData || myAdsData.result.length === 0) return <p className="mt-[6rem] flex justify-center">지난 내 광고가 없습니다.</p>;
+  if (!myAdsData || myAdsData.result.length === 0) {
+    return (
+      <div className="border-border bg-card flex min-h-[16rem] items-center justify-center rounded-[2rem] border text-center">
+        <p className="text-muted-foreground text-sm">지난 내 광고가 없습니다.</p>
+      </div>
+    );
+  }
 
   return (
-    <>
+    <div className="space-y-[0.8rem]">
       {myAdsData.result.map(myAd => (
         <MySpaceListItem key={myAd.id} isOngoing={false}>
-          <div className="flex items-center">
-            <RoleIcon isOrganizer={true} />
-            <div className="max-w-[20rem] truncate md:max-w-[36rem]">{myAd.ad_title}</div>
+          <div className="flex min-w-0 flex-1 items-center gap-[1rem]">
+            <span className="bg-muted text-muted-foreground grid h-[4.4rem] w-[4.4rem] shrink-0 place-items-center rounded-[1.2rem]">
+              <LuMegaphone className="h-[2rem] w-[2rem] stroke-[1.9]" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-muted-foreground text-xs">지난 광고</p>
+              <p className="text-foreground mt-[0.2rem] truncate font-semibold">{myAd.ad_title}</p>
+              <p className="text-muted-foreground mt-[0.2rem] text-xs">신청 {myAd.total}건</p>
+            </div>
           </div>
+          <span className="bg-muted text-muted-foreground shrink-0 rounded-full px-[0.9rem] py-[0.35rem] text-xs font-semibold">마감</span>
         </MySpaceListItem>
       ))}
       {/* 버튼 영역 */}
@@ -89,7 +102,7 @@ const PastMyAd = () => {
         onPreviousGroupButtonClick={handlePreviousGroupButtonClick}
         onNextGroupButtonClick={handleNextGroupButtonClick}
       />
-    </>
+    </div>
   );
 };
 

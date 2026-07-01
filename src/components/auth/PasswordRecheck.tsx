@@ -6,7 +6,7 @@ import { RootState } from "@/stores/store";
 
 import Link from "next/link";
 import { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { LuEye, LuEyeOff, LuLockKeyhole } from "react-icons/lu";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 
@@ -41,42 +41,45 @@ const PasswordRecheck = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center px-[1.5rem] py-[4rem]">
-      <div className="border-border bg-card w-full max-w-[36rem] rounded-[2rem] border p-[2.5rem] shadow-sm">
-        <form onSubmit={handlePasswordRecheckFormSubmit} className="flex w-full flex-col items-center gap-[2rem]">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold">비밀번호 재확인</h1>
-            <p className="text-muted-foreground mt-[0.6rem] text-sm">
-              회원정보 보호를 위해
-              <br />
-              비밀번호를 다시 한 번 확인합니다.
-            </p>
-          </div>
-          <div className="border-border focus-within:border-primary relative flex w-full items-center rounded-[1rem] border bg-white transition-colors">
-            <input
-              type={isVisivlePassword ? "text" : "password"}
-              value={password}
-              onChange={handlePasswordChange}
-              placeholder="비밀번호를 입력해주세요."
-              className="h-[4rem] w-full bg-transparent px-[1rem] outline-none"
-            />
-            <button type="button" onClick={handleTogglePassword} className="text-muted-foreground hover:text-foreground mr-[1rem] shrink-0 text-[1.9rem] transition-colors">
-              {isVisivlePassword ? <FaEyeSlash /> : <FaEye />}
-            </button>
-          </div>
-          <div className="flex w-full flex-col gap-[0.8rem]">
-            <button type="submit" className="bg-primary text-primary-foreground h-[4rem] w-full rounded-[1rem] text-lg font-semibold transition hover:opacity-90">
-              입력완료
-            </button>
-            <Link href="/account">
-              <div className="border-primary text-primary hover:bg-primary-soft flex h-[4rem] w-full items-center justify-center rounded-[1rem] border text-lg font-semibold transition-colors">
-                돌아가기
-              </div>
-            </Link>
-          </div>
-        </form>
-      </div>
-    </div>
+    <section className="border-border bg-card rounded-[2rem] border p-[1.8rem] md:p-[2rem]">
+      <form onSubmit={handlePasswordRecheckFormSubmit} className="space-y-[1.4rem]">
+        <div>
+          <h2 className="text-foreground text-lg font-bold">비밀번호 재확인</h2>
+          <p className="text-muted-foreground mt-[0.5rem] text-sm leading-relaxed">회원정보 보호를 위해 비밀번호를 다시 확인합니다.</p>
+        </div>
+
+        <div className="border-border focus-within:border-primary flex h-[4.6rem] items-center gap-[0.9rem] rounded-[1.4rem] border px-[1.3rem] transition-colors">
+          <LuLockKeyhole className="text-muted-foreground h-[1.7rem] w-[1.7rem] stroke-[1.8]" />
+          <input
+            type={isVisivlePassword ? "text" : "password"}
+            value={password}
+            onChange={handlePasswordChange}
+            placeholder="비밀번호를 입력해주세요"
+            className="min-w-0 flex-1 bg-transparent text-sm outline-none"
+          />
+          <button
+            type="button"
+            onClick={handleTogglePassword}
+            aria-label={isVisivlePassword ? "비밀번호 숨기기" : "비밀번호 보기"}
+            className="text-muted-foreground hover:text-foreground shrink-0 transition-colors"
+          >
+            {isVisivlePassword ? <LuEyeOff className="h-[1.8rem] w-[1.8rem] stroke-[1.8]" /> : <LuEye className="h-[1.8rem] w-[1.8rem] stroke-[1.8]" />}
+          </button>
+        </div>
+
+        <div className="grid gap-[0.8rem] sm:grid-cols-2">
+          <button type="submit" className="bg-primary text-primary-foreground h-[4.4rem] rounded-[1.4rem] text-sm font-semibold transition hover:opacity-90">
+            확인
+          </button>
+          <Link
+            href="/account"
+            className="border-border text-muted-foreground hover:bg-muted flex h-[4.4rem] items-center justify-center rounded-[1.4rem] border text-sm font-semibold transition-colors"
+          >
+            돌아가기
+          </Link>
+        </div>
+      </form>
+    </section>
   );
 };
 

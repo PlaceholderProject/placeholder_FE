@@ -4,43 +4,40 @@ import "react-loading-skeleton/dist/skeleton.css";
 
 const ScheduleDetailSkeleton = () => {
   return (
-    <div className="flex flex-col items-center space-y-[1.6rem] p-[1.6rem]">
-      <div className="w-full rounded-md p-[1.6rem]">
-        {/* Header */}
-        <div className="mb-[1.6rem] flex items-center justify-between">
-          <div className="flex items-center">
-            {/* Schedule Number */}
-            <div className="mr-[1.2rem]">
-              <Skeleton circle height="4rem" width="4rem" />
+    <div className="py-[2.4rem] md:py-[3.2rem]">
+      <div className="mx-auto max-w-[82rem] space-y-[1.8rem]">
+        <Skeleton height="2rem" width="8rem" borderRadius="999px" />
+
+        <article className="border-border bg-card overflow-hidden rounded-[2rem] border">
+          <header className="p-[1.8rem] pb-[1.3rem] md:p-[2rem] md:pb-[1.5rem]">
+            <div className="mb-[1rem] flex items-center gap-[0.8rem]">
+              <Skeleton circle height="3.4rem" width="3.4rem" />
+              <Skeleton height="2.6rem" width="22rem" borderRadius="999px" />
             </div>
+            <Skeleton height="3rem" width="48%" borderRadius="1rem" />
+            <Skeleton height="1.6rem" width="68%" borderRadius="1rem" className="mt-[0.8rem]" />
+          </header>
+
+          <div className="px-[1.2rem] md:px-[1.6rem]">
+            <Skeleton height="46rem" borderRadius="1.8rem" />
+          </div>
+
+          <div className="p-[1.8rem] md:p-[2rem]">
+            <Skeleton height="1.7rem" width="100%" borderRadius="999px" />
+            <Skeleton height="1.7rem" width="74%" borderRadius="999px" className="mt-[0.8rem]" />
+          </div>
+        </article>
+
+        <section className="border-border bg-card overflow-hidden rounded-[2rem] border">
+          <div className="flex items-center justify-between gap-[1rem] p-[1.5rem] pb-[1rem]">
             <div>
-              <Skeleton height="1.4rem" width="12rem" style={{ marginBottom: "0.4rem" }} />
-              <Skeleton height="2rem" width="8rem" style={{ marginBottom: "0.4rem" }} />
-              <Skeleton height="1.4rem" width="16rem" />
+              <Skeleton height="1.7rem" width="8rem" borderRadius="999px" />
+              <Skeleton height="1.3rem" width="24rem" borderRadius="999px" className="mt-[0.5rem]" />
             </div>
+            <Skeleton height="4rem" width="4rem" borderRadius="1.2rem" />
           </div>
-        </div>
-
-        {/* Image Area */}
-        <div className="flex w-full flex-col items-center justify-center">
-          <div className="w-full max-w-[40rem]">
-            <div className="aspect-square overflow-hidden rounded-md">
-              <Skeleton height="100%" width="100%" style={{ borderRadius: "0.375rem" }} />
-            </div>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="mt-[1.6rem] flex w-full items-center justify-between">
-          {/* Attendee */}
-          <div className="flex items-center gap-[0.8rem]">
-            <Skeleton circle height="3.2rem" width="3.2rem" />
-            <Skeleton height="1.6rem" width="6rem" />
-          </div>
-
-          {/* Button */}
-          <Skeleton height="3.2rem" width="8rem" style={{ borderRadius: "0.375rem" }} />
-        </div>
+          <Skeleton height="26rem" borderRadius="0" />
+        </section>
       </div>
     </div>
   );

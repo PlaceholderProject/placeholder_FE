@@ -12,6 +12,7 @@
   }
 }
 
+/* 카테고리 뱃지 색상은 단일 브랜드 컬러로 통일됨 (src/constants/category.ts) */
 
 html {
   color: #013a4b;
@@ -28,7 +29,7 @@ body {
   display: flex;
   scroll-snap-type: x mandatory;
   scroll-padding: 0;
-  overflow-x: hidden;
+  overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -52,6 +53,16 @@ body {
     background: linear-gradient(to right, #9b5de5, #f15bb5, #fee440, #00bbf9);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+  }
+}
+
+/* 캐러셀 프로그레스 바: 시간에 따라 0 → 100% 채워짐 */
+@keyframes carouselProgress {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
   }
 }
 

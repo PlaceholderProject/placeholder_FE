@@ -51,12 +51,16 @@ const ReceivedProposals = () => {
   // const receivedProposals = data?.filter((proposal: ReceivedProposal) => proposal.status === "pending");
 
   if (!receivedProposals || receivedProposals.length === 0) {
-    return <p className="mt-24 flex justify-center">받은 신청서가 없습니다.</p>;
+    return (
+      <div className="border-border bg-card flex min-h-[16rem] items-center justify-center rounded-[2rem] border text-center">
+        <p className="text-muted-foreground text-sm">받은 신청서가 없습니다.</p>
+      </div>
+    );
   }
 
   return (
-    <div className="mb-[6rem] flex flex-col items-center gap-[3rem]">
-      <ul className="flex w-[90%] flex-col gap-[1.5rem] md:max-w-[80rem]">
+    <div className="space-y-[1.2rem]">
+      <ul className="flex flex-col gap-[0.8rem]">
         {receivedProposals.map((proposal: ReceivedProposal) => (
           <li key={proposal.id}>
             <ReceivedProposalItem proposal={proposal} />

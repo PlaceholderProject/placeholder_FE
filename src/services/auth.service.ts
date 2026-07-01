@@ -3,6 +3,12 @@ import { LoginProps } from "@/types/authType";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
 
+const authCookieOptions = (expires: number) => ({
+  expires,
+  secure: typeof window !== "undefined" ? window.location.protocol === "https:" : process.env.NODE_ENV === "production",
+  sameSite: "Strict" as const,
+});
+
 // 회원가입페이지 : 이메일 중복확인
 export const checkEmail = async (email: string) => {
   try {
@@ -78,8 +84,8 @@ export const login = async ({ email, password }: LoginProps) => {
     if (response.ok) {
       const { access, refresh } = await response.json();
 
-      Cookies.set("accessToken", access, { expires: 1, secure: true, sameSite: "Strict" });
-      Cookies.set("refreshToken", refresh, { expires: 7, secure: true, sameSite: "Strict" });
+      Cookies.set("accessToken", access, authCookieOptions(1));
+      Cookies.set("refreshToken", refresh, authCookieOptions(7));
 
       return { access, refresh };
     }
@@ -119,8 +125,8 @@ export const refreshToken = async () => {
     }
 
     const { access, refresh } = await response.json();
-    Cookies.set("accessToken", access, { expires: 1, secure: true, sameSite: "Strict" });
-    Cookies.set("refreshToken", refresh, { expires: 7, secure: true, sameSite: "Strict" });
+    Cookies.set("accessToken", access, authCookieOptions(1));
+    Cookies.set("refreshToken", refresh, authCookieOptions(7));
   } catch (error) {
     console.error("토큰 갱신 요청 실패:", error);
     return null;
@@ -171,8 +177,8 @@ export const resetPassword = async (password: string) => {
 
     if (response.ok) {
       const { access, refresh } = await response.json();
-      Cookies.set("accessToken", access, { expires: 1, secure: true, sameSite: "Strict" });
-      Cookies.set("refreshToken", refresh, { expires: 7, secure: true, sameSite: "Strict" });
+      Cookies.set("accessToken", access, authCookieOptions(1));
+      Cookies.set("refreshToken", refresh, authCookieOptions(7));
       return { access, refresh };
     }
 

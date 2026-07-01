@@ -1,35 +1,32 @@
 import { SortType } from "@/types/meetupType";
 import React from "react";
+import { IconType } from "react-icons";
+import { FaFire, FaRegClock, FaHourglassHalf } from "react-icons/fa";
 
-const SortButtons = ({ currentSort, handleSortChange }: { currentSort: SortType; handleSortChange: (NewSortType: SortType) => void }) => {
-  const sortButtonsArray = [
-    { type: "like" as SortType, label: "🔥 인기 모집" },
-    { type: "latest" as SortType, label: "✨ 최신 모집" },
-    { type: "deadline" as SortType, label: "⏰ 마감 임박 모집" },
-  ];
+const SORT_BUTTONS: { type: SortType; label: string; icon: IconType }[] = [
+  { type: "like", label: "인기순", icon: FaFire },
+  { type: "latest", label: "최신순", icon: FaRegClock },
+  { type: "deadline", label: "마감임박", icon: FaHourglassHalf },
+];
+
+const SortButtons = ({ currentSort, handleSortChange, showLabels = false }: { currentSort: SortType; handleSortChange: (NewSortType: SortType) => void; showLabels?: boolean }) => {
   return (
-    <>
-      {/* <div className="">
-        <button className={`${currentSort === "like" ? "px-[1rem] text-base" : "text-base text-gray-medium"}`} onClick={() => handleSortChange("like")}>
-          🔥 인기 모집
+    <div className="border-border bg-card flex shrink-0 rounded-full border p-[0.3rem]">
+      {SORT_BUTTONS.map(({ type, label, icon: Icon }) => (
+        <button
+          key={type}
+          onClick={() => handleSortChange(type)}
+          title={label}
+          aria-label={label}
+          className={`flex items-center gap-[0.4rem] rounded-full px-[1.1rem] py-[0.5rem] text-sm transition ${
+            currentSort === type ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <Icon className="text-[1.2rem]" />
+          <span className={showLabels ? "inline" : "hidden sm:inline"}>{label}</span>
         </button>
-        <button className={`${currentSort === "latest" ? "text-base" : "text-base text-[#BDBDBD]"}`} onClick={() => handleSortChange("latest")}>
-          ✨ 최신 모집
-        </button>
-        <button className={`${currentSort === "deadline" ? "text-base" : "text-base text-[#BDBDBD]"}`} onClick={() => handleSortChange("deadline")}>
-          {" "}
-          ⏰ 마감 임박 모집
-        </button>
-      </div> */}
-
-      <div>
-        {sortButtonsArray.map(({ type, label }) => (
-          <button key={type} className={`mt-[1rem] mr-[0.9rem] text-base ${currentSort === type ? "" : "text-gray-medium"}`} onClick={() => handleSortChange(type)}>
-            {label}
-          </button>
-        ))}
-      </div>
-    </>
+      ))}
+    </div>
   );
 };
 

@@ -8,20 +8,21 @@ const MyAdArea = () => {
   const [activeSubTab, setActiveSubTab] = useState<"current" | "past">("current");
 
   return (
-    <div>
-      <div className="sub-tabs mt-[2.7rem] mb-[2rem] flex justify-between md:grid md:grid-cols-2 md:gap-x-[4rem]">
-        <button
-          className={`${activeSubTab === "current" ? "active bg-primary text-white" : "bg-gray-medium text-primary"} rounded-[1rem] px-[1.5rem] py-[0.5rem] text-base md:text-xl`}
-          onClick={() => setActiveSubTab("current")}
-        >
-          현재 내 광고 보기
-        </button>
-        <button
-          className={`${activeSubTab === "past" ? "active bg-primary text-white" : "bg-gray-medium text-primary"} rounded-[1rem] px-[1.5rem] py-[0.5rem] text-base md:text-xl`}
-          onClick={() => setActiveSubTab("past")}
-        >
-          지난 내 광고 보기
-        </button>
+    <div className="space-y-[1.4rem]">
+      <div className="border-border bg-card inline-flex rounded-full border p-[0.4rem]">
+        {[
+          { key: "current", label: "현재" },
+          { key: "past", label: "지난 광고" },
+        ].map(tab => (
+          <button
+            key={tab.key}
+            type="button"
+            className={`rounded-full px-[1.6rem] py-[0.7rem] text-sm font-semibold transition-colors ${activeSubTab === tab.key ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            onClick={() => setActiveSubTab(tab.key as "current" | "past")}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {activeSubTab === "current" ? <CurrentMyAd /> : <PastMyAd />}

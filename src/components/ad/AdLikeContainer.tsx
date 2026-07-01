@@ -1,11 +1,11 @@
 import React from "react";
 import { LikeContainerProps } from "@/types/likeType";
-import LikeItem from "../likes/LikeItem";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toggleLikeApi } from "@/services/like.service";
 import { Meetup } from "@/types/meetupType";
 import { getUser } from "@/services/user.service";
 import { toast } from "sonner";
+import { IoMdHeart, IoMdHeartEmpty } from "react-icons/io";
 
 const AdLikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerProps) => {
   const queryClient = useQueryClient();
@@ -62,14 +62,18 @@ const AdLikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerP
   };
 
   return (
-    <LikeItem isLike={initialIsLike} likeCount={initialLikeCount} onToggle={handleToggleLike} isPending={likeMutation.isPending} />
-
-    // <div className="flex items-center">
-    //   <div className="flex">
-    //     <IoMdHeart className="h-[1.5rem] w-[1.5rem] text-primary md:h-[20px] md:w-[20px]" />
-    //   </div>
-    //   <div className="text-sm md:text-[18px]">likeCount</div>
-    // </div>
+    <div className="text-muted-foreground inline-flex min-w-[3.2rem] flex-col items-center gap-[0.3rem]">
+      <button
+        type="button"
+        onClick={handleToggleLike}
+        disabled={likeMutation.isPending}
+        aria-label="좋아요"
+        className="hover:text-primary disabled:text-muted-foreground inline-flex h-[1.8rem] w-[1.8rem] items-center justify-center transition disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        {initialIsLike ? <IoMdHeart className="text-primary h-[1.9rem] w-[1.9rem]" /> : <IoMdHeartEmpty className="h-[1.9rem] w-[1.9rem]" />}
+      </button>
+      <span className="text-sm leading-none">{initialLikeCount}</span>
+    </div>
   );
 };
 

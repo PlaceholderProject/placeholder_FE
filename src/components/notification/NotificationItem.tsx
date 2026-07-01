@@ -4,12 +4,16 @@ import { Notification } from "@/types/NotificationType";
 import { useRouter } from "next/navigation";
 import { formatNotificationDate } from "@/utils/NotificationdateUtils";
 import { useNotificationRead } from "@/hooks/useNotification";
+import { getNotificationMeta, getNotificationTitle } from "@/utils/notificationUtils";
 
-const NotificationItem = ({ id, message, url, is_read, created_at }: Notification) => {
+const NotificationItem = (notification: Notification) => {
+  const { id, url, is_read, created_at } = notification;
   const router = useRouter();
 
   const { markAsRead } = useNotificationRead(id);
   const formattedDate = created_at ? formatNotificationDate(created_at) : "";
+  const { icon: Icon, label, iconClassName, pillClassName } = getNotificationMeta(notification);
+  const title = getNotificationTitle(notification);
 
   if (!id) {
     return null;
@@ -25,19 +29,27 @@ const NotificationItem = ({ id, message, url, is_read, created_at }: Notificatio
   };
 
   return (
-    // 읽음 상태에 따라 배경색을 다르게 적용합니다.
-    <div className={`flex cursor-pointer items-start gap-3 border-b border-gray-100 p-4 transition-colors hover:bg-gray-100 ${!is_read ? "bg-white" : "bg-gray-50"}`} onClick={handleNotificationClick}>
-      {/* 읽음 여부 표시 점 */}
-      <div className={`mt-1.5 h-2.5 w-2.5 flex-shrink-0 rounded-full ${!is_read ? "bg-error" : "bg-gray-300"}`}></div>
+    <button
+      type="button"
+      className={`hover:border-primary/30 relative flex w-full cursor-pointer items-start gap-[1.2rem] rounded-[1.4rem] border px-[1.6rem] py-[1.5rem] text-left transition hover:-translate-y-[0.1rem] md:px-[1.8rem] md:py-[1.7rem] ${
+        is_read ? "border-border bg-card shadow-none" : "border-[#d8c5ff] bg-[#f7f2ff]"
+      }`}
+      onClick={handleNotificationClick}
+    >
+      <span className={`grid h-[4.4rem] w-[4.4rem] shrink-0 place-items-center rounded-full ${iconClassName}`}>
+        <Icon className="h-[2rem] w-[2rem] stroke-[2]" />
+      </span>
 
-      {/* 메시지와 날짜 텍스트 영역 */}
-      <div className="flex-1">
-        <p className="text-base text-gray-800">{message}</p>
+      <div className="min-w-0 flex-1 pt-[0.1rem]">
+        <div className="flex flex-wrap items-center gap-[0.7rem]">
+          <span className={`rounded-full px-[0.8rem] py-[0.25rem] text-[1rem] leading-[1.4rem] font-bold ${pillClassName}`}>{label}</span>
+          {formattedDate && <span className="text-muted-foreground text-xs font-semibold">{formattedDate}</span>}
+        </div>
+        <p className="text-foreground mt-[0.6rem] text-sm leading-snug font-bold break-keep">{title}</p>
       </div>
 
-      {/* 시간(Timestamp)을 오른쪽으로 이동시켜 가독성 향상 */}
-      {created_at && <div className="ml-auto pl-3 text-sm whitespace-nowrap text-gray-400">{formattedDate}</div>}
-    </div>
+      {!is_read && <span className="bg-primary mt-[1rem] h-[0.8rem] w-[0.8rem] shrink-0 rounded-full" />}
+    </button>
   );
 };
 

@@ -47,8 +47,9 @@ const AdPage = async ({ params }: { params: Promise<{ meetupId: string }> }) => 
   return (
     <>
       <div>
-        <AdArea initialData={initialData} meetupId={Number(meetupId)} />
-        <ReplyArea />
+        <AdArea initialData={initialData} meetupId={Number(meetupId)}>
+          <ReplyArea variant="card" />
+        </AdArea>
       </div>
     </>
   );

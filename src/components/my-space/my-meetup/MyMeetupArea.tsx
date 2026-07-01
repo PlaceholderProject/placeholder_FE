@@ -27,42 +27,25 @@ const MyMeetupArea = () => {
   const [activeSubTab, setActiveSubTab] = useState<"current" | "past">("current");
 
   return (
-    <>
-      <div className="">
-        {/* 상위 탭 제목들
-        <div className="main-tabs">
-          <div className="tab-list">
-            <button className={activeMainTab === "myMeetup" ? "active" : ""} onClick={() => setActiveMainTab("myMeetup")}>
-              내 모임
-            </button>
-            <button className={activeMainTab === "myAd" ? "active" : ""} onClick={() => setActiveMainTab("myAd")}>
-              내 광고
-            </button>
-          </div>
-        </div>
-
-        {activeMainTab === "myMeetup"} */}
-
-        {/* 하위 탭 버튼들 */}
-        <div className="sub-tabs mt-[2.7rem] mb-[2rem] flex justify-between md:grid md:grid-cols-2 md:gap-x-[4rem]">
+    <div className="space-y-[1.4rem]">
+      <div className="border-border bg-card inline-flex rounded-full border p-[0.4rem]">
+        {[
+          { key: "current", label: "현재" },
+          { key: "past", label: "지난 모임" },
+        ].map(tab => (
           <button
-            className={`${activeSubTab === "current" ? "active bg-primary text-white" : "bg-gray-medium text-primary"} rounded-[1rem] px-[1.5rem] py-[0.5rem] text-base md:text-xl`}
-            onClick={() => setActiveSubTab("current")}
+            key={tab.key}
+            type="button"
+            className={`rounded-full px-[1.6rem] py-[0.7rem] text-sm font-semibold transition-colors ${activeSubTab === tab.key ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            onClick={() => setActiveSubTab(tab.key as "current" | "past")}
           >
-            현재 내 모임 보기
+            {tab.label}
           </button>
-          <button
-            className={`${activeSubTab === "past" ? "active bg-primary text-white" : "bg-gray-medium text-primary"} rounded-[1rem] px-[1.5rem] py-[0.5rem] text-base md:text-xl`}
-            onClick={() => setActiveSubTab("past")}
-          >
-            지난 내 모임 보기
-          </button>
-        </div>
-
-        {/* 나올 내용 */}
-        {activeSubTab === "current" ? <CurrentMyMeetup /> : <PastMyMeetup />}
+        ))}
       </div>
-    </>
+
+      {activeSubTab === "current" ? <CurrentMyMeetup /> : <PastMyMeetup />}
+    </div>
   );
 };
 

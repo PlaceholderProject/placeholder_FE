@@ -2,7 +2,7 @@
 
 import React from "react";
 import OutButton from "./OutButton";
-import { FaRegUserCircle } from "react-icons/fa";
+import { LuUsers } from "react-icons/lu";
 import { useDispatch } from "react-redux";
 import { MyMeetupItem } from "@/types/mySpaceType";
 import { useModal } from "@/hooks/useModal";
@@ -73,8 +73,12 @@ const MemberOutContainer: React.FC<MemberOutContainerProps> = ({ meetupId, isOrg
     <>
       <div>
         {isOrganizer ? (
-          <button onClick={handleMemberListButtonClick} className="p-[0.5rem]">
-            <FaRegUserCircle size={20} />
+          <button
+            onClick={handleMemberListButtonClick}
+            className="border-border text-muted-foreground hover:text-foreground hover:bg-muted inline-flex h-[3.2rem] items-center gap-[0.5rem] rounded-full border px-[1rem] text-xs font-semibold transition-colors"
+          >
+            <LuUsers className="h-[1.4rem] w-[1.4rem] stroke-[1.9]" />
+            멤버
           </button>
         ) : (
           // <OutButton isOrganizer={isOrganizer} isInMemberDeleteModal={false} onClick={handleSelfLeaveClick} />

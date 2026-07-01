@@ -40,12 +40,16 @@ const SentProposals = () => {
   if (isLoading) return <Spinner isLoading={isLoading} />;
 
   if (!sentProposals || sentProposals.length === 0) {
-    return <p className="mt-24 flex justify-center">보낸 신청서가 없습니다.</p>;
+    return (
+      <div className="border-border bg-card flex min-h-[16rem] items-center justify-center rounded-[2rem] border text-center">
+        <p className="text-muted-foreground text-sm">보낸 신청서가 없습니다.</p>
+      </div>
+    );
   }
 
   return (
-    <div className="flex flex-col items-center">
-      <ul className="flex w-[90%] flex-col gap-[1.5rem] py-[3rem] md:max-w-[80rem]">
+    <div className="space-y-[1.2rem]">
+      <ul className="flex flex-col gap-[0.8rem]">
         {sentProposals.map((proposal: SentProposal) => (
           <li key={proposal.id}>
             <SentProposalItem proposal={proposal} />

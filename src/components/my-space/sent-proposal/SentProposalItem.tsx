@@ -1,13 +1,23 @@
 "use client";
 
 import { transformCreatedDate } from "@/utils/ReplyDateFormat";
-import { FaUser, FaUserCheck, FaUserTimes } from "react-icons/fa";
+import { LuClock, LuCheck, LuX } from "react-icons/lu";
 import { SentProposal } from "@/types/proposalType";
 import { useModal } from "@/hooks/useModal";
 import Link from "next/link";
 
+const STATUS_META = {
+  pending: { label: "대기중", className: "bg-muted text-muted-foreground", icon: LuClock },
+  acceptance: { label: "수락됨", className: "bg-primary-soft text-primary", icon: LuCheck },
+  accepted: { label: "수락됨", className: "bg-primary-soft text-primary", icon: LuCheck },
+  rejected: { label: "거절됨", className: "bg-destructive/10 text-destructive", icon: LuX },
+  refuse: { label: "거절됨", className: "bg-destructive/10 text-destructive", icon: LuX },
+} as const;
+
 const SentProposalItem = ({ proposal }: { proposal: SentProposal }) => {
   const { openModal } = useModal();
+  const status = STATUS_META[proposal.status as keyof typeof STATUS_META] ?? STATUS_META.pending;
+  const StatusIcon = status.icon;
 
   const handleCancellationModalOpen = () => {
     openModal("PROPOSAL_CANCELLATION", { proposal });
@@ -18,46 +28,37 @@ const SentProposalItem = ({ proposal }: { proposal: SentProposal }) => {
   };
 
   return (
-    <div className="bg-secondary-light flex flex-col items-center justify-between gap-[0.5rem] rounded-[1rem] p-[1.5rem] shadow-md">
-      <div className="flex w-full flex-row items-center justify-between">
-        <div className="flex flex-row items-center gap-[1rem]">
-          <div className="px-1">
-            {proposal.status === "pending" ? (
-              <div className="text-gray-dark flex flex-col items-center">
-                <div className="text-2xl">
-                  <FaUser />
-                </div>
-                <div className="text-xs whitespace-nowrap">대기중</div>
-              </div>
-            ) : proposal.status === "acceptance" ? (
-              <div className="flex flex-col items-center text-[#028AB3]">
-                <div className="text-[2.2rem]">
-                  <FaUserCheck />
-                </div>
-                <div className="h-fil text-xs leading-5 whitespace-nowrap">수락됨</div>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center text-[#F9617A]">
-                <div className="text-[2.2rem]">
-                  <FaUserTimes />
-                </div>
-                <div className="text-xs leading-5 whitespace-nowrap">거절됨</div>
-              </div>
-            )}
-          </div>
-          <Link href={`/ad/${proposal.meetup_id}`}>
-            <div className="font-semibold break-all">{proposal.meetup_ad_title}</div>
+    <div className="border-border bg-card rounded-[1.6rem] border p-[1.4rem]">
+      <div className="flex items-start justify-between gap-[1rem]">
+        <div className="min-w-0 flex-1">
+          <Link href={`/ad/${proposal.meetup_id}`} className="text-foreground block truncate font-semibold hover:underline">
+            {proposal.meetup_ad_title}
           </Link>
+          <p className="text-muted-foreground mt-[0.3rem] truncate text-xs">{proposal.meetup_name}</p>
         </div>
-        <span className="text-gray-dark text-sm">{transformCreatedDate(proposal.created_at)}</span>
+        <span className={`inline-flex shrink-0 items-center gap-[0.4rem] rounded-full px-[0.8rem] py-[0.35rem] text-xs font-semibold ${status.className}`}>
+          <StatusIcon className="h-[1.3rem] w-[1.3rem] stroke-[2]" />
+          {status.label}
+        </span>
       </div>
-      <div className="flex w-full flex-row items-center justify-between gap-[1rem]">
-        <div className="break-all">{proposal.text}&nbsp;&nbsp;</div>
-        <div className="flex gap-[1rem] whitespace-nowrap text-white">
-          <button onClick={handleCancellationModalOpen} className="h-fil bg-warning rounded-[0.5rem] p-[0.5rem] text-sm font-bold">
-            취소
-          </button>
-          <button onClick={handleProposalHide} className="bg-gray-dark rounded-[0.5rem] p-[0.5rem] text-sm font-bold">
+
+      <p className="bg-muted text-foreground/90 mt-[1rem] rounded-[1.2rem] px-[1.2rem] py-[1rem] text-sm leading-relaxed break-keep">{proposal.text}</p>
+
+      <div className="mt-[1rem] flex items-center justify-between gap-[1rem]">
+        <span className="text-muted-foreground text-xs">{transformCreatedDate(proposal.created_at)}</span>
+        <div className="flex gap-[0.6rem] whitespace-nowrap">
+          {proposal.status === "pending" && (
+            <button
+              onClick={handleCancellationModalOpen}
+              className="text-destructive hover:bg-destructive/5 border-border rounded-full border px-[1rem] py-[0.55rem] text-xs font-semibold transition-colors"
+            >
+              취소
+            </button>
+          )}
+          <button
+            onClick={handleProposalHide}
+            className="border-border text-muted-foreground hover:bg-muted hover:text-foreground rounded-full border px-[1rem] py-[0.55rem] text-xs font-semibold transition-colors"
+          >
             숨기기
           </button>
         </div>

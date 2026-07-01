@@ -1,72 +1,89 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { LuInbox, LuMegaphone, LuSendHorizontal, LuUsers } from "react-icons/lu";
+import { useSelector } from "react-redux";
+import { useQuery } from "@tanstack/react-query";
+import { RootState } from "@/stores/store";
+import { getImageURL } from "@/utils/getImageURL";
+import { getMyAdsApi, getMyMeetupsApi } from "@/services/my.space.service";
+import { getSentProposal } from "@/services/proposal.service";
+
+const tabs = [
+  { href: "/my-space/my-meetup", label: "내 모임", icon: LuUsers, match: "my-meetup" },
+  { href: "/my-space/my-ad", label: "내 광고", icon: LuMegaphone, match: "my-ad" },
+  { href: "/my-space/received-proposal", label: "받은 신청", icon: LuInbox, match: "received-proposal" },
+  { href: "/my-space/sent-proposal", label: "보낸 신청", icon: LuSendHorizontal, match: "sent-proposal" },
+];
 
 const MySpaceLayout = ({ children }: { children: React.ReactNode }) => {
-  // --NOTE--
-  // 메인 탭 기본값이 myMeetup이어서 my-space/my-meetup으로 url 엔드 포인트 타이핑 해서 들어가도
-  // 내 광고가 아닌 내 모임이 기본으로 뜬다
-  // 그런데 유저가 내 공간(모임, 광고 모두 포함) 버튼 - 내 모임 - 내광고 순서로 접근하는 것 외에
-  // 기획상 내광고로 한 번에 접근할 경로는 아직 없으므로 그냥 둠
-
   const pathname = usePathname();
-  const getInitailTab = (path: string): "myMeetup" | "myAd" | "receivedProposals" | "sentProposals" => {
-    if (path.includes("my-space/my-ad")) return "myAd";
-    if (path.includes("my-space/received-proposal")) return "receivedProposals";
-    if (path.includes("my-space/sent-proposal")) return "sentProposals";
-    return "myMeetup";
-  };
+  const user = useSelector((state: RootState) => state.user.user);
 
-  const [activeMainTab, setActiveMainTab] = useState<"myMeetup" | "myAd" | "receivedProposals" | "sentProposals">(getInitailTab(pathname));
+  const { data: myMeetupsData } = useQuery({
+    queryKey: ["mySpaceSummary", "meetups"],
+    queryFn: () => getMyMeetupsApi("ongoing", 1, 1),
+    staleTime: 1000 * 60 * 5,
+  });
 
-  useEffect(() => {
-    setActiveMainTab(getInitailTab(pathname));
-  }, [pathname]);
+  const { data: myAdsData } = useQuery({
+    queryKey: ["mySpaceSummary", "ads"],
+    queryFn: () => getMyAdsApi("ongoing", 1, 1),
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const { data: sentProposalData } = useQuery({
+    queryKey: ["mySpaceSummary", "sentProposals"],
+    queryFn: () => getSentProposal(1),
+    staleTime: 1000 * 60 * 5,
+  });
+
   return (
-    <>
-      <div className="flex-col items-center justify-center">
-        <div className="mx-auto flex w-full min-w-[32rem] flex-col items-center justify-center">
-          <div className="justify-cente mx-auto w-[30.1rem] flex-col items-center text-center md:w-full md:max-w-[80rem]">
-            <h1 className="m-[3rem] text-3xl font-bold md:text-4xl">내 공간</h1>
-            <div className="mb-[2rem] flex justify-between md:mx-[3rem] md:grid md:max-w-[80rem] md:grid-cols-4">
-              <Link
-                className={`rounded-[0.5rem] px-[1rem] py-[0.5rem] text-base font-semibold md:text-xl ${activeMainTab === "myMeetup" ? "active bg-secondary-dark" : ""}`}
-                onClick={() => setActiveMainTab("myMeetup")}
-                href="/my-space/my-meetup"
-              >
-                내 모임
-              </Link>
-              <Link
-                className={`rounded-[0.5rem] px-[1rem] py-[0.5rem] text-base font-semibold md:text-xl ${activeMainTab === "myAd" ? "active bg-secondary-dark" : ""}`}
-                onClick={() => setActiveMainTab("myAd")}
-                href="/my-space/my-ad"
-              >
-                내 광고
-              </Link>
-              <Link
-                className={`rounded-[0.5rem] px-[1rem] py-[0.5rem] text-base font-semibold md:text-xl ${activeMainTab === "receivedProposals" ? "active bg-secondary-dark" : ""}`}
-                onClick={() => setActiveMainTab("receivedProposals")}
-                href="/my-space/received-proposal"
-              >
-                받은 신청서
-              </Link>
-              <Link
-                className={`rounded-[0.5rem] px-[1rem] py-[0.5rem] text-base font-semibold md:text-xl ${activeMainTab === "sentProposals" ? "active bg-secondary-dark" : ""}`}
-                onClick={() => setActiveMainTab("sentProposals")}
-                href="/my-space/sent-proposal"
-              >
-                보낸 신청서
-              </Link>
-            </div>
-          </div>
-          <div className="border-gray-medium flex w-full min-w-[32rem] flex-col border-t-[0.1rem]">
-            <div className="mx-auto w-[56%] md:max-w-[80rem]">{children}</div>
+    <div className="mx-auto w-[95%] max-w-[76rem] space-y-[2rem] py-[2.4rem] md:py-[3.2rem]">
+      <section className="border-border bg-card flex items-center gap-[1.4rem] rounded-[2rem] border p-[1.6rem] md:p-[2rem]">
+        <div className="relative h-[6.4rem] w-[6.4rem] shrink-0 overflow-hidden rounded-full md:h-[8rem] md:w-[8rem]">
+          <Image src={getImageURL(user.profileImage)} alt={user.nickname || "프로필"} fill sizes="8rem" className="object-cover" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <h1 className="text-foreground truncate text-xl font-bold md:text-2xl">{user.nickname || "내 공간"}</h1>
+          <p className="text-muted-foreground mt-[0.3rem] truncate text-sm">{user.bio || "내 모임과 신청서를 한곳에서 확인해요."}</p>
+          <div className="mt-[0.9rem] flex flex-wrap gap-x-[1.6rem] gap-y-[0.4rem] text-sm">
+            <span>
+              <b className="text-foreground font-bold">{myMeetupsData?.total ?? 0}</b> <span className="text-muted-foreground">모임</span>
+            </span>
+            <span>
+              <b className="text-foreground font-bold">{myAdsData?.total ?? 0}</b> <span className="text-muted-foreground">광고</span>
+            </span>
+            <span>
+              <b className="text-foreground font-bold">{sentProposalData?.total ?? 0}</b> <span className="text-muted-foreground">신청</span>
+            </span>
           </div>
         </div>
-      </div>
-    </>
+      </section>
+
+      <nav className="border-border bg-card grid grid-cols-2 gap-[0.4rem] rounded-[1.6rem] border p-[0.4rem] md:grid-cols-4" aria-label="내 공간 메뉴">
+        {tabs.map(({ href, label, icon: Icon, match }) => {
+          const isActive = pathname.includes(match);
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={`flex min-h-[4rem] items-center justify-center gap-[0.6rem] rounded-[1.2rem] px-[0.8rem] text-sm font-semibold transition-colors ${
+                isActive ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
+            >
+              <Icon className="h-[1.6rem] w-[1.6rem] stroke-[1.9]" />
+              {label}
+            </Link>
+          );
+        })}
+      </nav>
+
+      <section>{children}</section>
+    </div>
   );
 };
 

@@ -1,72 +1,64 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { BASE_URL } from "@/constants/baseURL";
 import LikeContainer from "../likes/LikeContainer";
 import { Meetup } from "@/types/meetupType";
 import Link from "next/link";
 import Image from "next/image";
 import { FaLock } from "react-icons/fa";
 import { FaRegCalendarAlt } from "react-icons/fa";
-import { FaCrown } from "react-icons/fa6";
+import { FaMapMarkerAlt } from "react-icons/fa";
+import { FaRegCommentDots } from "react-icons/fa";
+import { LuCrown } from "react-icons/lu";
+import CategoryBadge from "../common/CategoryBadge";
+import { getDday } from "@/utils/getDday";
+import { getImageURL } from "@/utils/getImageURL";
+
+type ThumbnailHighlight = {
+  range: string;
+  keyword: string;
+};
 
 // id 였는데 썸네일 객체를 직접 전달하도록 수정
 // 구조분해할당, 타입지정
-const ThumbnailItem = ({ thumbnail, userNickname, priority }: { thumbnail: Meetup; userNickname: string | null; priority: boolean }) => {
-  const [profileImageSource, setProfileImageSource] = useState("/profile.png");
-  const thumbnailImageUrl = thumbnail.image?.startsWith("http") ? thumbnail.image : `${BASE_URL}/${thumbnail.image}`;
+const ThumbnailItem = ({ thumbnail, userNickname, priority, highlight }: { thumbnail: Meetup; userNickname: string | null; priority: boolean; highlight?: ThumbnailHighlight }) => {
+  const [profileImageSource, setProfileImageSource] = useState(getImageURL(thumbnail.organizer.image ?? null));
 
   useEffect(() => {
-    // 직접 fetch로 테스트
-    fetch(thumbnailImageUrl)
-      .then(() => {})
-      .catch(error => {
-        console.error("===이미지 fetch 에러:", error);
-      });
-  }, [thumbnailImageUrl]);
-
-  useEffect(() => {
-    // 프로필 이미지가 없으면 기본 이미지 사용
-    if (!thumbnail?.organizer.image) {
-      setProfileImageSource("/profile.png");
-      return;
-    }
-
-    // 메인 작성자 프사 이미지
-    const profileImageUrl = thumbnail.organizer.image?.startsWith("http") ? thumbnail.organizer.image : `${BASE_URL}/${thumbnail.organizer.image}`;
-
-    // HTMLImageElement를 사용하여 이미지 존재 여부 확인
-    const imgElement = document.createElement("img");
-
-    imgElement.onload = () => {
-      setProfileImageSource(profileImageUrl);
-    };
-
-    imgElement.onerror = () => {
-      console.error("이미지로딩 실패", profileImageUrl);
-      setProfileImageSource("/profile.png");
-    };
-
-    // 이미지 로드 시작
-    imgElement.src = profileImageUrl;
-
-    // 컴포넌트 언마운트 시 정리
-    return () => {
-      imgElement.onload = null;
-      imgElement.onerror = null;
-    };
+    setProfileImageSource(getImageURL(thumbnail.organizer.image ?? null));
   }, [thumbnail?.organizer.image]);
 
   if (!thumbnail) return null;
 
   const isOwner = userNickname === thumbnail.organizer.nickname;
+  const canOpen = thumbnail.isPublic || isOwner;
+  const adDday = thumbnail.adEndedAt ? getDday(thumbnail.adEndedAt) : null;
+  const isUrgent = adDday === "D-DAY" || /^D-[0-3]$/.test(adDday ?? "");
+  const highlightKeyword = highlight?.keyword.trim() ?? "";
+  const shouldHighlightTitle = highlight?.range === "ad_title" && highlightKeyword.length > 0;
+  const shouldHighlightOrganizer = highlight?.range === "organizer" && highlightKeyword.length > 0;
+  const shouldHighlightDescription = highlight?.range === "description" && highlightKeyword.length > 0;
 
-  // 왕관(방장) 뱃지
-  const crownBadge = isOwner && (
-    <div className="bg-primary text-primary-foreground absolute top-3 left-3 z-10 flex h-[2.2rem] w-[2.2rem] place-content-center items-center rounded-full text-[1.4rem] shadow-sm">
-      <FaCrown />
-    </div>
-  );
+  const highlightText = (text: string) => {
+    if (!highlightKeyword) return text;
+
+    const escapedKeyword = highlightKeyword.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
+    const regex = new RegExp(`(${escapedKeyword})`, "gi");
+
+    return text.split(regex).map((part, index) =>
+      part.toLocaleLowerCase() === highlightKeyword.toLocaleLowerCase() ? (
+        <mark key={`${part}-${index}`} className="bg-accent/70 rounded-[0.2rem] px-[0.1rem] font-bold text-inherit">
+          {part}
+        </mark>
+      ) : (
+        <span key={`${part}-${index}`}>{part}</span>
+      ),
+    );
+  };
+
+  const renderTitle = () => (shouldHighlightTitle ? highlightText(thumbnail.adTitle) : <>{thumbnail.adTitle}</>);
+  const renderDescription = () => (shouldHighlightDescription ? highlightText(thumbnail.description) : <>{thumbnail.description}</>);
+  const renderOrganizer = () => (shouldHighlightOrganizer ? highlightText(thumbnail.organizer.nickname) : <>{thumbnail.organizer.nickname}</>);
 
   // 카드 이미지 영역 (공개/비공개 분기)
   const renderImageArea = () => {
@@ -76,21 +68,23 @@ const ThumbnailItem = ({ thumbnail, userNickname, priority }: { thumbnail: Meetu
           <Image
             loading={priority ? undefined : "lazy"}
             unoptimized={false}
-            src={thumbnailImageUrl}
-            alt="thumbnailImage"
+            src={getImageURL(thumbnail.image)}
+            alt={thumbnail.adTitle}
             fill
-            sizes="(max-width: 768px) 50vw, 200px"
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            sizes="(max-width: 768px) 47vw, 32rem"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
-          {crownBadge}
         </Link>
       );
     }
 
     // 비공개: 방장이면 링크 유지, 아니면 잠금 박스만
     const lockBox = (
-      <div className="bg-muted flex h-full w-full items-center justify-center">
-        <FaLock className="text-muted-foreground h-[4rem] w-[4rem]" />
+      <div className="bg-muted flex h-full w-full flex-col items-center justify-center gap-[0.7rem]">
+        <span className="bg-card text-muted-foreground grid h-[4.2rem] w-[4.2rem] place-items-center rounded-full shadow-sm">
+          <FaLock className="h-[1.8rem] w-[1.8rem]" />
+        </span>
+        <span className="text-muted-foreground text-xs font-medium">{thumbnail.isPublic ? "이미지 준비 중" : "비공개 모임"}</span>
       </div>
     );
 
@@ -98,7 +92,6 @@ const ThumbnailItem = ({ thumbnail, userNickname, priority }: { thumbnail: Meetu
       return (
         <Link href={`/ad/${thumbnail.id}`} className="relative block h-full w-full">
           {lockBox}
-          {crownBadge}
         </Link>
       );
     }
@@ -107,23 +100,55 @@ const ThumbnailItem = ({ thumbnail, userNickname, priority }: { thumbnail: Meetu
   };
 
   return (
-    <article className="group bg-card border-border hover:border-primary/30 flex flex-col overflow-hidden rounded-[1.6rem] border transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(22,21,15,0.35)]">
+    <article className="group bg-card border-border hover:border-primary/30 flex h-full flex-col overflow-hidden rounded-[1.6rem] border transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(22,21,15,0.35)]">
       {/* 이미지 영역 */}
-      <div className="bg-muted relative aspect-square w-full overflow-hidden">
+      <div className="bg-muted relative aspect-[4/3] w-full overflow-hidden">
         {renderImageArea()}
-        {/* 모집 마감일 pill */}
-        {thumbnail.adEndedAt && (
-          <span className="bg-background/90 text-foreground absolute top-3 right-3 z-10 rounded-full px-[0.7rem] py-[0.2rem] text-xs font-medium backdrop-blur">
-            ~{thumbnail.adEndedAt.substring(5, 10)}
+
+        <div className="pointer-events-none absolute top-3 left-3 z-10 flex max-w-[calc(100%-7rem)] flex-wrap items-center gap-[0.4rem]">
+          {thumbnail.category && <CategoryBadge category={thumbnail.category} variant="solid" className="shadow-sm" />}
+          {isOwner && (
+            <span className="bg-card/85 text-primary inline-flex h-[2.2rem] w-[2.2rem] place-content-center items-center rounded-full shadow-sm backdrop-blur">
+              <LuCrown className="fill-primary/20 h-[1.4rem] w-[1.4rem] stroke-[2]" />
+            </span>
+          )}
+          {!thumbnail.isPublic && (
+            <span className="bg-foreground/80 text-background inline-flex items-center gap-[0.3rem] rounded-full px-[0.7rem] py-[0.2rem] text-xs font-semibold backdrop-blur">
+              <FaLock className="shrink-0" />
+              비공개
+            </span>
+          )}
+        </div>
+
+        {adDday && (
+          <span
+            className={`absolute top-3 right-3 z-10 rounded-full px-[0.7rem] py-[0.2rem] font-mono text-xs font-semibold backdrop-blur ${isUrgent ? "bg-destructive text-destructive-foreground" : "bg-background/90 text-foreground"}`}
+          >
+            {adDday}
+          </span>
+        )}
+
+        {thumbnail.place && (
+          <span className="bg-foreground/80 text-background absolute bottom-3 left-3 z-10 inline-flex items-center gap-[0.3rem] rounded-full px-[0.7rem] py-[0.3rem] text-xs font-medium backdrop-blur">
+            <FaMapMarkerAlt className="shrink-0" />
+            {thumbnail.place}
           </span>
         )}
       </div>
 
       {/* 콘텐츠 영역 */}
-      <div className="flex flex-1 flex-col gap-[0.6rem] p-[1.1rem]">
-        <h3 className="line-clamp-2 text-sm leading-snug font-semibold break-words">
-          <span className="text-primary whitespace-nowrap">[{thumbnail.place}]</span> {thumbnail.adTitle}
+      <div className="flex flex-1 flex-col gap-[0.8rem] p-[1.3rem]">
+        <h3 className="line-clamp-2 min-h-[3.2rem] text-sm leading-snug font-semibold break-words md:text-base">
+          {canOpen ? (
+            <Link href={`/ad/${thumbnail.id}`} className="hover:text-primary transition-colors">
+              {renderTitle()}
+            </Link>
+          ) : (
+            renderTitle()
+          )}
         </h3>
+
+        {thumbnail.description && <p className="text-muted-foreground line-clamp-2 text-xs leading-relaxed break-keep">{renderDescription()}</p>}
 
         <div className="text-muted-foreground flex items-center gap-[0.4rem] text-xs">
           <FaRegCalendarAlt className="shrink-0" />
@@ -133,15 +158,19 @@ const ThumbnailItem = ({ thumbnail, userNickname, priority }: { thumbnail: Meetu
         </div>
 
         {/* 작성자 & 좋아요 */}
-        <div className="border-border mt-auto flex items-center justify-between border-t pt-[0.7rem]">
+        <div className="border-border mt-auto flex items-center justify-between gap-[1rem] border-t pt-[0.8rem]">
           <div className="flex min-w-0 items-center gap-[0.4rem]">
             <div className="relative h-[2rem] w-[2rem] flex-shrink-0">
-              <Image unoptimized={false} src={profileImageSource} fill alt="작성자 프로필 이미지" className="rounded-full object-cover" />
+              <Image unoptimized={false} src={profileImageSource} fill alt="작성자 프로필 이미지" className="rounded-full object-cover" onError={() => setProfileImageSource("/profile.png")} />
             </div>
-            <div className="text-muted-foreground truncate text-sm">{thumbnail.organizer.nickname}</div>
+            <div className="text-muted-foreground truncate text-sm">{renderOrganizer()}</div>
           </div>
 
-          <div className="pointer-events-auto flex-shrink-0">
+          <div className="pointer-events-auto flex flex-shrink-0 items-center gap-[0.7rem]">
+            <span className="text-muted-foreground inline-flex items-center gap-[0.3rem] text-[1.3rem]">
+              <FaRegCommentDots className="h-[1.4rem] w-[1.4rem]" />
+              {thumbnail.commentCount}
+            </span>
             <LikeContainer id={thumbnail.id} initialIsLike={thumbnail.isLike} initialLikeCount={thumbnail.likeCount} />
           </div>
         </div>

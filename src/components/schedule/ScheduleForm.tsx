@@ -1,18 +1,17 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import type { Address } from "react-daum-postcode";
-import { FaSearch } from "react-icons/fa";
-
+import SubmitLoader from "@/components/common/SubmitLoader";
 import MemberSelector from "@/components/schedule/MemberSelector";
-import ScheduleNumber from "./ScheduleNumber";
-import { useCreateSchedule, useScheduleDetail, useUpdateSchedule } from "@/hooks/useSchedule";
 import { useImageUpload } from "@/hooks/useImageUpload";
-import { useScheduleForm } from "@/hooks/useScheduleForm";
 import { useModal } from "@/hooks/useModal";
-import SubmitLoader from "../common/SubmitLoader";
+import { useCreateSchedule, useScheduleDetail, useUpdateSchedule } from "@/hooks/useSchedule";
+import { useScheduleForm } from "@/hooks/useScheduleForm";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import React, { useCallback, useEffect, useState } from "react";
+import type { Address } from "react-daum-postcode";
+import { IconType } from "react-icons";
+import { LuArrowLeft, LuCalendarDays, LuClock3, LuImagePlus, LuMapPin, LuSearch, LuStickyNote, LuUsersRound, LuX } from "react-icons/lu";
 import { toast } from "sonner";
 
 interface ScheduleFormProps {
@@ -21,8 +20,12 @@ interface ScheduleFormProps {
   scheduleId?: number;
 }
 
+const inputClassName =
+  "border-border bg-card text-foreground placeholder:text-muted-foreground/70 focus:border-primary focus:ring-primary/15 h-[4.4rem] w-full rounded-[1.3rem] border px-[1.2rem] text-sm outline-none transition focus:ring-[0.3rem] disabled:bg-muted disabled:text-muted-foreground";
+
 const useKakaoMapSDK = () => {
   const [isLoaded, setIsLoaded] = useState(false);
+
   useEffect(() => {
     const loadKakaoSDK = () => {
       if (window.kakao?.maps?.services) {
@@ -35,10 +38,12 @@ const useKakaoMapSDK = () => {
         document.head.appendChild(script);
       }
     };
+
     if (typeof window !== "undefined") {
       loadKakaoSDK();
     }
   }, []);
+
   return isLoaded;
 };
 
@@ -48,15 +53,19 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
   const { openModal } = useModal();
 
   const { data: scheduleData, isPending: isLoadingSchedule } = useScheduleDetail(mode === "edit" ? scheduleId : undefined, { enabled: mode === "edit" && !!scheduleId });
-
   const { formData, imagePreview, handleChange, handleMemberSelect, handleImageSelect, handleImageRemove, setAddress } = useScheduleForm(mode, scheduleData);
+
+  const imageUploadMutation = useImageUpload();
+  const createMutation = useCreateSchedule(meetupId);
+  const updateMutation = useUpdateSchedule(scheduleId || 0);
 
   const handleCompletePostcode = useCallback(
     (data: Address) => {
       if (!isKakaoMapLoaded || !window.kakao?.maps?.services) {
-        toast.success("지도 서비스가 아직 로딩 중입니다. 잠시 후 다시 시도해주세요.");
+        toast.message("지도 서비스가 아직 로딩 중입니다. 잠시 후 다시 시도해주세요.");
         return;
       }
+
       const geocoder = new window.kakao.maps.services.Geocoder();
       geocoder.addressSearch(data.address, (result, status) => {
         if (status === window.kakao.maps.services.Status.OK && result?.[0]) {
@@ -71,12 +80,7 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
 
   const handleAddressSearch = useCallback(() => {
     openModal("POSTCODE", { onCompletePostcode: handleCompletePostcode });
-  }, [openModal, handleCompletePostcode]);
-
-  // ... (handleSubmit 등 나머지 코드는 이전과 동일)
-  const imageUploadMutation = useImageUpload();
-  const createMutation = useCreateSchedule(meetupId);
-  const updateMutation = useUpdateSchedule(scheduleId || 0);
+  }, [handleCompletePostcode, openModal]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -122,7 +126,11 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
   };
 
   if (mode === "edit" && isLoadingSchedule) {
-    return <div className="p-4 text-center">데이터를 불러오는 중...</div>;
+    return (
+      <div className="mx-auto w-[95%] max-w-[72rem] py-[4rem]">
+        <div className="bg-muted h-[24rem] animate-pulse rounded-[2rem]" />
+      </div>
+    );
   }
 
   const isSubmitting = createMutation.isPending || updateMutation.isPending || imageUploadMutation.isPending;
@@ -130,140 +138,158 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
   return (
     <>
       {isSubmitting && <SubmitLoader isLoading={isSubmitting} />}
+      <div className="mx-auto w-[95%] max-w-[100rem] space-y-[2rem] py-[2.4rem] pb-[8rem] md:py-[3.2rem] md:pb-[5rem]">
+        <button type="button" onClick={() => router.back()} className="text-muted-foreground hover:text-foreground inline-flex items-center gap-[0.5rem] text-sm font-semibold transition-colors">
+          <LuArrowLeft className="h-[1.5rem] w-[1.5rem] stroke-[1.9]" />
+          뒤로
+        </button>
 
-      <div className="p-4 md:p-8">
-        <form onSubmit={handleSubmit} className="mx-auto max-w-4xl">
-          <div className="mb-6 flex justify-center">
-            <ScheduleNumber number={1} />
-          </div>
+        <div>
+          <h1 className="text-foreground text-2xl font-bold md:text-3xl">{mode === "create" ? "새 일정 만들기" : "일정 수정하기"}</h1>
+          <p className="text-muted-foreground mt-[0.4rem] text-sm">멤버들이 모일 장소와 시간을 등록해요.</p>
+        </div>
 
-          <div className="md:grid md:grid-cols-2 md:gap-12">
-            <div className="space-y-6">
-              <div>
-                <label htmlFor="place" className="mb-2 block text-base font-bold">
-                  모임 장소
-                </label>
-                <input
-                  type="text"
-                  id="place"
-                  name="place"
-                  value={formData.place}
-                  onChange={handleChange}
-                  required
-                  placeholder="모임 장소명을 입력하세요"
-                  className="focus:border-primary focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-1 focus:outline-none"
-                />
-              </div>
+        <form onSubmit={handleSubmit} className="grid gap-[2rem] lg:grid-cols-[minmax(0,1fr)_34rem] lg:items-start">
+          <div className="space-y-[1.4rem]">
+            <section className="border-border bg-card rounded-[2rem] border p-[1.6rem] md:p-[2rem]">
+              <SectionTitle icon={LuMapPin} title="장소" description="주소 검색으로 지도 좌표까지 함께 저장해요." />
 
-              <div>
-                <label htmlFor="address" className="mb-2 block text-base font-bold">
-                  주소
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    id="address"
-                    name="address"
-                    value={formData.address}
-                    readOnly
-                    placeholder="클릭하여 우편 입력 창 열기"
-                    onClick={handleAddressSearch}
-                    className="focus:border-primary focus:ring-primary flex-1 cursor-pointer rounded-md border border-gray-300 bg-gray-50 px-3 py-2 focus:ring-1 focus:outline-none"
-                  />
-                  <button type="button" onClick={handleAddressSearch} className="bg-primary hover:bg-opacity-80 rounded-md p-3 text-white transition-colors">
-                    <FaSearch />
-                  </button>
-                </div>
-              </div>
+              <div className="space-y-[1.4rem]">
+                <FieldLabel label="장소명">
+                  <input type="text" id="place" name="place" value={formData.place} onChange={handleChange} required placeholder="예) 뚝섬한강공원" className={inputClassName} />
+                </FieldLabel>
 
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <label htmlFor="date" className="mb-2 block text-base font-bold">
-                    날짜
-                  </label>
-                  <input
-                    type="date"
-                    id="date"
-                    name="date"
-                    value={formData.date}
-                    onChange={handleChange}
-                    required
-                    className="focus:border-primary focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-1 focus:outline-none"
-                  />
-                </div>
-                <div className="flex-1">
-                  <label htmlFor="time" className="mb-2 block text-base font-bold">
-                    시간
-                  </label>
-                  <input
-                    type="time"
-                    id="time"
-                    name="time"
-                    value={formData.time}
-                    onChange={handleChange}
-                    required
-                    className="focus:border-primary focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-1 focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label htmlFor="memo" className="mb-2 block text-base font-bold">
-                  메모 ✍️
-                </label>
-                <textarea
-                  id="memo"
-                  name="memo"
-                  value={formData.memo}
-                  onChange={handleChange}
-                  rows={5}
-                  placeholder="스케줄에 대한 추가 정보를 입력하세요"
-                  className="bg-secondary-light focus:border-primary focus:ring-primary w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-1 focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-base font-bold">이미지 업로드</label>
-                <input type="file" id="image-upload" accept="image/*" onChange={handleImageSelect} className="hidden" />
-                <div className="relative">
-                  <label
-                    htmlFor="image-upload"
-                    className="flex h-48 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-4 transition-colors hover:border-gray-400"
-                  >
-                    {imagePreview ? (
-                      <Image unoptimized={true} src={imagePreview} alt="미리보기" fill style={{ objectFit: "cover" }} className="rounded-lg" />
-                    ) : (
-                      <div className="text-center text-gray-500">클릭하여 이미지 선택</div>
-                    )}
-                  </label>
-                  {imagePreview && (
-                    <button type="button" onClick={handleImageRemove} className="absolute top-2 right-2 rounded-full bg-red-500 px-2 py-1 text-sm text-white hover:bg-red-600">
-                      ✕
+                <FieldLabel label="주소">
+                  <div className="flex gap-[0.8rem]">
+                    <input
+                      type="text"
+                      id="address"
+                      name="address"
+                      value={formData.address}
+                      readOnly
+                      placeholder="주소를 검색해주세요"
+                      onClick={handleAddressSearch}
+                      className={`${inputClassName} cursor-pointer`}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddressSearch}
+                      className="bg-foreground text-background grid h-[4.4rem] w-[4.8rem] shrink-0 place-items-center rounded-[1.3rem] transition hover:opacity-90"
+                    >
+                      <LuSearch className="h-[1.8rem] w-[1.8rem] stroke-[2]" />
                     </button>
-                  )}
+                  </div>
+                </FieldLabel>
+              </div>
+            </section>
+
+            <section className="border-border bg-card rounded-[2rem] border p-[1.6rem] md:p-[2rem]">
+              <SectionTitle icon={LuCalendarDays} title="일시와 메모" description="언제 만나는지, 무엇을 준비하면 좋은지 알려주세요." />
+
+              <div className="grid gap-[1.4rem] md:grid-cols-2">
+                <FieldLabel label="날짜">
+                  <input type="date" id="date" name="date" value={formData.date} onChange={handleChange} required className={inputClassName} />
+                </FieldLabel>
+                <FieldLabel label="시간">
+                  <div className="relative">
+                    <LuClock3 className="text-muted-foreground pointer-events-none absolute top-1/2 right-[1.2rem] h-[1.7rem] w-[1.7rem] -translate-y-1/2 stroke-[1.9]" />
+                    <input type="time" id="time" name="time" value={formData.time} onChange={handleChange} required className={`${inputClassName} pr-[3.8rem]`} />
+                  </div>
+                </FieldLabel>
+              </div>
+
+              <FieldLabel label="메모">
+                <div className="relative">
+                  <LuStickyNote className="text-muted-foreground pointer-events-none absolute top-[1.2rem] right-[1.2rem] h-[1.8rem] w-[1.8rem] stroke-[1.9]" />
+                  <textarea
+                    id="memo"
+                    name="memo"
+                    value={formData.memo}
+                    onChange={handleChange}
+                    rows={6}
+                    placeholder="준비물, 만나는 위치, 진행 방식 등을 적어주세요."
+                    className={`${inputClassName} mt-[1.4rem] h-[15rem] resize-none py-[1rem] pr-[4rem]`}
+                  />
                 </div>
-              </div>
-            </div>
-            <div className="mt-6 space-y-6 md:mt-0">
-              <div>
-                <label className="mb-2 block text-base font-bold">참석자 등록하기</label>
-                <MemberSelector meetupId={meetupId} selectedMember={formData.participant} onMemberSelect={handleMemberSelect} />
-              </div>
-            </div>
+              </FieldLabel>
+            </section>
+
+            <section className="border-border bg-card rounded-[2rem] border p-[1.6rem] md:p-[2rem]">
+              <SectionTitle icon={LuImagePlus} title="사진" description="장소나 분위기를 보여줄 사진을 추가할 수 있어요." />
+
+              <input type="file" id="image-upload" accept="image/*" onChange={handleImageSelect} className="hidden" />
+              <label
+                htmlFor="image-upload"
+                className="border-border bg-muted/60 group hover:border-primary/45 relative flex h-[21rem] cursor-pointer items-center justify-center overflow-hidden rounded-[1.6rem] border border-dashed transition-colors"
+              >
+                {imagePreview ? (
+                  <Image
+                    unoptimized
+                    src={imagePreview}
+                    alt="일정 이미지 미리보기"
+                    fill
+                    sizes="(min-width: 1024px) 66rem, 95vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                  />
+                ) : (
+                  <div className="text-muted-foreground flex flex-col items-center gap-[0.7rem] text-sm font-semibold">
+                    <span className="bg-card text-primary grid h-[4.6rem] w-[4.6rem] place-items-center rounded-full shadow-sm">
+                      <LuImagePlus className="h-[2.2rem] w-[2.2rem] stroke-[1.9]" />
+                    </span>
+                    일정 사진 추가하기
+                  </div>
+                )}
+              </label>
+              {imagePreview && (
+                <button
+                  type="button"
+                  onClick={handleImageRemove}
+                  className="text-destructive hover:bg-destructive/5 mt-[0.9rem] inline-flex h-[3.4rem] items-center gap-[0.5rem] rounded-full px-[1rem] text-xs font-bold transition-colors"
+                >
+                  <LuX className="h-[1.5rem] w-[1.5rem] stroke-[2]" />
+                  사진 제거
+                </button>
+              )}
+            </section>
           </div>
-          <div className="mt-10">
+
+          <aside className="space-y-[1.4rem] lg:sticky lg:top-[8.4rem]">
+            <section className="border-border bg-card rounded-[2rem] border p-[1.6rem]">
+              <SectionTitle icon={LuUsersRound} title="참석자" description="이 일정에 함께할 멤버를 선택하세요." compact />
+              <MemberSelector meetupId={meetupId} selectedMember={formData.participant} onMemberSelect={handleMemberSelect} />
+            </section>
+
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-primary hover:bg-opacity-80 focus:ring-primary w-full rounded-md px-4 py-3 text-lg font-bold text-white transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+              className="bg-primary text-primary-foreground flex h-[4.8rem] w-full items-center justify-center rounded-[1.5rem] text-sm font-bold transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-55"
             >
-              {isSubmitting ? "처리 중..." : mode === "create" ? "스케줄 등록" : "스케줄 수정"}
+              {isSubmitting ? "처리 중..." : mode === "create" ? "일정 만들기" : "일정 수정하기"}
             </button>
-          </div>
+          </aside>
         </form>
       </div>
     </>
   );
 };
+
+const SectionTitle = ({ icon: Icon, title, description, compact = false }: { icon: IconType; title: string; description: string; compact?: boolean }) => (
+  <div className={`${compact ? "mb-[1rem]" : "mb-[1.4rem]"} flex items-center gap-[0.8rem]`}>
+    <span className="bg-primary-soft text-primary grid h-[3.8rem] w-[3.8rem] place-items-center rounded-[1.2rem]">
+      <Icon className="h-[1.9rem] w-[1.9rem] stroke-[1.9]" />
+    </span>
+    <div>
+      <h2 className="text-foreground text-lg font-bold">{title}</h2>
+      <p className="text-muted-foreground mt-[0.2rem] text-xs">{description}</p>
+    </div>
+  </div>
+);
+
+const FieldLabel = ({ label, children }: { label: string; children: React.ReactNode }) => (
+  <div>
+    <label className="text-foreground mb-[0.7rem] block text-sm font-bold">{label}</label>
+    {children}
+  </div>
+);
 
 export default ScheduleForm;

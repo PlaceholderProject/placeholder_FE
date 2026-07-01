@@ -23,8 +23,8 @@ const LikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerPro
   // 여기서 oldData가 있으려면 부모와 같은 ㅝ리키를 사용하고 업뎃하고 무효화하고 해야되는데
   // 부모 쿼리키가 동적으로 생성되는거지..?
 
-  const baseQueryKey = ["headhuntings", sortType];
   const getQueryKey = () => {
+    const baseQueryKey = ["headhuntings", sortType];
     if (isFilterActive) {
       if (place) {
         baseQueryKey.push("place", place);

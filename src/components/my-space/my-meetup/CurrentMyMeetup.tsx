@@ -142,15 +142,25 @@ const CurrentMyMeetup = () => {
 
   if (isPending) return <Spinner isLoading={isPending} />;
   if (isError) return <div>에러 : {error.message}</div>;
-  if (!myMeetupsData || myMeetupsData.result.length === 0) return <p className="mt-[6rem] flex justify-center">현재 내 모임이 없습니다.</p>;
+  if (!myMeetupsData || myMeetupsData.result.length === 0) {
+    return (
+      <div className="border-border bg-card flex min-h-[16rem] items-center justify-center rounded-[2rem] border text-center">
+        <p className="text-muted-foreground text-sm">현재 내 모임이 없습니다.</p>
+      </div>
+    );
+  }
 
   return (
-    <>
+    <div className="space-y-[0.8rem]">
       {myMeetupsData.result.map(myMeetup => (
         <MySpaceListItem key={myMeetup.id} isOngoing={true}>
-          <Link href={`/meetup/${myMeetup.id}`} className="flex items-center">
+          <Link href={`/meetup/${myMeetup.id}`} className="flex min-w-0 flex-1 items-center gap-[1rem]">
             <RoleIcon isOrganizer={myMeetup.is_organizer} />
-            <div className="max-w-[20rem] truncate md:max-w-[40rem]">{myMeetup.name}</div>
+            <div className="min-w-0 flex-1">
+              <p className="text-muted-foreground text-xs">{myMeetup.is_organizer ? "내가 만든 모임" : "참여 중인 모임"}</p>
+              <p className="text-foreground mt-[0.2rem] truncate font-semibold">{myMeetup.name}</p>
+              <p className="text-muted-foreground mt-[0.2rem] text-xs">멤버 {myMeetup.total}명</p>
+            </div>
           </Link>
           <MemberOutContainer meetupId={myMeetup.id} isOrganizer={myMeetup.is_organizer} onSelfLeave={handleSelfLeave} isPending={deleteMutation.isPending} />
         </MySpaceListItem>
@@ -167,7 +177,7 @@ const CurrentMyMeetup = () => {
         onNextGroupButtonClick={handleNextGroupButtonClick}
       />
       {/* <MemberDeleteModal onKickMember={handleKickMember} isPending={deleteMutation.isPending} /> */}
-    </>
+    </div>
   );
 };
 

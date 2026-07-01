@@ -1,10 +1,10 @@
-import { BASE_URL } from "@/constants/baseURL";
 import { useAcceptProposal, useRefuseProposal } from "@/hooks/useProposal";
 import { ReceivedProposal } from "@/types/proposalType";
 import { transformCreatedDate } from "@/utils/ReplyDateFormat";
+import { getImageURL } from "@/utils/getImageURL";
 import Image from "next/image";
 import React from "react";
-import { FaUserCheck, FaUserTimes } from "react-icons/fa";
+import { LuCheck, LuX } from "react-icons/lu";
 import { toast } from "sonner";
 
 const ReceivedProposalItem = ({ proposal }: { proposal: ReceivedProposal }) => {
@@ -22,28 +22,35 @@ const ReceivedProposalItem = ({ proposal }: { proposal: ReceivedProposal }) => {
   };
 
   return (
-    <div className="bg-secondary-light flex flex-row justify-between gap-[1rem] rounded-[1rem] p-[1.5rem] shadow-md">
-      <div className="w-full">
-        <div className="flex flex-row items-center gap-[1rem]">
-          <div className="relative h-[2rem] w-[2rem] overflow-hidden rounded-full">
-            <Image
-              src={proposal.user.image ? (proposal.user.image.startsWith("http") ? proposal.user.image : `${BASE_URL}/${proposal.user.image}`) : "/profile.png"}
-              alt="프로필 이미지"
-              fill
-              className="object-cover"
-            />
-          </div>
-          <span>{proposal.user.nickname}</span>
-          <span className="text-gray-dark text-sm">{transformCreatedDate(proposal.createdAt)}</span>
+    <div className="border-border bg-card rounded-[1.6rem] border p-[1.4rem]">
+      <div className="flex items-start gap-[1rem]">
+        <div className="relative h-[4rem] w-[4rem] shrink-0 overflow-hidden rounded-full">
+          <Image src={getImageURL(proposal.user.image)} alt={proposal.user.nickname} fill sizes="4rem" className="object-cover" />
         </div>
-        <p className="pt-[0.5rem]">{proposal.text}</p>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-[0.6rem]">
+            <span className="text-foreground font-semibold">{proposal.user.nickname}</span>
+            <span className="text-muted-foreground text-xs">{transformCreatedDate(proposal.createdAt)}</span>
+          </div>
+          <p className="bg-muted text-foreground/90 mt-[1rem] rounded-[1.2rem] px-[1.2rem] py-[1rem] text-sm leading-relaxed break-keep">{proposal.text}</p>
+        </div>
       </div>
-      <div className="flex flex-row items-center gap-3">
-        <button onClick={handleProposalAccept} disabled={acceptProposal.isPending || refuseProposal.isPending} className="text-[2.5rem] text-[#028AB3]">
-          <FaUserCheck />
+      <div className="mt-[1rem] grid grid-cols-2 gap-[0.8rem]">
+        <button
+          onClick={handleProposalAccept}
+          disabled={acceptProposal.isPending || refuseProposal.isPending}
+          className="bg-primary text-primary-foreground flex h-[3.8rem] items-center justify-center gap-[0.5rem] rounded-[1.2rem] text-sm font-semibold transition hover:opacity-90 disabled:opacity-55"
+        >
+          <LuCheck className="h-[1.5rem] w-[1.5rem] stroke-[2]" />
+          수락
         </button>
-        <button onClick={handleProposalRefuse} disabled={acceptProposal.isPending || refuseProposal.isPending} className="text-warning text-[2.5rem]">
-          <FaUserTimes />
+        <button
+          onClick={handleProposalRefuse}
+          disabled={acceptProposal.isPending || refuseProposal.isPending}
+          className="bg-muted text-muted-foreground hover:text-foreground flex h-[3.8rem] items-center justify-center gap-[0.5rem] rounded-[1.2rem] text-sm font-semibold transition disabled:opacity-55"
+        >
+          <LuX className="h-[1.5rem] w-[1.5rem] stroke-[2]" />
+          거절
         </button>
       </div>
     </div>

@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import Header from "@/components/common/Header";
-import NavigationBar from "@/components/common/NavigationBar";
 import ReduxProvider from "@/stores/ReduxProvider";
 import QueryProvider from "./(providers)/_providers/QueryProvider";
-import ModalContainer from "@/components/modals/ModalContainer";
-import { Toaster } from "sonner";
+import AppShell from "@/components/common/AppShell";
 
 export const metadata: Metadata = {
   title: "Placeholder - 모두의 모임 플랫폼",
@@ -61,11 +58,7 @@ export default function RootLayout({
       <body className={pretendard.className}>
         <ReduxProvider>
           <QueryProvider>
-            <Header />
-            <main className="pt-[6rem] pb-[6rem] md:pt-[7.5rem] md:pb-[0rem]">{children}</main>
-            <ModalContainer />
-            <NavigationBar />
-            <Toaster position="top-center" />
+            <AppShell>{children}</AppShell>
           </QueryProvider>
         </ReduxProvider>
       </body>

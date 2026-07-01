@@ -13,6 +13,20 @@ const nextConfig: NextConfig = {
         port: "8000",
         pathname: "/media/profile_images/**",
       },
+      // 목업 데이터용 임시 이미지 (picsum.photos)
+      {
+        protocol: "https",
+        hostname: "picsum.photos",
+      },
+      {
+        protocol: "https",
+        hostname: "fastly.picsum.photos",
+      },
+      // 리디자인 목업용 임시 이미지 (Unsplash)
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
       // 프로덕션 환경을 위한 도메인도 추가하는 것이 좋습니다
       {
         protocol: "https",

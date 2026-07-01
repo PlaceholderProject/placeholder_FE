@@ -2,14 +2,15 @@
 
 import { getMyMeetupMembersApi } from "@/services/my.space.service";
 import { useQuery } from "@tanstack/react-query";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import OutButton from "./OutButton";
 import { MyMeetupMember } from "@/types/myMeetupMemberType";
 import Image from "next/image";
 import { useMemberDelete } from "@/hooks/useMemberDelete";
-import { BASE_URL } from "@/constants/baseURL";
 import { showConfirmToast } from "@/components/common/ConfirmDialog";
 import { toast } from "sonner";
+import { getImageURL } from "@/utils/getImageURL";
+import { LuCrown, LuUserRound, LuUsersRound } from "react-icons/lu";
 
 interface MyMeetupMembersProps {
   meetupId: number;
@@ -18,40 +19,28 @@ interface MyMeetupMembersProps {
 }
 
 const MyMeetupMembers: React.FC<MyMeetupMembersProps> = ({ meetupId }) => {
-  // 개별 유저 이미 관리 스테이트
-  const [userImages, setUserImages] = useState<{ [userId: number]: string }>({});
-
   const deleteMutation = useMemberDelete();
 
-  //강퇴 핸들러를 내부에서 구현
-  const handleKickMember = (memberId: number) => {
-    // ⭐️ 확인 후 삭제
-    // const confirmed = window.confirm("정말 이 멤버를 강퇴하시겠습니까?");
-    // if (confirmed) {
-    //   deleteMutation.mutate(memberId);
-    // }
-
-    // ⭐️ confirm 커스텀
+  const handleKickMember = (memberId: number, memberNickname: string) => {
     showConfirmToast({
-      message: "정말 이 멤버를 강퇴하시겠습니까?",
-      confirmText: "강퇴",
+      message: `${memberNickname}님을 모임에서 내보낼까요?`,
+      confirmText: "내보내기",
       cancelText: "취소",
       onConfirm: async () => {
         try {
-          await deleteMutation.mutateAsync(memberId);
-          toast.success("정상적으로 멤버를 강퇴했습니다.");
+          const response = await deleteMutation.mutateAsync(memberId);
+          if (response && !response.ok) throw new Error("member delete failed");
+          toast.success(`${memberNickname}님을 내보냈습니다.`);
         } catch {
-          toast.error("멤버 강퇴 처리 중 문제가 발생했습니다.");
+          toast.error("멤버 내보내기 중 문제가 발생했습니다.");
         }
       },
     });
   };
 
-  // const selectedMeetupId = useSelector((state: RootState) => state.modal.selectedMeetupId);
-
   const {
     data: myMeetupMembersData,
-    // isPending,
+    isPending,
     isError,
     error,
   } = useQuery({
@@ -60,69 +49,88 @@ const MyMeetupMembers: React.FC<MyMeetupMembersProps> = ({ meetupId }) => {
     enabled: !!meetupId,
   });
 
-  // 이미지 처리 로직
-  useEffect(() => {
-    if (myMeetupMembersData?.result) {
-      // 개별 멤버 이미지 처리
-      const imageMap: { [userId: number]: string } = {};
+  if (!meetupId) {
+    return <div className="bg-muted text-muted-foreground rounded-[1.6rem] px-[1.4rem] py-[2.4rem] text-center text-sm">모임 정보를 찾을 수 없어요.</div>;
+  }
 
-      myMeetupMembersData.result.forEach((member: MyMeetupMember) => {
-        if (member.user?.id) {
-          if (member.user.image) {
-            const userImage = member.user.image.startsWith("http") ? member.user.image : `${BASE_URL}/${member.user.image}`;
-            const profileImageUrl = userImage;
-            imageMap[member.user.id] = profileImageUrl;
-          } else {
-            imageMap[member.user.id] = "/profile.png";
-          }
-        }
-      });
-      setUserImages(imageMap);
-    }
-  }, [myMeetupMembersData]);
+  if (isPending) {
+    return (
+      <div className="space-y-[0.8rem]">
+        {[0, 1, 2].map(item => (
+          <div key={item} className="border-border bg-background flex items-center gap-[1rem] rounded-[1.6rem] border p-[1.2rem]">
+            <div className="bg-muted h-[4.4rem] w-[4.4rem] animate-pulse rounded-full" />
+            <div className="min-w-0 flex-1 space-y-[0.6rem]">
+              <div className="bg-muted h-[1.2rem] w-[10rem] animate-pulse rounded-full" />
+              <div className="bg-muted h-[1rem] w-[6rem] animate-pulse rounded-full" />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
-  //myMeetupmembersData를 넣으려고 했더니 선언 전에 쓰려고 했대..
-  // use 커스텀훅으로 빼야한다 AdOrganizer 처럼..
+  if (isError) {
+    return (
+      <div className="border-error/20 bg-error/5 text-error rounded-[1.6rem] border px-[1.4rem] py-[2.4rem] text-center text-sm font-medium">{error.message || "멤버 정보를 불러오지 못했어요."}</div>
+    );
+  }
 
-  // // 삭제 뮤테이션
-  // const deleteMutation = useMutation({
-  //   mutationFn: (member_id: number) => deleteMeetupMemberApi(member_id),
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({ queryKey: ["myMeetups"] });
-  //   },
-  // });
+  const members = myMeetupMembersData?.result ?? [];
 
-  // const handleDeleteClick = (member_id: number) => {
-  //   alert("멤버 강퇴 눌림");
-  //   const confirmed = window.confirm("정말 이 멤버를 강퇴하시겠습니까?");
-  //   if (confirmed) deleteMutation.mutate(member_id);
-  // };
-
-  if (!meetupId) return <div>모임 아이디 필요핣니다.</div>;
-  // if (isPending) return <div>로딩중...</div>;
-  if (isError) return <div>에러 : {error.message}</div>;
-  if (!myMeetupMembersData || !myMeetupMembersData.result || myMeetupMembersData.result.length === 0) return <p>멤버가 없습니다.</p>;
+  if (members.length === 0) {
+    return (
+      <div className="border-border bg-background rounded-[1.6rem] border px-[1.4rem] py-[3rem] text-center">
+        <span className="bg-muted text-muted-foreground mx-auto mb-[1rem] grid h-[4.4rem] w-[4.4rem] place-items-center rounded-full">
+          <LuUsersRound className="h-[2rem] w-[2rem] stroke-[1.8]" />
+        </span>
+        <p className="text-foreground text-sm font-semibold">아직 멤버가 없어요.</p>
+      </div>
+    );
+  }
 
   return (
-    <>
-      {myMeetupMembersData.result.map((member: MyMeetupMember) => {
-        const userImageSource = userImages[member.user?.id || 0] || "/profile.png";
-        return (
-          <div key={member.id} className="border-gray-medium mx-[1rem] my-[1rem] grid grid-cols-[10%_15%_60%_15%] items-center border-b-[0.1rem] pb-[0.8rem] text-base last:border-b-0">
-            <div>{member.role == "organizer" ? <span className="ml-[0.5rem]">👑</span> : <span className="ml-[0.5rem]"> </span>}</div>
-            {/* mebmer.id래요 언제 생성되심? : {member.id} */}
-            <div className="relative mx-auto flex h-[1.8rem] w-[1.8rem] items-center bg-purple-100">
-              <Image unoptimized={true} src={userImageSource} alt="내 모임 회원 프로필 이미지" sizes="width=18rem, height=18rem" fill className="rounded-full bg-yellow-200 object-cover" />
-            </div>
-            <div>{member.user?.nickname}</div>
-            {/* 모임아이디 : {member.meetupId} */}
-            {/* 모임에서 역할 : {member.role} */}
-            {/* 이게 유저아이디 member.user.id 이게 맞는거같은데: {member.user?.id} */}
-            <div>{member.role !== "organizer" && <OutButton text="강퇴" onClick={() => handleKickMember(member.id)} />}</div>
-          </div>
-        );
-      })}
-    </>
+    <div className="space-y-[1rem]">
+      <div className="border-border flex items-center justify-between border-t pt-[1.4rem]">
+        <p className="text-foreground text-sm font-semibold">전체 {members.length}명</p>
+        <p className="text-muted-foreground text-xs">모임장 포함</p>
+      </div>
+
+      <ul className="max-h-[42rem] space-y-[0.8rem] overflow-y-auto pr-[0.2rem]">
+        {members.map((member: MyMeetupMember) => {
+          const isOrganizer = member.role === "organizer";
+          const userImageSource = getImageURL(member.user?.image || null);
+          const nickname = member.user?.nickname || "이름 없는 멤버";
+
+          const RoleIcon = isOrganizer ? LuCrown : LuUserRound;
+
+          return (
+            <li key={member.id} className="border-border bg-background flex items-center gap-[1rem] rounded-[1.6rem] border p-[1.2rem]">
+              <div className="relative h-[4.4rem] w-[4.4rem] shrink-0 overflow-hidden rounded-full">
+                <Image unoptimized src={userImageSource} alt={`${nickname} 프로필 이미지`} sizes="4.4rem" fill className="object-cover" />
+              </div>
+
+              <div className="min-w-0 flex-1">
+                <p className="text-foreground truncate text-sm font-semibold">{nickname}</p>
+                <span
+                  className={`mt-[0.4rem] inline-flex items-center gap-[0.4rem] rounded-full px-[0.8rem] py-[0.25rem] text-xs font-semibold ${
+                    isOrganizer ? "bg-accent text-accent-foreground" : "bg-primary-soft text-primary"
+                  }`}
+                >
+                  <RoleIcon className="h-[1.2rem] w-[1.2rem] stroke-[1.9]" />
+                  {isOrganizer ? "모임장" : "멤버"}
+                </span>
+              </div>
+
+              {isOrganizer ? (
+                <span className="text-muted-foreground shrink-0 text-xs font-medium">관리자</span>
+              ) : (
+                <OutButton text="내보내기" onClick={() => handleKickMember(member.id, nickname)} isPending={deleteMutation.isPending} />
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 };
 
