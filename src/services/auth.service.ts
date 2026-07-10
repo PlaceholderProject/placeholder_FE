@@ -124,9 +124,10 @@ export const refreshToken = async () => {
       return null;
     }
 
-    const { access, refresh } = await response.json();
+    const { access } = await response.json();
     Cookies.set("accessToken", access, authCookieOptions(1));
-    Cookies.set("refreshToken", refresh, authCookieOptions(7));
+    // 백엔드는 갱신 시 access 토큰만 반환하므로 기존 refresh 토큰을 유지합니다.
+    return access;
   } catch (error) {
     console.error("토큰 갱신 요청 실패:", error);
     return null;
