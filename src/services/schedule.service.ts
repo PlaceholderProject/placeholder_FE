@@ -3,6 +3,7 @@
 import { Schedule, SchedulePayload } from "@/types/scheduleType";
 import { BASE_URL } from "@/constants/baseURL";
 import Cookies from "js-cookie";
+import { HttpError } from "@/utils/httpError";
 
 interface ScheduleResponse {
   result: Schedule[];
@@ -10,6 +11,10 @@ interface ScheduleResponse {
 
 //스케줄 리스트 가져오기
 export const getSchedules = async (meetupId: number): Promise<Schedule[]> => {
+  if (!Number.isSafeInteger(meetupId) || meetupId <= 0) {
+    throw new HttpError(404, "모임을 찾을 수 없습니다.");
+  }
+
   const token = Cookies.get("accessToken");
 
   const response = await fetch(`${BASE_URL}/api/v1/meetup/${meetupId}/schedule`, {
@@ -19,7 +24,7 @@ export const getSchedules = async (meetupId: number): Promise<Schedule[]> => {
     },
   });
 
-  if (!response.ok) throw new Error("스케줄 패치 실패");
+  if (!response.ok) throw new HttpError(response.status, response.status === 404 ? "모임을 찾을 수 없습니다." : "일정 목록을 불러오지 못했습니다.");
   const data: ScheduleResponse = await response.json();
   return data.result;
 };
@@ -53,6 +58,10 @@ export const createSchedule = async (meetupId: number, payload: SchedulePayload)
 
 // 단일 스케줄 가져오기
 export const getSchedule = async (scheduleId: number): Promise<Schedule> => {
+  if (!Number.isSafeInteger(scheduleId) || scheduleId <= 0) {
+    throw new HttpError(404, "일정을 찾을 수 없습니다.");
+  }
+
   const token = Cookies.get("accessToken");
 
   const response = await fetch(`${BASE_URL}/api/v1/schedule/${scheduleId}`, {
@@ -62,7 +71,7 @@ export const getSchedule = async (scheduleId: number): Promise<Schedule> => {
     },
   });
 
-  if (!response.ok) throw new Error("스케줄 조회 실패");
+  if (!response.ok) throw new HttpError(response.status, response.status === 404 ? "일정을 찾을 수 없습니다." : "일정 정보를 불러오지 못했습니다.");
   return response.json();
 };
 

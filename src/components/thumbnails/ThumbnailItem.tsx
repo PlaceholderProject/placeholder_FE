@@ -59,6 +59,7 @@ const ThumbnailItem = ({ thumbnail, userNickname, priority, highlight }: { thumb
   const renderTitle = () => (shouldHighlightTitle ? highlightText(thumbnail.adTitle) : <>{thumbnail.adTitle}</>);
   const renderDescription = () => (shouldHighlightDescription ? highlightText(thumbnail.description) : <>{thumbnail.description}</>);
   const renderOrganizer = () => (shouldHighlightOrganizer ? highlightText(thumbnail.organizer.nickname) : <>{thumbnail.organizer.nickname}</>);
+  const startDate = thumbnail.startedAt ? new Intl.DateTimeFormat("ko-KR", { month: "long", day: "numeric", weekday: "short" }).format(new Date(thumbnail.startedAt)) : "일정 미정";
 
   // 카드 이미지 영역 (공개/비공개 분기)
   const renderImageArea = () => {
@@ -71,8 +72,8 @@ const ThumbnailItem = ({ thumbnail, userNickname, priority, highlight }: { thumb
             src={getImageURL(thumbnail.image)}
             alt={thumbnail.adTitle}
             fill
-            sizes="(max-width: 768px) 47vw, 32rem"
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            sizes="(max-width: 519px) calc(100vw - 3.2rem), (max-width: 1023px) 50vw, 36rem"
+            className="object-cover transition-transform duration-700 group-hover/img:scale-[1.045]"
           />
         </Link>
       );
@@ -100,10 +101,12 @@ const ThumbnailItem = ({ thumbnail, userNickname, priority, highlight }: { thumb
   };
 
   return (
-    <article className="group bg-card border-border hover:border-primary/30 flex h-full flex-col overflow-hidden rounded-[1.6rem] border transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(22,21,15,0.35)]">
+    <article className="group bg-card border-border hover:border-primary/25 flex h-full flex-col overflow-hidden rounded-[2.2rem] border transition-all duration-300 hover:-translate-y-[0.3rem] hover:shadow-[0_2rem_4.5rem_-2.6rem_rgba(24,23,29,0.34)]">
       {/* 이미지 영역 */}
-      <div className="bg-muted relative aspect-[4/3] w-full overflow-hidden">
+      <div className="bg-muted relative aspect-[16/10] w-full overflow-hidden">
         {renderImageArea()}
+
+        <div className="from-foreground/45 pointer-events-none absolute inset-x-0 bottom-0 h-[45%] bg-gradient-to-t to-transparent" />
 
         <div className="pointer-events-none absolute top-3 left-3 z-10 flex max-w-[calc(100%-7rem)] flex-wrap items-center gap-[0.4rem]">
           {thumbnail.category && <CategoryBadge category={thumbnail.category} variant="solid" className="shadow-sm" />}
@@ -122,14 +125,14 @@ const ThumbnailItem = ({ thumbnail, userNickname, priority, highlight }: { thumb
 
         {adDday && (
           <span
-            className={`absolute top-3 right-3 z-10 rounded-full px-[0.7rem] py-[0.2rem] font-mono text-xs font-semibold backdrop-blur ${isUrgent ? "bg-destructive text-destructive-foreground" : "bg-background/90 text-foreground"}`}
+            className={`absolute top-3 right-3 z-10 rounded-full px-[0.8rem] py-[0.3rem] text-xs font-semibold backdrop-blur ${isUrgent ? "bg-destructive text-destructive-foreground" : "bg-accent text-accent-foreground"}`}
           >
             {adDday}
           </span>
         )}
 
         {thumbnail.place && (
-          <span className="bg-foreground/80 text-background absolute bottom-3 left-3 z-10 inline-flex items-center gap-[0.3rem] rounded-full px-[0.7rem] py-[0.3rem] text-xs font-medium backdrop-blur">
+          <span className="text-background absolute bottom-3 left-3 z-10 inline-flex items-center gap-[0.4rem] text-xs font-bold drop-shadow-sm">
             <FaMapMarkerAlt className="shrink-0" />
             {thumbnail.place}
           </span>
@@ -137,8 +140,8 @@ const ThumbnailItem = ({ thumbnail, userNickname, priority, highlight }: { thumb
       </div>
 
       {/* 콘텐츠 영역 */}
-      <div className="flex flex-1 flex-col gap-[0.8rem] p-[1.3rem]">
-        <h3 className="line-clamp-2 min-h-[3.2rem] text-sm leading-snug font-semibold break-words md:text-base">
+      <div className="flex flex-1 flex-col gap-[0.9rem] p-[1.6rem] md:p-[1.8rem]">
+        <h3 className="text-foreground line-clamp-2 min-h-[4rem] text-[1.7rem] leading-[1.25] font-black tracking-[-0.025em] break-keep">
           {canOpen ? (
             <Link href={`/ad/${thumbnail.id}`} className="hover:text-primary transition-colors">
               {renderTitle()}
@@ -148,22 +151,22 @@ const ThumbnailItem = ({ thumbnail, userNickname, priority, highlight }: { thumb
           )}
         </h3>
 
-        {thumbnail.description && <p className="text-muted-foreground line-clamp-2 text-xs leading-relaxed break-keep">{renderDescription()}</p>}
+        {thumbnail.description && <p className="text-muted-foreground line-clamp-2 text-sm leading-[1.55] break-keep">{renderDescription()}</p>}
 
-        <div className="text-muted-foreground flex items-center gap-[0.4rem] text-xs">
-          <FaRegCalendarAlt className="shrink-0" />
-          <span className="truncate">
-            {thumbnail.startedAt === null ? "미정" : thumbnail.startedAt.substring(0, 10)} ~ {thumbnail.endedAt === null ? "미정" : thumbnail.endedAt.substring(0, 10)}
+        <div className="text-foreground/70 flex items-center gap-[0.5rem] text-xs font-bold">
+          <span className="bg-primary-soft text-primary grid h-[2.4rem] w-[2.4rem] place-items-center rounded-[0.8rem]">
+            <FaRegCalendarAlt className="shrink-0" />
           </span>
+          <span className="truncate">{startDate}</span>
         </div>
 
         {/* 작성자 & 좋아요 */}
-        <div className="border-border mt-auto flex items-center justify-between gap-[1rem] border-t pt-[0.8rem]">
+        <div className="border-border mt-[0.2rem] flex items-center justify-between gap-[1rem] border-t pt-[1.1rem]">
           <div className="flex min-w-0 items-center gap-[0.4rem]">
-            <div className="relative h-[2rem] w-[2rem] flex-shrink-0">
+            <div className="ring-muted relative h-[2.4rem] w-[2.4rem] flex-shrink-0 overflow-hidden rounded-full ring-2">
               <Image unoptimized={false} src={profileImageSource} fill alt="작성자 프로필 이미지" className="rounded-full object-cover" onError={() => setProfileImageSource("/profile.png")} />
             </div>
-            <div className="text-muted-foreground truncate text-sm">{renderOrganizer()}</div>
+            <div className="text-muted-foreground truncate text-xs font-bold">{renderOrganizer()}</div>
           </div>
 
           <div className="pointer-events-auto flex flex-shrink-0 items-center gap-[0.7rem]">

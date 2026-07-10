@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import CurrentMyMeetup from "./CurrentMyMeetup";
 import PastMyMeetup from "./PastMyMeetup";
+import SegmentedIndicator from "@/components/common/SegmentedIndicator";
 
 const MyMeetupArea = () => {
   // 🐣🐣🐣객체 맵핑 방식~~ 🐣🐣
@@ -28,15 +29,16 @@ const MyMeetupArea = () => {
 
   return (
     <div className="space-y-[1.4rem]">
-      <div className="border-border bg-card inline-flex rounded-full border p-[0.4rem]">
+      <div className="border-border bg-card relative grid grid-cols-2 rounded-[1.3rem] border p-[0.3rem]">
+        <SegmentedIndicator count={2} index={activeSubTab === "current" ? 0 : 1} className="bg-primary-soft rounded-[1rem]" />
         {[
-          { key: "current", label: "현재" },
-          { key: "past", label: "지난 모임" },
+          { key: "current", label: "진행 중" },
+          { key: "past", label: "종료" },
         ].map(tab => (
           <button
             key={tab.key}
             type="button"
-            className={`rounded-full px-[1.6rem] py-[0.7rem] text-sm font-semibold transition-colors ${activeSubTab === tab.key ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            className={`relative z-10 rounded-[1rem] px-[1.6rem] py-[0.7rem] text-sm font-bold transition-colors duration-200 ${activeSubTab === tab.key ? "text-primary-soft-foreground" : "text-muted-foreground hover:text-foreground"}`}
             onClick={() => setActiveSubTab(tab.key as "current" | "past")}
           >
             {tab.label}

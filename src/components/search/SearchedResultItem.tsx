@@ -73,7 +73,7 @@ const SearchedResultItem = ({ ad }: { ad: SearchedType }) => {
 
         {adDday && (
           <span
-            className={`absolute top-[0.5rem] right-[0.5rem] z-10 rounded-full px-[0.5rem] py-[0.15rem] font-mono text-[0.95rem] font-semibold backdrop-blur ${isUrgent ? "bg-destructive text-destructive-foreground" : "bg-background/90 text-foreground"}`}
+            className={`absolute top-[0.5rem] right-[0.5rem] z-10 rounded-full px-[0.5rem] py-[0.15rem] text-[0.95rem] font-semibold backdrop-blur ${isUrgent ? "bg-destructive text-destructive-foreground" : "bg-background/90 text-foreground"}`}
           >
             {adDday}
           </span>

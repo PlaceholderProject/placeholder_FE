@@ -112,8 +112,7 @@ const ReplyForm = ({ variant = "default", canWrite = true, disabledReason }: { v
           </button>
         </div>
 
-        <div className="flex items-center justify-between px-[0.3rem] text-xs">
-          <p className="text-muted-foreground">{user.nickname ? `${user.nickname}님으로 작성` : "방문자"}</p>
+        <div className="flex items-center justify-end px-[0.3rem] text-xs">
           <p className={content.length >= MAX_REPLY_LENGTH ? "text-primary font-semibold" : "text-muted-foreground"}>
             {content.length}/{MAX_REPLY_LENGTH}
           </p>

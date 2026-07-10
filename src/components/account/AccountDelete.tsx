@@ -11,12 +11,16 @@ import { useDeleteUser } from "@/hooks/useUser";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { LuArrowLeft, LuShieldAlert, LuTrash2 } from "react-icons/lu";
+import { setHasUnreadNotifications } from "@/stores/notificationSlice";
+import { resetSelectedMeetupId } from "@/stores/proposalSlice";
+import { useQueryClient } from "@tanstack/react-query";
 
 const AccountDelete = () => {
   const isPasswordRechecked = useSelector((state: RootState) => state.auth.isPasswordRechecked);
 
   const router = useRouter();
   const deleteUserMutation = useDeleteUser();
+  const queryClient = useQueryClient();
 
   const dispatch = useDispatch();
 
@@ -30,7 +34,10 @@ const AccountDelete = () => {
       Cookies.remove("accessToken");
       Cookies.remove("refreshToken");
       dispatch(setIsAuthenticated(false));
+      dispatch(setHasUnreadNotifications(false));
+      dispatch(resetSelectedMeetupId());
       persistor.purge();
+      queryClient.clear();
       router.replace("/");
       toast.success("탈퇴되었습니다.");
     } catch {
@@ -39,7 +46,7 @@ const AccountDelete = () => {
   };
 
   return (
-    <div className="mx-auto w-[95%] max-w-[58rem] space-y-[1.8rem] py-[2.4rem] md:py-[3.2rem]">
+    <div className="mx-auto w-[calc(100%-3.2rem)] max-w-[64rem] space-y-[1.8rem] py-[2.4rem] pb-[11rem] md:py-[3.2rem] md:pb-[5rem]">
       <Link href="/account" className="text-muted-foreground hover:text-foreground inline-flex items-center gap-[0.5rem] text-sm font-semibold transition-colors">
         <LuArrowLeft className="h-[1.5rem] w-[1.5rem] stroke-[1.9]" />
         계정 관리

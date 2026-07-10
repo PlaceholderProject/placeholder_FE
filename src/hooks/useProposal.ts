@@ -21,6 +21,7 @@ export const useCreateProposal = (meetupId: number) => {
     mutationFn: (proposalText: string) => createProposal(proposalText, meetupId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["status", meetupId] }); // 신청 상태 갱신
+      toast.success("가입 신청을 보냈어요.");
     },
     onError: error => {
       toast.error(error.message || "신청서 제출 중 오류가 발생했습니다.");

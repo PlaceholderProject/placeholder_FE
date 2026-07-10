@@ -11,8 +11,10 @@ const FilterPill = ({ active, onClick, children }: FilterPillProps) => {
   return (
     <button
       onClick={onClick}
-      className={`shrink-0 rounded-full border px-[1.4rem] py-[0.6rem] text-sm transition-all duration-150 ${
-        active ? "bg-foreground text-background border-transparent shadow-sm" : "bg-card text-muted-foreground border-border hover:border-foreground/30 hover:text-foreground"
+      className={`inline-flex shrink-0 items-center gap-[0.45rem] rounded-full border px-[1.4rem] py-[0.75rem] text-sm font-bold transition-all duration-150 ${
+        active
+          ? "bg-primary text-primary-foreground border-transparent shadow-[0_0.8rem_2rem_-1.2rem_rgba(108,77,255,0.8)]"
+          : "bg-card text-muted-foreground border-border hover:border-primary/30 hover:text-foreground"
       }`}
     >
       {children}

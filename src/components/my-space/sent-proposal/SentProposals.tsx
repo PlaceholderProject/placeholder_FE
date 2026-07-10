@@ -7,6 +7,7 @@ import { SentProposal } from "@/types/proposalType";
 import { PROPOSALS_BUTTONS_PER_GROUP, PROPOSALS_SIZE_LIMIT } from "@/constants/pagination";
 import PaginationButtons from "../PaginationButtons";
 import Spinner from "@/components/common/Spinner";
+import MySpaceEmptyState from "../MySpaceEmptyState";
 
 const SentProposals = () => {
   const [page, setPage] = useState(1);
@@ -40,11 +41,7 @@ const SentProposals = () => {
   if (isLoading) return <Spinner isLoading={isLoading} />;
 
   if (!sentProposals || sentProposals.length === 0) {
-    return (
-      <div className="border-border bg-card flex min-h-[16rem] items-center justify-center rounded-[2rem] border text-center">
-        <p className="text-muted-foreground text-sm">보낸 신청서가 없습니다.</p>
-      </div>
-    );
+    return <MySpaceEmptyState title="아직 보낸 가입 신청이 없어요" description="마음에 드는 모임을 찾아 가입 신청을 보내보세요." actionHref="/" actionLabel="모임 둘러보기" />;
   }
 
   return (

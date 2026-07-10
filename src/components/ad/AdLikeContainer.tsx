@@ -62,18 +62,19 @@ const AdLikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerP
   };
 
   return (
-    <div className="text-muted-foreground inline-flex min-w-[3.2rem] flex-col items-center gap-[0.3rem]">
-      <button
-        type="button"
-        onClick={handleToggleLike}
-        disabled={likeMutation.isPending}
-        aria-label="좋아요"
-        className="hover:text-primary disabled:text-muted-foreground inline-flex h-[1.8rem] w-[1.8rem] items-center justify-center transition disabled:cursor-not-allowed disabled:opacity-60"
-      >
-        {initialIsLike ? <IoMdHeart className="text-primary h-[1.9rem] w-[1.9rem]" /> : <IoMdHeartEmpty className="h-[1.9rem] w-[1.9rem]" />}
-      </button>
-      <span className="text-sm leading-none">{initialLikeCount}</span>
-    </div>
+    <button
+      type="button"
+      onClick={handleToggleLike}
+      disabled={likeMutation.isPending}
+      aria-label={initialIsLike ? "관심 모임에서 삭제" : "관심 모임에 추가"}
+      aria-pressed={initialIsLike}
+      className={`inline-flex h-[3.8rem] items-center gap-[0.5rem] rounded-full px-[1rem] text-sm font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
+        initialIsLike ? "bg-primary-soft text-primary" : "text-muted-foreground hover:bg-muted hover:text-primary"
+      }`}
+    >
+      {initialIsLike ? <IoMdHeart className="h-[1.8rem] w-[1.8rem]" /> : <IoMdHeartEmpty className="h-[1.8rem] w-[1.8rem]" />}
+      관심 {initialLikeCount}
+    </button>
   );
 };
 

@@ -43,8 +43,8 @@ const ProposalPostcardContent = ({ meetupId }: { meetupId: number }) => {
           <LuMessageSquareText className="h-[2.2rem] w-[2.2rem] stroke-[1.8]" />
         </div>
         <div>
-          <p className="text-primary mb-[0.4rem] text-xs font-bold">참여 신청</p>
-          <h2 className="text-foreground text-[2rem] leading-tight font-bold">모임장에게 신청서를 보낼게요</h2>
+          <p className="text-primary mb-[0.4rem] text-xs font-bold">가입 신청</p>
+          <h2 className="text-foreground text-[2rem] leading-tight font-black tracking-[-0.025em]">방장에게 나를 소개해보세요</h2>
           <p className="text-muted-foreground mt-[0.8rem] text-sm leading-relaxed break-keep">승인되면 모임 공간에 입장할 수 있어요.</p>
         </div>
       </div>
@@ -88,7 +88,7 @@ const ProposalPostcardContent = ({ meetupId }: { meetupId: number }) => {
             ) : (
               <>
                 <LuSendHorizontal className="h-[1.7rem] w-[1.7rem] stroke-[2]" />
-                신청 보내기
+                가입 신청 보내기
               </>
             )}
           </button>

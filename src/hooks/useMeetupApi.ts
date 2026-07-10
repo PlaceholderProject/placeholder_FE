@@ -3,6 +3,7 @@
 import { createMeetupApi, editMeetupApi, getMeetupByIdApi, getMeetupPresignedUrl } from "@/services/meetup.service";
 import { FileType, Meetup, NewMeetup, S3PresignedItem } from "@/types/meetupType";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { retryQuery } from "@/utils/httpError";
 
 //모임 생성
 export const useCreateMeetup = () => {
@@ -35,7 +36,8 @@ export const useMeetupDetail = (meetupId?: number, options?: { enabled: boolean 
   return useQuery({
     queryKey: ["meetup", meetupId],
     queryFn: () => getMeetupByIdApi(meetupId!),
-    enabled: options?.enabled !== undefined ? options?.enabled : !!meetupId,
+    enabled: options?.enabled !== undefined ? options.enabled : meetupId !== undefined,
+    retry: retryQuery,
   });
 };
 

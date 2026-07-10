@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { LuBell, LuChevronRight, LuCompass, LuLogOut, LuPlus, LuSearch, LuSettings, LuUserRound, LuUsers } from "react-icons/lu";
+import { LuBell, LuChevronRight, LuCompass, LuLogOut, LuSearch, LuSettings, LuUserRound, LuUsers } from "react-icons/lu";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { persistor, RootState } from "@/stores/store";
@@ -20,6 +20,8 @@ import { getImageURL } from "@/utils/getImageURL";
 import { formatNotificationDate } from "@/utils/NotificationdateUtils";
 import { getNotificationMeta, getNotificationTitle } from "@/utils/notificationUtils";
 import { toast } from "sonner";
+import BrandLogo from "./BrandLogo";
+import SegmentedIndicator from "./SegmentedIndicator";
 
 const Header = () => {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -124,28 +126,29 @@ const Header = () => {
   const navItems = [
     { href: "/", icon: LuCompass, label: "둘러보기", isActive: pathname === "/", requireAuth: false },
     { href: "/search", icon: LuSearch, label: "검색", isActive: pathname.startsWith("/search"), requireAuth: false },
-    { href: "/my-space/my-meetup", icon: LuUserRound, label: "내 공간", isActive: pathname.startsWith("/my-space"), requireAuth: true },
   ];
   const visibleNavItems = navItems.filter(item => !item.requireAuth || isAuthenticated);
+  const activeNavIndex = visibleNavItems.findIndex(item => item.isActive);
 
   return (
-    <header className="border-border fixed top-0 right-0 left-0 z-50 flex h-[6rem] items-center justify-center border-b bg-white/80 backdrop-blur-md md:h-[6.4rem]">
-      <div className="mx-auto flex w-[95%] max-w-[100rem] items-center justify-between">
+    <header className="border-border bg-background/88 fixed top-0 right-0 left-0 z-50 flex h-[6.8rem] items-center justify-center border-b backdrop-blur-xl md:h-[7.2rem]">
+      <div className="mx-auto flex w-[calc(100%-3.2rem)] max-w-[112rem] items-center justify-between">
         {/* 로고 */}
-        <Link href="/" className="flex items-center">
-          <Image unoptimized src="/logo.png" alt="placeholder 로고" width={175} height={60} priority className="h-[2.4rem] w-auto md:h-[2.8rem]" />
+        <Link href="/" className="rounded-[1.2rem]">
+          <BrandLogo />
         </Link>
 
         {/* 가운데 네비 (데스크탑) */}
-        <nav className="hidden items-center gap-[0.3rem] md:flex">
+        <nav className="bg-card/75 border-border relative hidden grid-cols-2 rounded-full border p-[0.3rem] shadow-[0_1rem_3rem_-2rem_rgba(24,23,29,0.35)] md:grid">
+          <SegmentedIndicator count={visibleNavItems.length} index={activeNavIndex} className="bg-foreground rounded-full shadow-sm" />
           {visibleNavItems.map(item => {
             const Icon = item.icon;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`relative inline-flex items-center gap-[0.5rem] rounded-full px-[1.2rem] py-[0.7rem] text-sm font-medium transition-colors ${
-                  item.isActive ? "bg-primary-soft text-primary font-semibold" : "text-foreground/75 hover:bg-muted hover:text-foreground"
+                className={`relative z-10 inline-flex items-center justify-center gap-[0.5rem] rounded-full px-[1.3rem] py-[0.75rem] text-sm font-semibold transition-colors duration-200 ${
+                  item.isActive ? "text-background" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 <Icon size={16} strokeWidth={1.9} />
@@ -155,18 +158,21 @@ const Header = () => {
           })}
         </nav>
 
-        {/* 우측: CTA + 인증 영역 */}
+        {/* 우측: 개인 영역 */}
         <div className="flex items-center gap-[0.8rem]">
-          <Link
-            href="/meetup/create"
-            className="bg-foreground text-background hidden items-center gap-[0.5rem] rounded-full px-[1.4rem] py-[0.8rem] text-sm font-semibold transition hover:opacity-90 md:inline-flex"
-          >
-            <LuPlus size={15} strokeWidth={2.2} />
-            모임 만들기
-          </Link>
-
           {isAuthenticated ? (
             <>
+              <span className="bg-border hidden h-[2.4rem] w-px lg:block" aria-hidden />
+
+              <Link
+                href="/my-space/my-meetup"
+                className={`hidden items-center gap-[0.55rem] rounded-full px-[1rem] py-[0.75rem] text-sm font-bold transition-colors lg:inline-flex ${
+                  pathname.startsWith("/my-space") ? "bg-primary-soft text-primary" : "text-muted-foreground hover:bg-card hover:text-foreground"
+                }`}
+              >
+                <LuUserRound className="h-[1.6rem] w-[1.6rem] stroke-[1.9]" />내 공간
+              </Link>
+
               {/* 아바타 드롭다운 */}
               <div ref={dropdownRef} className="relative">
                 <div className="relative">
@@ -175,15 +181,20 @@ const Header = () => {
                     aria-label="내 계정 메뉴"
                     aria-haspopup="menu"
                     aria-expanded={menuOpen}
-                    className="border-border hover:border-primary/40 block h-[3.4rem] w-[3.4rem] overflow-hidden rounded-full border transition-colors"
+                    className="border-card hover:ring-primary/20 block h-[3.7rem] w-[3.7rem] overflow-hidden rounded-full border-[0.3rem] shadow-sm transition-all hover:ring-[0.3rem]"
                   >
                     <Image src={getImageURL(user.profileImage)} alt="프로필" width={34} height={34} className="h-full w-full object-cover" />
                   </button>
-                  {unreadCount > 0 && <span aria-label="읽지 않은 알림" className="bg-destructive ring-card absolute -top-[0.1rem] -right-[0.1rem] h-[1rem] w-[1rem] rounded-full ring-[0.2rem]" />}
+                  {unreadCount > 0 && (
+                    <span
+                      aria-label={`읽지 않은 알림 ${unreadCount}개`}
+                      className="bg-destructive ring-background pointer-events-none absolute -top-[0.15rem] -right-[0.15rem] h-[1.05rem] w-[1.05rem] rounded-full ring-[0.25rem]"
+                    />
+                  )}
                 </div>
 
                 {menuOpen && (
-                  <div className="border-border absolute right-0 mt-[0.9rem] w-[29rem] overflow-hidden rounded-[1.6rem] border bg-white shadow-[0_22px_50px_-24px_rgba(22,21,15,0.45)]" role="menu">
+                  <div className="surface-shadow border-border bg-card absolute right-0 mt-[1rem] w-[29rem] overflow-hidden rounded-[2rem] border" role="menu">
                     <div className="border-border flex items-center gap-[1rem] border-b px-[1.4rem] py-[1.3rem]">
                       <div className="relative h-[4.2rem] w-[4.2rem] shrink-0 overflow-hidden rounded-full">
                         <Image src={getImageURL(user.profileImage)} alt="프로필" fill sizes="4.2rem" className="object-cover" />
@@ -222,7 +233,7 @@ const Header = () => {
                                 key={notification.id}
                                 href={notification.url ?? "/notification"}
                                 onClick={() => handleNotificationPreviewClick(notification.id, notification.is_read)}
-                                className={`hover:bg-muted relative flex gap-[0.8rem] rounded-[1rem] px-[0.8rem] py-[0.8rem] transition-colors ${notification.is_read ? "" : "bg-[#f7f2ff]"}`}
+                                className={`hover:bg-muted relative flex gap-[0.8rem] rounded-[1rem] px-[0.8rem] py-[0.8rem] transition-colors ${notification.is_read ? "" : "bg-primary-soft"}`}
                               >
                                 <span className={`grid h-[2.8rem] w-[2.8rem] shrink-0 place-items-center rounded-full ${iconClassName}`}>
                                   <NotificationIcon className="h-[1.4rem] w-[1.4rem] stroke-[2]" />
@@ -282,10 +293,13 @@ const Header = () => {
             </>
           ) : (
             <div className="flex items-center gap-[0.6rem]">
-              <Link href="/login" className="text-foreground hover:bg-muted rounded-full px-[1.2rem] py-[0.8rem] text-sm font-semibold transition-colors">
+              <Link href="/login" className="text-foreground hover:bg-card rounded-full px-[0.8rem] py-[0.8rem] text-sm font-bold transition-colors min-[420px]:px-[1.2rem]">
                 로그인
               </Link>
-              <Link href="/signup" className="bg-primary rounded-full px-[1.4rem] py-[0.8rem] text-sm font-semibold text-white transition hover:opacity-90">
+              <Link
+                href="/signup"
+                className="bg-primary hover:bg-primary-hover rounded-full px-[1.2rem] py-[0.85rem] text-sm font-bold text-white shadow-[0_0.8rem_2rem_-1.2rem_rgba(108,77,255,0.8)] transition-colors min-[420px]:px-[1.4rem]"
+              >
                 회원가입
               </Link>
             </div>

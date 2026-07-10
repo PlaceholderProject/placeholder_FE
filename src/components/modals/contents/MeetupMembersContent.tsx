@@ -80,7 +80,6 @@ const MeetupMembersContent = ({ meetupId, meetupName }: MeetupMembersContentProp
         <div className="space-y-[1rem]">
           <div className="border-border flex items-center justify-between border-t pt-[1.4rem]">
             <p className="text-foreground text-sm font-semibold">전체 {members.length}명</p>
-            <p className="text-muted-foreground text-xs">모임장 포함</p>
           </div>
 
           <ul className="max-h-[42rem] space-y-[0.8rem] overflow-y-auto pr-[0.2rem]">
@@ -102,7 +101,7 @@ const MeetupMembersContent = ({ meetupId, meetupName }: MeetupMembersContentProp
                       }`}
                     >
                       <RoleIcon className="h-[1.2rem] w-[1.2rem] stroke-[1.9]" />
-                      {isOrganizer ? "모임장" : "멤버"}
+                      {isOrganizer ? "방장" : "멤버"}
                     </span>
                   </div>
 
@@ -114,9 +113,7 @@ const MeetupMembersContent = ({ meetupId, meetupName }: MeetupMembersContentProp
                     >
                       {deleteMutation.isPending ? "처리 중" : "내보내기"}
                     </button>
-                  ) : (
-                    <span className="text-muted-foreground shrink-0 text-xs font-medium">{isOrganizer ? "관리자" : ""}</span>
-                  )}
+                  ) : null}
                 </li>
               );
             })}

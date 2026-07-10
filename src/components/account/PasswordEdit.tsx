@@ -15,8 +15,8 @@ import Link from "next/link";
 const PasswordEdit = () => {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [isVisivlePassword, setIsVisivlePassword] = useState(false);
-  const [isVisivlePassworConfirm, setIsVisivlePasswordConfirm] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isPasswordConfirmVisible, setIsPasswordConfirmVisible] = useState(false);
   const [passwordWarning, setPasswordWarning] = useState("");
   const [passwordConfirmWarning, setPasswordConfirmWarning] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -55,11 +55,11 @@ const PasswordEdit = () => {
   };
 
   const handleTogglePassword = () => {
-    setIsVisivlePassword(!isVisivlePassword);
+    setIsPasswordVisible(current => !current);
   };
 
   const handleTogglePasswordConfirm = () => {
-    setIsVisivlePasswordConfirm(!isVisivlePassworConfirm);
+    setIsPasswordConfirmVisible(current => !current);
   };
 
   const handlePasswordEditFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -85,18 +85,21 @@ const PasswordEdit = () => {
       return;
     }
 
-    setIsSubmitting(true);
-    const response = await resetPassword(password);
-    setIsSubmitting(false);
+    try {
+      setIsSubmitting(true);
+      const response = await resetPassword(password);
 
-    if (response) {
-      toast.success("비밀번호가 변경되었습니다.");
-      router.replace("/account");
+      if (response) {
+        toast.success("비밀번호가 변경되었습니다.");
+        router.replace("/account");
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="mx-auto w-[95%] max-w-[58rem] space-y-[1.8rem] py-[2.4rem] md:py-[3.2rem]">
+    <div className="mx-auto w-[calc(100%-3.2rem)] max-w-[64rem] space-y-[1.8rem] py-[2.4rem] pb-[11rem] md:py-[3.2rem] md:pb-[5rem]">
       <Link href="/account" className="text-muted-foreground hover:text-foreground inline-flex items-center gap-[0.5rem] text-sm font-semibold transition-colors">
         <LuArrowLeft className="h-[1.5rem] w-[1.5rem] stroke-[1.9]" />
         계정 관리
@@ -116,16 +119,16 @@ const PasswordEdit = () => {
               <label htmlFor="password" className="text-foreground mb-[0.7rem] block text-sm font-semibold">
                 새 비밀번호
               </label>
-              <div className="border-border focus-within:border-primary flex h-[4.6rem] items-center gap-[0.9rem] rounded-[1.4rem] border px-[1.3rem] transition-colors">
+              <div className="border-border focus-within:border-primary focus-within:ring-primary/10 flex h-[4.6rem] items-center gap-[0.9rem] rounded-[1.4rem] border px-[1.3rem] transition-all focus-within:ring-4">
                 <LuLockKeyhole className="text-muted-foreground h-[1.7rem] w-[1.7rem] stroke-[1.8]" />
-                <input id="password" type={isVisivlePassword ? "text" : "password"} value={password} onChange={handlePasswordChange} className="min-w-0 flex-1 bg-transparent text-sm outline-none" />
+                <input id="password" type={isPasswordVisible ? "text" : "password"} value={password} onChange={handlePasswordChange} className="min-w-0 flex-1 bg-transparent text-sm outline-none" />
                 <button
                   type="button"
                   onClick={handleTogglePassword}
-                  aria-label={isVisivlePassword ? "비밀번호 숨기기" : "비밀번호 보기"}
+                  aria-label={isPasswordVisible ? "비밀번호 숨기기" : "비밀번호 보기"}
                   className="text-muted-foreground hover:text-foreground shrink-0 transition-colors"
                 >
-                  {isVisivlePassword ? <LuEyeOff className="h-[1.8rem] w-[1.8rem] stroke-[1.8]" /> : <LuEye className="h-[1.8rem] w-[1.8rem] stroke-[1.8]" />}
+                  {isPasswordVisible ? <LuEyeOff className="h-[1.8rem] w-[1.8rem] stroke-[1.8]" /> : <LuEye className="h-[1.8rem] w-[1.8rem] stroke-[1.8]" />}
                 </button>
               </div>
               {passwordWarning && <p className="text-warning mt-[0.6rem] text-xs font-medium">{passwordWarning}</p>}
@@ -135,11 +138,11 @@ const PasswordEdit = () => {
               <label htmlFor="passwordConfirm" className="text-foreground mb-[0.7rem] block text-sm font-semibold">
                 새 비밀번호 확인
               </label>
-              <div className="border-border focus-within:border-primary flex h-[4.6rem] items-center gap-[0.9rem] rounded-[1.4rem] border px-[1.3rem] transition-colors">
+              <div className="border-border focus-within:border-primary focus-within:ring-primary/10 flex h-[4.6rem] items-center gap-[0.9rem] rounded-[1.4rem] border px-[1.3rem] transition-all focus-within:ring-4">
                 <LuLockKeyhole className="text-muted-foreground h-[1.7rem] w-[1.7rem] stroke-[1.8]" />
                 <input
                   id="passwordConfirm"
-                  type={isVisivlePassworConfirm ? "text" : "password"}
+                  type={isPasswordConfirmVisible ? "text" : "password"}
                   value={passwordConfirm}
                   onChange={handlePasswordConfirmChange}
                   className="min-w-0 flex-1 bg-transparent text-sm outline-none"
@@ -147,10 +150,10 @@ const PasswordEdit = () => {
                 <button
                   type="button"
                   onClick={handleTogglePasswordConfirm}
-                  aria-label={isVisivlePassworConfirm ? "비밀번호 확인 숨기기" : "비밀번호 확인 보기"}
+                  aria-label={isPasswordConfirmVisible ? "비밀번호 확인 숨기기" : "비밀번호 확인 보기"}
                   className="text-muted-foreground hover:text-foreground shrink-0 transition-colors"
                 >
-                  {isVisivlePassworConfirm ? <LuEyeOff className="h-[1.8rem] w-[1.8rem] stroke-[1.8]" /> : <LuEye className="h-[1.8rem] w-[1.8rem] stroke-[1.8]" />}
+                  {isPasswordConfirmVisible ? <LuEyeOff className="h-[1.8rem] w-[1.8rem] stroke-[1.8]" /> : <LuEye className="h-[1.8rem] w-[1.8rem] stroke-[1.8]" />}
                 </button>
               </div>
               {passwordConfirmWarning && <p className="text-warning mt-[0.6rem] text-xs font-medium">{passwordConfirmWarning}</p>}

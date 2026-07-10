@@ -11,7 +11,8 @@ export const metadata: Metadata = {
   keywords: "모임, 만남, 동호회, 프론트엔드 프로젝트, 커뮤니티",
   authors: [{ name: "Team Placeholder" }],
   icons: {
-    icon: "/favicon.png",
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+    shortcut: "/favicon.svg",
   },
   robots: {
     index: true,

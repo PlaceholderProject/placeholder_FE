@@ -92,7 +92,6 @@ const MyMeetupMembers: React.FC<MyMeetupMembersProps> = ({ meetupId }) => {
     <div className="space-y-[1rem]">
       <div className="border-border flex items-center justify-between border-t pt-[1.4rem]">
         <p className="text-foreground text-sm font-semibold">전체 {members.length}명</p>
-        <p className="text-muted-foreground text-xs">모임장 포함</p>
       </div>
 
       <ul className="max-h-[42rem] space-y-[0.8rem] overflow-y-auto pr-[0.2rem]">
@@ -113,19 +112,15 @@ const MyMeetupMembers: React.FC<MyMeetupMembersProps> = ({ meetupId }) => {
                 <p className="text-foreground truncate text-sm font-semibold">{nickname}</p>
                 <span
                   className={`mt-[0.4rem] inline-flex items-center gap-[0.4rem] rounded-full px-[0.8rem] py-[0.25rem] text-xs font-semibold ${
-                    isOrganizer ? "bg-accent text-accent-foreground" : "bg-primary-soft text-primary"
+                    isOrganizer ? "bg-primary-soft text-primary" : "bg-muted text-muted-foreground"
                   }`}
                 >
                   <RoleIcon className="h-[1.2rem] w-[1.2rem] stroke-[1.9]" />
-                  {isOrganizer ? "모임장" : "멤버"}
+                  {isOrganizer ? "방장" : "멤버"}
                 </span>
               </div>
 
-              {isOrganizer ? (
-                <span className="text-muted-foreground shrink-0 text-xs font-medium">관리자</span>
-              ) : (
-                <OutButton text="내보내기" onClick={() => handleKickMember(member.id, nickname)} isPending={deleteMutation.isPending} />
-              )}
+              {!isOrganizer && <OutButton text="내보내기" onClick={() => handleKickMember(member.id, nickname)} isPending={deleteMutation.isPending} />}
             </li>
           );
         })}

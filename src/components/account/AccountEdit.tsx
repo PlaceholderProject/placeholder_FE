@@ -18,11 +18,14 @@ const AccountEdit = () => {
   const [profileImage, setProfileImage] = useState<string | null>("");
   const [nickname, setNickname] = useState("");
   const [nicknameWarning, setNicknameWarning] = useState("");
+  const [isNicknameChecked, setIsNicknameChecked] = useState(true);
+  const [isCheckingNickname, setIsCheckingNickname] = useState(false);
   const [bio, setBio] = useState("");
   const [bioTextLength, setBioTextLength] = useState(0);
   const [bioWarning, setBioWarning] = useState("");
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const profilePreviewUrlRef = React.useRef<string | null>(null);
 
   const { data, isLoading } = useUser();
   const editUserMutation = useEditUser();
@@ -52,14 +55,23 @@ const AccountEdit = () => {
 
     setProfileImage(nextImage ? getImageURL(nextImage) : "/profile.png");
     setNickname(nextNickname);
+    setIsNicknameChecked(true);
     setBio(nextBio);
     setBioTextLength(nextBio.length);
   }, [data, dispatch, user.bio, user.email, user.nickname, user.profileImage]);
 
+  useEffect(() => {
+    return () => {
+      if (profilePreviewUrlRef.current) URL.revokeObjectURL(profilePreviewUrlRef.current);
+    };
+  }, []);
+
   const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      if (profilePreviewUrlRef.current) URL.revokeObjectURL(profilePreviewUrlRef.current);
       const objectUrl = URL.createObjectURL(file);
+      profilePreviewUrlRef.current = objectUrl;
       setProfileImage(objectUrl);
     }
   };
@@ -72,6 +84,7 @@ const AccountEdit = () => {
       setNicknameWarning("");
     }
     setNickname(nextNickname);
+    setIsNicknameChecked(nextNickname === (user.nickname ?? data?.nickname ?? ""));
   };
 
   const handleBioChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -86,6 +99,7 @@ const AccountEdit = () => {
 
   const handleCheckNickname = async () => {
     if (nickname === (user.nickname ?? data?.nickname)) {
+      setIsNicknameChecked(true);
       toast.success("사용 가능한 닉네임입니다.");
       return;
     }
@@ -97,7 +111,10 @@ const AccountEdit = () => {
       toast.error("닉네임은 최소 2자 최대 8자까지 가능합니다.");
       return;
     }
-    await checkNickname(nickname);
+    setIsCheckingNickname(true);
+    const isAvailable = await checkNickname(nickname.trim());
+    setIsNicknameChecked(isAvailable);
+    setIsCheckingNickname(false);
   };
 
   const handleAccountEditFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -111,6 +128,10 @@ const AccountEdit = () => {
       toast.error("닉네임은 최소 2자 최대 8자까지 가능합니다.");
       return;
     }
+    if (!isNicknameChecked) {
+      toast.error("변경할 닉네임의 중복 확인을 해주세요.");
+      return;
+    }
 
     const file = fileInputRef.current?.files?.[0];
     let resizedFile: File | null = null;
@@ -121,7 +142,7 @@ const AccountEdit = () => {
     }
 
     const editedUser = {
-      nickname,
+      nickname: nickname.trim(),
       bio,
       profileImage: resizedFile,
     };
@@ -153,14 +174,14 @@ const AccountEdit = () => {
 
   if (isLoading && !user.email) {
     return (
-      <div className="mx-auto w-[95%] max-w-[58rem] py-[3rem]">
+      <div className="mx-auto w-[calc(100%-3.2rem)] max-w-[64rem] py-[3rem]">
         <div className="bg-muted h-[24rem] animate-pulse rounded-[2rem]" />
       </div>
     );
   }
 
   return (
-    <div className="mx-auto w-[95%] max-w-[58rem] space-y-[1.8rem] py-[2.4rem] md:py-[3.2rem]">
+    <div className="mx-auto w-[calc(100%-3.2rem)] max-w-[64rem] space-y-[1.8rem] py-[2.4rem] pb-[11rem] md:py-[3.2rem] md:pb-[5rem]">
       <Link href="/account" className="text-muted-foreground hover:text-foreground inline-flex items-center gap-[0.5rem] text-sm font-semibold transition-colors">
         <LuArrowLeft className="h-[1.5rem] w-[1.5rem] stroke-[1.9]" />
         계정 관리
@@ -193,19 +214,21 @@ const AccountEdit = () => {
               닉네임
             </label>
             <div className="flex gap-[0.7rem]">
-              <div className="border-border focus-within:border-primary flex h-[4.6rem] min-w-0 flex-1 items-center gap-[0.9rem] rounded-[1.4rem] border px-[1.3rem] transition-colors">
+              <div className="border-border focus-within:border-primary focus-within:ring-primary/10 flex h-[4.6rem] min-w-0 flex-1 items-center gap-[0.9rem] rounded-[1.4rem] border px-[1.3rem] transition-all focus-within:ring-4">
                 <LuUserRound className="text-muted-foreground h-[1.7rem] w-[1.7rem] stroke-[1.8]" />
-                <input id="nickname" type="text" value={nickname} onChange={handleNicknameChange} className="min-w-0 flex-1 bg-transparent text-sm outline-none" />
+                <input id="nickname" type="text" value={nickname} onChange={handleNicknameChange} maxLength={8} className="min-w-0 flex-1 bg-transparent text-sm outline-none" />
               </div>
               <button
                 type="button"
                 onClick={handleCheckNickname}
-                className="bg-primary-soft text-primary h-[4.6rem] shrink-0 rounded-[1.4rem] px-[1.2rem] text-sm font-semibold transition hover:opacity-80"
+                disabled={isCheckingNickname || !!nicknameWarning}
+                className="bg-primary-soft text-primary h-[4.6rem] shrink-0 rounded-[1.4rem] px-[1.2rem] text-sm font-semibold transition hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                확인
+                {isCheckingNickname ? "확인 중" : isNicknameChecked ? "확인됨" : "중복 확인"}
               </button>
             </div>
             {nicknameWarning && <p className="text-warning mt-[0.6rem] text-xs font-medium">{nicknameWarning}</p>}
+            {!nicknameWarning && isNicknameChecked && <p className="text-success mt-[0.6rem] text-xs font-medium">사용할 수 있는 닉네임입니다.</p>}
           </div>
 
           <div>
@@ -220,12 +243,13 @@ const AccountEdit = () => {
             <label htmlFor="bio" className="text-foreground mb-[0.7rem] block text-sm font-semibold">
               소개
             </label>
-            <div className="border-border focus-within:border-primary flex min-h-[9rem] items-start gap-[0.9rem] rounded-[1.4rem] border px-[1.3rem] py-[1.2rem] transition-colors">
+            <div className="border-border focus-within:border-primary focus-within:ring-primary/10 flex min-h-[9rem] items-start gap-[0.9rem] rounded-[1.4rem] border px-[1.3rem] py-[1.2rem] transition-all focus-within:ring-4">
               <LuPenLine className="text-muted-foreground mt-[0.2rem] h-[1.6rem] w-[1.6rem] stroke-[1.8]" />
               <textarea
                 id="bio"
                 value={bio}
                 onChange={handleBioChange}
+                maxLength={40}
                 placeholder="함께할 모임원을 위해 간단한 자기소개를 작성해주세요."
                 className="min-h-[6.4rem] min-w-0 flex-1 resize-none bg-transparent text-sm leading-relaxed outline-none"
               />

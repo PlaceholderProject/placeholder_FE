@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // 개발 서버와 프로덕션 빌드가 동시에 실행되어도 manifest를 덮어쓰지 않도록 분리합니다.
+  // yarn dev: .next-dev / yarn build: .next
+  distDir: process.env.NEXT_DIST_DIR || ".next",
+
   images: {
     // domains는 deprecated되었으므로 제거..하려 했으나
     // 호환성을 위해 domains도 유지

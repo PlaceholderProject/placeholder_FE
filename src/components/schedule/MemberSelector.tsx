@@ -56,7 +56,7 @@ const MemberSelector = ({ meetupId, selectedMember, onMemberSelect }: MemberSele
                 {participant.role === "organizer" && <LuCrown className="text-primary fill-primary/20 h-[1.4rem] w-[1.4rem] shrink-0 stroke-[2]" />}
                 {participant.user.nickname}
               </p>
-              <p className="text-muted-foreground mt-[0.2rem] text-xs">{participant.role === "organizer" ? "모임장" : "멤버"}</p>
+              <p className="text-muted-foreground mt-[0.2rem] text-xs">{participant.role === "organizer" ? "방장" : "멤버"}</p>
             </div>
             <span
               className={`grid h-[2.4rem] w-[2.4rem] shrink-0 place-items-center rounded-full border transition-colors ${isSelected ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background"}`}

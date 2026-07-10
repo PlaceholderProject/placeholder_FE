@@ -7,7 +7,9 @@ import { BUTTONS_PER_GROUP, SIZE_LIMIT } from "@/constants/pagination";
 import PaginationButtons from "../PaginationButtons";
 import MySpaceListItem from "../MySpaceListItem";
 import Spinner from "@/components/common/Spinner";
-import { LuMegaphone } from "react-icons/lu";
+import { LuChevronRight, LuMegaphone, LuUserCheck } from "react-icons/lu";
+import MySpaceEmptyState from "../MySpaceEmptyState";
+import Link from "next/link";
 
 const PastMyAd = () => {
   const [page, setPage] = useState(1);
@@ -42,7 +44,7 @@ const PastMyAd = () => {
     isError,
     error,
   } = useQuery({
-    queryKey: ["myAds", "ended"],
+    queryKey: ["myAds", "ended", page],
     queryFn: () => getMyAdsApi("ended", page, SIZE_LIMIT),
     staleTime: 1000 * 60 * 5,
     retry: 1,
@@ -64,30 +66,35 @@ const PastMyAd = () => {
   const endPage = Math.min(currentGroup * BUTTONS_PER_GROUP, totalPages);
 
   if (isPending) return <Spinner isLoading={isPending} />;
-  if (isError) return <div>에러: {error.message}</div>;
-  if (!myAdsData || myAdsData.result.length === 0) {
+  if (isError) {
     return (
-      <div className="border-border bg-card flex min-h-[16rem] items-center justify-center rounded-[2rem] border text-center">
-        <p className="text-muted-foreground text-sm">지난 내 광고가 없습니다.</p>
+      <div className="border-error/20 bg-error/5 text-error rounded-[1.6rem] border px-[1.4rem] py-[2.4rem] text-center text-sm font-medium">
+        {error.message || "마감된 모집글을 불러오지 못했어요."}
       </div>
     );
+  }
+  if (!myAdsData || myAdsData.result.length === 0) {
+    return <MySpaceEmptyState title="마감된 모집글이 없어요" description="모집이 끝난 기록은 이곳에서 다시 확인할 수 있어요." />;
   }
 
   return (
     <div className="space-y-[0.8rem]">
       {myAdsData.result.map(myAd => (
-        <MySpaceListItem key={myAd.id} isOngoing={false}>
-          <div className="flex min-w-0 flex-1 items-center gap-[1rem]">
-            <span className="bg-muted text-muted-foreground grid h-[4.4rem] w-[4.4rem] shrink-0 place-items-center rounded-[1.2rem]">
-              <LuMegaphone className="h-[2rem] w-[2rem] stroke-[1.9]" />
+        <MySpaceListItem key={myAd.id}>
+          <Link href={`/ad/${myAd.id}`} className="flex min-w-0 flex-1 items-center gap-[1rem]">
+            <span className="bg-muted text-muted-foreground grid h-[5rem] w-[5rem] shrink-0 place-items-center rounded-[1.4rem]">
+              <LuMegaphone className="h-[2.2rem] w-[2.2rem] stroke-[1.9]" />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-muted-foreground text-xs">지난 광고</p>
-              <p className="text-foreground mt-[0.2rem] truncate font-semibold">{myAd.ad_title}</p>
-              <p className="text-muted-foreground mt-[0.2rem] text-xs">신청 {myAd.total}건</p>
+              <span className="border-border text-muted-foreground inline-flex rounded-full border px-[0.75rem] py-[0.2rem] text-[1rem] font-black">모집 마감</span>
+              <p className="text-foreground mt-[0.45rem] truncate font-bold">{myAd.ad_title}</p>
+              <p className="text-muted-foreground mt-[0.3rem] inline-flex items-center gap-[0.35rem] text-xs">
+                <LuUserCheck className="h-[1.3rem] w-[1.3rem] stroke-[1.9]" />
+                가입 신청 {myAd.total}건
+              </p>
             </div>
-          </div>
-          <span className="bg-muted text-muted-foreground shrink-0 rounded-full px-[0.9rem] py-[0.35rem] text-xs font-semibold">마감</span>
+          </Link>
+          <LuChevronRight className="text-muted-foreground h-[1.8rem] w-[1.8rem] shrink-0" aria-hidden="true" />
         </MySpaceListItem>
       ))}
       {/* 버튼 영역 */}

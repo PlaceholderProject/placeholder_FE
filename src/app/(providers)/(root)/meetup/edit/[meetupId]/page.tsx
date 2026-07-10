@@ -1,5 +1,7 @@
 import React from "react";
 import MeetupForm from "@/components/meetup/MeetupForm";
+import { parsePositiveInteger } from "@/utils/parsePositiveInteger";
+import { notFound } from "next/navigation";
 
 export const metadata = {
   robots: {
@@ -10,11 +12,10 @@ export const metadata = {
 
 const MeetupEditPage = async ({ params }: { params: Promise<{ meetupId: string }> }) => {
   const { meetupId } = await params;
-  return (
-    <>
-      <MeetupForm mode="edit" meetupId={parseInt(meetupId, 10)} />
-    </>
-  );
+  const meetupIdNum = parsePositiveInteger(meetupId);
+  if (!meetupIdNum) notFound();
+
+  return <MeetupForm mode="edit" meetupId={meetupIdNum} />;
 };
 
 export default MeetupEditPage;

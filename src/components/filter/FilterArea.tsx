@@ -8,10 +8,20 @@ import { setFilterType, setPlace, setCatregory } from "@/stores/filterSlice";
 import { setSortType } from "@/stores/sortSlice";
 import FilterPill from "../common/FilterPill";
 import SortButtons from "../sort/SortButtons";
-import { LuPlus, LuX } from "react-icons/lu";
+import { LuChevronDown, LuChevronUp, LuMapPin } from "react-icons/lu";
+import SegmentedIndicator from "../common/SegmentedIndicator";
 
 const FILTER_TABS: FilterType[] = ["모임 성격별", "지역별"];
-const CATEGORIES: Exclude<TypePurposeType, null>[] = ["운동", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
+const CATEGORIES: { value: Exclude<TypePurposeType, null>; emoji: string }[] = [
+  { value: "운동", emoji: "🏃" },
+  { value: "공부", emoji: "📚" },
+  { value: "취준", emoji: "💼" },
+  { value: "취미", emoji: "🎨" },
+  { value: "친목", emoji: "🥂" },
+  { value: "맛집", emoji: "🍜" },
+  { value: "여행", emoji: "✈️" },
+  { value: "기타", emoji: "✨" },
+];
 const REGIONS: Exclude<TypeRegionType, null>[] = [
   "전국",
   "서울",
@@ -56,36 +66,20 @@ const FilterArea = () => {
     }
   }, [filterType]);
 
-  useEffect(() => {
-    if (!isRegionPickerOpen) return;
-
-    const previousBodyOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsRegionPickerOpen(false);
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.body.style.overflow = previousBodyOverflow;
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [isRegionPickerOpen]);
-
   const selectedRegionIsQuick = place ? QUICK_REGIONS.includes(place) : true;
+  const activeFilterTabIndex = FILTER_TABS.findIndex(tab => tab === filterType);
 
   return (
-    <div className="mx-auto w-[95%] min-w-[32rem] space-y-[0.8rem] md:max-w-[100rem]">
+    <div className="mx-auto w-[calc(100%-3.2rem)] space-y-[1rem] md:max-w-[112rem]">
       {/* 필터 탭 (세그먼트) */}
       <div className="flex items-center justify-between gap-[0.8rem]">
-        <div className="border-border bg-card inline-flex rounded-full border p-[0.3rem]">
+        <div className="border-border bg-card relative grid grid-cols-2 rounded-[1.3rem] border p-[0.3rem] shadow-[0_1rem_3rem_-2.4rem_rgba(24,23,29,0.4)]">
+          <SegmentedIndicator count={FILTER_TABS.length} index={activeFilterTabIndex} className="bg-foreground rounded-[1rem] shadow-sm" />
           {FILTER_TABS.map(tab => (
             <button
               key={tab}
               onClick={() => dispatch(setFilterType(tab))}
-              className={`rounded-full px-[1.6rem] py-[0.6rem] text-sm transition ${filterType === tab ? "bg-foreground text-background" : "text-muted-foreground"}`}
+              className={`relative z-10 rounded-[1rem] px-[1.4rem] py-[0.7rem] text-sm font-bold transition-colors duration-200 ${filterType === tab ? "text-background" : "text-muted-foreground hover:text-foreground"}`}
             >
               {tab}
             </button>
@@ -102,69 +96,66 @@ const FilterArea = () => {
             <FilterPill active={category === null} onClick={() => dispatch(setCatregory(null))}>
               전체
             </FilterPill>
-            {CATEGORIES.map(c => (
-              <FilterPill key={c} active={category === c} onClick={() => dispatch(setCatregory(c))}>
-                {c}
+            {CATEGORIES.map(({ value, emoji }) => (
+              <FilterPill key={value} active={category === value} onClick={() => dispatch(setCatregory(value))}>
+                <span aria-hidden>{emoji}</span> {value}
               </FilterPill>
             ))}
           </>
         </div>
       ) : (
-        <div className="scroll-container flex gap-[0.6rem] overflow-x-auto pb-[0.4rem]">
-          <FilterPill active={place === null} onClick={() => handleRegionChange(null)}>
-            전체
-          </FilterPill>
-          {QUICK_REGIONS.map(region => (
-            <FilterPill key={region} active={place === region} onClick={() => handleRegionChange(region)}>
-              {region}
+        <>
+          <div className="scroll-container flex gap-[0.6rem] overflow-x-auto pb-[0.4rem]">
+            <FilterPill active={place === null} onClick={() => handleRegionChange(null)}>
+              전체
             </FilterPill>
-          ))}
-          {place && !selectedRegionIsQuick && (
-            <FilterPill active onClick={() => setIsRegionPickerOpen(true)}>
-              {place}
-            </FilterPill>
+            {QUICK_REGIONS.map(region => (
+              <FilterPill key={region} active={place === region} onClick={() => handleRegionChange(region)}>
+                {region}
+              </FilterPill>
+            ))}
+            {place && !selectedRegionIsQuick && (
+              <FilterPill active onClick={() => setIsRegionPickerOpen(true)}>
+                {place}
+              </FilterPill>
+            )}
+            <button
+              type="button"
+              aria-expanded={isRegionPickerOpen}
+              aria-controls="all-region-options"
+              onClick={() => setIsRegionPickerOpen(prev => !prev)}
+              className="border-border bg-card text-muted-foreground hover:border-primary/30 hover:text-primary inline-flex shrink-0 items-center gap-[0.5rem] rounded-full border px-[1.3rem] py-[0.75rem] text-sm font-bold transition-colors"
+            >
+              <LuMapPin className="h-[1.4rem] w-[1.4rem] stroke-[2]" />
+              {isRegionPickerOpen ? "지역 접기" : "전체 지역"}
+              {isRegionPickerOpen ? <LuChevronUp className="h-[1.3rem] w-[1.3rem]" /> : <LuChevronDown className="h-[1.3rem] w-[1.3rem]" />}
+            </button>
+          </div>
+
+          {isRegionPickerOpen && (
+            <section id="all-region-options" className="border-border bg-card mt-[0.2rem] rounded-[1.8rem] border p-[1.4rem] shadow-[0_1.4rem_3.4rem_-2.6rem_rgba(24,23,29,0.35)] md:p-[1.6rem]">
+              <div className="mb-[1.1rem] flex items-center justify-between gap-[1rem]">
+                <div>
+                  <h3 className="text-foreground text-sm font-black">전체 지역</h3>
+                  <p className="text-muted-foreground mt-[0.2rem] text-xs">활동하고 싶은 지역을 하나 선택하세요.</p>
+                </div>
+                {place && (
+                  <button type="button" onClick={() => handleRegionChange(null)} className="text-primary hover:bg-primary-soft rounded-full px-[1rem] py-[0.55rem] text-xs font-bold transition-colors">
+                    선택 초기화
+                  </button>
+                )}
+              </div>
+
+              <div className="grid grid-cols-4 gap-[0.7rem] sm:grid-cols-5 md:grid-cols-7">
+                {REGIONS.map(region => (
+                  <RegionButton key={region} active={place === region} onClick={() => handleRegionChange(region)}>
+                    {region}
+                  </RegionButton>
+                ))}
+              </div>
+            </section>
           )}
-          <button
-            type="button"
-            onClick={() => setIsRegionPickerOpen(true)}
-            className="border-border bg-card text-muted-foreground hover:border-primary/30 hover:text-primary inline-flex shrink-0 items-center gap-[0.45rem] rounded-full border border-dashed px-[1.3rem] py-[0.6rem] text-sm font-semibold transition-colors"
-          >
-            <LuPlus className="h-[1.4rem] w-[1.4rem] stroke-[2]" />
-            더보기
-          </button>
-        </div>
-      )}
-
-      {isRegionPickerOpen && (
-        <div className="bg-background/75 fixed inset-0 z-[60] flex items-end backdrop-blur-sm md:items-center md:justify-center" onClick={() => setIsRegionPickerOpen(false)}>
-          <section
-            className="border-border bg-card w-full rounded-t-[2rem] border p-[1.4rem] shadow-[0_-1.2rem_3.5rem_rgba(22,21,15,0.12)] md:max-w-[48rem] md:rounded-[2rem] md:shadow-[0_1.6rem_4rem_rgba(22,21,15,0.14)]"
-            onClick={event => event.stopPropagation()}
-          >
-            <div className="mb-[1.2rem] flex items-center justify-between gap-[1rem]">
-              <h2 className="text-foreground text-base font-bold">지역 선택</h2>
-              <button
-                type="button"
-                onClick={() => setIsRegionPickerOpen(false)}
-                className="text-muted-foreground hover:bg-muted hover:text-foreground grid h-[3.4rem] w-[3.4rem] place-items-center rounded-full transition-colors"
-                aria-label="지역 선택 닫기"
-              >
-                <LuX className="h-[1.8rem] w-[1.8rem] stroke-[1.9]" />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-4 gap-[0.7rem] sm:grid-cols-5">
-              <RegionButton active={place === null} onClick={() => handleRegionChange(null)}>
-                전체
-              </RegionButton>
-              {REGIONS.map(region => (
-                <RegionButton key={region} active={place === region} onClick={() => handleRegionChange(region)}>
-                  {region}
-                </RegionButton>
-              ))}
-            </div>
-          </section>
-        </div>
+        </>
       )}
     </div>
   );
@@ -175,7 +166,7 @@ const RegionButton = ({ active, onClick, children }: { active: boolean; onClick:
     type="button"
     onClick={onClick}
     className={`h-[3.4rem] rounded-full border px-[0.8rem] text-sm font-semibold transition-colors ${
-      active ? "bg-foreground text-background border-transparent shadow-sm" : "border-border bg-background text-muted-foreground hover:border-foreground/30 hover:text-foreground"
+      active ? "bg-primary-soft text-primary-soft-foreground border-primary/15" : "border-border bg-background text-muted-foreground hover:border-primary/25 hover:text-foreground"
     }`}
   >
     {children}

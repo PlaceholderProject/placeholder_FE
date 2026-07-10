@@ -16,10 +16,10 @@ const SortArea = () => {
   };
 
   return (
-    <div className="mx-auto flex w-[95%] min-w-[32rem] items-start justify-between gap-[1rem] md:max-w-[100rem] md:items-center">
+    <div className="mx-auto flex w-[calc(100%-3.2rem)] items-end justify-between gap-[1.2rem] md:max-w-[112rem]">
       <div>
-        <h2 className="text-foreground text-2xl font-bold md:text-3xl">지금 모집 중인 모임</h2>
-        <p className="text-muted-foreground mt-[0.2rem] text-sm md:text-base">관심사에 맞는 모임을 찾아보세요</p>
+        <h2 className="text-foreground text-[2.4rem] leading-tight font-black tracking-[-0.04em] md:text-[3.4rem]">지금, 함께할 사람들</h2>
+        <p className="text-muted-foreground mt-[0.45rem] text-sm md:text-base">취향이 맞는 모임을 발견하고 가볍게 시작해보세요.</p>
       </div>
       <div className="hidden md:block">
         <SortButtons currentSort={sortType} handleSortChange={handleSortChange} />

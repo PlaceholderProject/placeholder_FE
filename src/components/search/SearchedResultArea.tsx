@@ -9,7 +9,7 @@ import { getSearchedAd } from "@/services/search.service";
 import { getHeadhuntingsApi } from "@/services/thumbnails.service";
 import { setSearchedAds, setTotal } from "@/stores/searchSlice";
 import { FaExclamationTriangle, FaLock, FaMapMarkerAlt } from "react-icons/fa";
-import { LuSearch } from "react-icons/lu";
+import { LuChevronLeft, LuChevronRight, LuSearch, LuTrendingUp } from "react-icons/lu";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import Image from "next/image";
@@ -127,15 +127,24 @@ const SearchedResultArea = () => {
 
   if (!hasKeyword) {
     return (
-      <div className="mx-auto mt-[2.2rem] w-[95%] md:max-w-[100rem]">
+      <div className="mx-auto mt-[2.8rem] w-[calc(100%-3.2rem)] md:mt-[4rem] md:max-w-[112rem]">
         <section>
-          <h2 className="text-muted-foreground mb-[1.2rem] text-sm font-medium">인기 광고 🔥</h2>
+          <div className="mb-[1.4rem] flex items-end justify-between gap-[1.6rem] md:mb-[1.8rem]">
+            <div>
+              <p className="text-primary mb-[0.35rem] inline-flex items-center gap-[0.4rem] text-xs font-black">
+                <LuTrendingUp className="h-[1.4rem] w-[1.4rem] stroke-[2.2]" />
+                인기 광고
+              </p>
+              <h2 className="text-foreground text-xl font-black tracking-[-0.025em] md:text-2xl">지금 많이 찾는 모임</h2>
+            </div>
+            <p className="text-muted-foreground hidden text-sm md:block">관심받는 모집 공고부터 가볍게 둘러보세요.</p>
+          </div>
 
           {isRecommendedLoading ? (
-            <div className="scroll-container flex gap-[0.9rem] pb-[0.3rem]">
+            <div className="scroll-container flex gap-[1rem] pb-[0.5rem]">
               {Array.from({ length: 5 }).map((_, index) => (
-                <div key={index} className="border-border bg-card flex w-[22rem] shrink-0 gap-[0.7rem] rounded-[1.2rem] border p-[0.7rem]">
-                  <div className="bg-muted h-[6.4rem] w-[6.4rem] shrink-0 animate-pulse rounded-[0.9rem]" />
+                <div key={index} className="border-border bg-card flex w-[26rem] shrink-0 gap-[1rem] rounded-[1.8rem] border p-[0.8rem]">
+                  <div className="bg-muted h-[8rem] w-[8rem] shrink-0 animate-pulse rounded-[1.3rem]" />
                   <div className="flex flex-1 flex-col justify-center gap-[0.6rem]">
                     <div className="bg-muted h-[1.2rem] w-[80%] animate-pulse rounded-full" />
                     <div className="bg-muted h-[1rem] w-[55%] animate-pulse rounded-full" />
@@ -144,7 +153,7 @@ const SearchedResultArea = () => {
               ))}
             </div>
           ) : recommendedAds.length > 0 ? (
-            <div className="scroll-container flex gap-[0.9rem] pb-[0.3rem]">
+            <div className="scroll-container flex gap-[1rem] pb-[0.5rem]">
               {recommendedAds.map((ad, index) => {
                 const adDday = getDday(ad.adEndedAt);
                 const isUrgent = adDday === "D-DAY" || /^D-[0-3]$/.test(adDday);
@@ -153,35 +162,33 @@ const SearchedResultArea = () => {
                   <Link
                     key={ad.id}
                     href={`/ad/${ad.id}`}
-                    className="group border-border bg-card hover:border-primary/30 flex w-[22rem] shrink-0 gap-[0.7rem] rounded-[1.2rem] border p-[0.7rem] transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_24px_-24px_rgba(22,21,15,0.45)]"
+                    className="group border-border bg-card hover:border-primary/30 flex w-[26rem] shrink-0 gap-[1rem] rounded-[1.8rem] border p-[0.8rem] transition-all hover:-translate-y-0.5 hover:shadow-[0_1.6rem_3rem_-2.4rem_rgba(24,23,29,0.36)]"
                   >
-                    <div className="bg-muted relative h-[6.4rem] w-[6.4rem] shrink-0 overflow-hidden rounded-[0.9rem]">
+                    <div className="bg-muted relative h-[8rem] w-[8rem] shrink-0 overflow-hidden rounded-[1.3rem]">
                       {ad.isPublic && ad.image ? (
-                        <Image src={getImageURL(ad.image ?? null)} alt={ad.adTitle} fill sizes="6.4rem" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                        <Image src={getImageURL(ad.image ?? null)} alt={ad.adTitle} fill sizes="8rem" className="object-cover transition-transform duration-500 group-hover:scale-105" />
                       ) : (
                         <div className="bg-muted text-muted-foreground grid h-full w-full place-items-center">
                           <FaLock className="h-[1.5rem] w-[1.5rem]" />
                         </div>
                       )}
-                      <span className="bg-primary text-primary-foreground absolute top-[0.45rem] left-[0.45rem] grid h-[1.8rem] min-w-[1.8rem] place-items-center rounded-full px-[0.45rem] font-mono text-[0.95rem] font-semibold">
+                      <span className="bg-accent text-accent-foreground absolute top-[0.55rem] left-[0.55rem] grid h-[2rem] min-w-[2rem] place-items-center rounded-full px-[0.5rem] text-[1rem] font-black shadow-sm">
                         {index + 1}
                       </span>
                     </div>
 
-                    <div className="flex min-w-0 flex-1 flex-col justify-between py-[0.1rem]">
+                    <div className="flex min-w-0 flex-1 flex-col justify-between py-[0.25rem]">
                       <div className="min-w-0">
-                        <h3 className="text-foreground line-clamp-2 text-sm leading-snug font-semibold break-words">{ad.adTitle}</h3>
-                        <p className="text-muted-foreground mt-[0.25rem] flex min-w-0 items-center gap-[0.3rem] text-xs">
+                        <h3 className="text-foreground line-clamp-2 text-sm leading-snug font-bold break-words">{ad.adTitle}</h3>
+                        <p className="text-muted-foreground mt-[0.4rem] flex min-w-0 items-center gap-[0.3rem] text-xs">
                           <FaMapMarkerAlt className="shrink-0" />
                           <span className="truncate">{ad.place}</span>
                         </p>
                       </div>
 
-                      <div className="flex items-center gap-[0.45rem] text-[1rem]">
+                      <div className="flex items-center gap-[0.5rem] text-[1.05rem]">
                         {adDday && (
-                          <span
-                            className={`rounded-full px-[0.55rem] py-[0.15rem] font-mono font-semibold ${isUrgent ? "bg-destructive text-destructive-foreground" : "bg-muted text-muted-foreground"}`}
-                          >
+                          <span className={`rounded-full px-[0.55rem] py-[0.15rem] font-semibold ${isUrgent ? "bg-destructive text-destructive-foreground" : "bg-muted text-muted-foreground"}`}>
                             {adDday}
                           </span>
                         )}
@@ -200,9 +207,9 @@ const SearchedResultArea = () => {
 
   if (isLoading) {
     return (
-      <div className="mx-auto mt-[2.2rem] w-[95%] md:max-w-[100rem]">
+      <div className="mx-auto mt-[3rem] w-[calc(100%-3.2rem)] md:max-w-[112rem]">
         <SkeletonTheme baseColor="#E8E8E8" highlightColor="#D9D9D9">
-          <div className="grid grid-cols-2 gap-[1.2rem] py-[0.4rem] md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-[1.6rem] py-[0.4rem] min-[520px]:grid-cols-2 md:gap-[2rem] lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, index) => (
               <ThumbnailSkeleton key={index} />
             ))}
@@ -214,8 +221,8 @@ const SearchedResultArea = () => {
 
   if (isError) {
     return (
-      <div className="mx-auto mt-[2.2rem] w-[95%] md:max-w-[100rem]">
-        <div className="border-border flex min-h-[20rem] flex-col items-center justify-center rounded-[1.6rem] border border-dashed px-[2rem] text-center">
+      <div className="mx-auto mt-[3rem] w-[calc(100%-3.2rem)] md:max-w-[112rem]">
+        <div className="border-border bg-card flex min-h-[22rem] flex-col items-center justify-center rounded-[2.2rem] border border-dashed px-[2rem] text-center">
           <span className="bg-destructive/10 text-destructive mb-[1rem] grid h-[4.2rem] w-[4.2rem] place-items-center rounded-full">
             <FaExclamationTriangle className="h-[1.8rem] w-[1.8rem]" />
           </span>
@@ -228,8 +235,8 @@ const SearchedResultArea = () => {
 
   if (!searchedAds || searchedAds.length === 0) {
     return (
-      <div className="mx-auto mt-[2.2rem] w-[95%] md:max-w-[100rem]">
-        <div className="border-border flex min-h-[20rem] flex-col items-center justify-center rounded-[1.6rem] border border-dashed px-[2rem] text-center">
+      <div className="mx-auto mt-[3rem] w-[calc(100%-3.2rem)] md:max-w-[112rem]">
+        <div className="border-border bg-card flex min-h-[22rem] flex-col items-center justify-center rounded-[2.2rem] border border-dashed px-[2rem] text-center">
           <span className="bg-primary-soft text-primary mb-[1rem] grid h-[4.4rem] w-[4.4rem] place-items-center rounded-full">
             <LuSearch className="h-[2rem] w-[2rem] stroke-[1.8]" />
           </span>
@@ -243,12 +250,20 @@ const SearchedResultArea = () => {
   }
 
   return (
-    <div className="mx-auto mt-[2.2rem] w-[95%] md:max-w-[100rem]">
-      <p className="text-muted-foreground mb-[1.2rem] text-sm">
-        검색 결과 <span className="text-foreground font-semibold">{total}</span>건
-      </p>
+    <div className="mx-auto mt-[3rem] w-[calc(100%-3.2rem)] md:mt-[4rem] md:max-w-[112rem]">
+      <div className="mb-[1.6rem] flex items-end justify-between gap-[1.6rem]">
+        <div>
+          <p className="text-primary mb-[0.35rem] text-xs font-black">검색 결과</p>
+          <h2 className="text-foreground text-xl font-black tracking-[-0.025em] md:text-2xl">
+            ‘{keyword}’<span className="text-muted-foreground ml-[0.4rem] font-medium">에 대한 모임</span>
+          </h2>
+        </div>
+        <p className="text-muted-foreground shrink-0 pb-[0.15rem] text-xs font-medium">
+          총 <strong className="text-foreground text-base font-black tabular-nums">{total}</strong>건
+        </p>
+      </div>
 
-      <ul className="grid grid-cols-2 gap-[1.2rem] py-[0.4rem] md:grid-cols-3">
+      <ul className="grid grid-cols-1 gap-[1.6rem] py-[0.4rem] min-[520px]:grid-cols-2 md:gap-[2rem] lg:grid-cols-3">
         {searchedAds.map((ad: SearchedType, index: number) => (
           <li key={ad.id}>
             <ThumbnailItem thumbnail={toThumbnailMeetup(ad)} userNickname={userNickname} priority={index === 0} highlight={{ range, keyword }} />
@@ -257,11 +272,15 @@ const SearchedResultArea = () => {
       </ul>
 
       {totalPages > 1 && (
-        <div className="mt-[3rem] flex items-center justify-center gap-[0.6rem]">
+        <nav aria-label="검색 결과 페이지" className="mt-[3.6rem] flex items-center justify-center gap-[0.5rem]">
           {/* 이전 그룹 버튼 */}
           {startPage > 1 && (
-            <button onClick={() => setPage(startPage - 1)} className="bg-muted text-muted-foreground hover:bg-muted/70 rounded-full px-[1rem] py-[0.5rem] text-sm transition">
-              이전
+            <button
+              onClick={() => setPage(startPage - 1)}
+              aria-label="이전 페이지 그룹"
+              className="border-border bg-card text-muted-foreground hover:text-foreground grid h-[3.6rem] w-[3.6rem] place-items-center rounded-full border transition-colors"
+            >
+              <LuChevronLeft className="h-[1.7rem] w-[1.7rem]" />
             </button>
           )}
 
@@ -270,7 +289,8 @@ const SearchedResultArea = () => {
             <button
               key={p}
               onClick={() => setPage(p)}
-              className={`rounded-full px-[1.2rem] py-[0.5rem] text-sm font-medium transition ${page === p ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/70"}`}
+              aria-current={page === p ? "page" : undefined}
+              className={`grid h-[3.6rem] min-w-[3.6rem] place-items-center rounded-full px-[0.8rem] text-sm font-bold transition ${page === p ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-card hover:text-foreground"}`}
             >
               {p}
             </button>
@@ -278,11 +298,15 @@ const SearchedResultArea = () => {
 
           {/* 다음 그룹 버튼 */}
           {endPage < totalPages && (
-            <button onClick={() => setPage(endPage + 1)} className="bg-muted text-muted-foreground hover:bg-muted/70 rounded-full px-[1rem] py-[0.5rem] text-sm transition">
-              다음
+            <button
+              onClick={() => setPage(endPage + 1)}
+              aria-label="다음 페이지 그룹"
+              className="border-border bg-card text-muted-foreground hover:text-foreground grid h-[3.6rem] w-[3.6rem] place-items-center rounded-full border transition-colors"
+            >
+              <LuChevronRight className="h-[1.7rem] w-[1.7rem]" />
             </button>
           )}
-        </div>
+        </nav>
       )}
     </div>
   );

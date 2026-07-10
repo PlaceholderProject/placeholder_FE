@@ -13,6 +13,7 @@ import { toast } from "sonner";
 const PasswordRecheck = () => {
   const [password, setPassword] = useState("");
   const [isVisivlePassword, setIsVisivlePassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const dispatch = useDispatch();
   const isPasswordRechecked = useSelector((state: RootState) => state.auth.isPasswordRechecked);
@@ -33,10 +34,15 @@ const PasswordRecheck = () => {
       return;
     }
 
-    const response = await recheckPassword(password);
-    if (response) {
-      toast.success("비밀번호가 일치합니다.");
-      dispatch(setIsPasswordRechecked(!isPasswordRechecked));
+    try {
+      setIsSubmitting(true);
+      const response = await recheckPassword(password);
+      if (response) {
+        toast.success("비밀번호가 일치합니다.");
+        dispatch(setIsPasswordRechecked(!isPasswordRechecked));
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -48,7 +54,7 @@ const PasswordRecheck = () => {
           <p className="text-muted-foreground mt-[0.5rem] text-sm leading-relaxed">회원정보 보호를 위해 비밀번호를 다시 확인합니다.</p>
         </div>
 
-        <div className="border-border focus-within:border-primary flex h-[4.6rem] items-center gap-[0.9rem] rounded-[1.4rem] border px-[1.3rem] transition-colors">
+        <div className="border-border focus-within:border-primary focus-within:ring-primary/10 flex h-[4.6rem] items-center gap-[0.9rem] rounded-[1.4rem] border px-[1.3rem] transition-all focus-within:ring-4">
           <LuLockKeyhole className="text-muted-foreground h-[1.7rem] w-[1.7rem] stroke-[1.8]" />
           <input
             type={isVisivlePassword ? "text" : "password"}
@@ -68,8 +74,12 @@ const PasswordRecheck = () => {
         </div>
 
         <div className="grid gap-[0.8rem] sm:grid-cols-2">
-          <button type="submit" className="bg-primary text-primary-foreground h-[4.4rem] rounded-[1.4rem] text-sm font-semibold transition hover:opacity-90">
-            확인
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="bg-primary text-primary-foreground h-[4.4rem] rounded-[1.4rem] text-sm font-semibold transition hover:opacity-90 disabled:cursor-wait disabled:opacity-55"
+          >
+            {isSubmitting ? "확인 중" : "확인"}
           </button>
           <Link
             href="/account"

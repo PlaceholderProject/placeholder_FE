@@ -7,6 +7,7 @@ import { useAdItem } from "@/hooks/useAdItem";
 import { useModal } from "@/hooks/useModal";
 import Link from "next/link";
 import { FaCheckCircle, FaClock, FaInfoCircle } from "react-icons/fa";
+import { getDday } from "@/utils/getDday";
 
 const ActionNote = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -23,6 +24,7 @@ const AdButton = ({ meetupId }: { meetupId: number }) => {
 
   const { data: proposal, isLoading } = useMyProposalStatus(meetupId);
   const { adData } = useAdItem(meetupId);
+  const isClosed = getDday(adData?.adEndedAt ?? "") === "마감";
 
   if (isLoading) return <div className="bg-muted h-[4.4rem] w-full animate-pulse rounded-[1.4rem]" />;
 
@@ -59,7 +61,7 @@ const AdButton = ({ meetupId }: { meetupId: number }) => {
               >
                 신청 취소
               </button>
-              <ActionNote>모임장이 승인하면 입장 버튼이 열려요.</ActionNote>
+              <ActionNote>방장이 승인하면 입장 버튼이 열려요.</ActionNote>
             </div>
           ) : proposal.status === "acceptance" ? (
             <div className="flex w-full flex-col gap-[0.8rem]">
@@ -80,6 +82,11 @@ const AdButton = ({ meetupId }: { meetupId: number }) => {
               <ActionNote>이번 모집에는 입장할 수 없어요.</ActionNote>
             </div>
           )
+        ) : isClosed ? (
+          <div className="flex w-full flex-col gap-[0.8rem]">
+            <div className="bg-muted text-muted-foreground flex h-[4.6rem] w-full items-center justify-center rounded-[1.4rem] font-bold">모집이 마감되었어요</div>
+            <ActionNote>다른 모집 중인 모임을 둘러보세요.</ActionNote>
+          </div>
         ) : !user.email ? (
           <div className="flex w-full flex-col gap-[0.8rem]">
             <Link href="/login" className="bg-primary text-primary-foreground flex h-[4.4rem] w-full items-center justify-center rounded-[1.4rem] font-semibold transition hover:opacity-90">
@@ -89,8 +96,8 @@ const AdButton = ({ meetupId }: { meetupId: number }) => {
           </div>
         ) : (
           <div className="flex w-full flex-col gap-[0.8rem]">
-            <button onClick={handleProposalModal} className="bg-primary text-primary-foreground h-[4.4rem] w-full rounded-[1.4rem] font-semibold transition hover:opacity-90">
-              신청하기
+            <button onClick={handleProposalModal} className="bg-primary text-primary-foreground hover:bg-primary-hover h-[4.6rem] w-full rounded-[1.4rem] font-bold transition-colors">
+              가입 신청하기
             </button>
             <ActionNote>승인되면 모임 공간에 입장할 수 있어요.</ActionNote>
           </div>

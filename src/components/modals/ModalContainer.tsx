@@ -10,11 +10,11 @@ import AdDeleteContent from "./contents/AdDeleteContent";
 import ProposalCancellationContent from "./contents/ProposalCancellationContent";
 import ProposalPostcardContent from "./contents/ProposalPostcardContent";
 import MeetupMembersContent from "./contents/MeetupMembersContent";
-import MeetupInfoContent from "./contents/MeetupInfoContent";
 import MemberDeleteContent from "./contents/MemberDeleteContent";
 import ProposalHideContent from "./contents/ProposalHideContent";
 import PostcodeContent from "./contents/PostcodeContent";
 import { LuX } from "react-icons/lu";
+import MeetupLeaveContent from "./contents/MeetupLeaveContent";
 
 const getModalContainerStyles = (modalType: ModalType): string => {
   const baseStyles = "w-full rounded-[2rem] p-[1.8rem]";
@@ -24,9 +24,11 @@ const getModalContainerStyles = (modalType: ModalType): string => {
       return `${baseStyles} max-w-lg`;
     case "PROPOSAL_POSTCARD":
       return `${baseStyles} max-w-[42rem] md:p-[2.2rem]`;
-    case "MEETUP_INFO":
-      // 모바일에서는 rounded-2xl, PC(lg)에서는 rounded-[2.7rem]으로 반응형 radius 적용
-      return `w-full max-w-lg rounded-2xl md:rounded-[2.7rem] p-6 md:px-12 md:py-10`;
+    case "AD_DELETE":
+    case "PROPOSAL_CANCELLATION":
+    case "PROPOSAL_HIDE":
+    case "MEETUP_LEAVE":
+      return `${baseStyles} max-w-[40rem] md:p-[2rem]`;
     case "MEETUP_MEMBERS":
     case "MEMBER_DELETE":
       return `${baseStyles} max-w-[44rem] md:p-[2rem]`;
@@ -38,7 +40,7 @@ const getModalContainerStyles = (modalType: ModalType): string => {
 const renderModalContent = (modalType: ModalType, modalData: ModalData): JSX.Element | null => {
   switch (modalType) {
     case "AD_DELETE":
-      return <AdDeleteContent meetupId={modalData.meetupId!} />;
+      return <AdDeleteContent meetupId={modalData.meetupId!} adTitle={modalData.adTitle} />;
     case "PROPOSAL_CANCELLATION":
       return <ProposalCancellationContent proposal={modalData.proposal!} />;
     case "PROPOSAL_HIDE":
@@ -47,8 +49,8 @@ const renderModalContent = (modalType: ModalType, modalData: ModalData): JSX.Ele
       return <ProposalPostcardContent meetupId={modalData.meetupId!} />;
     case "MEETUP_MEMBERS":
       return <MeetupMembersContent meetupId={modalData.meetupId!} meetupName={modalData.meetupName!} />;
-    case "MEETUP_INFO":
-      return <MeetupInfoContent meetupData={modalData.meetupData!} isOrganizer={modalData.isOrganizer!} meetupId={modalData.meetupId!} />;
+    case "MEETUP_LEAVE":
+      return <MeetupLeaveContent meetupId={modalData.meetupId!} meetupName={modalData.meetupName!} />;
     case "MEMBER_DELETE":
       return <MemberDeleteContent />;
     case "POSTCODE":
@@ -99,11 +101,13 @@ const ModalContainer = () => {
       <div
         className={`border-border bg-card relative max-h-[90vh] overflow-y-auto border shadow-[0_2rem_5rem_rgba(22,21,15,0.14)] ${getModalContainerStyles(modalType)}`}
         onClick={e => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
       >
         <button
           onClick={() => dispatch(closeModal())}
           className="text-muted-foreground hover:bg-muted hover:text-foreground absolute top-[1.4rem] right-[1.4rem] z-10 grid h-[3.4rem] w-[3.4rem] place-items-center rounded-full transition-colors"
-          aria-label="Close modal"
+          aria-label="모달 닫기"
         >
           <LuX className="h-[1.9rem] w-[1.9rem] stroke-[1.9]" />
         </button>

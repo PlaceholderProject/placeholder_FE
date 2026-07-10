@@ -1,8 +1,10 @@
 "use client";
 
 import SubmitLoader from "@/components/common/SubmitLoader";
+import ResourceState from "@/components/common/ResourceState";
 import MemberSelector from "@/components/schedule/MemberSelector";
 import { useImageUpload } from "@/hooks/useImageUpload";
+import { useAdItem } from "@/hooks/useAdItem";
 import { useModal } from "@/hooks/useModal";
 import { useCreateSchedule, useScheduleDetail, useUpdateSchedule } from "@/hooks/useSchedule";
 import { useScheduleForm } from "@/hooks/useScheduleForm";
@@ -11,8 +13,9 @@ import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import type { Address } from "react-daum-postcode";
 import { IconType } from "react-icons";
-import { LuArrowLeft, LuCalendarDays, LuClock3, LuImagePlus, LuMapPin, LuSearch, LuStickyNote, LuUsersRound, LuX } from "react-icons/lu";
+import { LuArrowLeft, LuCalendarDays, LuImagePlus, LuMapPin, LuSearch, LuUsersRound, LuX } from "react-icons/lu";
 import { toast } from "sonner";
+import { isNotFoundError } from "@/utils/httpError";
 
 interface ScheduleFormProps {
   meetupId: number;
@@ -21,7 +24,7 @@ interface ScheduleFormProps {
 }
 
 const inputClassName =
-  "border-border bg-card text-foreground placeholder:text-muted-foreground/70 focus:border-primary focus:ring-primary/15 h-[4.4rem] w-full rounded-[1.3rem] border px-[1.2rem] text-sm outline-none transition focus:ring-[0.3rem] disabled:bg-muted disabled:text-muted-foreground";
+  "border-border bg-card text-foreground placeholder:text-muted-foreground/70 focus:border-primary focus:ring-primary/10 h-[4.8rem] w-full rounded-[1.3rem] border px-[1.3rem] text-sm outline-none transition focus:ring-[0.35rem] disabled:bg-muted disabled:text-muted-foreground";
 
 const useKakaoMapSDK = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -51,8 +54,13 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
   const router = useRouter();
   const isKakaoMapLoaded = useKakaoMapSDK();
   const { openModal } = useModal();
+  const { adData: meetupData, isPending: isMeetupLoading, error: meetupError } = useAdItem(meetupId);
 
-  const { data: scheduleData, isPending: isLoadingSchedule } = useScheduleDetail(mode === "edit" ? scheduleId : undefined, { enabled: mode === "edit" && !!scheduleId });
+  const {
+    data: scheduleData,
+    isPending: isLoadingSchedule,
+    error: scheduleError,
+  } = useScheduleDetail(mode === "edit" ? scheduleId : undefined, { enabled: mode === "edit" && scheduleId !== undefined });
   const { formData, imagePreview, handleChange, handleMemberSelect, handleImageSelect, handleImageRemove, setAddress } = useScheduleForm(mode, scheduleData);
 
   const imageUploadMutation = useImageUpload();
@@ -125,11 +133,37 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
     }
   };
 
-  if (mode === "edit" && isLoadingSchedule) {
+  if (isMeetupLoading || (mode === "edit" && isLoadingSchedule)) {
     return (
       <div className="mx-auto w-[95%] max-w-[72rem] py-[4rem]">
         <div className="bg-muted h-[24rem] animate-pulse rounded-[2rem]" />
       </div>
+    );
+  }
+
+  if (meetupError || !meetupData) {
+    const isNotFound = isNotFoundError(meetupError) || (!meetupData && !meetupError);
+    return (
+      <ResourceState
+        kind={isNotFound ? "not-found" : "error"}
+        title={isNotFound ? "모임을 찾을 수 없어요" : "모임 정보를 불러오지 못했어요"}
+        description={isNotFound ? "삭제되었거나 존재하지 않는 모임이에요." : "잠시 후 다시 시도해주세요."}
+        actionHref="/my-space/my-meetup"
+        actionLabel="모임 공간 목록"
+      />
+    );
+  }
+
+  if (mode === "edit" && (scheduleError || !scheduleData || scheduleData.meetupId !== meetupId)) {
+    const isNotFound = isNotFoundError(scheduleError) || (!!scheduleData && scheduleData.meetupId !== meetupId) || (!scheduleData && !scheduleError);
+    return (
+      <ResourceState
+        kind={isNotFound ? "not-found" : "error"}
+        title={isNotFound ? "일정을 찾을 수 없어요" : "일정 정보를 불러오지 못했어요"}
+        description={isNotFound ? "삭제되었거나 이 모임에 속하지 않은 일정이에요." : "잠시 후 다시 시도해주세요."}
+        actionHref={`/meetup/${meetupId}`}
+        actionLabel="모임으로 돌아가기"
+      />
     );
   }
 
@@ -138,14 +172,14 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
   return (
     <>
       {isSubmitting && <SubmitLoader isLoading={isSubmitting} />}
-      <div className="mx-auto w-[95%] max-w-[100rem] space-y-[2rem] py-[2.4rem] pb-[8rem] md:py-[3.2rem] md:pb-[5rem]">
+      <div className="mx-auto w-[calc(100%-3.2rem)] max-w-[100rem] space-y-[2rem] py-[2.4rem] pb-[8rem] md:py-[3.2rem] md:pb-[5rem]">
         <button type="button" onClick={() => router.back()} className="text-muted-foreground hover:text-foreground inline-flex items-center gap-[0.5rem] text-sm font-semibold transition-colors">
           <LuArrowLeft className="h-[1.5rem] w-[1.5rem] stroke-[1.9]" />
           뒤로
         </button>
 
         <div>
-          <h1 className="text-foreground text-2xl font-bold md:text-3xl">{mode === "create" ? "새 일정 만들기" : "일정 수정하기"}</h1>
+          <h1 className="text-foreground text-2xl font-black tracking-[-0.035em] md:text-3xl">{mode === "create" ? "새 일정 만들기" : "일정 수정하기"}</h1>
           <p className="text-muted-foreground mt-[0.4rem] text-sm">멤버들이 모일 장소와 시간을 등록해요.</p>
         </div>
 
@@ -174,9 +208,10 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
                     <button
                       type="button"
                       onClick={handleAddressSearch}
-                      className="bg-foreground text-background grid h-[4.4rem] w-[4.8rem] shrink-0 place-items-center rounded-[1.3rem] transition hover:opacity-90"
+                      className="bg-foreground text-background flex h-[4.8rem] w-[10rem] shrink-0 items-center justify-center gap-[0.5rem] rounded-[1.3rem] text-sm font-bold transition hover:opacity-90"
                     >
                       <LuSearch className="h-[1.8rem] w-[1.8rem] stroke-[2]" />
+                      주소 검색
                     </button>
                   </div>
                 </FieldLabel>
@@ -184,34 +219,30 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
             </section>
 
             <section className="border-border bg-card rounded-[2rem] border p-[1.6rem] md:p-[2rem]">
-              <SectionTitle icon={LuCalendarDays} title="일시와 메모" description="언제 만나는지, 무엇을 준비하면 좋은지 알려주세요." />
+              <SectionTitle icon={LuCalendarDays} title="날짜와 시간" description="멤버들이 확인할 만남 일시를 정해주세요." />
 
-              <div className="grid gap-[1.4rem] md:grid-cols-2">
+              <div className="grid gap-[1.2rem] md:grid-cols-2">
                 <FieldLabel label="날짜">
                   <input type="date" id="date" name="date" value={formData.date} onChange={handleChange} required className={inputClassName} />
                 </FieldLabel>
                 <FieldLabel label="시간">
-                  <div className="relative">
-                    <LuClock3 className="text-muted-foreground pointer-events-none absolute top-1/2 right-[1.2rem] h-[1.7rem] w-[1.7rem] -translate-y-1/2 stroke-[1.9]" />
-                    <input type="time" id="time" name="time" value={formData.time} onChange={handleChange} required className={`${inputClassName} pr-[3.8rem]`} />
-                  </div>
+                  <input type="time" id="time" name="time" value={formData.time} onChange={handleChange} required className={inputClassName} />
                 </FieldLabel>
               </div>
 
-              <FieldLabel label="메모">
-                <div className="relative">
-                  <LuStickyNote className="text-muted-foreground pointer-events-none absolute top-[1.2rem] right-[1.2rem] h-[1.8rem] w-[1.8rem] stroke-[1.9]" />
+              <div className="border-border mt-[1.6rem] border-t pt-[1.6rem]">
+                <FieldLabel label="메모" optional>
                   <textarea
                     id="memo"
                     name="memo"
                     value={formData.memo}
                     onChange={handleChange}
-                    rows={6}
-                    placeholder="준비물, 만나는 위치, 진행 방식 등을 적어주세요."
-                    className={`${inputClassName} mt-[1.4rem] h-[15rem] resize-none py-[1rem] pr-[4rem]`}
+                    rows={4}
+                    placeholder="준비물이나 구체적인 만남 위치를 알려주세요."
+                    className={`${inputClassName} h-[11rem] resize-none py-[1.2rem] leading-relaxed`}
                   />
-                </div>
-              </FieldLabel>
+                </FieldLabel>
+              </div>
             </section>
 
             <section className="border-border bg-card rounded-[2rem] border p-[1.6rem] md:p-[2rem]">
@@ -220,7 +251,7 @@ const ScheduleForm = ({ meetupId, mode = "create", scheduleId }: ScheduleFormPro
               <input type="file" id="image-upload" accept="image/*" onChange={handleImageSelect} className="hidden" />
               <label
                 htmlFor="image-upload"
-                className="border-border bg-muted/60 group hover:border-primary/45 relative flex h-[21rem] cursor-pointer items-center justify-center overflow-hidden rounded-[1.6rem] border border-dashed transition-colors"
+                className="border-border bg-muted/60 group hover:border-primary/45 relative flex h-[18rem] cursor-pointer items-center justify-center overflow-hidden rounded-[1.6rem] border border-dashed transition-colors"
               >
                 {imagePreview ? (
                   <Image
@@ -285,9 +316,12 @@ const SectionTitle = ({ icon: Icon, title, description, compact = false }: { ico
   </div>
 );
 
-const FieldLabel = ({ label, children }: { label: string; children: React.ReactNode }) => (
+const FieldLabel = ({ label, children, optional = false }: { label: string; children: React.ReactNode; optional?: boolean }) => (
   <div>
-    <label className="text-foreground mb-[0.7rem] block text-sm font-bold">{label}</label>
+    <label className="text-foreground mb-[0.7rem] flex items-center gap-[0.5rem] text-sm font-bold">
+      {label}
+      {optional && <span className="text-muted-foreground text-xs font-medium">선택</span>}
+    </label>
     {children}
   </div>
 );

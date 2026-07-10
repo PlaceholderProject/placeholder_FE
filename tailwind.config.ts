@@ -23,41 +23,46 @@ const config: Config = {
       },
       colors: {
         primary: {
-          DEFAULT: "#6e3bff",
-          foreground: "#ffffff",
-          soft: "#ecebff",
-          "soft-foreground": "#3a1da8",
+          DEFAULT: "#6C4DFF",
+          hover: "#5B3EE8",
+          foreground: "#FFFFFF",
+          soft: "#EFEBFF",
+          "soft-foreground": "#4930B8",
         },
         secondary: {
-          dark: "#FBFFA9",
-          light: "#FEFFEC",
+          dark: "#DDFB52",
+          light: "#F4FFD0",
         },
-        background: "#f7f6f2",
-        foreground: "#16150f",
+        background: "#F7F6F2",
+        foreground: "#18171D",
         card: {
-          DEFAULT: "#ffffff",
-          foreground: "#16150f",
+          DEFAULT: "#FFFFFF",
+          foreground: "#18171D",
         },
         muted: {
-          DEFAULT: "#efeee9",
-          foreground: "#79766c",
+          DEFAULT: "#EFEEE9",
+          foreground: "#77746D",
         },
         accent: {
-          DEFAULT: "#cdfb45",
-          foreground: "#1c2607",
+          DEFAULT: "#DDFB52",
+          foreground: "#20280A",
         },
         destructive: {
-          DEFAULT: "#e23a52",
-          foreground: "#ffffff",
+          DEFAULT: "#E5485D",
+          foreground: "#FFFFFF",
         },
-        border: "rgba(22, 21, 15, 0.09)",
+        success: {
+          DEFAULT: "#2F9E75",
+          soft: "#E5F7F0",
+        },
+        border: "rgba(24, 23, 29, 0.10)",
         gray: {
           dark: "#868282",
           medium: "#D9D9D9",
           light: "#E8E8E8",
         },
-        error: "#F9617A",
-        warning: "#F9617A",
+        error: "#E5485D",
+        warning: "#E5485D",
 
         dimmer: {
           900: "#17171980", //#171719에 투명도 50%
