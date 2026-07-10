@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // 개발 서버와 프로덕션 빌드가 동시에 실행되어도 manifest를 덮어쓰지 않도록 분리합니다.
+  // yarn dev: .next-dev / yarn build: .next
+  distDir: process.env.NEXT_DIST_DIR || ".next",
+
   images: {
     // domains는 deprecated되었으므로 제거..하려 했으나
     // 호환성을 위해 domains도 유지
@@ -12,6 +16,20 @@ const nextConfig: NextConfig = {
         hostname: "localhost",
         port: "8000",
         pathname: "/media/profile_images/**",
+      },
+      // 목업 데이터용 임시 이미지 (picsum.photos)
+      {
+        protocol: "https",
+        hostname: "picsum.photos",
+      },
+      {
+        protocol: "https",
+        hostname: "fastly.picsum.photos",
+      },
+      // 리디자인 목업용 임시 이미지 (Unsplash)
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
       },
       // 프로덕션 환경을 위한 도메인도 추가하는 것이 좋습니다
       {

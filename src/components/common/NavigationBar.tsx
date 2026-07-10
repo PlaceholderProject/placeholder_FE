@@ -2,67 +2,48 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
-import { FaArrowUp, FaHome, FaPlus, FaUser, FaUsers } from "react-icons/fa";
+import { LuCompass, LuPlus, LuSearch } from "react-icons/lu";
 
 const NavigationBar = () => {
   const pathname = usePathname();
 
   const navItems = [
-    {
-      href: "/",
-      icon: FaHome,
-      label: "홈",
-      isActive: pathname === "/",
-    },
-    {
-      href: "/my-space/my-meetup",
-      icon: FaUsers,
-      label: "내 공간",
-      isActive: pathname.startsWith("/my-space"),
-    },
-    {
-      href: "/meetup/create",
-      icon: FaPlus,
-      label: "모임 만들기",
-      isActive: pathname === "/meetup/create",
-    },
-    {
-      href: "/account",
-      icon: FaUser,
-      label: "계정 관리",
-      isActive: pathname.startsWith("/account"),
-    },
+    { href: "/", icon: LuCompass, label: "둘러보기", isActive: pathname === "/" },
+    { href: "/meetup/create", icon: LuPlus, label: "만들기", isActive: pathname === "/meetup/create", isAction: true },
+    { href: "/search", icon: LuSearch, label: "검색", isActive: pathname.startsWith("/search") },
   ];
 
-  const handleScrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
-
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-[#FEFFEC] md:hidden">
-      <div className="flex items-center justify-around py-2">
+    <nav
+      className="border-border bg-card/94 fixed right-[1.4rem] bottom-[calc(0.8rem+env(safe-area-inset-bottom))] left-[1.4rem] z-50 rounded-[1.8rem] border px-[0.6rem] shadow-[0_1.2rem_3rem_-1.8rem_rgba(24,23,29,0.32)] backdrop-blur-2xl md:hidden"
+      aria-label="하단 메뉴"
+    >
+      <div className="mx-auto grid h-[6rem] max-w-[42rem] grid-cols-3 items-center">
         {navItems.map(item => {
-          const IconComponent = item.icon;
+          const Icon = item.icon;
+
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`rem:1.4 flex flex-col items-center rounded-lg p-2 transition-colors ${item.isActive ? "text-[#006B8B]" : "text-gray-500 hover:text-gray-700"}`}
+              aria-current={item.isActive ? "page" : undefined}
+              className={`group flex h-[5rem] flex-col items-center justify-center gap-[0.2rem] rounded-[1.4rem] px-[0.5rem] text-xs font-bold transition-colors ${
+                item.isAction ? "text-foreground" : item.isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+              }`}
             >
-              <IconComponent size={24} />
-              <span className="mt-1 text-xs">{item.label}</span>
+              <span
+                className={`grid place-items-center transition-all ${
+                  item.isAction
+                    ? "bg-primary text-primary-foreground h-[3.6rem] w-[3.6rem] rounded-full shadow-[0_0.8rem_1.8rem_-1rem_rgba(108,77,255,0.72)] group-active:scale-95"
+                    : "h-[3rem] w-[4.2rem] rounded-full"
+                }`}
+              >
+                <Icon className={`${item.isAction ? "h-[2.1rem] w-[2.1rem]" : "h-[2rem] w-[2rem]"} stroke-[2]`} />
+              </span>
+              <span>{item.label}</span>
             </Link>
           );
         })}
-
-        <button onClick={handleScrollToTop} className="flex flex-col items-center rounded-lg p-2 text-gray-500 transition-colors hover:text-gray-700">
-          <FaArrowUp size={24} />
-          <span className="mt-1 text-xs">맨 위로</span>
-        </button>
       </div>
     </nav>
   );

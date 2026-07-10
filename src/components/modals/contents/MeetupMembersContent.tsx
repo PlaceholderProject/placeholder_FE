@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
 import { showConfirmToast } from "@/components/common/ConfirmDialog";
 import { toast } from "sonner";
+import { LuCrown, LuUserRound, LuUsersRound } from "react-icons/lu";
 
 interface MeetupMembersContentProps {
   meetupId: number;
@@ -20,81 +21,112 @@ const MeetupMembersContent = ({ meetupId, meetupName }: MeetupMembersContentProp
   const { closeModal } = useModal();
   const { data: members, isPending, error } = useMeetupMembers(meetupId);
 
-  // 강퇴 기능을 위한 훅과 현재 유저 정보 가져오기
   const deleteMutation = useMemberDelete();
   const currentUser = useSelector((state: RootState) => state.user.user);
+  const isCurrentUserOrganizer = members?.find(member => member.user.nickname === currentUser.nickname)?.role === "organizer";
 
-  // 현재 유저가 방장인지 확인
-  const isCurrentUserOrganizer = members?.find(m => m.user.nickname === currentUser.nickname)?.role === "organizer";
-
-  // 강퇴 버튼 클릭 핸들러
   const handleKickOut = (memberId: number, memberNickname: string) => {
-    // ⭐️ 확인 후 삭제
-    // if (window.confirm(`정말로 '${memberNickname}' 님을 강퇴하시겠습니까?`)) {
-    //   deleteMutation.mutate(memberId);
-    // }
-
-    // ⭐️ confirm 커스텀
     showConfirmToast({
-      message: `정말로 '${memberNickname}' 님을 강퇴하시겠습니까?`,
-      confirmText: "강퇴",
+      message: `${memberNickname}님을 모임에서 내보낼까요?`,
+      confirmText: "내보내기",
       cancelText: "취소",
       onConfirm: async () => {
         try {
-          await deleteMutation.mutateAsync(memberId);
-          toast.success(`'${memberNickname}' 님을 강퇴했습니다.`);
+          const response = await deleteMutation.mutateAsync(memberId);
+          if (response && !response.ok) throw new Error("member delete failed");
+          toast.success(`${memberNickname}님을 내보냈습니다.`);
         } catch {
-          toast.error("강퇴 처리 중 문제가 발생했습니다.");
+          toast.error("멤버 내보내기 중 문제가 발생했습니다.");
         }
       },
     });
   };
 
   return (
-    <div className="w-full text-gray-800">
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xl font-bold">{meetupName} 멤버</h2>
+    <div className="space-y-[1.6rem] pr-[0.2rem]">
+      <div className="flex items-start gap-[1rem] pr-[3.2rem]">
+        <span className="bg-primary-soft text-primary grid h-[4.4rem] w-[4.4rem] shrink-0 place-items-center rounded-[1.3rem]">
+          <LuUsersRound className="h-[2rem] w-[2rem] stroke-[1.9]" />
+        </span>
+        <div className="min-w-0">
+          <p className="text-muted-foreground text-xs font-semibold">모임 멤버</p>
+          <h2 className="text-foreground mt-[0.2rem] truncate text-lg font-bold">{meetupName}</h2>
+          <p className="text-muted-foreground mt-[0.4rem] text-sm leading-relaxed">함께 참여 중인 멤버를 확인해요.</p>
+        </div>
       </div>
 
-      <div className="max-h-80 overflow-y-auto pr-2">
-        {isPending ? (
-          <div className="py-4 text-center">멤버 정보를 불러오는 중...</div>
-        ) : error ? (
-          <div className="py-4 text-center text-error">멤버 정보를 불러오는데 실패했습니다.</div>
-        ) : !members || members.length === 0 ? (
-          <div className="py-4 text-center">모임에 등록된 멤버가 없습니다.</div>
-        ) : (
-          <ul className="space-y-2">
-            {members.map(member => (
-              <li key={member.id} className="flex items-center border-b border-gray-100 py-3">
-                <div className="flex flex-1 items-center gap-3">
-                  {member.role === "organizer" && <span className="text-xl">👑</span>}
-                  <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-full bg-gray-200">
-                    <Image src={getImageURL(member.user.image)} alt={member.user.nickname} fill className="object-cover" />
+      {isPending ? (
+        <div className="space-y-[0.8rem]">
+          {[0, 1, 2].map(item => (
+            <div key={item} className="border-border bg-background flex items-center gap-[1rem] rounded-[1.6rem] border p-[1.2rem]">
+              <div className="bg-muted h-[4.4rem] w-[4.4rem] animate-pulse rounded-full" />
+              <div className="min-w-0 flex-1 space-y-[0.6rem]">
+                <div className="bg-muted h-[1.2rem] w-[10rem] animate-pulse rounded-full" />
+                <div className="bg-muted h-[1rem] w-[6rem] animate-pulse rounded-full" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : error ? (
+        <div className="border-error/20 bg-error/5 text-error rounded-[1.6rem] border px-[1.4rem] py-[2.4rem] text-center text-sm font-medium">멤버 정보를 불러오지 못했어요.</div>
+      ) : !members || members.length === 0 ? (
+        <div className="border-border bg-background rounded-[1.6rem] border px-[1.4rem] py-[3rem] text-center">
+          <span className="bg-muted text-muted-foreground mx-auto mb-[1rem] grid h-[4.4rem] w-[4.4rem] place-items-center rounded-full">
+            <LuUsersRound className="h-[2rem] w-[2rem] stroke-[1.8]" />
+          </span>
+          <p className="text-foreground text-sm font-semibold">아직 멤버가 없어요.</p>
+        </div>
+      ) : (
+        <div className="space-y-[1rem]">
+          <div className="border-border flex items-center justify-between border-t pt-[1.4rem]">
+            <p className="text-foreground text-sm font-semibold">전체 {members.length}명</p>
+          </div>
+
+          <ul className="max-h-[42rem] space-y-[0.8rem] overflow-y-auto pr-[0.2rem]">
+            {members.map(member => {
+              const isOrganizer = member.role === "organizer";
+              const RoleIcon = isOrganizer ? LuCrown : LuUserRound;
+
+              return (
+                <li key={member.id} className="border-border bg-background flex items-center gap-[1rem] rounded-[1.6rem] border p-[1.2rem]">
+                  <div className="bg-muted relative h-[4.4rem] w-[4.4rem] shrink-0 overflow-hidden rounded-full">
+                    <Image unoptimized src={getImageURL(member.user.image)} alt={member.user.nickname} fill sizes="4.4rem" className="object-cover" />
                   </div>
-                  <span className="font-semibold">{member.user.nickname}</span>
-                </div>
 
-                {isCurrentUserOrganizer && member.role !== "organizer" && (
-                  <button
-                    onClick={() => handleKickOut(member.id, member.user.nickname)}
-                    disabled={deleteMutation.isPending}
-                    className="rounded-md bg-error px-3 py-1 text-sm font-bold text-white transition hover:bg-opacity-80 disabled:opacity-50"
-                  >
-                    강퇴
-                  </button>
-                )}
-              </li>
-            ))}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-foreground truncate text-sm font-semibold">{member.user.nickname}</p>
+                    <span
+                      className={`mt-[0.4rem] inline-flex items-center gap-[0.4rem] rounded-full px-[0.8rem] py-[0.25rem] text-xs font-semibold ${
+                        isOrganizer ? "bg-accent text-accent-foreground" : "bg-primary-soft text-primary"
+                      }`}
+                    >
+                      <RoleIcon className="h-[1.2rem] w-[1.2rem] stroke-[1.9]" />
+                      {isOrganizer ? "방장" : "멤버"}
+                    </span>
+                  </div>
+
+                  {isCurrentUserOrganizer && !isOrganizer ? (
+                    <button
+                      onClick={() => handleKickOut(member.id, member.user.nickname)}
+                      disabled={deleteMutation.isPending}
+                      className="text-destructive hover:bg-destructive/5 border-border h-[3.2rem] shrink-0 rounded-full border px-[1.1rem] text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-55"
+                    >
+                      {deleteMutation.isPending ? "처리 중" : "내보내기"}
+                    </button>
+                  ) : null}
+                </li>
+              );
+            })}
           </ul>
-        )}
-      </div>
+        </div>
+      )}
 
-      <div className="mt-4 flex justify-end">
-        <button onClick={closeModal} className="rounded-lg bg-gray-200 px-5 py-2 hover:bg-gray-300">
-          닫기
-        </button>
-      </div>
+      <button
+        onClick={closeModal}
+        className="border-border text-muted-foreground hover:bg-muted flex h-[4.4rem] w-full items-center justify-center rounded-[1.4rem] border text-sm font-semibold transition-colors"
+      >
+        닫기
+      </button>
     </div>
   );
 };

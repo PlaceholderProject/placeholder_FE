@@ -1,16 +1,16 @@
 "use client";
 
-import { BASE_URL } from "@/constants/baseURL";
 import { useEditUser, useUser } from "@/hooks/useUser";
 import { checkNickname } from "@/services/auth.service";
 import { RootState } from "@/stores/store";
 import { setUser } from "@/stores/userSlice";
 import { resizeImage } from "@/utils/resizeImage";
+import { getImageURL } from "@/utils/getImageURL";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { FaCog } from "react-icons/fa";
+import { LuArrowLeft, LuCamera, LuMail, LuPenLine, LuSave, LuUserRound } from "react-icons/lu";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 
@@ -18,81 +18,88 @@ const AccountEdit = () => {
   const [profileImage, setProfileImage] = useState<string | null>("");
   const [nickname, setNickname] = useState("");
   const [nicknameWarning, setNicknameWarning] = useState("");
+  const [isNicknameChecked, setIsNicknameChecked] = useState(true);
+  const [isCheckingNickname, setIsCheckingNickname] = useState(false);
   const [bio, setBio] = useState("");
   const [bioTextLength, setBioTextLength] = useState(0);
   const [bioWarning, setBioWarning] = useState("");
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const profilePreviewUrlRef = React.useRef<string | null>(null);
 
   const { data, isLoading } = useUser();
-
   const editUserMutation = useEditUser();
 
   const user = useSelector((state: RootState) => state.user.user);
   const dispatch = useDispatch();
-
   const router = useRouter();
 
   useEffect(() => {
-    if (!user.email) {
-      const fetchUser = async () => {
-        if (data) {
-          dispatch(
-            setUser({
-              email: data.email,
-              nickname: data.nickname,
-              bio: data.bio,
-              profileImage: data.image,
-            }),
-          );
-          setProfileImage(data.image || "/profile.png");
-        }
-      };
-      fetchUser();
-    } else {
-      if (user.profileImage) {
-        const imagePath = user.profileImage.startsWith("http") ? user.profileImage : `${BASE_URL}/${user.profileImage}`;
-        setProfileImage(imagePath);
-      } else {
-        setProfileImage("/profile.png");
-      }
-      setNickname(user.nickname || "");
-      setBio(user.bio || "");
+    if (data && !user.email) {
+      dispatch(
+        setUser({
+          email: data.email,
+          nickname: data.nickname,
+          bio: data.bio,
+          profileImage: data.image,
+        }),
+      );
     }
+
+    const nextEmail = user.email || data?.email;
+    if (!nextEmail) return;
+
+    const nextNickname = user.nickname ?? data?.nickname ?? "";
+    const nextBio = user.bio ?? data?.bio ?? "";
+    const nextImage = user.profileImage ?? data?.image ?? "";
+
+    setProfileImage(nextImage ? getImageURL(nextImage) : "/profile.png");
+    setNickname(nextNickname);
+    setIsNicknameChecked(true);
+    setBio(nextBio);
+    setBioTextLength(nextBio.length);
   }, [data, dispatch, user.bio, user.email, user.nickname, user.profileImage]);
 
-  if (!data) return;
+  useEffect(() => {
+    return () => {
+      if (profilePreviewUrlRef.current) URL.revokeObjectURL(profilePreviewUrlRef.current);
+    };
+  }, []);
 
   const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      if (profilePreviewUrlRef.current) URL.revokeObjectURL(profilePreviewUrlRef.current);
       const objectUrl = URL.createObjectURL(file);
-      setProfileImage(objectUrl); // Blob URL을 React 상태에 설정
+      profilePreviewUrlRef.current = objectUrl;
+      setProfileImage(objectUrl);
     }
   };
 
   const handleNicknameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value.length > 8) {
-      setNicknameWarning("닉네임은 최소 2자 최대 8자까지 가능합니다.");
+    const nextNickname = event.target.value;
+    if (nextNickname.length > 8 || (nextNickname.length > 0 && nextNickname.length < 2)) {
+      setNicknameWarning("닉네임은 2자 이상 8자 이하로 입력해주세요.");
     } else {
       setNicknameWarning("");
     }
-    setNickname(event.target.value);
+    setNickname(nextNickname);
+    setIsNicknameChecked(nextNickname === (user.nickname ?? data?.nickname ?? ""));
   };
 
   const handleBioChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (event.target.value.length > 40) {
-      setBioWarning("자기소개는 최대 40자까지 작성이 가능합니다.");
+      setBioWarning("자기소개는 최대 40자까지 작성할 수 있어요.");
       return;
-    } else {
-      setBioWarning("");
     }
+    setBioWarning("");
     setBio(event.target.value);
     setBioTextLength(event.target.value.length);
   };
 
   const handleCheckNickname = async () => {
-    if (nickname === user.nickname) {
+    if (nickname === (user.nickname ?? data?.nickname)) {
+      setIsNicknameChecked(true);
       toast.success("사용 가능한 닉네임입니다.");
       return;
     }
@@ -104,7 +111,10 @@ const AccountEdit = () => {
       toast.error("닉네임은 최소 2자 최대 8자까지 가능합니다.");
       return;
     }
-    await checkNickname(nickname);
+    setIsCheckingNickname(true);
+    const isAvailable = await checkNickname(nickname.trim());
+    setIsNicknameChecked(isAvailable);
+    setIsCheckingNickname(false);
   };
 
   const handleAccountEditFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -118,26 +128,30 @@ const AccountEdit = () => {
       toast.error("닉네임은 최소 2자 최대 8자까지 가능합니다.");
       return;
     }
+    if (!isNicknameChecked) {
+      toast.error("변경할 닉네임의 중복 확인을 해주세요.");
+      return;
+    }
 
     const file = fileInputRef.current?.files?.[0];
     let resizedFile: File | null = null;
 
     if (file) {
-      const resizedBlob = await resizeImage(file, 300, 300); // 예: 최대 300x300
+      const resizedBlob = await resizeImage(file, 300, 300);
       resizedFile = new File([resizedBlob], file.name, { type: file.type });
     }
 
     const editedUser = {
-      nickname,
+      nickname: nickname.trim(),
       bio,
-      profileImage: resizedFile, // 리사이징된 파일 사용
+      profileImage: resizedFile,
     };
 
     try {
       const response = await editUserMutation.mutateAsync(editedUser);
 
       if (response) {
-        const imageUrl = response.image ? (response.image.startsWith("http") ? response.image : `${BASE_URL}/${response.image}`) : null;
+        const imageUrl = response.image ? getImageURL(response.image) : null;
 
         dispatch(
           setUser({
@@ -158,76 +172,104 @@ const AccountEdit = () => {
     }
   };
 
-  if (isLoading) return <div>로딩중</div>;
+  if (isLoading && !user.email) {
+    return (
+      <div className="mx-auto w-[calc(100%-3.2rem)] max-w-[64rem] py-[3rem]">
+        <div className="bg-muted h-[24rem] animate-pulse rounded-[2rem]" />
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <div className="my-[4rem] flex min-h-[calc(100vh-12rem)] flex-col items-center justify-center md:min-h-[calc(100vh-13.5rem)]">
-        <h2 className="mb-[2rem] text-3xl font-semibold">회원 정보 수정</h2>
-        <div className="flex h-full min-h-[54rem] w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] border-gray-medium py-[2rem] md:max-w-[80rem]">
-          <form onSubmit={handleAccountEditFormSubmit} className="flex flex-col justify-center gap-[1.5rem] p-[2rem]">
-            <div className="relative flex items-center justify-center">
-              <div className="relative h-[15rem] w-[15rem] overflow-hidden rounded-full">
-                <Image src={profileImage ? profileImage : "/profile.png"} alt="프로필 이미지" fill className="object-cover" />
-              </div>
-              <label htmlFor="profileImage" className="absolute bottom-0 right-20 flex h-[3rem] w-[3rem] cursor-pointer items-center justify-center rounded-full bg-primary text-2xl text-white">
-                <FaCog />
-                <input
-                  type="file"
-                  id="profileImage"
-                  accept="image/*"
-                  ref={fileInputRef}
-                  onChange={handleProfileImageChange}
-                  className="hidden" // 숨김 처리
-                />
-              </label>
-            </div>
-            <div>
-              <div className="flex flex-col">
-                <label htmlFor="nickname" className="text-lg font-semibold">
-                  닉네임
-                </label>
-                <div>
-                  <input type="text" value={nickname} onChange={handleNicknameChange} className="h-[4rem] w-[18rem] rounded-l-[1rem] border-[0.1rem] border-gray-medium px-[1rem]" />
-                  <button
-                    type="button"
-                    onClick={handleCheckNickname}
-                    className="h-[4rem] w-[6rem] rounded-r-[1rem] border-y-[0.1rem] border-r-[0.1rem] border-gray-medium bg-gray-light hover:bg-gray-medium"
-                  >
-                    중복확인
-                  </button>
-                  {nicknameWarning && <p className="mt-[0.3rem] w-[24rem] text-sm text-warning">{nicknameWarning}</p>}
-                </div>
-              </div>
-              <div className="flex flex-col">
-                <label htmlFor="bio" className="text-lg font-semibold">
-                  자기소개
-                </label>
-                <div>
-                  <textarea
-                    value={bio}
-                    onChange={handleBioChange}
-                    placeholder="함께할 모임원을 위해 간단한 자기소개를 작성해주세요."
-                    className="h-[7rem] w-[24rem] rounded-[1rem] border-[0.1rem] border-gray-medium p-[1rem]"
-                  />
-                  {bioWarning && <p className="mt-[0.3rem] w-[24rem] text-sm text-warning">{bioWarning}</p>}
-                  <div className="flex w-full justify-end">
-                    <p className="mt-[0.3rem] text-sm">{bioTextLength}/40</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-col gap-[0.8rem]">
-              <button type="submit" disabled={editUserMutation.isPending} className="flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] bg-secondary-dark text-lg">
-                변경하기
-              </button>
-              <Link href="/account">
-                <div className="flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] bg-gray-light text-lg">취소하기</div>
-              </Link>
-            </div>
-          </form>
-        </div>
+    <div className="mx-auto w-[calc(100%-3.2rem)] max-w-[64rem] space-y-[1.8rem] py-[2.4rem] pb-[11rem] md:py-[3.2rem] md:pb-[5rem]">
+      <Link href="/account" className="text-muted-foreground hover:text-foreground inline-flex items-center gap-[0.5rem] text-sm font-semibold transition-colors">
+        <LuArrowLeft className="h-[1.5rem] w-[1.5rem] stroke-[1.9]" />
+        계정 관리
+      </Link>
+
+      <div>
+        <h1 className="text-foreground text-2xl font-bold">회원 정보 수정</h1>
+        <p className="text-muted-foreground mt-[0.5rem] text-sm">프로필과 모임원에게 보이는 소개를 관리해요.</p>
       </div>
+
+      <form onSubmit={handleAccountEditFormSubmit} className="space-y-[1.6rem]">
+        <section className="border-border bg-card flex flex-col items-center rounded-[2rem] border p-[2rem]">
+          <div className="relative">
+            <div className="relative h-[10rem] w-[10rem] overflow-hidden rounded-full">
+              <Image unoptimized src={profileImage || "/profile.png"} alt="프로필 이미지" fill sizes="10rem" className="object-cover" />
+            </div>
+            <label
+              htmlFor="profileImage"
+              className="bg-primary text-primary-foreground ring-card absolute right-0 bottom-0 grid h-[3.4rem] w-[3.4rem] cursor-pointer place-items-center rounded-full ring-[0.4rem]"
+            >
+              <LuCamera className="h-[1.6rem] w-[1.6rem] stroke-[2]" />
+              <input type="file" id="profileImage" accept="image/*" ref={fileInputRef} onChange={handleProfileImageChange} className="hidden" />
+            </label>
+          </div>
+        </section>
+
+        <section className="border-border bg-card space-y-[1.4rem] rounded-[2rem] border p-[1.8rem] md:p-[2rem]">
+          <div>
+            <label htmlFor="nickname" className="text-foreground mb-[0.7rem] block text-sm font-semibold">
+              닉네임
+            </label>
+            <div className="flex gap-[0.7rem]">
+              <div className="border-border focus-within:border-primary focus-within:ring-primary/10 flex h-[4.6rem] min-w-0 flex-1 items-center gap-[0.9rem] rounded-[1.4rem] border px-[1.3rem] transition-all focus-within:ring-4">
+                <LuUserRound className="text-muted-foreground h-[1.7rem] w-[1.7rem] stroke-[1.8]" />
+                <input id="nickname" type="text" value={nickname} onChange={handleNicknameChange} maxLength={8} className="min-w-0 flex-1 bg-transparent text-sm outline-none" />
+              </div>
+              <button
+                type="button"
+                onClick={handleCheckNickname}
+                disabled={isCheckingNickname || !!nicknameWarning}
+                className="bg-primary-soft text-primary h-[4.6rem] shrink-0 rounded-[1.4rem] px-[1.2rem] text-sm font-semibold transition hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {isCheckingNickname ? "확인 중" : isNicknameChecked ? "확인됨" : "중복 확인"}
+              </button>
+            </div>
+            {nicknameWarning && <p className="text-warning mt-[0.6rem] text-xs font-medium">{nicknameWarning}</p>}
+            {!nicknameWarning && isNicknameChecked && <p className="text-success mt-[0.6rem] text-xs font-medium">사용할 수 있는 닉네임입니다.</p>}
+          </div>
+
+          <div>
+            <label className="text-foreground mb-[0.7rem] block text-sm font-semibold">이메일</label>
+            <div className="border-border bg-muted/50 flex h-[4.6rem] items-center gap-[0.9rem] rounded-[1.4rem] border px-[1.3rem]">
+              <LuMail className="text-muted-foreground h-[1.7rem] w-[1.7rem] stroke-[1.8]" />
+              <span className="text-muted-foreground min-w-0 truncate text-sm">{user.email || data?.email}</span>
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="bio" className="text-foreground mb-[0.7rem] block text-sm font-semibold">
+              소개
+            </label>
+            <div className="border-border focus-within:border-primary focus-within:ring-primary/10 flex min-h-[9rem] items-start gap-[0.9rem] rounded-[1.4rem] border px-[1.3rem] py-[1.2rem] transition-all focus-within:ring-4">
+              <LuPenLine className="text-muted-foreground mt-[0.2rem] h-[1.6rem] w-[1.6rem] stroke-[1.8]" />
+              <textarea
+                id="bio"
+                value={bio}
+                onChange={handleBioChange}
+                maxLength={40}
+                placeholder="함께할 모임원을 위해 간단한 자기소개를 작성해주세요."
+                className="min-h-[6.4rem] min-w-0 flex-1 resize-none bg-transparent text-sm leading-relaxed outline-none"
+              />
+            </div>
+            <div className="mt-[0.6rem] flex justify-between gap-[1rem]">
+              {bioWarning ? <p className="text-warning text-xs font-medium">{bioWarning}</p> : <span />}
+              <p className="text-muted-foreground text-xs">{bioTextLength}/40</p>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={editUserMutation.isPending}
+            className="bg-primary text-primary-foreground flex h-[4.8rem] w-full items-center justify-center gap-[0.7rem] rounded-[1.4rem] text-sm font-semibold transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-55"
+          >
+            <LuSave className="h-[1.6rem] w-[1.6rem] stroke-[2]" />
+            {editUserMutation.isPending ? "저장 중" : "프로필 저장"}
+          </button>
+        </section>
+      </form>
     </div>
   );
 };

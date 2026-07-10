@@ -6,7 +6,7 @@ interface SortTypeState {
 }
 
 const initialState: SortTypeState = {
-  //sortType: "latest",
+  // sortType: "latest",
   sortType: "like",
 };
 

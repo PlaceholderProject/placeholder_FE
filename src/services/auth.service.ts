@@ -3,6 +3,12 @@ import { LoginProps } from "@/types/authType";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
 
+const authCookieOptions = (expires: number) => ({
+  expires,
+  secure: typeof window !== "undefined" ? window.location.protocol === "https:" : process.env.NODE_ENV === "production",
+  sameSite: "Strict" as const,
+});
+
 // 회원가입페이지 : 이메일 중복확인
 export const checkEmail = async (email: string) => {
   try {
@@ -78,8 +84,8 @@ export const login = async ({ email, password }: LoginProps) => {
     if (response.ok) {
       const { access, refresh } = await response.json();
 
-      Cookies.set("accessToken", access, { expires: 1, secure: true, sameSite: "Strict" });
-      Cookies.set("refreshToken", refresh, { expires: 7, secure: true, sameSite: "Strict" });
+      Cookies.set("accessToken", access, authCookieOptions(1));
+      Cookies.set("refreshToken", refresh, authCookieOptions(7));
 
       return { access, refresh };
     }
@@ -113,13 +119,15 @@ export const refreshToken = async () => {
     });
 
     if (!response.ok) {
-      console.error("refressToken이 없습니다. 다시 로그인 해주세요.");
+      console.error("토큰 갱신 실패. 다시 로그인 해주세요.");
       toast.error("다시 로그인해주세요.");
+      return null;
     }
 
-    const { access, refresh } = await response.json();
-    Cookies.set("accessToken", access, { expires: 1, secure: true, sameSite: "Strict" });
-    Cookies.set("refreshToken", refresh, { expires: 7, secure: true, sameSite: "Strict" });
+    const { access } = await response.json();
+    Cookies.set("accessToken", access, authCookieOptions(1));
+    // 백엔드는 갱신 시 access 토큰만 반환하므로 기존 refresh 토큰을 유지합니다.
+    return access;
   } catch (error) {
     console.error("토큰 갱신 요청 실패:", error);
     return null;
@@ -170,8 +178,8 @@ export const resetPassword = async (password: string) => {
 
     if (response.ok) {
       const { access, refresh } = await response.json();
-      Cookies.set("accessToken", access, { expires: 1, secure: true, sameSite: "Strict" });
-      Cookies.set("refreshToken", refresh, { expires: 7, secure: true, sameSite: "Strict" });
+      Cookies.set("accessToken", access, authCookieOptions(1));
+      Cookies.set("refreshToken", refresh, authCookieOptions(7));
       return { access, refresh };
     }
 

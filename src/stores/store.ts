@@ -5,7 +5,6 @@ import { FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, R
 import authReducer from "./authSlice";
 import userReducer from "./userSlice";
 import notificationReducer from "./notificationSlice";
-import nonModalReducer from "./nonModalSlice";
 import modalReducer from "./modalSlice";
 import sortReducer from "./sortSlice";
 import filterReducer from "./filterSlice";
@@ -25,7 +24,6 @@ const persistedUserReducer = persistReducer(persistConfig, userReducer);
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    nonModal: nonModalReducer,
     modal: modalReducer,
     reply: replyReducer,
     user: persistedUserReducer,

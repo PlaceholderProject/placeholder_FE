@@ -1,141 +1,147 @@
-// src/components/kakao/KakaoMaps.tsx
-
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Map, MapMarker, useKakaoLoader } from "react-kakao-maps-sdk";
+import ScheduleNumber from "@/components/schedule/ScheduleNumber";
 import { useSchedules } from "@/hooks/useSchedule";
 import { Schedule } from "@/types/scheduleType";
-import ScheduleNumber from "@/components/schedule/ScheduleNumber";
-import Spinner from "../common/Spinner";
+import { useRouter } from "next/navigation";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Map, MapMarker, useKakaoLoader } from "react-kakao-maps-sdk";
+import { LuMapPinned } from "react-icons/lu";
 
-// 컴포넌트 Props 타입 정의
 interface KakaoMapsProps {
   meetupId: number;
 }
 
-// 위도, 경도 객체 타입 정의
 interface LatLng {
   lat: number;
   lng: number;
 }
 
-/**
- * 카카오 지도를 감싸는 컨테이너 컴포넌트입니다.
- * useKakaoLoader를 사용하여 스크립트 로딩을 관리합니다.
- */
-const KakaoMapContainer: React.FC<KakaoMapsProps> = ({ meetupId }) => {
-  // useKakaoLoader 훅을 사용하여 스크립트 로딩
+const DEFAULT_CENTER: LatLng = { lat: 37.5665, lng: 126.978 };
+
+const toLatLng = (schedule: Schedule): LatLng | null => {
+  const lat = Number(schedule.latitude);
+  const lng = Number(schedule.longitude);
+
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  return { lat, lng };
+};
+
+const MapStatus = ({ title, description }: { title: string; description?: string }) => (
+  <div className="bg-muted/70 flex h-full min-h-[18rem] w-full items-center justify-center p-[1.6rem] text-center">
+    <div>
+      <span className="bg-primary-soft text-primary mx-auto mb-[1rem] grid h-[4.4rem] w-[4.4rem] place-items-center rounded-full">
+        <LuMapPinned className="h-[2rem] w-[2rem] stroke-[1.9]" />
+      </span>
+      <p className="text-foreground text-sm font-bold">{title}</p>
+      {description && <p className="text-muted-foreground mt-[0.4rem] text-xs leading-relaxed break-keep">{description}</p>}
+    </div>
+  </div>
+);
+
+const KakaoMapLoader = ({ meetupId, appKey }: KakaoMapsProps & { appKey: string }) => {
   const [loading, error] = useKakaoLoader({
-    appkey: process.env.NEXT_PUBLIC_KAKAO_APP_JS_KEY as string, // 카카오 앱 JS KEY
+    appkey: appKey,
     libraries: ["services", "clusterer", "drawing"],
   });
 
-  if (loading) return <div className="flex h-full w-full items-center justify-center bg-gray-100">지도 로딩 중...</div>;
-  if (error) return <div className="flex h-full w-full items-center justify-center bg-red-100">지도 로딩 중 에러가 발생했습니다.</div>;
+  if (loading) return <MapStatus title="지도를 불러오는 중" />;
+  if (error) return <MapStatus title="지도를 불러오지 못했어요" description="카카오 JavaScript 키와 등록 도메인을 확인해주세요." />;
 
   return <KakaoMaps meetupId={meetupId} />;
 };
 
-/**
- * 카카오 지도를 표시하는 메인 컴포넌트입니다.
- * 스크립트 로딩이 완료된 후 KakaoMapContainer에 의해 렌더링됩니다.
- * @param {KakaoMapsProps} props - meetupId를 포함하는 객체
- */
-const KakaoMaps: React.FC<KakaoMapsProps> = ({ meetupId }) => {
+const KakaoMaps = ({ meetupId }: KakaoMapsProps) => {
   const router = useRouter();
   const { data: schedules, isPending, error: dataError } = useSchedules(meetupId);
-
   const [currentLocation, setCurrentLocation] = useState<LatLng | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [mapInstance, setMapInstance] = useState<kakao.maps.Map | null>(null);
 
-  // 1. 현재 위치 정보 가져오기
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        position => {
-          setCurrentLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-        },
-        () => {
-          setLocationError("위치 정보를 가져오는 데 실패했습니다.");
-          setCurrentLocation({ lat: 37.5665, lng: 126.978 }); // 실패 시 기본 위치
-        },
-      );
-    } else {
-      setLocationError("Geolocation을 지원하지 않는 브라우저입니다.");
-      setCurrentLocation({ lat: 37.5665, lng: 126.978 }); // 미지원 시 기본 위치
-    }
-  }, []);
+  const schedulePositions = useMemo(() => {
+    return (schedules ?? []).map(schedule => ({ schedule, position: toLatLng(schedule) })).filter((item): item is { schedule: Schedule; position: LatLng } => Boolean(item.position));
+  }, [schedules]);
 
-  // 2. 지도 생성 시 인스턴스 저장
+  const hasSchedulePositions = schedulePositions.length > 0;
+
+  useEffect(() => {
+    if (isPending || dataError || hasSchedulePositions) return;
+
+    if (!navigator.geolocation) {
+      setLocationError("현재 위치를 사용할 수 없어 기본 위치를 표시합니다.");
+      setCurrentLocation(DEFAULT_CENTER);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        setCurrentLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+      },
+      () => {
+        setLocationError("현재 위치를 사용할 수 없어 기본 위치를 표시합니다.");
+        setCurrentLocation(DEFAULT_CENTER);
+      },
+      { timeout: 5000 },
+    );
+  }, [dataError, hasSchedulePositions, isPending]);
+
   const handleMapCreate = useCallback((map: kakao.maps.Map) => {
     setMapInstance(map);
   }, []);
 
-  // 3. 스케줄에 맞춰 지도 범위 조절
   useEffect(() => {
-    if (!mapInstance || !schedules || schedules.length === 0) return;
+    if (!mapInstance || !hasSchedulePositions) return;
 
     const bounds = new window.kakao.maps.LatLngBounds();
-    schedules.forEach((schedule: Schedule) => {
-      bounds.extend(new window.kakao.maps.LatLng(Number(schedule.latitude), Number(schedule.longitude)));
+    schedulePositions.forEach(({ position }) => {
+      bounds.extend(new window.kakao.maps.LatLng(position.lat, position.lng));
     });
 
     if (!bounds.isEmpty()) {
       mapInstance.setBounds(bounds);
     }
-  }, [mapInstance, schedules]);
+  }, [hasSchedulePositions, mapInstance, schedulePositions]);
 
-  // 4. 스케줄 마커 클릭 시 상세 페이지로 이동
   const handleScheduleClick = useCallback(
     (scheduleId: number) => {
       router.push(`/meetup/${meetupId}/schedule/${scheduleId}`);
     },
-    [router, meetupId],
+    [meetupId, router],
   );
 
-  // 데이터 로딩 및 에러 상태 처리
-  if (isPending) {
-    // return <Loading />;
-    return <Spinner isLoading={isPending} />;
-  }
-  if (dataError) {
-    return <div className="flex h-full w-full items-center justify-center bg-red-100">스케줄 정보를 가져올 수 없습니다.</div>;
-  }
+  if (isPending) return <MapStatus title="일정 위치를 불러오는 중" />;
+  if (dataError) return <MapStatus title="일정 위치를 불러오지 못했어요" description={dataError.message} />;
 
-  const hasSchedules = schedules && schedules.length > 0;
-  const mapCenter = hasSchedules
-    ? {
-        lat: Number(schedules[0].latitude),
-        lng: Number(schedules[0].longitude),
-      }
-    : currentLocation;
-
-  if (!mapCenter) {
-    return <div className="flex h-full w-full items-center justify-center bg-gray-100">{locationError || "현재 위치를 가져오는 중..."}</div>;
-  }
+  const mapCenter = hasSchedulePositions ? schedulePositions[0].position : currentLocation || DEFAULT_CENTER;
 
   return (
-    <Map center={mapCenter} style={{ width: "100%", height: "100%" }} level={hasSchedules ? 8 : 4} onCreate={handleMapCreate}>
-      {hasSchedules &&
-        schedules.map((schedule: Schedule, index: number) => (
-          <ScheduleNumber
-            key={schedule.id}
-            number={index + 1}
-            isMapMarker
-            position={{ lat: Number(schedule.latitude), lng: Number(schedule.longitude) }}
-            onClick={() => handleScheduleClick(schedule.id)}
-            label={schedule.place}
-          />
+    <div className="relative h-full w-full">
+      <Map center={mapCenter} style={{ width: "100%", height: "100%" }} level={hasSchedulePositions ? 5 : 6} onCreate={handleMapCreate}>
+        {schedulePositions.map(({ schedule, position }, index) => (
+          <ScheduleNumber key={schedule.id} number={index + 1} isMapMarker position={position} onClick={() => handleScheduleClick(schedule.id)} label={schedule.place} />
         ))}
-      {!hasSchedules && currentLocation && <MapMarker position={currentLocation} />}
-    </Map>
+        {!hasSchedulePositions && <MapMarker position={mapCenter} />}
+      </Map>
+      {!hasSchedulePositions && locationError && (
+        <div className="bg-background/90 text-muted-foreground pointer-events-none absolute right-[1rem] bottom-[1rem] left-[1rem] rounded-[1.2rem] px-[1rem] py-[0.8rem] text-center text-xs font-semibold shadow-sm backdrop-blur">
+          {locationError}
+        </div>
+      )}
+    </div>
   );
+};
+
+const KakaoMapContainer = ({ meetupId }: KakaoMapsProps) => {
+  const appKey = process.env.NEXT_PUBLIC_KAKAO_APP_JS_KEY;
+
+  if (!appKey) {
+    return <MapStatus title="카카오 지도 키가 필요해요" description=".env.local에 NEXT_PUBLIC_KAKAO_APP_JS_KEY를 설정해주세요." />;
+  }
+
+  return <KakaoMapLoader meetupId={meetupId} appKey={appKey} />;
 };
 
 export default KakaoMapContainer;

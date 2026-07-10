@@ -4,7 +4,7 @@ import React from "react";
 
 const SearchPage = () => {
   return (
-    <div>
+    <div className="pb-[4rem]">
       <SearchForm />
       <SearchedResultArea />
     </div>

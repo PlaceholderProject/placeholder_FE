@@ -1,4 +1,6 @@
 import ScheduleForm from "@/components/schedule/ScheduleForm";
+import { parsePositiveInteger } from "@/utils/parsePositiveInteger";
+import { notFound } from "next/navigation";
 
 interface MeetupCreatePageProps {
   params: Promise<{
@@ -9,13 +11,10 @@ interface MeetupCreatePageProps {
 const MeetupCreatePage = async ({ params }: MeetupCreatePageProps) => {
   const { meetupId } = await params;
 
-  const meetupIdNum = Number(meetupId);
+  const meetupIdNum = parsePositiveInteger(meetupId);
+  if (!meetupIdNum) notFound();
 
-  return (
-    <div>
-      <ScheduleForm meetupId={meetupIdNum} />
-    </div>
-  );
+  return <ScheduleForm meetupId={meetupIdNum} />;
 };
 
 export default MeetupCreatePage;

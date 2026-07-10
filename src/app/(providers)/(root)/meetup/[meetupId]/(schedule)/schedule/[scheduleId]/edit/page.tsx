@@ -1,4 +1,6 @@
 import ScheduleForm from "@/components/schedule/ScheduleForm";
+import { parsePositiveInteger } from "@/utils/parsePositiveInteger";
+import { notFound } from "next/navigation";
 
 interface EditSchedulePageProps {
   params: Promise<{
@@ -10,15 +12,11 @@ interface EditSchedulePageProps {
 const EditSchedulePage = async ({ params }: EditSchedulePageProps) => {
   const { meetupId, scheduleId } = await params;
 
-  const meetupIdNum = Number(meetupId);
-  const scheduleIdNum = Number(scheduleId);
+  const meetupIdNum = parsePositiveInteger(meetupId);
+  const scheduleIdNum = parsePositiveInteger(scheduleId);
+  if (!meetupIdNum || !scheduleIdNum) notFound();
 
-  return (
-    <div className="p-4">
-      <h1 className="mb-4 text-2xl font-bold">스케줄 수정</h1>
-      <ScheduleForm meetupId={meetupIdNum} mode="edit" scheduleId={scheduleIdNum} />
-    </div>
-  );
+  return <ScheduleForm meetupId={meetupIdNum} mode="edit" scheduleId={scheduleIdNum} />;
 };
 
 export default EditSchedulePage;

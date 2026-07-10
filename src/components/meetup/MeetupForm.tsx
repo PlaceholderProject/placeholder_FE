@@ -1,99 +1,52 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { FileType, LabeledInputProps, LabeledSelectProps, Meetup, NewMeetup } from "@/types/meetupType";
+import SubmitLoader from "@/components/common/SubmitLoader";
+import ResourceState from "@/components/common/ResourceState";
 import { MAX_AD_TITLE_LENGTH, MAX_DESCRIPTION_LENGTH, MAX_NAME_LENGTH, MAX_PLACE_LENGTH } from "@/constants/meetup";
-import SubmitLoader from "../common/SubmitLoader";
 import { useMeetupForm } from "@/hooks/useMeetupForm";
-import { useCreateMeetup, useEditMeetup, useMeetupDetail, useGetPresignedUrl, useS3Upload } from "@/hooks/useMeetupApi";
+import { useCreateMeetup, useEditMeetup, useGetPresignedUrl, useMeetupDetail, useS3Upload } from "@/hooks/useMeetupApi";
+import { FileType, Meetup, NewMeetup } from "@/types/meetupType";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useRef, useState } from "react";
+import { IconType } from "react-icons";
+import { LuArrowLeft, LuCalendarDays, LuGlobe, LuImagePlus, LuLockKeyhole, LuMegaphone, LuUpload, LuUsersRound } from "react-icons/lu";
 import { toast } from "sonner";
-
-// displayName 추가
-const LabeledInput = React.forwardRef<HTMLInputElement, LabeledInputProps>(
-  ({ defaultChecked, id, name, label, type, placeholder, value, defaultValue, disabled, required, checked, onChange, maxLength, className, labelClassName, containerClassName }, ref) => {
-    return (
-      <>
-        <div className={containerClassName}>
-          <label htmlFor={id} className={labelClassName}>
-            {label}
-          </label>
-          <input
-            id={id}
-            name={name}
-            type={type}
-            placeholder={placeholder}
-            disabled={disabled}
-            value={value}
-            defaultValue={defaultValue}
-            required={required}
-            checked={checked}
-            onChange={onChange}
-            ref={ref}
-            maxLength={maxLength}
-            className={className}
-            defaultChecked={defaultChecked}
-          />
-        </div>
-      </>
-    );
-  },
-);
-LabeledInput.displayName = "LabeledInput";
-
-// displayName 추가
-const LabeledSelect = React.forwardRef<HTMLSelectElement, LabeledSelectProps>(({ id, name, label, options, required = true, className, labelClassName, containerClassName, defaultValue }, ref) => {
-  return (
-    <>
-      <div className={containerClassName}>
-        <label htmlFor={id} className={labelClassName}>
-          {label}
-        </label>
-        <select id={id} name={name} required={required} ref={ref} defaultValue={defaultValue} className={className}>
-          {options.map(option => {
-            return (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            );
-          })}
-        </select>
-      </div>
-    </>
-  );
-});
-LabeledSelect.displayName = "LabeledSelect";
+import { isNotFoundError } from "@/utils/httpError";
 
 interface MeetupFormProps {
   mode: "create" | "edit";
   meetupId?: number;
 }
 
+const CATEGORY_OPTIONS = ["운동", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
+const PLACE_OPTIONS = ["서울", "경기", "인천", "강원", "대전", "세종", "충남", "충북", "부산", "울산", "경남", "경북", "대구", "광주", "전남", "전북", "제주", "전국", "미정"];
+const inputClassName =
+  "border-border bg-card text-foreground placeholder:text-muted-foreground/70 focus:border-primary focus:ring-primary/15 h-[4.4rem] w-full rounded-[1.3rem] border px-[1.2rem] text-sm outline-none transition focus:ring-[0.3rem] disabled:bg-muted disabled:text-muted-foreground";
+
+type FormField = "image" | "name" | "description" | "startedAt" | "endedAt" | "placeDescription" | "adTitle" | "adEndedAt";
+type FormErrors = Partial<Record<FormField, string>>;
+
 const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
   const router = useRouter();
 
-  // api 훅
   const {
     data: previousMeetupData,
     isPending,
     isError,
+    error: meetupError,
   } = useMeetupDetail(meetupId, {
-    enabled: mode == "edit" && !!meetupId,
+    enabled: mode === "edit" && !!meetupId,
   });
   const createMutation = useCreateMeetup();
   const editMutation = useEditMeetup();
   const getPresignedUrl = useGetPresignedUrl();
   const s3Upload = useS3Upload();
 
-  // 폼 로직 훅
   const { formStates, handlers, validateDates } = useMeetupForm(mode, previousMeetupData);
   const { isSubmitting, setIsSubmitting, nameLength, placeLength, adTitleLength, descriptionLength, isStartedAtNull, setIsStartedAtNull, isEndedAtNull, setIsEndedAtNull, previewImage } = formStates;
   const { handleNameLengthChange, handlePlaceLengthChange, handleAdTitleLengthChange, handleDescriptionLengthChange, handlePreviewImageChange } = handlers;
 
-  // Ref (컴포넌트 자체에서 관리)
-  const organizerNicknameRef = useRef<HTMLInputElement>(null); // ✨이게 MeetupEditForm에는 없음
-  const organizerProfileImageRef = useRef<HTMLInputElement>(null); // ✨이게 MeetupEditForm에는 없음
   const nameRef = useRef<HTMLInputElement>(null);
   const startedAtRef = useRef<HTMLInputElement>(null);
   const endedAtRef = useRef<HTMLInputElement>(null);
@@ -102,213 +55,90 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
   const adTitleRef = useRef<HTMLInputElement>(null);
   const adEndedAtRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
-  const isPublicRef = useRef<HTMLInputElement>(null);
-  const categoryRef = useRef<HTMLSelectElement>(null);
   const imageRef = useRef<HTMLInputElement>(null);
 
-  // 제출 상태 로컬 관리
-  // const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(CATEGORY_OPTIONS[0]);
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({});
 
-  // 2️⃣ s3에 직접 이미지 업로드 함수
-  // const meetupUploadToS3 = async (file: File, meetupPresignedData: S3PresignedItem) => {
-  //   const formData = new FormData();
-  //   Object.keys(meetupPresignedData.fields).forEach(key => {
-  //     const typedKey = key as keyof S3PresignedField;
-  //     formData.append(key, meetupPresignedData.fields[typedKey]);
-  //   });
+  const hasPreviewImage = previewImage !== "/meetup_default_image.png";
 
-  //   formData.append("file", file);
+  const clearFieldError = (field: FormField) => {
+    setErrors(current => {
+      if (!current[field]) return current;
+      const next = { ...current };
+      delete next[field];
+      return next;
+    });
+  };
 
-  //   try {
-  //     const response = await fetch(meetupPresignedData.url, {
-  //       method: "POST",
-  //       body: formData,
-  //     });
-  //     if (!response.ok) {
-  //       const errorText = await response.text();
-  //       console.error("S3 오류 내용:", errorText);
-  //       throw new Error(`s3 업로드 실패:, ${response.status} ${errorText}`);
-  //     }
-  //     // 업로드된 파일의 URL 생성
-  //     const uploadedFileUrl = `${meetupPresignedData.url}${meetupPresignedData.fields.key}`;
-  //     console.log("업로드 성공 URL", uploadedFileUrl);
-  //     return uploadedFileUrl;
-  //   } catch (error) {
-  //     console.error("💥 업로드 중 오류:", error);
-  //     throw error;
-  //   }
-  // };
+  const validateRequiredFields = () => {
+    const nextErrors: FormErrors = {};
 
-  // 글자수 관리 위한 스테이트
-  // const [nameLength, setNameLength] = useState(0);
-  // const [placeLength, setPlaceLength] = useState(0);
-  // const [adTitleLength, setAdTitleLength] = useState(0);
-  // const [descriptionLength, setDescriptionLength] = useState(0);
-  // const handleNameLengthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setNameLength(event.target.value.length);
-  // };
-  // const handlePlaceLengthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setPlaceLength(event.target.value.length);
-  // };
-  // const handleAdTitleLengthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setAdTitleLength(event.target.value.length);
-  // };
-  // const handleDescriptionLengthChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-  //   setDescriptionLength(event.target.value.length);
-  // };
+    if (mode === "create" && !imageRef.current?.files?.[0] && !hasPreviewImage) nextErrors.image = "대표 이미지를 선택해주세요.";
+    if (!nameRef.current?.value.trim()) nextErrors.name = "모임 이름을 입력해주세요.";
+    if (!descriptionRef.current?.value.trim()) nextErrors.description = "모임 소개를 입력해주세요.";
+    if (!isStartedAtNull && !startedAtRef.current?.value) nextErrors.startedAt = "시작일을 선택하거나 미정으로 설정해주세요.";
+    if (!isEndedAtNull && !endedAtRef.current?.value) nextErrors.endedAt = "종료일을 선택하거나 미정으로 설정해주세요.";
+    if (!placeDescriptionRef.current?.value.trim()) nextErrors.placeDescription = "상세 위치를 입력해주세요.";
+    if (!adTitleRef.current?.value.trim()) nextErrors.adTitle = "모집 제목을 입력해주세요.";
+    if (!adEndedAtRef.current?.value) nextErrors.adEndedAt = "모집 종료일을 선택해주세요.";
 
-  // 체크 박스 상태 관리 위한 스테이트
-  // const [isStartedAtNull, setIsStartedAtNull] = useState(false);
-  // const [isEndedAtNull, setIsEndedAtNull] = useState(false);
+    setErrors(nextErrors);
 
-  // 미리보기 스테이트
-  // const [previewImage, setPreviewImage] = useState("/meetup_default_image.png");
+    const firstError = Object.keys(nextErrors)[0] as FormField | undefined;
+    if (firstError) {
+      requestAnimationFrame(() => {
+        document.getElementById(`${firstError}-field`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+        if (firstError !== "image") {
+          document.getElementById(firstError)?.focus({ preventScroll: true });
+        }
+      });
+      toast.error("입력하지 않은 항목을 확인해주세요.");
+      return false;
+    }
 
-  // 셀렉트 옵션 배열
-  const categoryOptions = ["운동", "공부", "취준", "취미", "친목", "맛집", "여행", "기타"];
-  const placeOptions = ["서울", "경기", "인천", "강원", "대전", "세종", "충남", "충북", "부산", "울산", "경남", "경북", "대구", "광주", "전남", "전북", "제주", "전국", "미정"];
-
-  // 미리보기 이미지, 미정 여부 설정
-  //  ✨이게 MeetupForm에는 없음
+    return true;
+  };
 
   useEffect(() => {
     if (mode === "edit" && previousMeetupData) {
-      // if (previousMeetupData?.image) {
-      //   const previewImageUrl = `${previousMeetupData.image}`;
-      //   console.log("미리보기 설정되는 이미지 URL: ", previewImageUrl);
-      // }
-
       setIsStartedAtNull(previousMeetupData.startedAt === null);
       setIsEndedAtNull(previousMeetupData.endedAt === null);
+      setSelectedCategory(previousMeetupData.category || CATEGORY_OPTIONS[0]);
+      setIsPrivate(previousMeetupData.isPublic === false);
     }
-  }, [mode, previousMeetupData, setIsStartedAtNull, setIsEndedAtNull]);
+  }, [mode, previousMeetupData, setIsEndedAtNull, setIsStartedAtNull]);
 
-  // 생성 useMutation은 최상단에 위치시키라고 함
-  //  ✨이게 MeetupEditForm에는 없음
-  // const createMutation = useMutation({
-  //   mutationFn: ({ meetupData, imageUrl }: { meetupData: NewMeetup; imageUrl: string }) => createMeetupApi(meetupData, imageUrl),
-  // });
-
-  // 미리보기 이미지 변경 핸들 함수
-  // const handlePreviewImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (event.target.files && event.target.files[0]) {
-  //     const previewFile = event.target.files[0];
-  //     const previewFileUrl = URL.createObjectURL(previewFile);
-  //     setPreviewImage(previewFileUrl);
-  //   }
-  // };
-
-  // async 함수로 변경한 모임 생성 제출 함수
   const handleMeetupFormSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (isSubmitting) {
-      return;
-    }
+    if (isSubmitting) return;
+
+    const startDate = isStartedAtNull ? null : startedAtRef.current?.value || null;
+    const endDate = isEndedAtNull ? null : endedAtRef.current?.value || null;
+    const adEndDate = adEndedAtRef.current?.value || "";
+
+    if (!validateRequiredFields()) return;
+    if (!validateDates(startDate, endDate, adEndDate)) return;
+
     setIsSubmitting(true);
 
-    // 모든 날짜가 오늘보다 과거인지 유효성 검사
-    // const now = new Date();
-    // now.setHours(0, 0, 0, 0);
-
-    // 필드 이름 케이스별로 가져오기
-    // const getDateFieldName = (fieldName: string): string => {
-    //   switch (fieldName) {
-    //     case "startedAt":
-    //       return "모임 시작일";
-    //     case "endedAt":
-    //       return "모임 종료일";
-    //     case "adEndedAt":
-    //       return "광고 종료일";
-    //     default:
-    //       return fieldName;
-    //   }
-    // };
-
-    // 통과(true)인지 걸리는지(false) 불리언 값 리턴하는 유효성 검사 함수
-    // 날짜와 필드네임을 받는데
-    // 그게 엄청 아래에서 실제 실행될 때 값으로 들어옴
-    // const createMeetUpValidateDate = (date: string | null, fieldName: string): boolean => {
-    //   // 사용자 입력값 미정이면 true (통과)
-    //   if (!date) {
-    //     return true;
-    //   }
-
-    //   const inputDate = new Date(date);
-    //   inputDate.setHours(0, 0, 0, 0);
-
-    //   // 사용자 입력 날짜값이 오늘보다 이전이면 false(걸림)
-    //   // if (inputDate !== null && inputDate < now) {
-    //   //   alert(`${getDateFieldName(fieldName)}은 이미 지난 날짜로 설정할 수 없습니다.`);
-    //   //   return false;
-    //   // }
-
-    //   // 모임 시작날짜와 모임 종료 날짜 비교
-    //   if (endDate !== null && startDate !== null) {
-    //     const endDateObject = new Date(endDate);
-    //     const startDateObject = new Date(startDate);
-    //     if (endDateObject < startDateObject) {
-    //       console.log("시작일 타입:", typeof startDate);
-    //       console.log("종료일 타입", typeof endDate);
-    //       console.log("시작일 오브젝트 타입", typeof startDateObject);
-    //       alert("모임 종료일은 시작일보다 빠르게 설정할 수 없습니다.");
-    //       return false;
-    //     }
-    //   }
-
-    //   return true;
-    // };
-
-    // 폼 제출전, 유효성 검사 에 함수 실행해보고 통과 못하면 제출 전에 리턴으로 탈출
-    // if (!createMeetUpValidateDate(startDate, "startedAt") || !createMeetUpValidateDate(endDate, "endedAt") || !createMeetUpValidateDate(adEndDate, "adEndedAt")) {
-    //   console.log("유효성 함수 실행은 됨");
-    //   console.log("설정된 모임 시작일, 모임 종료일, 광고 종료일:", startDate, endDate, adEndDate);
-    //   return;
-    // }
-
     try {
-      // 인풋 필드에서 날짜값 가져옴
-      const startDate = isStartedAtNull ? null : startedAtRef.current?.value || null;
-      const endDate = isEndedAtNull ? null : endedAtRef.current?.value || null;
-      const adEndDate = adEndedAtRef.current?.value || "";
-
-      //날짜 유효성 검사
-      if (!validateDates(startDate, endDate, adEndDate)) {
-        return;
-      }
-
-      // 이미지 업로드 처리
       let imageUrl = mode === "edit" ? previousMeetupData?.image || "" : "";
-      console.log("----1111이미지패스 찍자", imageUrl);
-      // ---1--- 이미지 있으면 (s3에 업로드)
-      if (imageRef?.current?.files?.[0]) {
-        const imageFile = imageRef.current.files[0]; //
-        // const fileType = typeof(imageFile).toString()
-        //위처럼 이렇게 쓰면 오브젝트 반환함 (File 객체니까sssss)
 
-        // ✅ 파일 타입 정확히 가져오기
+      if (imageRef.current?.files?.[0]) {
+        const imageFile = imageRef.current.files[0];
         const fileType = imageFile.type as FileType;
-        // console.log("🎯 파일 타입 확인:", fileType);
-
-        // presigned URL 요청
-        // const presignedResponse: S3PresignedResponse = await getMeetupPresignedUrl(fileType);
-        // const presignedData: S3PresignedItem = presignedResponse.result[0];
-
         const presignedResponse = await getPresignedUrl.mutateAsync(fileType);
         const presignedData = presignedResponse.result[0];
-
-        // presigned 데이터의 Content-Type 확인
-        // console.log("🎯 presigned Content-Type:", presignedData.fields["Content-Type"]);
-        // s3업로드 함수 실행으로 업로드 하고 imageUrl 받아오기
         imageUrl = await s3Upload.mutateAsync({ file: imageFile, presignedData });
-        console.log("----222이미지패스 찍자", imageUrl);
       }
 
       if (mode === "create") {
-        // ---2--- 모임 데이터 생성 (폼데이터X)
         const newMeetup: NewMeetup = {
           organizer: {
-            nickname: organizerNicknameRef.current?.value || "",
-            image: organizerProfileImageRef.current?.value || "",
+            nickname: "",
+            image: "",
           },
           name: nameRef.current?.value || "",
           description: descriptionRef.current?.value || "",
@@ -318,353 +148,437 @@ const MeetupForm = ({ mode, meetupId }: MeetupFormProps) => {
           endedAt: endDate,
           adTitle: adTitleRef.current?.value || "",
           adEndedAt: adEndDate,
-          isPublic: !isPublicRef.current?.checked,
-          category: categoryRef.current?.value || "",
-          // image: imageRef.current?.value || "",
+          isPublic: !isPrivate,
+          category: selectedCategory,
           isLike: false,
           likeCount: 0,
           createdAt: "",
           commentCount: 0,
         };
-        // ---3--- 모임 생성 (이미 업로드되고 받아온 이미지 url포함, 이건 유저 폼제출 이!!후!!에 유저 모르게 일어나는 과정임)
 
         await createMutation.mutateAsync({ data: newMeetup, imageUrl });
-        console.log("----1111 생성이미지패스 찍자", imageUrl);
-
         toast.success("모임 생성에 성공했습니다!");
-        console.log("생성할 새모임 데이터:", newMeetup);
-        // queryClient.invalidateQueries({ queryKey: ["meetups"] });
-        // queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
       } else {
-        if (!previousMeetupData) return;
+        if (!previousMeetupData || !meetupId) return;
+
         const editedMeetup: Meetup = {
           ...previousMeetupData,
           name: nameRef.current?.value || "",
           description: descriptionRef.current?.value || "",
           place: placeRef.current?.value || "",
           placeDescription: placeDescriptionRef.current?.value || "",
-          // startedAt: isStartedAtNull ? null : startedAtRef.current?.value || null,
           startedAt: startDate,
           endedAt: endDate,
-          // endedAt: isEndedAtNull ? null : endedAtRef.current?.value || null,
           adTitle: adTitleRef.current?.value || "",
-          // adEndedAt: adEndedAtRef.current?.value || "",
           adEndedAt: adEndDate,
-          isPublic: !isPublicRef.current?.checked,
-          category: categoryRef.current?.value || "",
-          // image: imageRef.current?.value || "",
+          isPublic: !isPrivate,
+          category: selectedCategory,
         };
-        await editMutation.mutateAsync({ data: editedMeetup, imageUrl, meetupId: meetupId! });
+
+        await editMutation.mutateAsync({ data: editedMeetup, imageUrl, meetupId });
         toast.success("모임 수정에 성공했습니다!");
       }
 
       router.push("/");
     } catch (error) {
       console.error(`모임 ${mode === "create" ? "생성" : "수정"} 실패:`, error);
+      toast.error(`모임 ${mode === "create" ? "생성" : "수정"}에 실패했습니다.`);
     } finally {
       setIsSubmitting(false);
     }
-
-    // const meetupFormData = new FormData();
-    // meetupFormData.append("payload", JSON.stringify(newMeetup));
-
-    // if (imageRef.current?.files?.[0]) {
-    //   meetupFormData.append("image", imageRef.current.files[0]);
-    // }
-
-    // try {
-    //   await createMutation.mutateAsync({ meetupData: newMeetup, imageUrl: imageUrl });
-    //   queryClient.invalidateQueries({ queryKey: ["meetups"] });
-    //   queryClient.invalidateQueries({ queryKey: ["headhuntings"] });
-    //   alert("모임 생성에 성공했습니다!");
-    //   router.push("/");
-    // } catch (error) {
-    //   console.error(error);
-    // }
   };
 
-  // 로딩 상태 처리
-  if (mode === "edit" && isPending) return <p>로딩 중...</p>;
-  if (mode === "edit" && isError) return <p>모임 데이터 로드 에러 발생</p>;
+  if (mode === "edit" && isPending) {
+    return (
+      <div className="mx-auto w-[95%] max-w-[72rem] py-[4rem]">
+        <div className="bg-muted h-[28rem] animate-pulse rounded-[2rem]" />
+      </div>
+    );
+  }
+
+  if (mode === "edit" && isError) {
+    const isNotFound = isNotFoundError(meetupError);
+    return (
+      <ResourceState
+        kind={isNotFound ? "not-found" : "error"}
+        title={isNotFound ? "모임을 찾을 수 없어요" : "모임 정보를 불러오지 못했어요"}
+        description={isNotFound ? "삭제되었거나 존재하지 않는 모임이에요." : "잠시 후 다시 시도해주세요."}
+        actionHref="/my-space/my-meetup"
+        actionLabel="모임 공간 목록"
+      />
+    );
+  }
 
   return (
     <>
       {isSubmitting && <SubmitLoader isLoading={isSubmitting} />}
-      <div className="mx-auto my-[5rem] w-[32rem] rounded-[1rem] border-[0.1rem] border-gray-medium p-[3rem] md:w-full md:max-w-[100rem]">
-        <div className="place-items-center">
-          <h1 className="mb-[4rem] text-center text-3xl font-semibold">{mode === "create" ? "모임 생성하기" : "모임 수정하기"}</h1>
-          <form onSubmit={handleMeetupFormSubmit}>
-            <div className="grid md:grid-cols-2 md:gap-x-[7rem]">
-              <div className="좌측영역">
-                <h2 className="text-2xl font-semibold text-primary">모임에 대해 알려주세요.</h2>
-                <LabeledSelect
-                  id="category"
-                  name="category"
-                  label="모임 성격"
-                  options={categoryOptions}
-                  ref={categoryRef}
-                  required
-                  defaultValue={mode === "edit" ? previousMeetupData?.category : undefined}
-                  containerClassName={"my-[0.5rem] flex justify-between items-center"}
-                  labelClassName={"font-semibold text-lg "}
-                  className={"h-[4rem] w-[21.3rem] rounded-[1rem] border-[0.1rem] border-gray-light text-center text-base"}
-                />
-                <div>
-                  <LabeledInput
-                    id="name"
-                    name="name"
-                    label="모임 이름"
-                    type="text"
-                    ref={nameRef}
-                    defaultValue={mode === "edit" ? previousMeetupData.name : undefined}
-                    required
-                    onChange={handleNameLengthChange}
-                    maxLength={MAX_NAME_LENGTH}
-                    containerClassName={"my-[0.5rem] flex flex-col gap-2"}
-                    labelClassName={"font-semibold text-lg"}
-                    className={"h-[4rem] w-full items-center rounded-[1rem] border-[0.1rem] border-gray-light px-[0.5rem] text-start text-base"}
-                  />
-                  <span className="text-sm text-gray-dark">
-                    {nameLength <= MAX_NAME_LENGTH ? nameLength : MAX_NAME_LENGTH} / {MAX_NAME_LENGTH} 자
-                  </span>
-                  {nameLength >= MAX_NAME_LENGTH && <p className="text-sm text-warning">모임 이름은 최대 {MAX_NAME_LENGTH}자까지 입력할 수 있습니다.</p>}
-                </div>
+      <div className="mx-auto w-[calc(100%-3.2rem)] max-w-[112rem] space-y-[2rem] py-[2.4rem] pb-[8rem] md:py-[3.2rem] md:pb-[5rem]">
+        <button type="button" onClick={() => router.back()} className="text-muted-foreground hover:text-foreground inline-flex items-center gap-[0.5rem] text-sm font-semibold transition-colors">
+          <LuArrowLeft className="h-[1.5rem] w-[1.5rem] stroke-[1.9]" />
+          뒤로
+        </button>
 
-                <h3 className={"mt-4 text-lg font-semibold"}>모임 날짜</h3>
+        <div>
+          <h1 className="text-foreground text-2xl font-bold md:text-3xl">{mode === "create" ? "새로운 모임 만들기" : "모임 수정하기"}</h1>
+          <p className="text-muted-foreground mt-[0.4rem] text-sm">관심사로 사람들을 모으고 함께할 일정을 준비해요.</p>
+        </div>
 
-                <div className="flex justify-between">
-                  <LabeledInput
-                    id="startedAt"
-                    name="startedAt"
-                    label="시작일"
-                    type="date"
-                    ref={startedAtRef}
-                    defaultValue={mode === "edit" && previousMeetupData?.startedAt ? previousMeetupData.startedAt.substring(0, 10) : undefined}
-                    disabled={isStartedAtNull}
-                    required
-                    containerClassName={"flex justify-between mt-[1rem]"}
-                    labelClassName={"text-base pt-[1rem] pr-[1rem]"}
-                    className={"h-[4rem] w-[18rem] rounded-[1rem] border-[0.1rem] border-gray-light px-[1rem] py-[1rem]"}
-                  />
-                  <LabeledInput
-                    id="startedAtUndecided"
-                    name="startedAtUndecided"
-                    label="미정"
-                    // defaultChecked={mode === "edit" ? previousMeetupData.isStartedAtNull : false}
-                    checked={isStartedAtNull}
-                    type="checkbox"
-                    onChange={event => {
-                      setIsStartedAtNull(event.target.checked);
-                    }}
-                    containerClassName={"flex items-center "}
-                    labelClassName={"text-base ml-[0.5rem] mr-[0.5rem] mt-[1rem] "}
-                    className={
-                      "mt-[1rem] h-[1.5rem] w-[1.5rem] appearance-none rounded-[0.2rem] border-[0.2rem] border-[#013A4B] checked:border-primary checked:bg-primary checked:after:flex checked:after:h-full checked:after:items-center checked:after:justify-center checked:after:text-xs checked:after:font-bold checked:after:text-white checked:after:content-['✓']"
-                    }
-                  />
-                </div>
-                <div className="flex justify-between">
-                  <LabeledInput
-                    id="endedAt"
-                    name="endedAt"
-                    label="종료일"
-                    type="date"
-                    ref={endedAtRef}
-                    defaultValue={mode === "edit" && previousMeetupData?.endedAt ? previousMeetupData.endedAt.substring(0, 10) : undefined}
-                    disabled={isEndedAtNull}
-                    required
-                    containerClassName={"flex justify-between mt-[1rem]"}
-                    labelClassName={"text-base pt-[1rem] pr-[1rem]"}
-                    className={"h-[4rem] w-[18rem] rounded-[1rem] border-[0.1rem] border-gray-light px-[1rem] py-[1rem]"}
-                  />
-                  <LabeledInput
-                    id="endedAtUndecided"
-                    name="endedAtUndecided"
-                    label="미정"
-                    // defaultChecked={mode === "edit" ? previousMeetupData.isEndedAtNull : false}
-                    checked={isEndedAtNull}
-                    type="checkbox"
-                    onChange={event => {
-                      setIsEndedAtNull(event.target.checked);
-                    }}
-                    containerClassName={"flex items-center"}
-                    labelClassName={"text-base ml-[0.5rem] mr-[0.5rem] mt-[1rem]"}
-                    className={
-                      "mt-[1rem] h-[1.5rem] w-[1.5rem] appearance-none rounded-[0.2rem] border-[0.2rem] border-[#013A4B] checked:border-primary checked:bg-primary checked:after:flex checked:after:h-full checked:after:items-center checked:after:justify-center checked:after:text-xs checked:after:font-bold checked:after:text-white checked:after:content-['✓']"
-                    }
-                  />
-                </div>
-                <span className="text-sm text-warning">
-                  {isStartedAtNull && isEndedAtNull && (
-                    <p className="mt-[1rem] text-sm text-warning">
-                      모임의 시작일과 종료일이 모두 미정이면, <br />
-                      <span className="font-semibold">내 공간</span> - <span className="font-semibold">내 광고</span> 에서 광고글만 확인 가능합니다.
-                    </p>
-                  )}
-                </span>
-                <h2 className="my-[1rem] items-baseline justify-start pt-[0.5rem] text-2xl font-semibold text-primary md:pt-[1rem]">
-                  멤버 모집 광고글의 내용을
-                  <br /> 작성해주세요.
-                </h2>
-                <div>
-                  <LabeledInput
-                    id="adTitle"
-                    name="adTitle"
-                    label="광고글 제목"
-                    type="text"
-                    ref={adTitleRef}
-                    defaultValue={mode === "edit" ? previousMeetupData?.adTitle : undefined}
-                    required
-                    onChange={handleAdTitleLengthChange}
-                    maxLength={MAX_AD_TITLE_LENGTH}
-                    containerClassName={"my-[0.5rem] flex flex-col items-start"}
-                    labelClassName={"font-semibold text-lg my-[0.5rem]"}
-                    className={"h-[4rem] w-full items-center rounded-[1rem] border-[0.1rem] border-gray-light px-[0.5rem] text-start text-base"}
-                  />
-                  <span className="text-sm text-gray-dark">
-                    {adTitleLength <= MAX_AD_TITLE_LENGTH ? adTitleLength : MAX_AD_TITLE_LENGTH} / {MAX_AD_TITLE_LENGTH} 자
-                  </span>
-                  {adTitleLength >= MAX_AD_TITLE_LENGTH && <p className="text-sm text-warning">광고글 제목은 최대 {MAX_AD_TITLE_LENGTH}자 까지 입력할 수 있습니다.</p>}
-                </div>
-                <div>
-                  <h2 className={"mt-4 text-lg font-semibold"}>멤버 모집 기간</h2>
-                  <LabeledInput
-                    id="adEndedAt"
-                    name="adEndedAt"
-                    label="광고 종료일"
-                    type="date"
-                    ref={adEndedAtRef}
-                    defaultValue={mode === "edit" && previousMeetupData?.adEndedAt ? previousMeetupData.adEndedAt.substring(0, 10) : undefined}
-                    required
-                    containerClassName={"flex justify-between"}
-                    labelClassName={"text-base pt-[1rem] w-[8rem]"}
-                    className={"h-[4rem] w-[21rem] rounded-[1rem] border-[0.1rem] border-gray-light px-[1rem]"}
-                  />
-                </div>
-                <div>
-                  <h2 className={"mt-4 text-lg font-semibold"}>모임 장소</h2>
-                  <div className="">
-                    <LabeledSelect
-                      id="category"
-                      name="category"
-                      label="모임 지역"
-                      options={placeOptions}
-                      ref={placeRef}
-                      defaultValue={mode === "edit" ? previousMeetupData?.place : undefined}
-                      required
-                      containerClassName={"flex my-[1rem] justify-between items-center "}
-                      labelClassName={"text-base "}
-                      className={"h-[4rem] w-[80%] rounded-[1rem] border-[0.1rem] border-gray-light px-[1rem] py-[1rem] text-center"}
-                    />
-                  </div>
-                  <LabeledInput
-                    id="placeDescription"
-                    name="placeDescription"
-                    label="모임 장소"
-                    type="text"
-                    placeholder="만날 곳의 대략적 위치를 작성해주세요. 예) 강남역"
-                    ref={placeDescriptionRef}
-                    defaultValue={mode === "edit" ? previousMeetupData.placeDescription : undefined}
-                    required
-                    onChange={handlePlaceLengthChange}
-                    maxLength={MAX_PLACE_LENGTH}
-                    containerClassName={"flex flex-col my-[0.5rem]"}
-                    labelClassName={"hidden"}
-                    className={"h-[4rem] w-full items-center rounded-[1rem] border-[0.1rem] border-gray-light px-[0.5rem] text-start text-[1.36rem]"}
-                  />
-                  <span className="text-sm text-gray-dark md:pb-[2rem]">
-                    {placeLength <= MAX_PLACE_LENGTH ? placeLength : MAX_PLACE_LENGTH} / {MAX_PLACE_LENGTH} 자
-                  </span>
-                  {placeLength >= MAX_PLACE_LENGTH && <p className="text-sm text-warning">모임 장소 설명은 최대 {MAX_PLACE_LENGTH}자까지 입력할 수 있습니다.</p>}
-                </div>
-              </div>
-              <div className="우측이동">
-                <div className="my-[0.5rem] flex flex-col py-[0.5rem]">
-                  <label className="my-[0.5rem] text-lg font-semibold" htmlFor="description">
-                    광고글 설명
-                  </label>
+        <form noValidate onSubmit={handleMeetupFormSubmit} className="grid gap-[2rem] lg:grid-cols-[minmax(0,1fr)_34rem] lg:items-start">
+          <div className="space-y-[1.4rem]">
+            <section className="border-border bg-card rounded-[2rem] border p-[1.6rem] md:p-[2rem]">
+              <SectionTitle icon={LuUsersRound} title="모임 기본 정보" description="사람들이 가장 먼저 보는 정보예요." />
 
-                  <textarea
-                    id="description"
-                    name="description"
-                    defaultValue={mode === "edit" ? previousMeetupData.description : ""}
-                    placeholder="멤버 모집 광고글에 보일 설명을 작성해주세요."
-                    ref={descriptionRef}
-                    maxLength={MAX_DESCRIPTION_LENGTH}
-                    onChange={handleDescriptionLengthChange}
-                    className="h-[17rem] w-full rounded-[1rem] border-[0.1rem] border-gray-light px-[0.5rem] text-start text-base"
-                  />
-                  <span className="pt-[1rem] text-sm text-gray-dark">
-                    {descriptionLength <= MAX_DESCRIPTION_LENGTH ? descriptionLength : MAX_DESCRIPTION_LENGTH} / {MAX_DESCRIPTION_LENGTH} 자
-                  </span>
-                  {descriptionLength >= MAX_DESCRIPTION_LENGTH && <p className="text-sm text-warning">광고글 설명은 최대 {MAX_DESCRIPTION_LENGTH}자 까지 입력할 수 있습니다.</p>}
-                </div>{" "}
-                <div className="my-[0.5rem]">
-                  <LabeledInput
+              <div className="space-y-[1.4rem]">
+                <FieldLabel htmlFor="image" label="대표 이미지" error={errors.image} fieldId="image-field">
+                  <input
                     id="image"
                     name="image"
-                    label="대표 이미지"
                     type="file"
                     accept="image/jpg, image/jpeg, image/png, image/webp, image/bmp"
                     ref={imageRef}
-                    onChange={handlePreviewImageChange}
-                    required={mode === "create"}
-                    containerClassName="sr-only"
-                    labelClassName="sr-only"
+                    onChange={event => {
+                      handlePreviewImageChange(event);
+                      if (event.target.files?.[0]) clearFieldError("image");
+                    }}
+                    aria-invalid={!!errors.image}
+                    aria-describedby={errors.image ? "image-error" : undefined}
                     className="sr-only"
                   />
-
-                  {/* 커스텀 버튼 */}
-                  <div className="flex-cols-2 flex items-center justify-between text-center">
-                    <label className="my-[0.5rem] text-lg font-semibold">대표 이미지</label>
-                    <label htmlFor="image" className="h-[2.2rem] w-[8rem] cursor-pointer items-center rounded-[1rem] bg-gray-medium py-[0.2rem] text-sm">
-                      파일 선택
-                    </label>
-                  </div>
-
-                  <div className="relative flex h-[14.5rem] w-full items-center justify-center overflow-hidden rounded-[1rem] border-[0.1rem] border-gray-light">
-                    <Image
-                      src={previewImage}
-                      alt="preview image"
-                      fill={previewImage !== "/meetup_default_image.png"} // 업로드된 이미지일 때만 fill
-                      width={previewImage === "/meetup_default_image.png" ? 50 : undefined}
-                      height={previewImage === "/meetup_default_image.png" ? 50 : undefined}
-                      style={{
-                        objectFit: previewImage === "/meetup_default_image.png" ? "contain" : "cover",
-                      }}
-                      className="rounded-[1rem]"
-                    />{" "}
-                  </div>
-                </div>
-                <LabeledInput
-                  id="isPublic"
-                  name="isPublic"
-                  label="모집글 비공개"
-                  type="checkbox"
-                  ref={isPublicRef}
-                  defaultChecked={mode === "edit" ? previousMeetupData?.isPublic === false : false}
-                  containerClassName={"flex md:justify-center items-center my-[3rem]"}
-                  labelClassName={"text-2xl text-primary items-baseline font-semibold ml-[0.5rem] mr-[0.5rem]"}
-                  className={
-                    "h-[1.5rem] w-[1.5rem] appearance-none rounded-[0.2rem] border-[0.2rem] border-[#013A4B] checked:border-primary checked:bg-primary checked:after:flex checked:after:h-full checked:after:items-center checked:after:justify-center checked:after:text-xs checked:after:font-bold checked:after:text-white checked:after:content-['✓']"
-                  }
-                />
-                <div className="mt-[3rem] flex justify-center">
-                  <button
-                    type="submit"
-                    className="text-bold h-[4rem] w-[14rem] items-center rounded-[1rem] bg-primary text-center text-lg text-white disabled:bg-gray-medium md:w-full"
-                    disabled={isSubmitting}
+                  <div
+                    className={`grid gap-[1.2rem] rounded-[1.6rem] border p-[1.2rem] md:grid-cols-[20rem_1fr] md:items-center ${errors.image ? "border-destructive/55 bg-destructive/5" : "border-border bg-muted/35"}`}
                   >
-                    {isSubmitting ? "처리 중..." : mode === "create" ? "모임 등록" : "모임 수정"}
-                  </button>
-                </div>
+                    <label htmlFor="image" className="border-border bg-muted group relative block aspect-[16/10] cursor-pointer overflow-hidden rounded-[1.3rem] border">
+                      {hasPreviewImage ? (
+                        <Image src={previewImage} alt="대표 이미지 미리보기" fill sizes="20rem" className="object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+                      ) : (
+                        <span className="text-muted-foreground flex h-full flex-col items-center justify-center gap-[0.7rem] text-xs font-bold">
+                          <span className="bg-card text-primary grid h-[4rem] w-[4rem] place-items-center rounded-[1.2rem] shadow-sm">
+                            <LuImagePlus className="h-[2rem] w-[2rem] stroke-[1.9]" />
+                          </span>
+                          이미지 미리보기
+                        </span>
+                      )}
+                    </label>
+
+                    <div className="min-w-0 py-[0.2rem]">
+                      <p className="text-foreground text-sm font-black">모임 분위기가 잘 보이는 사진</p>
+                      <p className="text-muted-foreground mt-[0.35rem] text-xs leading-relaxed break-keep">목록과 상세 화면에서 가장 먼저 보여요. 가로형 이미지를 권장합니다.</p>
+                      <label
+                        htmlFor="image"
+                        className="border-border bg-card text-foreground hover:border-primary/30 hover:text-primary mt-[1rem] inline-flex h-[3.6rem] cursor-pointer items-center gap-[0.55rem] rounded-full border px-[1.2rem] text-xs font-bold transition-colors"
+                      >
+                        <LuUpload className="h-[1.5rem] w-[1.5rem] stroke-[2]" />
+                        {hasPreviewImage ? "이미지 변경" : "이미지 선택"}
+                      </label>
+                      <p className="text-muted-foreground mt-[0.6rem] text-[1rem]">JPG, PNG, WEBP, BMP</p>
+                    </div>
+                  </div>
+                </FieldLabel>
+
+                <FieldLabel htmlFor="name" label="모임 이름" count={`${Math.min(nameLength, MAX_NAME_LENGTH)} / ${MAX_NAME_LENGTH}`} error={errors.name} fieldId="name-field">
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    ref={nameRef}
+                    defaultValue={mode === "edit" ? previousMeetupData?.name : undefined}
+                    onChange={event => {
+                      handleNameLengthChange(event);
+                      clearFieldError("name");
+                    }}
+                    maxLength={MAX_NAME_LENGTH}
+                    placeholder="예) 한강 러닝 크루"
+                    aria-invalid={!!errors.name}
+                    aria-describedby={errors.name ? "name-error" : undefined}
+                    className={`${inputClassName} ${errors.name ? "border-destructive/60 focus:border-destructive focus:ring-destructive/10" : ""}`}
+                  />
+                  {nameLength >= MAX_NAME_LENGTH && <p className="text-warning mt-[0.5rem] text-xs">모임 이름은 최대 {MAX_NAME_LENGTH}자까지 입력할 수 있습니다.</p>}
+                </FieldLabel>
+
+                <FieldLabel label="카테고리">
+                  <div className="flex flex-wrap gap-[0.7rem]">
+                    {CATEGORY_OPTIONS.map(category => (
+                      <button
+                        type="button"
+                        key={category}
+                        onClick={() => setSelectedCategory(category)}
+                        className={`rounded-full border px-[1.3rem] py-[0.65rem] text-sm font-semibold transition-colors ${
+                          selectedCategory === category ? "border-primary bg-primary-soft text-primary" : "border-border bg-card text-muted-foreground hover:border-primary/30 hover:text-foreground"
+                        }`}
+                      >
+                        {category}
+                      </button>
+                    ))}
+                  </div>
+                </FieldLabel>
+
+                <FieldLabel
+                  htmlFor="description"
+                  label="모임 소개"
+                  count={`${Math.min(descriptionLength, MAX_DESCRIPTION_LENGTH)} / ${MAX_DESCRIPTION_LENGTH}`}
+                  error={errors.description}
+                  fieldId="description-field"
+                >
+                  <textarea
+                    id="description"
+                    name="description"
+                    defaultValue={mode === "edit" ? previousMeetupData?.description : ""}
+                    placeholder="어떤 모임인지, 어떤 사람과 함께하고 싶은지 소개해주세요."
+                    ref={descriptionRef}
+                    maxLength={MAX_DESCRIPTION_LENGTH}
+                    onChange={event => {
+                      handleDescriptionLengthChange(event);
+                      clearFieldError("description");
+                    }}
+                    rows={6}
+                    aria-invalid={!!errors.description}
+                    aria-describedby={errors.description ? "description-error" : undefined}
+                    className={`${inputClassName} h-[15rem] resize-none py-[1rem] ${errors.description ? "border-destructive/60 focus:border-destructive focus:ring-destructive/10" : ""}`}
+                  />
+                  {descriptionLength >= MAX_DESCRIPTION_LENGTH && <p className="text-warning mt-[0.5rem] text-xs">광고글 설명은 최대 {MAX_DESCRIPTION_LENGTH}자까지 입력할 수 있습니다.</p>}
+                </FieldLabel>
               </div>
-            </div>
-          </form>
-        </div>
+            </section>
+
+            <section className="border-border bg-card rounded-[2rem] border p-[1.6rem] md:p-[2rem]">
+              <SectionTitle icon={LuCalendarDays} title="기간과 장소" description="아직 정해지지 않았다면 미정으로 둘 수 있어요." />
+
+              <div className="grid gap-[1.4rem] md:grid-cols-2">
+                <DateField
+                  id="startedAt"
+                  label="시작일"
+                  inputRef={startedAtRef}
+                  disabled={isStartedAtNull}
+                  error={errors.startedAt}
+                  onChange={() => clearFieldError("startedAt")}
+                  defaultValue={mode === "edit" && previousMeetupData?.startedAt ? previousMeetupData.startedAt.substring(0, 10) : undefined}
+                />
+                <DateField
+                  id="endedAt"
+                  label="종료일"
+                  inputRef={endedAtRef}
+                  disabled={isEndedAtNull}
+                  error={errors.endedAt}
+                  onChange={() => clearFieldError("endedAt")}
+                  defaultValue={mode === "edit" && previousMeetupData?.endedAt ? previousMeetupData.endedAt.substring(0, 10) : undefined}
+                />
+              </div>
+
+              <div className="mt-[0.9rem] flex flex-wrap gap-[0.8rem]">
+                <ToggleChip
+                  checked={isStartedAtNull}
+                  onChange={checked => {
+                    setIsStartedAtNull(checked);
+                    if (checked) clearFieldError("startedAt");
+                  }}
+                  label="시작일 미정"
+                />
+                <ToggleChip
+                  checked={isEndedAtNull}
+                  onChange={checked => {
+                    setIsEndedAtNull(checked);
+                    if (checked) clearFieldError("endedAt");
+                  }}
+                  label="종료일 미정"
+                />
+              </div>
+
+              {isStartedAtNull && isEndedAtNull && (
+                <p className="bg-muted text-muted-foreground mt-[1rem] rounded-[1.2rem] px-[1rem] py-[0.8rem] text-xs leading-relaxed">
+                  모임의 시작일과 종료일이 모두 미정이면 내 공간의 내 광고에서 광고글만 확인할 수 있어요.
+                </p>
+              )}
+
+              <div className="mt-[1.4rem] grid gap-[1.4rem] md:grid-cols-[16rem_1fr]">
+                <FieldLabel htmlFor="place" label="지역">
+                  <select id="place" name="place" ref={placeRef} defaultValue={mode === "edit" ? previousMeetupData?.place : undefined} className={inputClassName}>
+                    {PLACE_OPTIONS.map(option => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </FieldLabel>
+                <FieldLabel
+                  htmlFor="placeDescription"
+                  label="상세 위치"
+                  count={`${Math.min(placeLength, MAX_PLACE_LENGTH)} / ${MAX_PLACE_LENGTH}`}
+                  error={errors.placeDescription}
+                  fieldId="placeDescription-field"
+                >
+                  <input
+                    id="placeDescription"
+                    name="placeDescription"
+                    type="text"
+                    placeholder="예) 강남역 4번 출구 근처"
+                    ref={placeDescriptionRef}
+                    defaultValue={mode === "edit" ? previousMeetupData?.placeDescription : undefined}
+                    onChange={event => {
+                      handlePlaceLengthChange(event);
+                      clearFieldError("placeDescription");
+                    }}
+                    maxLength={MAX_PLACE_LENGTH}
+                    aria-invalid={!!errors.placeDescription}
+                    aria-describedby={errors.placeDescription ? "placeDescription-error" : undefined}
+                    className={`${inputClassName} ${errors.placeDescription ? "border-destructive/60 focus:border-destructive focus:ring-destructive/10" : ""}`}
+                  />
+                  {placeLength >= MAX_PLACE_LENGTH && <p className="text-warning mt-[0.5rem] text-xs">모임 장소 설명은 최대 {MAX_PLACE_LENGTH}자까지 입력할 수 있습니다.</p>}
+                </FieldLabel>
+              </div>
+            </section>
+          </div>
+
+          <aside className="space-y-[1.4rem] lg:sticky lg:top-[8.4rem]">
+            <section className="border-border bg-card rounded-[2rem] border p-[1.6rem]">
+              <SectionTitle icon={LuMegaphone} title="모집 설정" description="둘러보기 카드에 노출될 내용이에요." />
+
+              <div className="space-y-[1.4rem]">
+                <FieldLabel htmlFor="adTitle" label="모집 제목" count={`${Math.min(adTitleLength, MAX_AD_TITLE_LENGTH)} / ${MAX_AD_TITLE_LENGTH}`} error={errors.adTitle} fieldId="adTitle-field">
+                  <input
+                    id="adTitle"
+                    name="adTitle"
+                    type="text"
+                    ref={adTitleRef}
+                    defaultValue={mode === "edit" ? previousMeetupData?.adTitle : undefined}
+                    onChange={event => {
+                      handleAdTitleLengthChange(event);
+                      clearFieldError("adTitle");
+                    }}
+                    maxLength={MAX_AD_TITLE_LENGTH}
+                    placeholder="예) 주말마다 한강에서 같이 뛰어요"
+                    aria-invalid={!!errors.adTitle}
+                    aria-describedby={errors.adTitle ? "adTitle-error" : undefined}
+                    className={`${inputClassName} ${errors.adTitle ? "border-destructive/60 focus:border-destructive focus:ring-destructive/10" : ""}`}
+                  />
+                  {adTitleLength >= MAX_AD_TITLE_LENGTH && <p className="text-warning mt-[0.5rem] text-xs">광고글 제목은 최대 {MAX_AD_TITLE_LENGTH}자까지 입력할 수 있습니다.</p>}
+                </FieldLabel>
+
+                <FieldLabel htmlFor="adEndedAt" label="모집 종료일" error={errors.adEndedAt} fieldId="adEndedAt-field">
+                  <input
+                    id="adEndedAt"
+                    name="adEndedAt"
+                    type="date"
+                    ref={adEndedAtRef}
+                    defaultValue={mode === "edit" && previousMeetupData?.adEndedAt ? previousMeetupData.adEndedAt.substring(0, 10) : undefined}
+                    onChange={() => clearFieldError("adEndedAt")}
+                    aria-invalid={!!errors.adEndedAt}
+                    aria-describedby={errors.adEndedAt ? "adEndedAt-error" : undefined}
+                    className={`${inputClassName} ${errors.adEndedAt ? "border-destructive/60 focus:border-destructive focus:ring-destructive/10" : ""}`}
+                  />
+                </FieldLabel>
+
+                <FieldLabel label="공개 설정">
+                  <div className="grid gap-[0.8rem]">
+                    <VisibilityButton active={!isPrivate} icon={LuGlobe} title="공개" description="누구나 광고를 보고 신청할 수 있어요." onClick={() => setIsPrivate(false)} />
+                    <VisibilityButton active={isPrivate} icon={LuLockKeyhole} title="비공개" description="광고를 제한적으로 운영할 때 사용해요." onClick={() => setIsPrivate(true)} />
+                  </div>
+                </FieldLabel>
+              </div>
+            </section>
+
+            <button
+              type="submit"
+              className="bg-primary text-primary-foreground flex h-[4.8rem] w-full items-center justify-center rounded-[1.5rem] text-sm font-bold transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-55"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "처리 중..." : mode === "create" ? "모임 만들기" : "모임 수정하기"}
+            </button>
+          </aside>
+        </form>
       </div>
     </>
   );
 };
+
+const SectionTitle = ({ icon: Icon, title, description }: { icon: IconType; title: string; description: string }) => (
+  <div className="mb-[1.4rem] flex items-center gap-[0.8rem]">
+    <span className="bg-primary-soft text-primary grid h-[3.8rem] w-[3.8rem] place-items-center rounded-[1.2rem]">
+      <Icon className="h-[1.9rem] w-[1.9rem] stroke-[1.9]" />
+    </span>
+    <div>
+      <h2 className="text-foreground text-lg font-bold">{title}</h2>
+      <p className="text-muted-foreground mt-[0.2rem] text-xs">{description}</p>
+    </div>
+  </div>
+);
+
+const FieldLabel = ({ label, count, children, htmlFor, error, fieldId }: { label: string; count?: string; children: React.ReactNode; htmlFor?: string; error?: string; fieldId?: string }) => (
+  <div id={fieldId}>
+    <div className="mb-[0.7rem] flex items-center justify-between gap-[1rem]">
+      <label htmlFor={htmlFor} className="text-foreground text-sm font-bold">
+        {label}
+      </label>
+      {count && <span className="text-muted-foreground text-xs font-semibold">{count}</span>}
+    </div>
+    {children}
+    {error && (
+      <p id={`${htmlFor}-error`} role="alert" className="text-destructive mt-[0.55rem] text-xs font-bold">
+        {error}
+      </p>
+    )}
+  </div>
+);
+
+const DateField = ({
+  id,
+  label,
+  inputRef,
+  disabled,
+  defaultValue,
+  error,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  inputRef: React.Ref<HTMLInputElement>;
+  disabled: boolean;
+  defaultValue?: string;
+  error?: string;
+  onChange: () => void;
+}) => (
+  <FieldLabel htmlFor={id} label={label} error={error} fieldId={`${id}-field`}>
+    <input
+      id={id}
+      name={id}
+      type="date"
+      ref={inputRef}
+      defaultValue={defaultValue}
+      disabled={disabled}
+      onChange={onChange}
+      aria-invalid={!!error}
+      aria-describedby={error ? `${id}-error` : undefined}
+      className={`${inputClassName} ${error ? "border-destructive/60 focus:border-destructive focus:ring-destructive/10" : ""}`}
+    />
+  </FieldLabel>
+);
+
+const ToggleChip = ({ checked, onChange, label }: { checked: boolean; onChange: (checked: boolean) => void; label: string }) => (
+  <button
+    type="button"
+    onClick={() => onChange(!checked)}
+    className={`rounded-full border px-[1.1rem] py-[0.55rem] text-xs font-bold transition-colors ${
+      checked ? "border-primary bg-primary-soft text-primary" : "border-border bg-card text-muted-foreground hover:border-primary/30 hover:text-foreground"
+    }`}
+    aria-pressed={checked}
+  >
+    {label}
+  </button>
+);
+
+const VisibilityButton = ({ active, icon: Icon, title, description, onClick }: { active: boolean; icon: IconType; title: string; description: string; onClick: () => void }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className={`flex items-start gap-[1rem] rounded-[1.4rem] border p-[1.2rem] text-left transition-colors ${
+      active ? "border-primary bg-primary-soft/75" : "border-border bg-card hover:border-primary/30"
+    }`}
+  >
+    <Icon className="text-primary mt-[0.1rem] h-[1.9rem] w-[1.9rem] shrink-0 stroke-[1.9]" />
+    <span>
+      <span className="text-foreground block text-sm font-bold">{title}</span>
+      <span className="text-muted-foreground mt-[0.25rem] block text-xs leading-relaxed">{description}</span>
+    </span>
+  </button>
+);
 
 export default MeetupForm;

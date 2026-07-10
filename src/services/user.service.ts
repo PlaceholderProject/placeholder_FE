@@ -25,8 +25,7 @@ export const createUser = async (newUser: NewUserProps): Promise<number | undefi
     const result = response.status;
 
     return result;
-  } catch (error) {
-    console.log(error);
+  } catch {
     toast.error("회원가입을 실패했습니다. 다시 시도해주세요.");
     return;
   }
@@ -53,7 +52,6 @@ export const getUser = async (retryCount: number = 0): Promise<User | null> => {
       return null;
     }
     const result = await response.json();
-    // console.log(result);
     return result;
   } catch (error) {
     console.error("데이터 가져오기 오류:", error);
@@ -129,7 +127,6 @@ export const deleteUser = async () => {
     // 응답 본문 확인
     const contentLength = response.headers.get("content-length");
     if (!contentLength || parseInt(contentLength) === 0) {
-      console.warn("서버에서 빈 응답을 반환했습니다.");
       return { message: "User delete successfully." }; // 기본 메시지
     }
 
@@ -144,8 +141,6 @@ export const deleteUser = async () => {
 
 const uploadToS3WithForm = async (file: File, presignedData: PresignedUrlProps) => {
   const { url, fields } = presignedData;
-
-  console.log(presignedData);
 
   const formData = new FormData();
 

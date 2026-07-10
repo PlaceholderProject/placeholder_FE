@@ -4,12 +4,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createSchedule, deleteSchedule, getSchedule, getSchedules, updateSchedule } from "@/services/schedule.service";
 import { Member, Schedule, SchedulePayload } from "@/types/scheduleType";
 import { getMeetupMembers } from "@/services/member.service";
+import { retryQuery } from "@/utils/httpError";
 
 // 모임의 모든 스케줄
 export const useSchedules = (meetupId: number) => {
   return useQuery<Schedule[], Error>({
     queryKey: ["schedules", meetupId],
     queryFn: () => getSchedules(Number(meetupId)),
+    retry: retryQuery,
   });
 };
 
@@ -18,6 +20,7 @@ export const useMeetupMembers = (meetupId: number) => {
   return useQuery<Member[], Error>({
     queryKey: ["members", meetupId],
     queryFn: () => getMeetupMembers(Number(meetupId)),
+    retry: retryQuery,
   });
 };
 
@@ -38,7 +41,8 @@ export const useScheduleDetail = (scheduleId: number | undefined, options?: { en
   return useQuery<Schedule, Error>({
     queryKey: ["schedule", scheduleId],
     queryFn: () => getSchedule(scheduleId as number),
-    enabled: options?.enabled !== undefined ? options.enabled : !!scheduleId,
+    enabled: options?.enabled !== undefined ? options.enabled : scheduleId !== undefined,
+    retry: retryQuery,
   });
 };
 
@@ -49,7 +53,7 @@ export const useUpdateSchedule = (scheduleId: number) => {
   return useMutation({
     mutationFn: ({ scheduleId, payload }: { scheduleId: number; payload: SchedulePayload }) => updateSchedule(scheduleId, payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["schedules", scheduleId] });
+      queryClient.invalidateQueries({ queryKey: ["schedules"] });
       queryClient.invalidateQueries({ queryKey: ["schedule", scheduleId] });
     },
   });

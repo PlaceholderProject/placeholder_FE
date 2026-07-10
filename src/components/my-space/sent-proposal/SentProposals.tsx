@@ -7,13 +7,12 @@ import { SentProposal } from "@/types/proposalType";
 import { PROPOSALS_BUTTONS_PER_GROUP, PROPOSALS_SIZE_LIMIT } from "@/constants/pagination";
 import PaginationButtons from "../PaginationButtons";
 import Spinner from "@/components/common/Spinner";
+import MySpaceEmptyState from "../MySpaceEmptyState";
 
 const SentProposals = () => {
   const [page, setPage] = useState(1);
 
   const { data, isLoading } = useSentProposal(page);
-
-  console.log(data);
 
   const sentProposals = data ? data.proposals : [];
   const total = data ? data.total : 0;
@@ -42,12 +41,12 @@ const SentProposals = () => {
   if (isLoading) return <Spinner isLoading={isLoading} />;
 
   if (!sentProposals || sentProposals.length === 0) {
-    return <p className="mt-24 flex justify-center">보낸 신청서가 없습니다.</p>;
+    return <MySpaceEmptyState title="아직 보낸 가입 신청이 없어요" description="마음에 드는 모임을 찾아 가입 신청을 보내보세요." actionHref="/" actionLabel="모임 둘러보기" />;
   }
 
   return (
-    <div className="flex flex-col items-center">
-      <ul className="flex w-[90%] flex-col gap-[1.5rem] py-[3rem] md:max-w-[80rem]">
+    <div className="space-y-[1.2rem]">
+      <ul className="flex flex-col gap-[0.8rem]">
         {sentProposals.map((proposal: SentProposal) => (
           <li key={proposal.id}>
             <SentProposalItem proposal={proposal} />

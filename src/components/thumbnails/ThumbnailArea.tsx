@@ -10,6 +10,8 @@ import { RootState } from "@/stores/store";
 import { SkeletonTheme } from "react-loading-skeleton";
 import ThumbnailSkeleton from "@/components/thumbnails/ThumbnailSkeleton";
 import Spinner from "../common/Spinner";
+import { FaExclamationTriangle } from "react-icons/fa";
+import { LuSearch } from "react-icons/lu";
 
 const ThumbnailArea = () => {
   // 이제 리덕스에서 정렬 타입 가져옴
@@ -20,7 +22,6 @@ const ThumbnailArea = () => {
   const place = useSelector((state: RootState) => state.filter.place);
   const category = useSelector((state: RootState) => state.filter.category);
   const isFilterActive = useSelector((state: RootState) => state.filter.isFilterActive);
-
   const getQueryKey = () => {
     const baseQueryKey = ["headhuntings", sortType];
     if (isFilterActive) {
@@ -46,7 +47,6 @@ const ThumbnailArea = () => {
   } = useInfiniteQuery({
     queryKey: getQueryKey(),
     queryFn: ({ pageParam = 1 }) => {
-      console.log("ThumbnailArea에서 데이터 fetch 시작, 쿼리 키는 이것이다:", getQueryKey());
       return getHeadhuntingsApi(
         {
           sortType,
@@ -97,36 +97,49 @@ const ThumbnailArea = () => {
       threshold: 0.5,
     });
 
-    if (observerRef.current) {
-      observer.observe(observerRef.current);
+    const observerTarget = observerRef.current;
+
+    if (observerTarget) {
+      observer.observe(observerTarget);
     }
 
     return () => {
-      if (observerRef.current) {
-        observer.unobserve(observerRef.current);
+      if (observerTarget) {
+        observer.unobserve(observerTarget);
       }
     };
   }, [handleObserver]);
 
   const user = useSelector((state: RootState) => state.user.user);
   const userNickname = user.nickname;
+  const activeFilterLabel = category ?? place ?? "전체";
 
   if (isPending)
     return (
       <SkeletonTheme baseColor="#E8E8E8" highlightColor="#D9D9D9">
-        <div className="mx-auto w-[34rem] md:w-full md:max-w-[80rem]">
-          <div className="my-[0.1rem] grid grid-cols-2 gap-x-[17%] md:grid-cols-4 md:justify-items-center md:gap-x-[1px]">
+        <div className="mx-auto w-[calc(100%-3.2rem)] md:max-w-[112rem]">
+          <div className="grid grid-cols-1 gap-[1.6rem] py-[0.4rem] min-[520px]:grid-cols-2 md:gap-[2rem] lg:grid-cols-3">
             {Array.from({ length: 8 }).map((_, index) => (
-              <div key={index} className="w-[14.2rem] pb-[1rem] pt-[0.4rem] md:w-[150px]">
-                <ThumbnailSkeleton />
-              </div>
+              <ThumbnailSkeleton key={index} />
             ))}
           </div>
         </div>
       </SkeletonTheme>
     );
 
-  if (isError) return <div>에러 발생</div>;
+  if (isError) {
+    return (
+      <div className="mx-auto w-[calc(100%-3.2rem)] md:max-w-[112rem]">
+        <div className="border-border bg-card flex min-h-[20rem] flex-col items-center justify-center rounded-[1.6rem] border border-dashed px-[2rem] text-center">
+          <span className="bg-destructive/10 text-destructive mb-[1rem] grid h-[4.2rem] w-[4.2rem] place-items-center rounded-full">
+            <FaExclamationTriangle className="h-[1.8rem] w-[1.8rem]" />
+          </span>
+          <h3 className="text-foreground text-base font-bold">모임을 불러오지 못했어요</h3>
+          <p className="text-muted-foreground mt-[0.4rem] text-sm">잠시 후 다시 시도해주세요.</p>
+        </div>
+      </div>
+    );
+  }
 
   // 가져올 때 이미 소트한 뒤로 서버에서 보내주니까 sortedThumbnails로 네이밍
   // 여기서 result로 광고글 데이터에 접근
@@ -134,10 +147,20 @@ const ThumbnailArea = () => {
 
   // 모든 페이지 데이터를 하나의 배열로 합침
   const allThumbnails = headhuntingsData?.pages.flatMap(page => page.result) || [];
-  console.log("필터 적용 전 모든 데이터:", allThumbnails);
-  console.log("화면에 표시할 데이터:", allThumbnails);
 
-  if (allThumbnails.length === 0) return <p className="mt-[6rem] flex justify-center">해당하는 모임이 없습니다.</p>;
+  if (allThumbnails.length === 0) {
+    return (
+      <div className="mx-auto w-[calc(100%-3.2rem)] md:max-w-[112rem]">
+        <div className="border-border bg-card flex min-h-[22rem] flex-col items-center justify-center rounded-[1.6rem] border border-dashed px-[2rem] text-center">
+          <span className="bg-primary-soft text-primary mb-[1rem] grid h-[4.4rem] w-[4.4rem] place-items-center rounded-full">
+            <LuSearch className="h-[2rem] w-[2rem] stroke-[1.8]" />
+          </span>
+          <h3 className="text-foreground text-base font-bold">조건에 맞는 모임이 없어요</h3>
+          <p className="text-muted-foreground mt-[0.4rem] text-sm">{activeFilterLabel === "전체" ? "새 모임이 올라오면 이곳에 표시됩니다." : `${activeFilterLabel} 조건을 바꿔서 다시 찾아보세요.`}</p>
+        </div>
+      </div>
+    );
+  }
 
   // sort 이거 얻다 불니하고 싶었는데 이 로직을 백엔드에서 처리해줬다
   // 인기순 (기본)
@@ -163,39 +186,15 @@ const ThumbnailArea = () => {
   //   });
   // }
 
-  // --NOTE--
-  // 25.04.25 아이디만 넘겨주고 다시 썸네일아이템에서 또 데이터 페치하는 게 중복이라 수정함
-  // const thumbnailIds = sortedThumbnails.map((headhungting: Meetup) => headhungting.id);
-
-  // ❗️ 각각 모임 id를 엔드포인트에 붙여서 가져오는 함수에 에러가 난다
-  // 왜냐면 [headhuntingsData.result]라고 쓰면, 대괄호로 다시 배열을 씌우게 되므로!
-  // 스프레드 문법 써야함
-
   return (
     <>
-      <div className="mx-auto w-[34rem] md:w-full md:max-w-[80rem]">
-        <div className="my-[0.1rem] grid grid-cols-2 gap-x-[17%] md:grid-cols-4 md:justify-items-center md:gap-x-[1px]">
+      <div className="mx-auto w-[calc(100%-3.2rem)] md:max-w-[112rem]">
+        <div className="grid grid-cols-1 gap-[1.6rem] py-[0.4rem] min-[520px]:grid-cols-2 md:gap-[2rem] lg:grid-cols-3">
           {allThumbnails.map((thumbnail: Meetup, index: number) => {
-            return (
-              <div key={`${thumbnail.id}-${index}`} className="w-[14.2rem] pb-[1rem] pt-[0.4rem] md:w-[150px]">
-                <ThumbnailItem thumbnail={thumbnail} userNickname={userNickname} />
-                {/* <ThumbnailItem thumbnail={thumbnail} /> */}
-              </div>
-            );
+            return <ThumbnailItem key={`${thumbnail.id}-${index}`} thumbnail={thumbnail} userNickname={userNickname} priority={index === 0} />;
           })}
-          {/* 더 불러오기 */}
-          {/* {hasNextPage && (
-          <div className="col-span-full flex justify-center p-4">
-            <button onClick={() => fetchNextPage()} disabled={isFetchingNextPage} className="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300">
-              {isFetchingNextPage ? "불러오는 중..." : "더 보기"}
-            </button>
-          </div>
-        )} */}
-
-          {/* 관찰대상요소 */}
-
           <div ref={observerRef} className="col-span-full flex h-10 items-center justify-center">
-            {isFetchingNextPage && <Spinner isLoading={isFetchingNextPage} />}
+            {isFetchingNextPage && <Spinner isLoading={isFetchingNextPage} compact message="모임을 더 불러오는 중" />}
           </div>
         </div>
       </div>
