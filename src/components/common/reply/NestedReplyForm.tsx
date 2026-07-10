@@ -1,13 +1,14 @@
-// src/components/common/reply/NestedReplyForm.tsx
-
+import { type ChangeEvent, type Dispatch, type FormEvent, type SetStateAction, useRef, useState } from "react";
 import { useCreateNestedReply } from "@/hooks/useReply";
-import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
 import { Reply } from "@/types/replyType";
 import { resetReply } from "@/stores/replySlice";
-import SubmitLoader from "../SubmitLoader";
 import { useCreateScheduleNestedReply } from "@/hooks/useScheduleReply";
+import { toast } from "sonner";
+import { LuLoaderCircle, LuSendHorizontal, LuX } from "react-icons/lu";
+
+const MAX_NESTED_REPLY_LENGTH = 300;
 
 const NestedReplyForm = ({
   rootReply,
@@ -32,42 +33,41 @@ const NestedReplyForm = ({
 
   const dispatch = useDispatch();
 
-  const createNestedReplyMutation = useCreateNestedReply(nestedReply.id || rootReply.id, Number(meetupId));
-  const createScheduleNestedReplyMutation = useCreateScheduleNestedReply(nestedReply.id || rootReply.id, Number(scheduleId));
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const targetReplyId = nestedReply.id || rootReply.id;
+  const targetNickname = nestedReply.user.nickname || rootReply.user.nickname;
+  const createNestedReplyMutation = useCreateNestedReply(targetReplyId, Number(meetupId));
+  const createScheduleNestedReplyMutation = useCreateScheduleNestedReply(targetReplyId, Number(scheduleId));
+  const isSubmitting = createNestedReplyMutation.isPending || createScheduleNestedReplyMutation.isPending;
 
-  const handleContentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (event.target.value.length > 300) {
-      return;
-    }
-    setContent(event.target.value);
+  const handleContentChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    setContent(event.target.value.slice(0, MAX_NESTED_REPLY_LENGTH));
   };
 
-  const handleNestedReplySubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleNestedReplySubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (content.trim().length === 0) return;
 
-    if (isSubmitting) return;
-    setIsSubmitting(true);
+    if (!user.email) {
+      toast.info("로그인 후 답글을 작성할 수 있어요.");
+      return;
+    }
+
+    const text = content.trim();
+    if (!text || isSubmitting) return;
 
     try {
       if (scheduleId) {
-        await createScheduleNestedReplyMutation.mutateAsync({ text: content });
+        await createScheduleNestedReplyMutation.mutateAsync({ text });
       } else {
-        await createNestedReplyMutation.mutateAsync({ text: content });
-      }
-
-      // 🔍 개발 환경에서만 지연 시간 추가
-      if (process.env.NODE_ENV === "development") {
-        await new Promise(resolve => setTimeout(resolve, 2000)); // 2초 지연
+        await createNestedReplyMutation.mutateAsync({ text });
       }
 
       setIsVisiableNestedReply(true);
+      setIsVisiableNestedReplyForm(false);
       setContent("");
+      dispatch(resetReply());
     } catch (error) {
       console.error("답글 작성 실패:", error);
-    } finally {
-      setIsSubmitting(false);
+      toast.error("답글 등록 중 문제가 발생했습니다.");
     }
   };
 
@@ -78,36 +78,44 @@ const NestedReplyForm = ({
   };
 
   return (
-    <>
-      {isSubmitting && <SubmitLoader isLoading={isSubmitting} />}
-
-      <div className="flex w-full justify-center">
-        <form onSubmit={handleNestedReplySubmit} className="flex w-[80%] flex-col gap-[0.5rem] md:max-w-[80rem]">
-          <div className="flex w-full flex-col items-center justify-center gap-[1rem] rounded-[1rem] border-[0.1rem] border-gray-medium bg-white p-[1.5rem]">
-            <div className="justify-betwee flex w-full text-sm">@ {nestedReply.user.nickname ? nestedReply.user.nickname : rootReply.user.nickname}</div>
-            <textarea
-              ref={textareaRef}
-              className="h-[50px] w-full text-sm"
-              placeholder={user.email ? `${nestedReply.user.nickname ? nestedReply.user.nickname : rootReply.user.nickname}님에게 답글 다는 중` : "로그인한 이후에 댓글을 작성할 수 있습니다."}
-              onChange={handleContentChange}
-              value={content}
-              disabled={!user.email}
-            />
-          </div>
-          <div className="flex justify-between">
-            <span className="text-sm">{content.length}/ 300</span>
-            <span className="flex gap-2">
-              <button type="button" onClick={handleNestedReplyForm} className="h-[2.5rem] w-[6rem] rounded-[0.5rem] bg-gray-medium text-sm">
-                닫기
-              </button>
-              <button type="submit" className="h-[2.5rem] w-[6rem] rounded-[0.5rem] bg-secondary-dark text-sm">
-                등록
-              </button>
-            </span>
-          </div>
-        </form>
+    <form onSubmit={handleNestedReplySubmit} className="border-border bg-card mt-[1rem] rounded-[1.5rem] border px-[1.1rem] py-[1rem]">
+      <div className="mb-[0.6rem] flex items-center justify-between gap-[0.8rem]">
+        <p className="text-primary text-xs font-bold">@{targetNickname}에게 답글</p>
+        <button
+          type="button"
+          onClick={handleNestedReplyForm}
+          className="text-muted-foreground hover:text-foreground grid h-[2.8rem] w-[2.8rem] place-items-center rounded-full transition-colors"
+          aria-label="답글 닫기"
+        >
+          <LuX className="h-[1.5rem] w-[1.5rem]" />
+        </button>
       </div>
-    </>
+
+      <div className="flex items-end gap-[0.8rem]">
+        <textarea
+          ref={textareaRef}
+          className="placeholder:text-muted-foreground/75 min-h-[5rem] flex-1 resize-none bg-transparent text-sm leading-relaxed outline-none"
+          placeholder={user.email ? "답글을 남겨보세요" : "로그인 후 답글을 작성할 수 있어요."}
+          onChange={handleContentChange}
+          value={content}
+          disabled={!user.email}
+        />
+        <button
+          type="submit"
+          disabled={!user.email || isSubmitting || content.trim().length === 0}
+          className="bg-primary text-primary-foreground disabled:bg-muted disabled:text-muted-foreground grid h-[3.4rem] w-[3.4rem] shrink-0 place-items-center rounded-full transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-100"
+          aria-label="답글 등록"
+        >
+          {isSubmitting ? <LuLoaderCircle className="h-[1.6rem] w-[1.6rem] animate-spin" /> : <LuSendHorizontal className="h-[1.6rem] w-[1.6rem]" />}
+        </button>
+      </div>
+
+      <div className="mt-[0.5rem] flex justify-end text-xs">
+        <span className={content.length >= MAX_NESTED_REPLY_LENGTH ? "text-primary font-semibold" : "text-muted-foreground"}>
+          {content.length}/{MAX_NESTED_REPLY_LENGTH}
+        </span>
+      </div>
+    </form>
   );
 };
 

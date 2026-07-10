@@ -7,6 +7,8 @@ export interface ReplyItemProps {
   allReplies: Reply[];
   meetupId: number;
   scheduleId?: number;
+  canWrite?: boolean;
+  disabledReason?: string;
 }
 
 export type Reply = {

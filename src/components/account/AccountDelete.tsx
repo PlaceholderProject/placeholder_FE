@@ -10,12 +10,17 @@ import Cookies from "js-cookie";
 import { useDeleteUser } from "@/hooks/useUser";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { LuArrowLeft, LuShieldAlert, LuTrash2 } from "react-icons/lu";
+import { setHasUnreadNotifications } from "@/stores/notificationSlice";
+import { resetSelectedMeetupId } from "@/stores/proposalSlice";
+import { useQueryClient } from "@tanstack/react-query";
 
 const AccountDelete = () => {
   const isPasswordRechecked = useSelector((state: RootState) => state.auth.isPasswordRechecked);
 
   const router = useRouter();
   const deleteUserMutation = useDeleteUser();
+  const queryClient = useQueryClient();
 
   const dispatch = useDispatch();
 
@@ -25,11 +30,14 @@ const AccountDelete = () => {
 
   const handleDeleteUserButton = async () => {
     try {
-      await deleteUserMutation.mutateAsync(); // ✅ 비동기 호출
+      await deleteUserMutation.mutateAsync();
       Cookies.remove("accessToken");
       Cookies.remove("refreshToken");
       dispatch(setIsAuthenticated(false));
+      dispatch(setHasUnreadNotifications(false));
+      dispatch(resetSelectedMeetupId());
       persistor.purge();
+      queryClient.clear();
       router.replace("/");
       toast.success("탈퇴되었습니다.");
     } catch {
@@ -38,27 +46,46 @@ const AccountDelete = () => {
   };
 
   return (
-    <div className="my-[4rem] flex min-h-[calc(100vh-12rem)] flex-col items-center justify-center md:min-h-[calc(100vh-13.5rem)]">
-      <h2 className="mb-[2rem] text-3xl font-semibold">계정 관리</h2>
-      <div className="relative z-10 flex min-h-[54rem] w-[80%] min-w-[30rem] flex-col items-center justify-center gap-[3rem] rounded-[1.5rem] border-[0.1rem] border-gray-medium py-[3rem] md:max-w-[80rem]">
-        {!isPasswordRechecked ? (
-          <div className="absolute inset-5 z-50 flex items-center justify-center bg-[#f9f9f9]">
-            <PasswordRecheck />
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center">
-            <p className="my-[5rem] text-lg font-semibold">정말로 탈퇴 하시겠습니까?</p>
-            <div className="flex flex-col gap-[0.8rem]">
-              <Link href="/account" className="flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] bg-secondary-dark text-lg">
-                아니요
-              </Link>
-              <button onClick={handleDeleteUserButton} className="flex h-[4rem] w-[24rem] items-center justify-center rounded-[1rem] bg-gray-light text-lg">
-                네
-              </button>
-            </div>
-          </div>
-        )}
+    <div className="mx-auto w-[calc(100%-3.2rem)] max-w-[64rem] space-y-[1.8rem] py-[2.4rem] pb-[11rem] md:py-[3.2rem] md:pb-[5rem]">
+      <Link href="/account" className="text-muted-foreground hover:text-foreground inline-flex items-center gap-[0.5rem] text-sm font-semibold transition-colors">
+        <LuArrowLeft className="h-[1.5rem] w-[1.5rem] stroke-[1.9]" />
+        계정 관리
+      </Link>
+
+      <div>
+        <h1 className="text-foreground text-2xl font-bold">회원탈퇴</h1>
+        <p className="text-muted-foreground mt-[0.5rem] text-sm">탈퇴 전 비밀번호를 확인하고 계정 삭제를 진행해요.</p>
       </div>
+
+      {!isPasswordRechecked ? (
+        <PasswordRecheck />
+      ) : (
+        <section className="border-border bg-card rounded-[2rem] border p-[1.8rem] md:p-[2rem]">
+          <div className="bg-destructive/10 text-destructive mb-[1.4rem] grid h-[4.4rem] w-[4.4rem] place-items-center rounded-[1.3rem]">
+            <LuShieldAlert className="h-[2.2rem] w-[2.2rem] stroke-[1.9]" />
+          </div>
+          <h2 className="text-foreground text-lg font-bold">정말 탈퇴하시겠어요?</h2>
+          <p className="text-muted-foreground mt-[0.7rem] text-sm leading-relaxed break-keep">탈퇴하면 계정 정보가 삭제되고, 진행 중인 모임 활동을 더 이상 관리할 수 없어요.</p>
+
+          <div className="mt-[1.8rem] grid gap-[0.8rem] sm:grid-cols-2">
+            <Link
+              href="/account"
+              className="border-border text-muted-foreground hover:bg-muted flex h-[4.6rem] items-center justify-center rounded-[1.4rem] border text-sm font-semibold transition-colors"
+            >
+              유지하기
+            </Link>
+            <button
+              type="button"
+              onClick={handleDeleteUserButton}
+              disabled={deleteUserMutation.isPending}
+              className="bg-destructive text-destructive-foreground flex h-[4.6rem] items-center justify-center gap-[0.6rem] rounded-[1.4rem] text-sm font-semibold transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-55"
+            >
+              <LuTrash2 className="h-[1.6rem] w-[1.6rem] stroke-[2]" />
+              {deleteUserMutation.isPending ? "탈퇴 중" : "탈퇴하기"}
+            </button>
+          </div>
+        </section>
+      )}
     </div>
   );
 };

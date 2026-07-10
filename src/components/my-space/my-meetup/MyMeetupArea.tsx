@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import CurrentMyMeetup from "./CurrentMyMeetup";
 import PastMyMeetup from "./PastMyMeetup";
+import SegmentedIndicator from "@/components/common/SegmentedIndicator";
 
 const MyMeetupArea = () => {
   // 🐣🐣🐣객체 맵핑 방식~~ 🐣🐣
@@ -27,42 +28,26 @@ const MyMeetupArea = () => {
   const [activeSubTab, setActiveSubTab] = useState<"current" | "past">("current");
 
   return (
-    <>
-      <div className="">
-        {/* 상위 탭 제목들
-        <div className="main-tabs">
-          <div className="tab-list">
-            <button className={activeMainTab === "myMeetup" ? "active" : ""} onClick={() => setActiveMainTab("myMeetup")}>
-              내 모임
-            </button>
-            <button className={activeMainTab === "myAd" ? "active" : ""} onClick={() => setActiveMainTab("myAd")}>
-              내 광고
-            </button>
-          </div>
-        </div>
-
-        {activeMainTab === "myMeetup"} */}
-
-        {/* 하위 탭 버튼들 */}
-        <div className="sub-tabs mb-[2rem] mt-[2.7rem] flex justify-between md:grid md:grid-cols-2 md:gap-x-[4rem]">
+    <div className="space-y-[1.4rem]">
+      <div className="border-border bg-card relative grid grid-cols-2 rounded-[1.3rem] border p-[0.3rem]">
+        <SegmentedIndicator count={2} index={activeSubTab === "current" ? 0 : 1} className="bg-primary-soft rounded-[1rem]" />
+        {[
+          { key: "current", label: "진행 중" },
+          { key: "past", label: "종료" },
+        ].map(tab => (
           <button
-            className={`${activeSubTab === "current" ? "active bg-primary text-white" : "bg-gray-medium text-primary"} rounded-[1rem] px-[1.5rem] py-[0.5rem] text-base md:text-xl`}
-            onClick={() => setActiveSubTab("current")}
+            key={tab.key}
+            type="button"
+            className={`relative z-10 rounded-[1rem] px-[1.6rem] py-[0.7rem] text-sm font-bold transition-colors duration-200 ${activeSubTab === tab.key ? "text-primary-soft-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            onClick={() => setActiveSubTab(tab.key as "current" | "past")}
           >
-            현재 내 모임 보기
+            {tab.label}
           </button>
-          <button
-            className={`${activeSubTab === "past" ? "active bg-primary text-white" : "bg-gray-medium text-primary"} rounded-[1rem] px-[1.5rem] py-[0.5rem] text-base md:text-xl`}
-            onClick={() => setActiveSubTab("past")}
-          >
-            지난 내 모임 보기
-          </button>
-        </div>
-
-        {/* 나올 내용 */}
-        {activeSubTab === "current" ? <CurrentMyMeetup /> : <PastMyMeetup />}
+        ))}
       </div>
-    </>
+
+      {activeSubTab === "current" ? <CurrentMyMeetup /> : <PastMyMeetup />}
+    </div>
   );
 };
 
