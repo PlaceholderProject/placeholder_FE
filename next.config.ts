@@ -6,16 +6,17 @@ const nextConfig: NextConfig = {
   distDir: process.env.NEXT_DIST_DIR || ".next",
 
   images: {
-    // domains는 deprecated되었으므로 제거..하려 했으나
-    // 호환성을 위해 domains도 유지
-
-    domains: ["localhost", "placeholder-prod.s3.amazonaws.com"],
     remotePatterns: [
       {
         protocol: "http",
         hostname: "localhost",
         port: "8000",
-        pathname: "/media/profile_images/**",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "placeholder-prod.s3.amazonaws.com",
+        pathname: "/**",
       },
       // 목업 데이터용 임시 이미지 (picsum.photos)
       {
@@ -45,12 +46,7 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: false, // 타입 에러 무시하지 않음
   },
 
-  // ESLint 설정
-  eslint: {
-    ignoreDuringBuilds: false, // 빌드 시 ESLint 에러 무시하지 않음
-  },
-
-  // Next.js 15에서 변경된 설정 (experimental에서 최상위로 이동)
+  // 서버 전용 패키지가 추가되면 이 목록에서 관리합니다.
   serverExternalPackages: [], // 필요시 외부 패키지 추가
 
   // 빌드 최적화
@@ -61,17 +57,6 @@ const nextConfig: NextConfig = {
   // 정적 파일 최적화
   trailingSlash: false,
 
-  // 웹팩 설정 (클라이언트 빌드 오류 해결)
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.fallback = {
-        fs: false,
-        net: false,
-        tls: false,
-      };
-    }
-    return config;
-  },
 };
 
 export default nextConfig;

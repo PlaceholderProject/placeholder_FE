@@ -13,6 +13,7 @@ import { Meetup } from "@/types/meetupType";
 
 const AUTO_INTERVAL = 4000;
 const MAX_SLIDES = 5;
+const getStableSlideOrder = (id: number) => Math.imul(id, 2654435761) >>> 0;
 
 const ThumbnailCarousel = () => {
   // 기존 광고 목록 API 재사용 (서버 추가 없음)
@@ -22,11 +23,11 @@ const ThumbnailCarousel = () => {
     staleTime: 1000 * 60,
   });
 
-  // 이미지 있는 공개 광고만 골라 랜덤 셔플 후 상위 N개
+  // 서버와 클라이언트에서 동일한 순서가 나오도록 ID 기반으로 분산 정렬합니다.
   const slides = useMemo<Meetup[]>(() => {
     const list: Meetup[] = (data?.result ?? []).filter((m: Meetup) => m.isPublic && m.image);
-    const shuffled = [...list].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, MAX_SLIDES);
+    const ordered = [...list].sort((a, b) => getStableSlideOrder(a.id) - getStableSlideOrder(b.id));
+    return ordered.slice(0, MAX_SLIDES);
   }, [data]);
 
   const [index, setIndex] = useState(0);

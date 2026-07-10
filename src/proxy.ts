@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getMeetupByIdApi } from "./services/meetup.service";
 import { BASE_URL } from "./constants/baseURL";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const accessToken = request.cookies.get("accessToken")?.value;
 

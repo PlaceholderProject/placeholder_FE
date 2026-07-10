@@ -6,6 +6,5 @@
   "singleQuote": false,
   "trailingComma": "all",
   "arrowParens": "avoid",
-  "plugins": ["prettier-plugin-tailwindcss"],
-  "extends": ["next", "plugin:@typescript-eslint/recommended", "prettier"]
+  "plugins": ["prettier-plugin-tailwindcss"]
 }
