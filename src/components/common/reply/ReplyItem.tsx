@@ -1,5 +1,6 @@
 "use client";
 
+import { type ChangeEvent, useState } from "react";
 import { BASE_URL } from "@/constants/baseURL";
 import { ReplyItemProps } from "@/types/replyType";
 import { transformCreatedDate } from "@/utils/ReplyDateFormat";
@@ -7,19 +8,24 @@ import Image from "next/image";
 import { useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
 import NestedReplyItem from "./NestedReplyItem";
-import { useState } from "react";
 import { useDeleteReply, useEditReply } from "@/hooks/useReply";
 import NestedReplyForm from "./NestedReplyForm";
 import { useDeleteScheduleReply, useUpdateScheduleReply } from "@/hooks/useScheduleReply";
 import { toast } from "sonner";
 import { showConfirmToast } from "@/components/common/ConfirmDialog";
+import { LuCheck, LuChevronDown, LuChevronUp, LuCrown, LuMessageCircle, LuPencil, LuTrash2, LuX } from "react-icons/lu";
 
-const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId, scheduleId }) => {
+const getReplyImage = (image?: string | null) => {
+  if (!image) return "/profile.png";
+  return image.startsWith("http") ? image : `${BASE_URL}/${image}`;
+};
+
+const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId, scheduleId, canWrite = true, disabledReason }) => {
   const user = useSelector((state: RootState) => state.user.user);
   const [isEditMode, setIsEditMode] = useState(false);
   const [text, setText] = useState(reply.text);
-  const [isVisiableNestedReply, setIsVisiableNestedReply] = useState(false);
-  const [isVisiableNestedReplyForm, setIsVisiableNestedReplyForm] = useState(false);
+  const [isVisibleNestedReply, setIsVisibleNestedReply] = useState(false);
+  const [isVisibleNestedReplyForm, setIsVisibleNestedReplyForm] = useState(false);
 
   const editReplyMutation = useEditReply(meetupId);
   const deleteReplyMutation = useDeleteReply(meetupId);
@@ -27,9 +33,14 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId, sche
   const deleteScheduleReplyMutation = useDeleteScheduleReply(Number(scheduleId));
 
   const nestedReplies = allReplies.filter(r => r.root === reply.id).reverse();
+  const isMine = reply.user.nickname === user.nickname;
 
   const handleNestedReplyFormToggle = () => {
-    setIsVisiableNestedReplyForm(!isVisiableNestedReplyForm);
+    if (!canWrite) {
+      toast.info(disabledReason ?? "댓글 작성 권한이 필요해요.");
+      return;
+    }
+    setIsVisibleNestedReplyForm(prev => !prev);
   };
 
   const handleReplyDelete = async (replyId: number) => {
@@ -55,16 +66,22 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId, sche
     });
   };
 
-  const handleTextchange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleTextchange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setText(event.target.value);
   };
 
   const handleUpdateMode = () => {
-    setIsEditMode(!isEditMode);
+    setIsEditMode(prev => !prev);
     setText(reply.text);
   };
 
   const handleReplyUpdate = async (replyId: number) => {
+    const nextText = text.trim();
+    if (!nextText) {
+      toast.error("댓글 내용을 입력해주세요.");
+      return;
+    }
+
     showConfirmToast({
       message: "정말로 댓글을 수정하시겠습니까?",
       confirmText: "수정",
@@ -72,9 +89,9 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId, sche
       onConfirm: async () => {
         try {
           if (scheduleId) {
-            await editScheduleReplyMutation.mutateAsync({ text, replyId });
+            await editScheduleReplyMutation.mutateAsync({ text: nextText, replyId });
           } else if (meetupId) {
-            await editReplyMutation.mutateAsync({ text, replyId });
+            await editReplyMutation.mutateAsync({ text: nextText, replyId });
           }
           toast.success("정상적으로 수정되었습니다.");
           setIsEditMode(false);
@@ -86,75 +103,99 @@ const ReplyItem: React.FC<ReplyItemProps> = ({ reply, allReplies, meetupId, sche
   };
 
   return (
-    <div className="flex flex-col items-start gap-[1rem]">
-      {/* 1️⃣ 댓글 정보 */}
-      <div className="flex w-full justify-between">
-        <div className="flex flex-row items-center gap-[0.5rem]">
-          <div className="relative h-[2.5rem] w-[2.5rem] overflow-hidden rounded-full">
-            <Image
-              src={reply.user.image ? (reply.user.image.startsWith("http") ? reply.user.image : `${BASE_URL}/${reply.user.image}`) : "/profile.png"}
-              alt="프로필 이미지"
-              fill
-              className="object=cover"
-            />
-          </div>
-          <span className="text-sm">
-            {reply.isOrganizer && "👑 "}
-            {reply.user.nickname} ✨
-          </span>
-          <span className="text-sm text-gray-dark">{transformCreatedDate(reply.createdAt)}</span>
-        </div>
-        {reply.user.nickname === user.nickname ? (
-          !isEditMode ? (
-            <span className="flex gap-[1rem] text-gray-dark">
-              <button onClick={handleUpdateMode}>수정</button>
-              <button onClick={() => handleReplyDelete(reply.id)}>삭제</button>
-            </span>
-          ) : (
-            <span className="flex gap-[1rem] text-gray-dark">
-              <button onClick={handleUpdateMode}>취소</button>
-              <button onClick={() => handleReplyUpdate(reply.id)}>수정</button>
-            </span>
-          )
-        ) : null}
+    <article className="flex gap-[1rem]">
+      <div className="bg-muted relative h-[3.8rem] w-[3.8rem] shrink-0 overflow-hidden rounded-full">
+        <Image unoptimized src={getReplyImage(reply.user.image)} alt={reply.user.nickname} fill sizes="3.8rem" className="object-cover" />
       </div>
-      {/* 2️⃣ 댓글 내용 */}
-      {isEditMode ? <textarea value={text} onChange={handleTextchange} className="mx-[3rem] my-[1rem] w-[90%] rounded-[1rem] p-[1rem]" /> : <div className="w-full px-[3rem]">{reply.text}</div>}
-      {/* 3️⃣ 답글 영역 */}
-      <div className="flex w-full flex-col items-start gap-[0.5rem] pl-[3rem]">
-        {/* 3-1. 답글 더보기 & 접기 */}
-        {nestedReplies.length > 0 &&
-          (isVisiableNestedReply ? (
-            <div className="flex w-full flex-col items-start gap-[1rem]">
-              {nestedReplies.map(nestedReply => (
-                <NestedReplyItem key={nestedReply.id} nestedReply={nestedReply} meetupId={meetupId} handleReplyUpdate={handleReplyUpdate} />
-              ))}
-              <button onClick={() => setIsVisiableNestedReply(false)} className="text-sm text-gray-dark">
-                ---- 답글 접기
-              </button>
+
+      <div className="min-w-0 flex-1">
+        <div className="bg-muted/55 rounded-[1.6rem] rounded-tl-[0.5rem] px-[1.3rem] py-[1.1rem]">
+          <div className="flex flex-wrap items-start justify-between gap-[0.8rem]">
+            <div className="flex min-w-0 flex-wrap items-center gap-[0.6rem]">
+              <span className="text-foreground text-sm font-bold">{reply.user.nickname}</span>
+              {reply.isOrganizer && (
+                <span className="bg-primary-soft text-primary inline-flex items-center gap-[0.3rem] rounded-full px-[0.6rem] py-[0.2rem] text-[1.1rem] font-bold">
+                  <LuCrown className="fill-primary/20 h-[1.2rem] w-[1.2rem] stroke-[2]" />
+                  방장
+                </span>
+              )}
+              <span className="text-muted-foreground text-xs">{transformCreatedDate(reply.createdAt)}</span>
             </div>
+
+            {isMine && (
+              <div className="text-muted-foreground flex shrink-0 items-center gap-[0.7rem] text-xs font-semibold">
+                {isEditMode ? (
+                  <>
+                    <button type="button" onClick={handleUpdateMode} className="hover:text-foreground inline-flex items-center gap-[0.2rem] transition-colors">
+                      <LuX className="h-[1.3rem] w-[1.3rem]" />
+                      취소
+                    </button>
+                    <button type="button" onClick={() => handleReplyUpdate(reply.id)} className="text-primary inline-flex items-center gap-[0.2rem] transition hover:opacity-75">
+                      <LuCheck className="h-[1.3rem] w-[1.3rem]" />
+                      저장
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button type="button" onClick={handleUpdateMode} className="hover:text-foreground inline-flex items-center gap-[0.2rem] transition-colors">
+                      <LuPencil className="h-[1.3rem] w-[1.3rem]" />
+                      수정
+                    </button>
+                    <button type="button" onClick={() => handleReplyDelete(reply.id)} className="hover:text-destructive inline-flex items-center gap-[0.2rem] transition-colors">
+                      <LuTrash2 className="h-[1.3rem] w-[1.3rem]" />
+                      삭제
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+
+          {isEditMode ? (
+            <textarea
+              value={text}
+              onChange={handleTextchange}
+              className="border-border bg-card focus:border-primary/45 mt-[1rem] min-h-[7rem] w-full resize-none rounded-[1.2rem] border px-[1rem] py-[0.9rem] text-sm leading-relaxed outline-none"
+            />
           ) : (
-            <button onClick={() => setIsVisiableNestedReply(true)} className="text-sm text-gray-dark">
-              ---- 답글 {nestedReplies.length}개 더 보기
+            <p className="text-foreground/90 mt-[0.7rem] text-sm leading-relaxed break-keep whitespace-pre-line">{reply.text}</p>
+          )}
+        </div>
+
+        <div className="mt-[0.8rem] flex flex-wrap items-center gap-[1rem] pl-[0.6rem] text-xs font-semibold">
+          <button type="button" onClick={handleNestedReplyFormToggle} className="text-muted-foreground hover:text-primary inline-flex items-center gap-[0.35rem] transition-colors">
+            <LuMessageCircle className="h-[1.4rem] w-[1.4rem] stroke-[1.9]" />
+            답글
+          </button>
+
+          {nestedReplies.length > 0 && (
+            <button type="button" onClick={() => setIsVisibleNestedReply(prev => !prev)} className="text-primary inline-flex items-center gap-[0.35rem] transition hover:opacity-75">
+              {isVisibleNestedReply ? <LuChevronUp className="h-[1.4rem] w-[1.4rem]" /> : <LuChevronDown className="h-[1.4rem] w-[1.4rem]" />}
+              답글 {nestedReplies.length}개 {isVisibleNestedReply ? "접기" : "보기"}
             </button>
-          ))}
-        {/* 3-2. 답글 폼 */}
-        {isVisiableNestedReplyForm ? (
+          )}
+        </div>
+
+        {isVisibleNestedReply && nestedReplies.length > 0 && (
+          <div className="mt-[1rem] space-y-[1.2rem]">
+            {nestedReplies.map(nestedReply => (
+              <NestedReplyItem key={nestedReply.id} nestedReply={nestedReply} meetupId={meetupId} scheduleId={scheduleId} />
+            ))}
+          </div>
+        )}
+
+        {isVisibleNestedReplyForm && (
           <NestedReplyForm
             rootReply={reply}
             meetupId={meetupId}
             scheduleId={scheduleId}
-            setIsVisiableNestedReplyForm={setIsVisiableNestedReplyForm}
-            isVisiableNestedReplyForm={isVisiableNestedReplyForm}
-            setIsVisiableNestedReply={setIsVisiableNestedReply}
+            setIsVisiableNestedReplyForm={setIsVisibleNestedReplyForm}
+            isVisiableNestedReplyForm={isVisibleNestedReplyForm}
+            setIsVisiableNestedReply={setIsVisibleNestedReply}
           />
-        ) : (
-          <button onClick={handleNestedReplyFormToggle} className="text-sm text-gray-dark">
-            답글달기
-          </button>
         )}
       </div>
-    </div>
+    </article>
   );
 };
 

@@ -1,11 +1,11 @@
 import React from "react";
 import { LikeContainerProps } from "@/types/likeType";
-import LikeItem from "../likes/LikeItem";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toggleLikeApi } from "@/services/like.service";
 import { Meetup } from "@/types/meetupType";
 import { getUser } from "@/services/user.service";
 import { toast } from "sonner";
+import { IoMdHeart, IoMdHeartEmpty } from "react-icons/io";
 
 const AdLikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerProps) => {
   const queryClient = useQueryClient();
@@ -62,14 +62,19 @@ const AdLikeContainer = ({ id, initialIsLike, initialLikeCount }: LikeContainerP
   };
 
   return (
-    <LikeItem isLike={initialIsLike} likeCount={initialLikeCount} onToggle={handleToggleLike} isPending={likeMutation.isPending} />
-
-    // <div className="flex items-center">
-    //   <div className="flex">
-    //     <IoMdHeart className="h-[1.5rem] w-[1.5rem] text-primary md:h-[20px] md:w-[20px]" />
-    //   </div>
-    //   <div className="text-sm md:text-[18px]">likeCount</div>
-    // </div>
+    <button
+      type="button"
+      onClick={handleToggleLike}
+      disabled={likeMutation.isPending}
+      aria-label={initialIsLike ? "관심 모임에서 삭제" : "관심 모임에 추가"}
+      aria-pressed={initialIsLike}
+      className={`inline-flex h-[3.8rem] items-center gap-[0.5rem] rounded-full px-[1rem] text-sm font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
+        initialIsLike ? "bg-primary-soft text-primary" : "text-muted-foreground hover:bg-muted hover:text-primary"
+      }`}
+    >
+      {initialIsLike ? <IoMdHeart className="h-[1.8rem] w-[1.8rem]" /> : <IoMdHeartEmpty className="h-[1.8rem] w-[1.8rem]" />}
+      관심 {initialLikeCount}
+    </button>
   );
 };
 

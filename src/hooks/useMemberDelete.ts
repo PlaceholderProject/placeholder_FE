@@ -10,6 +10,7 @@ export const useMemberDelete = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["myMeetups"] });
       queryClient.invalidateQueries({ queryKey: ["myMeetupMembers"] });
+      queryClient.invalidateQueries({ queryKey: ["members"] });
     },
     onError: error => {
       console.error("멤버 삭제 실패", error);

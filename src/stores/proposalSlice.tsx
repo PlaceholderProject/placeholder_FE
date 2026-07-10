@@ -1,22 +1,22 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface ProposalState {
-  selectedMeeupId: number | null;
+  selectedMeetupId: number | null;
 }
 
 const initialState: ProposalState = {
-  selectedMeeupId: null,
+  selectedMeetupId: null,
 };
 
 const proposalSlice = createSlice({
   name: "proposal",
   initialState,
   reducers: {
-    setSelectedMeetupId: (state, action: PayloadAction<ProposalState["selectedMeeupId"]>) => {
-      state.selectedMeeupId = action.payload;
+    setSelectedMeetupId: (state, action: PayloadAction<ProposalState["selectedMeetupId"]>) => {
+      state.selectedMeetupId = action.payload;
     },
     resetSelectedMeetupId(state) {
-      state.selectedMeeupId = null;
+      state.selectedMeetupId = null;
     },
   },
 });

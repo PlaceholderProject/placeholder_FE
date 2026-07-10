@@ -1,17 +1,14 @@
 import ScheduleDetail from "@/components/schedule/ScheduleDetail";
-import ReplyArea from "@/components/common/reply/ReplyArea";
+import { parsePositiveInteger } from "@/utils/parsePositiveInteger";
+import { notFound } from "next/navigation";
 
 const ScheduleDetailPage = async ({ params }: { params: Promise<{ scheduleId: string; meetupId: string }> }) => {
   const { scheduleId, meetupId } = await params;
-  const scheduleIdNum = Number(scheduleId);
-  const meetupIdNum = Number(meetupId);
+  const scheduleIdNum = parsePositiveInteger(scheduleId);
+  const meetupIdNum = parsePositiveInteger(meetupId);
+  if (!scheduleIdNum || !meetupIdNum) notFound();
 
-  return (
-    <>
-      <ScheduleDetail scheduleId={scheduleIdNum} meetupId={meetupIdNum} />
-      <ReplyArea />
-    </>
-  );
+  return <ScheduleDetail scheduleId={scheduleIdNum} meetupId={meetupIdNum} />;
 };
 
 export default ScheduleDetailPage;

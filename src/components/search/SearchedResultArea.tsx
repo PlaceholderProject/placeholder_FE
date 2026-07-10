@@ -3,16 +3,76 @@
 import React, { useEffect, useState } from "react";
 import { RootState } from "@/stores/store";
 import { useDispatch, useSelector } from "react-redux";
-import SearchedResultItem from "./SearchedResultItem";
 import { SearchedType } from "@/types/searchType";
+import { Meetup } from "@/types/meetupType";
 import { getSearchedAd } from "@/services/search.service";
+import { getHeadhuntingsApi } from "@/services/thumbnails.service";
 import { setSearchedAds, setTotal } from "@/stores/searchSlice";
+import { FaExclamationTriangle, FaLock, FaMapMarkerAlt } from "react-icons/fa";
+import { LuChevronLeft, LuChevronRight, LuSearch, LuTrendingUp } from "react-icons/lu";
+import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
+import Image from "next/image";
+import { getImageURL } from "@/utils/getImageURL";
+import { getDday } from "@/utils/getDday";
+import ThumbnailItem from "../thumbnails/ThumbnailItem";
+import ThumbnailSkeleton from "../thumbnails/ThumbnailSkeleton";
+import { SkeletonTheme } from "react-loading-skeleton";
+
+type SearchResultForThumbnail = SearchedType &
+  Partial<Omit<Meetup, "organizer">> & {
+    organizer: SearchedType["organizer"] & Partial<Meetup["organizer"]>;
+    description?: string;
+    category?: string;
+  };
+
+const toThumbnailMeetup = (ad: SearchedType): Meetup => {
+  const searchResult = ad as SearchResultForThumbnail;
+
+  return {
+    id: ad.id,
+    organizer: {
+      nickname: ad.organizer.nickname,
+      image: searchResult.organizer.image ?? ad.organizer.profileImage ?? "",
+    },
+    isLike: ad.isLike,
+    likeCount: ad.likeCount,
+    name: searchResult.name ?? ad.meetup ?? ad.adTitle,
+    description: searchResult.description ?? ad.meetup ?? "",
+    place: ad.place,
+    placeDescription: searchResult.placeDescription ?? "",
+    startedAt: ad.startedAt ?? null,
+    endedAt: ad.endedAt ?? null,
+    adTitle: ad.adTitle,
+    adEndedAt: ad.adEndedAt,
+    isPublic: ad.isPublic,
+    image: ad.image,
+    category: searchResult.category ?? "",
+    createdAt: ad.createdAt,
+    commentCount: ad.commentCount,
+    pages: searchResult.pages ?? [],
+  };
+};
 
 const SearchedResultArea = () => {
   const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   const { searchedAds, searchField, total } = useSelector((state: RootState) => state.search);
+  const userNickname = useSelector((state: RootState) => state.user.user.nickname);
   const dispatch = useDispatch();
+  const keyword = searchField.keyword.trim();
+  const range = searchField.range || "ad_title";
+  const category = searchField.category ?? null;
+  const hasKeyword = keyword.length > 0;
+  const { data: recommendedData, isLoading: isRecommendedLoading } = useQuery({
+    queryKey: ["headhuntings", "search-popular-ads", category],
+    queryFn: () => getHeadhuntingsApi({ sortType: "like", ...(category ? { category } : {}) }, 1, 5),
+    enabled: !hasKeyword,
+    staleTime: 1000 * 60,
+  });
+  const recommendedAds: Meetup[] = (recommendedData?.result ?? []).slice(0, 5);
 
   const size = 10;
   const groupSize = 5;
@@ -22,50 +82,232 @@ const SearchedResultArea = () => {
   const endPage = Math.min(startPage + groupSize - 1, totalPages);
 
   useEffect(() => {
+    setPage(1);
+  }, [category, searchField.keyword, range]);
+
+  useEffect(() => {
+    if (!hasKeyword || !range) {
+      dispatch(setSearchedAds([]));
+      dispatch(setTotal(0));
+      setIsLoading(false);
+      setIsError(false);
+      return;
+    }
+
+    let isMounted = true;
+
     const fetchPage = async () => {
-      const result = await getSearchedAd(searchField.range, searchField.keyword, page);
-      dispatch(setSearchedAds(result?.proposals));
-      dispatch(setTotal(result?.total));
+      const result = await getSearchedAd(range, keyword, page, category);
+      if (!isMounted) return;
+
+      if (!result) {
+        dispatch(setSearchedAds([]));
+        dispatch(setTotal(0));
+        setIsError(true);
+      } else {
+        dispatch(setSearchedAds(result.proposals ?? []));
+        dispatch(setTotal(result.total ?? 0));
+      }
+
+      setIsLoading(false);
     };
 
-    fetchPage();
-  }, [page, dispatch, searchField.keyword, searchField.range]);
+    setIsLoading(true);
+    setIsError(false);
+
+    const searchTimer = window.setTimeout(() => {
+      fetchPage();
+    }, 250);
+
+    return () => {
+      isMounted = false;
+      window.clearTimeout(searchTimer);
+    };
+  }, [page, category, dispatch, hasKeyword, keyword, range]);
+
+  if (!hasKeyword) {
+    return (
+      <div className="mx-auto mt-[2.8rem] w-[calc(100%-3.2rem)] md:mt-[4rem] md:max-w-[112rem]">
+        <section>
+          <div className="mb-[1.4rem] flex items-end justify-between gap-[1.6rem] md:mb-[1.8rem]">
+            <div>
+              <p className="text-primary mb-[0.35rem] inline-flex items-center gap-[0.4rem] text-xs font-black">
+                <LuTrendingUp className="h-[1.4rem] w-[1.4rem] stroke-[2.2]" />
+                인기 광고
+              </p>
+              <h2 className="text-foreground text-xl font-black tracking-[-0.025em] md:text-2xl">지금 많이 찾는 모임</h2>
+            </div>
+            <p className="text-muted-foreground hidden text-sm md:block">관심받는 모집 공고부터 가볍게 둘러보세요.</p>
+          </div>
+
+          {isRecommendedLoading ? (
+            <div className="scroll-container flex gap-[1rem] pb-[0.5rem]">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <div key={index} className="border-border bg-card flex w-[26rem] shrink-0 gap-[1rem] rounded-[1.8rem] border p-[0.8rem]">
+                  <div className="bg-muted h-[8rem] w-[8rem] shrink-0 animate-pulse rounded-[1.3rem]" />
+                  <div className="flex flex-1 flex-col justify-center gap-[0.6rem]">
+                    <div className="bg-muted h-[1.2rem] w-[80%] animate-pulse rounded-full" />
+                    <div className="bg-muted h-[1rem] w-[55%] animate-pulse rounded-full" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : recommendedAds.length > 0 ? (
+            <div className="scroll-container flex gap-[1rem] pb-[0.5rem]">
+              {recommendedAds.map((ad, index) => {
+                const adDday = getDday(ad.adEndedAt);
+                const isUrgent = adDday === "D-DAY" || /^D-[0-3]$/.test(adDday);
+
+                return (
+                  <Link
+                    key={ad.id}
+                    href={`/ad/${ad.id}`}
+                    className="group border-border bg-card hover:border-primary/30 flex w-[26rem] shrink-0 gap-[1rem] rounded-[1.8rem] border p-[0.8rem] transition-all hover:-translate-y-0.5 hover:shadow-[0_1.6rem_3rem_-2.4rem_rgba(24,23,29,0.36)]"
+                  >
+                    <div className="bg-muted relative h-[8rem] w-[8rem] shrink-0 overflow-hidden rounded-[1.3rem]">
+                      {ad.isPublic && ad.image ? (
+                        <Image src={getImageURL(ad.image ?? null)} alt={ad.adTitle} fill sizes="8rem" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                      ) : (
+                        <div className="bg-muted text-muted-foreground grid h-full w-full place-items-center">
+                          <FaLock className="h-[1.5rem] w-[1.5rem]" />
+                        </div>
+                      )}
+                      <span className="bg-accent text-accent-foreground absolute top-[0.55rem] left-[0.55rem] grid h-[2rem] min-w-[2rem] place-items-center rounded-full px-[0.5rem] text-[1rem] font-black shadow-sm">
+                        {index + 1}
+                      </span>
+                    </div>
+
+                    <div className="flex min-w-0 flex-1 flex-col justify-between py-[0.25rem]">
+                      <div className="min-w-0">
+                        <h3 className="text-foreground line-clamp-2 text-sm leading-snug font-bold break-words">{ad.adTitle}</h3>
+                        <p className="text-muted-foreground mt-[0.4rem] flex min-w-0 items-center gap-[0.3rem] text-xs">
+                          <FaMapMarkerAlt className="shrink-0" />
+                          <span className="truncate">{ad.place}</span>
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-[0.5rem] text-[1.05rem]">
+                        {adDday && (
+                          <span className={`rounded-full px-[0.55rem] py-[0.15rem] font-semibold ${isUrgent ? "bg-destructive text-destructive-foreground" : "bg-muted text-muted-foreground"}`}>
+                            {adDday}
+                          </span>
+                        )}
+                        <span className="text-muted-foreground truncate">좋아요 {ad.likeCount}</span>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          ) : null}
+        </section>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="mx-auto mt-[3rem] w-[calc(100%-3.2rem)] md:max-w-[112rem]">
+        <SkeletonTheme baseColor="#E8E8E8" highlightColor="#D9D9D9">
+          <div className="grid grid-cols-1 gap-[1.6rem] py-[0.4rem] min-[520px]:grid-cols-2 md:gap-[2rem] lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <ThumbnailSkeleton key={index} />
+            ))}
+          </div>
+        </SkeletonTheme>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="mx-auto mt-[3rem] w-[calc(100%-3.2rem)] md:max-w-[112rem]">
+        <div className="border-border bg-card flex min-h-[22rem] flex-col items-center justify-center rounded-[2.2rem] border border-dashed px-[2rem] text-center">
+          <span className="bg-destructive/10 text-destructive mb-[1rem] grid h-[4.2rem] w-[4.2rem] place-items-center rounded-full">
+            <FaExclamationTriangle className="h-[1.8rem] w-[1.8rem]" />
+          </span>
+          <h2 className="text-foreground text-base font-bold">검색 결과를 불러오지 못했어요</h2>
+          <p className="text-muted-foreground mt-[0.4rem] text-sm">잠시 후 다시 시도해주세요.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!searchedAds || searchedAds.length === 0) {
-    return <div className="flex h-[30rem] items-center justify-center text-lg">검색결과가 없습니다.</div>;
+    return (
+      <div className="mx-auto mt-[3rem] w-[calc(100%-3.2rem)] md:max-w-[112rem]">
+        <div className="border-border bg-card flex min-h-[22rem] flex-col items-center justify-center rounded-[2.2rem] border border-dashed px-[2rem] text-center">
+          <span className="bg-primary-soft text-primary mb-[1rem] grid h-[4.4rem] w-[4.4rem] place-items-center rounded-full">
+            <LuSearch className="h-[2rem] w-[2rem] stroke-[1.8]" />
+          </span>
+          <h2 className="text-foreground text-base font-bold">검색 결과가 없어요</h2>
+          <p className="text-muted-foreground mt-[0.4rem] text-sm">
+            <span className="text-foreground font-medium">{keyword}</span>와 다른 키워드로 다시 찾아보세요.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="border-gray-mediu my-[4rem] border-t-[0.1rem]">
-      <ul>
-        {searchedAds.map((ad: SearchedType) => (
-          <li key={ad.id} className="flex justify-center border-b-[0.1rem]">
-            <SearchedResultItem ad={ad} />
+    <div className="mx-auto mt-[3rem] w-[calc(100%-3.2rem)] md:mt-[4rem] md:max-w-[112rem]">
+      <div className="mb-[1.6rem] flex items-end justify-between gap-[1.6rem]">
+        <div>
+          <p className="text-primary mb-[0.35rem] text-xs font-black">검색 결과</p>
+          <h2 className="text-foreground text-xl font-black tracking-[-0.025em] md:text-2xl">
+            ‘{keyword}’<span className="text-muted-foreground ml-[0.4rem] font-medium">에 대한 모임</span>
+          </h2>
+        </div>
+        <p className="text-muted-foreground shrink-0 pb-[0.15rem] text-xs font-medium">
+          총 <strong className="text-foreground text-base font-black tabular-nums">{total}</strong>건
+        </p>
+      </div>
+
+      <ul className="grid grid-cols-1 gap-[1.6rem] py-[0.4rem] min-[520px]:grid-cols-2 md:gap-[2rem] lg:grid-cols-3">
+        {searchedAds.map((ad: SearchedType, index: number) => (
+          <li key={ad.id}>
+            <ThumbnailItem thumbnail={toThumbnailMeetup(ad)} userNickname={userNickname} priority={index === 0} highlight={{ range, keyword }} />
           </li>
         ))}
       </ul>
-      <div className="mt-6 flex items-center justify-center gap-2">
-        {/* 이전 그룹 버튼 */}
-        {startPage > 1 && (
-          <button onClick={() => setPage(startPage - 1)} className="rounded border bg-gray-200 px-2 py-1">
-            이전
-          </button>
-        )}
 
-        {/* 페이지 번호 버튼들 */}
-        {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map(p => (
-          <button key={p} onClick={() => setPage(p)} className={`rounded border px-3 py-1 text-sm font-medium ${page === p ? "bg-blue-500 text-white" : "bg-gray-200"}`}>
-            {p}
-          </button>
-        ))}
+      {totalPages > 1 && (
+        <nav aria-label="검색 결과 페이지" className="mt-[3.6rem] flex items-center justify-center gap-[0.5rem]">
+          {/* 이전 그룹 버튼 */}
+          {startPage > 1 && (
+            <button
+              onClick={() => setPage(startPage - 1)}
+              aria-label="이전 페이지 그룹"
+              className="border-border bg-card text-muted-foreground hover:text-foreground grid h-[3.6rem] w-[3.6rem] place-items-center rounded-full border transition-colors"
+            >
+              <LuChevronLeft className="h-[1.7rem] w-[1.7rem]" />
+            </button>
+          )}
 
-        {/* 다음 그룹 버튼 */}
-        {endPage < totalPages && (
-          <button onClick={() => setPage(endPage + 1)} className="rounded border bg-gray-200 px-2 py-1">
-            다음
-          </button>
-        )}
-      </div>
+          {/* 페이지 번호 버튼들 */}
+          {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map(p => (
+            <button
+              key={p}
+              onClick={() => setPage(p)}
+              aria-current={page === p ? "page" : undefined}
+              className={`grid h-[3.6rem] min-w-[3.6rem] place-items-center rounded-full px-[0.8rem] text-sm font-bold transition ${page === p ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-card hover:text-foreground"}`}
+            >
+              {p}
+            </button>
+          ))}
+
+          {/* 다음 그룹 버튼 */}
+          {endPage < totalPages && (
+            <button
+              onClick={() => setPage(endPage + 1)}
+              aria-label="다음 페이지 그룹"
+              className="border-border bg-card text-muted-foreground hover:text-foreground grid h-[3.6rem] w-[3.6rem] place-items-center rounded-full border transition-colors"
+            >
+              <LuChevronRight className="h-[1.7rem] w-[1.7rem]" />
+            </button>
+          )}
+        </nav>
+      )}
     </div>
   );
 };

@@ -1,15 +1,40 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@config "../../tailwind.config.ts";
+
+/* Tailwind v4 호환: v3의 기본 border 색(gray-200)을 유지 */
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: rgba(24, 23, 29, 0.1);
+  }
+
+  *:focus-visible {
+    outline: 3px solid rgba(108, 77, 255, 0.28);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    color: #18171d;
+    background: #ddfb52;
+  }
+}
 
 html {
-  color: #013a4b;
+  color: #18171d;
   font-size: 62.5%;
   overflow-x: hidden;
-  background-color: #f9f9f9; /* 여기에 배경색 추가 */
+  scrollbar-gutter: stable;
+  background-color: #f7f6f2;
+  scroll-behavior: smooth;
 }
 body {
+  min-height: 100vh;
   font-size: 1.4rem;
+  background: radial-gradient(circle at 8% 2%, rgba(108, 77, 255, 0.06), transparent 30rem), radial-gradient(circle at 94% 24%, rgba(221, 251, 82, 0.1), transparent 26rem), #f7f6f2;
+  text-rendering: optimizeLegibility;
 }
 
 /* 기본 스크롤 컨테이너 스타일 - 반응형 UX에 유용함 */
@@ -17,7 +42,7 @@ body {
   display: flex;
   scroll-snap-type: x mandatory;
   scroll-padding: 0;
-  overflow-x: hidden;
+  overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -38,9 +63,23 @@ body {
 /* 유용한 유틸리티 */
 @layer utilities {
   .text-gradient {
-    background: linear-gradient(to right, #9b5de5, #f15bb5, #fee440, #00bbf9);
+    background: linear-gradient(110deg, #6c4dff 0%, #8c6fff 58%, #4b32c9 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+  }
+
+  .surface-shadow {
+    box-shadow: 0 1.8rem 5rem -3rem rgba(24, 23, 29, 0.28);
+  }
+}
+
+/* 캐러셀 프로그레스 바: 시간에 따라 0 → 100% 채워짐 */
+@keyframes carouselProgress {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
   }
 }
 
@@ -90,6 +129,20 @@ body {
 
   html {
     font-size: 68.75%; /* 1rem = 11px → body 1.4rem = 15.4px */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
 

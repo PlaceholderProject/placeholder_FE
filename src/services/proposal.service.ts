@@ -118,6 +118,7 @@ export const acceptProposal = async (proposalId: number) => {
     return result;
   } catch (error) {
     console.error("신청서 수락을 실패했습니다:", error);
+    throw error instanceof Error ? error : new Error("가입 승인에 실패했습니다.");
   }
 };
 
@@ -143,6 +144,7 @@ export const refuseProposal = async (proposalId: number) => {
     return result;
   } catch (error) {
     console.error("신청서 거절을 실패했습니다:", error);
+    throw error instanceof Error ? error : new Error("가입 신청 거절에 실패했습니다.");
   }
 };
 
@@ -231,6 +233,7 @@ export const hideProposal = async (proposalId: number) => {
     return;
   } catch (error) {
     console.error("신청서 숨기기를 실패했습니다:", error);
+    throw error instanceof Error ? error : new Error("신청서 숨기기에 실패했습니다.");
   }
 };
 
@@ -252,16 +255,26 @@ export const getMyProposalStatus = async (meetupId: number) => {
       return null;
     }
 
+    const contentType = response.headers.get("Content-Type") ?? "";
+
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.detail || "알 수 없는 오류");
+      if (contentType.includes("application/json")) {
+        const error = await response.json();
+        throw new Error(error.detail || error.message || "신청 상태를 불러오지 못했습니다.");
+      }
+
+      throw new Error(`신청 상태 조회 실패 (${response.status})`);
+    }
+
+    if (!contentType.includes("application/json")) {
+      throw new Error("신청 상태 API가 JSON이 아닌 응답을 반환했습니다.");
     }
 
     const result = await response.json();
 
     return result;
   } catch (error) {
-    console.error("상태를 가져오는데 실패했습니다:", error);
+    console.warn("상태를 가져오는데 실패했습니다:", error instanceof Error ? error.message : error);
     return null;
   }
 };
