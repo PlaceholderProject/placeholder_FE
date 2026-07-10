@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ReactNode } from "react";
+import BrandLogo from "@/components/common/BrandLogo";
 
 interface AuthLayoutProps {
   mode: "login" | "signup";
@@ -31,9 +32,8 @@ const AuthLayout = ({ mode, children }: AuthLayoutProps) => {
         <Image src={content.image} alt={content.alt} fill priority unoptimized sizes="50vw" className="object-cover opacity-55" />
         <div className="from-foreground via-foreground/45 absolute inset-0 bg-gradient-to-t to-transparent" />
         <div className="text-background relative flex h-full flex-col justify-between p-[4.4rem] lg:p-[4.8rem]">
-          <Link href="/" className="inline-flex items-center gap-[0.9rem]">
-            <span className="bg-primary text-primary-foreground grid h-[3.6rem] w-[3.6rem] place-items-center rounded-[1.1rem] font-mono text-lg font-bold">P</span>
-            <span className="text-lg font-bold">placeholder</span>
+          <Link href="/" aria-label="Placeholder 홈으로 이동" className="inline-flex">
+            <BrandLogo inverse className="h-[3rem] w-[13.3rem]" />
           </Link>
 
           <div className="max-w-[36rem] pb-[1rem]">
@@ -45,9 +45,8 @@ const AuthLayout = ({ mode, children }: AuthLayoutProps) => {
 
       <section className="flex min-h-full items-center justify-center px-[2rem] py-[4rem] lg:px-[4.8rem]">
         <div className="w-full max-w-[38rem]">
-          <Link href="/" className="mb-[2.4rem] inline-flex items-center gap-[0.8rem] lg:hidden">
-            <span className="bg-primary text-primary-foreground grid h-[3.4rem] w-[3.4rem] place-items-center rounded-[1rem] font-mono text-base font-bold">P</span>
-            <span className="text-foreground text-lg font-bold">placeholder</span>
+          <Link href="/" aria-label="Placeholder 홈으로 이동" className="mb-[2.4rem] inline-flex lg:hidden">
+            <BrandLogo className="h-[2.8rem] w-[12.5rem]" />
           </Link>
           {children}
         </div>
