@@ -54,7 +54,7 @@ const MySpaceLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="mx-auto w-[calc(100%-3.2rem)] max-w-[92rem] space-y-[2.4rem] py-[2.4rem] md:py-[4rem]">
       <section className="border-border bg-card surface-shadow relative flex items-center gap-[1.4rem] overflow-hidden rounded-[2.4rem] border p-[1.8rem] md:gap-[2rem] md:p-[2.4rem]">
-        <div className="border-border relative h-[6.4rem] w-[6.4rem] shrink-0 overflow-hidden rounded-[2rem] border md:h-[8rem] md:w-[8rem]">
+        <div className="bg-muted relative h-[6.4rem] w-[6.4rem] shrink-0 overflow-hidden rounded-full md:h-[8rem] md:w-[8rem]">
           <Image src={getImageURL(user.profileImage)} alt={user.nickname || "프로필"} fill sizes="8rem" className="object-cover" />
         </div>
         <div className="relative min-w-0 flex-1">
